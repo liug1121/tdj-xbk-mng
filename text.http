@@ -1,0 +1,26 @@
+GET  http://192.168.18.101:8080/orders/new
+Content-Type: application/json
+Authorization: "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE1ODUwMzEyMzUsInN1YiI6ImFkbWluIiwiY3JlYXRlZCI6MTU4NTAyNzI3NTkwMH0.kpD-WbTOs--O9hjtvurAtKzvL20sGZjNEmTgSducGGqlKq5j95TuqUpoZJsoN2pyKzDHoiEoj3e4UzYk8CHvDQ"
+
+{
+    "id": "",
+    "name": "",
+    "phoneNumber": "",
+    "address": "",
+    "startTime": "",
+    "endTime": "",
+}
+
+
+###
+
+
+POST suning1.xuebaka.cn/api/v1/authentication
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "password": "admin"
+}
+   
+###

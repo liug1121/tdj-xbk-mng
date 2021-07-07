@@ -1,0 +1,23 @@
+{
+  "id": "1642445",
+  "name": "flowcard",
+  "font_family": "fontFamily",
+  "css_prefix_text": "el-icon-flow",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "2744756",
+      "name": "menu unfold",
+      "font_class": "menuunfold",
+      "unicode": "e662",
+      "unicode_decimal": 58978
+    },
+    {
+      "icon_id": "7790152",
+      "name": "menu open",
+      "font_class": "menuopen",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    }
+  ]
+}
