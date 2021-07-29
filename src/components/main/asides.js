@@ -15,7 +15,8 @@ export default {
       icon: 'el-icon-postcard',
       title: '卡信息',
       path: '/cardInfo',
-      type: 0
+      type: 0,
+      usingInXuebaka:1
     },
     {
       icon: 'el-icon-bank-card',
@@ -27,7 +28,8 @@ export default {
       icon: 'el-icon-shopping-cart-full',
       title: '订单',
       path: '/order',
-      type: 0
+      type: 0,
+      usingInXuebaka:1
     },
     {
       icon: 'el-icon-shopping-cart-full',
@@ -40,18 +42,21 @@ export default {
       title: '销售渠道',
       path: '/sale',
       type: 0,
+      usingInXuebaka:1,
       children: [
         {
           icon: 'el-icon-s-help',
           title: '渠道管理',
           path: '/channelList',
-          type: 0
+          type: 0,
+          usingInXuebaka:1,
         },
         {
           icon: 'el-icon-s-help',
           title: '库存分配',
           path: '/inventoryAllocation',
-          type: 0
+          type: 0,
+          usingInXuebaka:1,
         },
         // {
         //   icon: 'el-icon-s-help',
@@ -62,7 +67,8 @@ export default {
           icon: 'el-icon-s-help',
           title: '渠道商品配置',
           path: '/channelGoodsList',
-          type: 0
+          type: 0,
+          usingInXuebaka:1,
         }
       ]
     },

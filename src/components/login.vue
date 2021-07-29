@@ -72,6 +72,7 @@ export default {
             window.sessionStorage.setItem('token', res.data.token)
             window.sessionStorage.setItem('userType', res.data.type)
             window.sessionStorage.setItem('usingInDevice', res.data.usingInDevice)
+            window.sessionStorage.setItem('usingInXuebaka', res.data.usingInXuebaka)
             window.sessionStorage.setItem('managerType', res.data.managerType)
             this.$router.push('/main');
           } else {

@@ -422,7 +422,7 @@ export default {
     };
   },
   mounted () {
-    this.getCardInfolist();
+    // this.getCardInfolist();
     this.getPorductsListOptions()
     this.getfwUnionAccountOptions()
   },
