@@ -61,7 +61,8 @@ export default {
   data () {
     return {
       path: "",
-      nav_menu_data: AsideData.nav_menu_data,
+      // nav_menu_data: AsideData.nav_menu_data,
+      nav_menu_data:[],
       userType: null,
       menuShow: false,
       usingInDevice: null,
@@ -83,7 +84,7 @@ export default {
     this.userType = window.sessionStorage.getItem('userType')
     this.usingInDevice = window.sessionStorage.getItem('usingInDevice')
     this.usingInXuebaka = window.sessionStorage.getItem('usingInXuebaka')
-    console.log('****' + this.usingInXuebaka)
+    this.nav_menu_data = JSON.parse(window.sessionStorage.getItem('Auths'))
   },
   methods: {
     onRouteChanged () {
