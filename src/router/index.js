@@ -31,9 +31,28 @@ const router = new Router({
       name: 'index',
       component: (resolve) => require(['components/index.vue'], resolve),
       meta: {
+        title: '大流量卡后台'
+      },
+      children: [
+        {
+          path: '/bigflowCardOrder',
+          name: '大流量卡订单',
+          component: (resolve) => require(['components/bigflow/cardManage/cardOrder.vue'], resolve),
+          meta: {
+            title: '大流量卡订单'
+          }
+        }
+      ]},
+    
+    {
+      path: '/index',
+      name: 'index',
+      component: (resolve) => require(['components/index.vue'], resolve),
+      meta: {
         title: '学霸卡后台'
       },
       children: [
+        
         {
           path: '/tasks',
           name: '我的任务',
@@ -329,7 +348,8 @@ const router = new Router({
           meta: { title: '资费计划' },
         }
       ]
-    }
+    },
+    
   ]
 })
 
