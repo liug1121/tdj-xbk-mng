@@ -26,14 +26,23 @@
           v-model="orderEndDate">
           </el-date-picker>
         </el-form-item>
+        <el-form-item label="渠道" class="queryFormItem">
+          <el-select class="queryFormInput"  
+          filterable
+          clearable
+          reserve-keyword
+           placeholder="请选择渠道" v-model="channel" @change="handleSelectBranchCom">
+            <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
         <el-button size="medium" type="primary" icon="el-icon-search" @click="queryCardOrders">查询</el-button>
       </el-form>
       <!-- 按钮区域 -->
       <div class="button_content">
         <el-button size="medium" type="primary" icon="el-icon-download" >导出</el-button>
-        <el-button size="medium" type="primary" icon="el-icon-download" >创建订单并分配渠道</el-button>
-        <el-button size="medium" type="primary" icon="el-icon-download" >首尾分配渠道</el-button>
-        <el-button size="medium" type="primary" icon="el-icon-download" >按首尾条件导出</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" >创建订单并分配渠道</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" >首尾分配渠道</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" >按首尾条件导出</el-button>
       </div>
       <!-- 列表区域 -->
       <div class="cardNos">
@@ -99,7 +108,9 @@ export default {
         orderId:'',
         iccid:'',
         msisdn:'',
+        channel:'',
         loading: false,
+
 
     statusOptions: [
         { label: "已录入", value: 1 },
@@ -110,6 +121,7 @@ export default {
         { label: "已销毁", value: 6 },
         { label: "支付成功", value: 30 }
       ],
+    channels:[],
       
       cardOrders: [],
       page: 1,
@@ -139,21 +151,23 @@ export default {
 
   },
   created(){
-
-    //   private Integer page;
-	// private String orderIdlike;
-	// private Integer status;
-	// private String iccidlike;
-	// private String phoneNumber;
-	// private String saleChannel;
-	// private String dateStart;
-	// private String dateEnd;
-	// private String gmtCreateStart;
-	// private String gmtCreateEnd;
+      this.getAllChannels()
       this.queryCardOrders()
   },
   watch: {},
   methods: {
+    handleSelectBranchCom:function(item){
+        console.log('handleSelectBranchCom:' + item)
+    },
+    getAllChannels:function(){
+        let params = {}
+        apiBigflow.getAllChannels(params).then(res=>{
+            if(res.resultCode == 0){
+              this.channels = res.data
+              console.log('****' + this.channels.length )
+          }
+        })
+    },
     queryCardOrders:function(){
       let params = {}
       params.page = this.page
@@ -165,16 +179,16 @@ export default {
         params.iccidlike = this.iccid
       if(this.msisdn != '')
         params.phoneNumber = this.msisdn
-        // params.saleChannel;
       if(this.orderStartDate != '')
         params.gmtCreateStart = this.orderStartDate
       if(this.orderEndDate != '')
-	    params.gmtCreateEnd = this.orderEndDate
-	//   params.gmtCreateStart;
-	//   params.gmtCreateEnd;
+        params.gmtCreateEnd = this.orderEndDate
+      if(this.channel != '') 
+        params.saleChannel = this.channel
       apiBigflow.getCardOrders(params).then(res => {
           if(res.resultCode == 0){
               this.cardOrders = res.data
+              this.total = res.rowNum
           }
       })
     },
@@ -187,11 +201,13 @@ export default {
     handleSelectionChange (val) {
       
     },
-    handleSizeChange (newSize) {
-      
+    handleSizeChange (newPage) {
+      this.page = newPage;
+      this.queryCardOrders()
     },
     handleCurrentChange (newPage) {
-      
+      this.page = newPage;
+      this.queryCardOrders()
     },
   }
 };
