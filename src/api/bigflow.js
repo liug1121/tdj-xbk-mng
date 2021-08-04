@@ -19,5 +19,9 @@ export default {
     },
     getVoiceRecords:params =>{
         return API.POST('/bigflow/manage/v1.0/voice/records', params)
+    },
+    getFlowPools:params =>{
+        return API.POST('/bigflow/manage/v1.0/flowpools', params)
     }
+
 }

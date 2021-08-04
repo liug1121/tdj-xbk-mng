@@ -57,7 +57,17 @@ const router = new Router({
           meta: {
             title: '话单记录'
           }
+        },
+        {
+          path: '/bigflowPoolInfo',
+          name: '流量池',
+          component: (resolve) => require(['components/bigflow/flowpool/flowPool.vue'], resolve),
+          meta: {
+            title: '流量池'
+          }
         }
+
+        
       ]},
     
     {
