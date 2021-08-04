@@ -147,6 +147,7 @@ export default {
         })
     },
     queryCardOrders:function(){
+      this.loading = true
       let params = {}
       params.page = this.page
       if(this.orderId != '')
@@ -167,6 +168,7 @@ export default {
           if(res.resultCode == 0){
               this.cardOrders = res.data
               this.total = res.rowNum
+              this.loading = false
           }
       })
     },

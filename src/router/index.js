@@ -65,7 +65,16 @@ const router = new Router({
           meta: {
             title: '流量池'
           }
+        },
+        {
+          path: '/bigflowCardStock',
+          name: '卡片库存',
+          component: (resolve) => require(['components/bigflow/flowpool/flowCardStock.vue'], resolve),
+          meta: {
+            title: '卡片库存'
+          }
         }
+        
 
         
       ]},

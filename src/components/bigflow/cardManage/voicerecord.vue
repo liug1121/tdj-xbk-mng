@@ -106,6 +106,7 @@ export default {
         console.log('handleSelectBranchCom:' + item)
     },
     queryVoiceRecords:function(){
+        this.loading = true
         let params = {}
         params.page = this.page
         if(this.iccid != '')
@@ -126,6 +127,7 @@ export default {
             if(res.resultCode == 0){
               this.voiceRecords = res.data
               this.total = res.rowNum
+              this.loading = false
           }
         })
     },

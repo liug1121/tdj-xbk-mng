@@ -172,6 +172,7 @@ export default {
   watch: {},
   methods: {
     queryCardInfos:function(){
+        this.loading = true
         let params = {}
         params.page = this.page
         if(this.iccid != '')
@@ -198,6 +199,7 @@ export default {
             if(res.resultCode == 0){
                 this.cardInfos = res.data
                 this.total = res.rowNum
+                this.loading = false
             }
         })
     },

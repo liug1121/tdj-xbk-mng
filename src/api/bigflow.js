@@ -22,6 +22,9 @@ export default {
     },
     getFlowPools:params =>{
         return API.POST('/bigflow/manage/v1.0/flowpools', params)
+    },
+    getFlowCardStock:params =>{
+        return API.POST('/bigflow/manage/v1.0/cardstockpool', params)
     }
 
 }
