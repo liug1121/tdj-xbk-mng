@@ -47,9 +47,7 @@
       <!-- 列表区域 -->
       <div class="cardNos">
         <div class="cardNosList">
-          <ul>
-            <!-- <li v-fo r="(item,index) in cardNos" :key="index">{{item}}</li> -->
-          </ul>
+         
         </div>
         <div class="cardNosNumber">选中<span class="red">0</span>条数据</div>
       </div>
@@ -59,26 +57,6 @@
         <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
           <template slot-scope="scope">
               <div v-html="scope.row[p.prop]" />
-            <!-- <div v-if="p.prop =='orderTypeZS'">
-              <div v-if="scope.row.cardStatus === 1">已激活</div>
-              <div v-if="scope.row.cardStatus === 0">未激活</div>
-              <div v-if="scope.row.cardStatus === 3">已停用</div>
-            </div>
-            <div v-if="p.prop == 'currentPackagePayTypeCL'">
-              <div v-if="scope.row.currentPackagePayType === 0">否</div>
-              <div v-if="scope.row.currentPackagePayType === 1">是</div>
-            </div>
-            <div v-if="p.prop == 'nextPackagePayTypeCL'">
-              <div v-if="scope.row.nextPackagePayType === 0">否</div>
-              <div v-if="scope.row.nextPackagePayType === 1">是</div>
-            </div>
-            <div v-if="p.prop == 'operation'">
-              <el-button type="text" size="small" @click="goDetail(scope.row)">详情</el-button>
-              <el-button type="text" size="small" @click="unbindCard(scope.row.cardNo)">解绑</el-button>
-            </div>
-            <div v-else>
-              <div v-html="scope.row[p.prop]" />
-            </div> -->
           </template>
         </el-table-column>
       </el-table>

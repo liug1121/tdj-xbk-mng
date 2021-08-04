@@ -41,6 +41,14 @@ const router = new Router({
           meta: {
             title: '大流量卡订单'
           }
+        },
+        {
+          path: '/bigflowCardInfo',
+          name: '大流量卡信息',
+          component: (resolve) => require(['components/bigflow/cardManage/cardInfo.vue'], resolve),
+          meta: {
+            title: '大流量卡信息'
+          }
         }
       ]},
     
@@ -52,7 +60,6 @@ const router = new Router({
         title: '学霸卡后台'
       },
       children: [
-        
         {
           path: '/tasks',
           name: '我的任务',
