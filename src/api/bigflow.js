@@ -16,5 +16,8 @@ export default {
     },
     getCardInfos:params =>{
         return API.POST('/bigflow/manage/v1.0/card/infos', params)
+    },
+    getVoiceRecords:params =>{
+        return API.POST('/bigflow/manage/v1.0/voice/records', params)
     }
 }

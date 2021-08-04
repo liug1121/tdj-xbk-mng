@@ -49,6 +49,14 @@ const router = new Router({
           meta: {
             title: '大流量卡信息'
           }
+        },
+        {
+          path: '/voiceRecord',
+          name: '话单记录',
+          component: (resolve) => require(['components/bigflow/cardManage/voicerecord.vue'], resolve),
+          meta: {
+            title: '话单记录'
+          }
         }
       ]},
     
