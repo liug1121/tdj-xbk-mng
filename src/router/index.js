@@ -73,7 +73,17 @@ const router = new Router({
           meta: {
             title: '卡片库存'
           }
+        },
+        {
+          path: '/bigflowPoolChanges',
+          name: '变更记录',
+          component: (resolve) => require(['components/bigflow/flowpool/bigflowPoolChanges.vue'], resolve),
+          meta: {
+            title: '变更记录'
+          }
         }
+
+        
         
 
         
