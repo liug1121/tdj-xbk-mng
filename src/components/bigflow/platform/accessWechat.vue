@@ -17,7 +17,6 @@
       <!-- 列表区域 -->
       <div class="cardNos">
         <div class="cardNosList">
-         
         </div>
         <div class="cardNosNumber">选中<span class="red">0</span>条数据</div>
       </div>

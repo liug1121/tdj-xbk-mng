@@ -37,5 +37,8 @@ export default {
     },
     getAccessWechats:params =>{
         return API.POST('/bigflow/manage/v1.0/accessWechats', params)
+    },
+    getProducts:params =>{
+        return API.POST('/bigflow/manage/v1.0/bigflowproducts', params)
     }
 }
