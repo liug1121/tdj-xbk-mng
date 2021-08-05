@@ -89,6 +89,14 @@ const router = new Router({
           meta: {
             title: '号卡充值记录'
           }
+        },
+        {
+          path: '/bigflowStockManage',
+          name: '大流量库存',
+          component: (resolve) => require(['components/bigflow/stock/bigflowStockManage.vue'], resolve),
+          meta: {
+            title: '大流量库存'
+          }
         }
 
         

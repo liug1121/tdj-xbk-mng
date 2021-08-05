@@ -31,5 +31,8 @@ export default {
     },
     getCardChanges:params =>{
         return API.POST('/bigflow/manage/v1.0/cardchanges', params)
+    },
+    getBigflowStocks:params =>{
+        return API.POST('/bigflow/manage/v1.0/bigflowcardstocks', params)
     }
 }
