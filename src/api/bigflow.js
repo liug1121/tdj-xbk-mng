@@ -28,8 +28,8 @@ export default {
     },
     getFlowPoolBills:params =>{
         return API.POST('/bigflow/manage/v1.0/flowpoolbills', params)
+    },
+    getCardChanges:params =>{
+        return API.POST('/bigflow/manage/v1.0/cardchanges', params)
     }
-
-    
-
 }

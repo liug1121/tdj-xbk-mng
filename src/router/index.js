@@ -81,7 +81,17 @@ const router = new Router({
           meta: {
             title: '变更记录'
           }
+        },
+        {
+          path: '/bigflowCardChanges',
+          name: '号卡充值记录',
+          component: (resolve) => require(['components/bigflow/bill/cardChange.vue'], resolve),
+          meta: {
+            title: '号卡充值记录'
+          }
         }
+
+        
 
         
         
