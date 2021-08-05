@@ -97,7 +97,25 @@ const router = new Router({
           meta: {
             title: '大流量库存'
           }
+        },
+        {
+          path: '/bigflowProduct',
+          name: '大流量产品',
+          component: (resolve) => require(['components/bigflow/platform/productManage.vue'], resolve),
+          meta: {
+            title: '大流量产品'
+          }
+        },
+        {
+          path: '/accessWechat',
+          name: '公众号接入',
+          component: (resolve) => require(['components/bigflow/platform/accessWechat.vue'], resolve),
+          meta: {
+            title: '公众号接入'
+          }
         }
+
+        
 
         
 
