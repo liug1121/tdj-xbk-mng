@@ -26,6 +26,40 @@ const router = new Router({
         title: '登录'
       }
     },
+
+    {
+      path: '/index',
+      name: 'index',
+      component: (resolve) => require(['components/index.vue'], resolve),
+      meta: {
+        title: '系统管理'
+      },
+      children: [
+        {
+          path: '/sysfunctions',
+          name: '系统功能',
+          component: (resolve) => require(['components/system/function.vue'], resolve),
+          meta: {
+            title: '系统功能'
+          }
+        },
+        {
+          path: '/sysroles',
+          name: '角色',
+          component: (resolve) => require(['components/system/role.vue'], resolve),
+          meta: {
+            title: '角色'
+          }
+        },
+        {
+          path: '/sysmanagers',
+          name: '用户',
+          component: (resolve) => require(['components/system/manager.vue'], resolve),
+          meta: {
+            title: '用户'
+          }
+        }
+      ]},
     {
       path: '/index',
       name: 'index',
@@ -113,16 +147,7 @@ const router = new Router({
           meta: {
             title: '公众号接入'
           }
-        }
-
-        
-
-        
-
-        
-        
-
-        
+        } 
       ]},
     
     {

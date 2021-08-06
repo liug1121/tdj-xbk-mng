@@ -98,6 +98,29 @@
         </template>
       </el-submenu>
 
+      <el-submenu index="root-sys">
+        <template slot="title">
+          <i class="el-icon-s-home"></i>
+          <span>系统管理</span>
+        </template>
+        <template v-for="(item, index) in sysMenus">
+          <el-submenu v-if="item.children" :index="item.path" :key="index">
+            <template slot="title">
+              <i :class="item.icon"></i>
+              <span>{{item.title}}</span>
+            </template>
+            <el-menu-item v-for="(subitem,subindex) in item.children" :key="subindex" :index="subitem.path">
+              <i :class="subitem.icon"></i>
+              {{subitem.title}}
+            </el-menu-item>
+          </el-submenu>
+          <el-menu-item v-else :index="item.path" :key="index">
+            <i :class="item.icon"></i>
+            <span v-show="!isCollapse">{{item.title}}</span>
+          </el-menu-item>
+        </template>
+      </el-submenu>
+
       
 
 
@@ -177,6 +200,7 @@ export default {
       deviceMenus:[],
       groupControlMenus:[],
       bigflowMenus:[],
+      sysMenus:[],
       userType: null,
       menuShow: false,
       usingInDevice: null,
@@ -224,6 +248,13 @@ export default {
       }
       return false
     })
+    this.sysMenus = this.nav_menu_data.filter(menu=>{
+      if(menu.type == 10){
+        return true
+      }
+      return false
+    })
+    
     
     // console.log('*****' + JSON.stringify(this.deviceMenus ))
   },
@@ -244,8 +275,9 @@ export default {
         this.openedMenus = ['root-groupControl', key]
       }else if(key === 'root-bigflow'){
         this.openedMenus = ['root-bigflow', key]
-      }
-      
+      }else if(key === 'root-sys'){
+        this.openedMenus = ['root-sys', key]
+      } 
     },
     handleClose (key, keyPath) {
       // console.log(key, keyPath);

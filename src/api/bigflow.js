@@ -40,5 +40,20 @@ export default {
     },
     getProducts:params =>{
         return API.POST('/bigflow/manage/v1.0/bigflowproducts', params)
+    },
+    getAllSysFunctions: params =>{
+        return API.GET('/bigflow/manage/v1.0/system/functions', params)
+    },
+    getAllSysRoles: params =>{
+        return API.GET('/bigflow/manage/v1.0/system/roles', params)
+    },
+    getAllSysRoleFunctions: params =>{
+        return API.GET('/bigflow/manage/v1.0/system/roleFunctions', params)
+    },
+    getAllSysManagerRoles: params =>{
+        return API.GET('/bigflow/manage/v1.0/system/managerRoles', params)
+    },
+    getAllSysManagers: params =>{
+        return API.GET('/bigflow/manage/v1.0/system/managers', params)
     }
 }
