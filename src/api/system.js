@@ -9,10 +9,19 @@ export default {
     getAllSysRoleFunctions: params =>{
         return API.GET('/boss/v1.0/system/roleFunctions', params)
     },
-    getAllSysManagerRoles: params =>{
-        return API.GET('/boss/v1.0/system/managerRoles', params)
+    getSysManagerRoles: params =>{
+        return API.POST('/boss/v1.0/system/managerRoles', params)
     },
     getAllSysManagers: params =>{
         return API.GET('/boss/v1.0/system/managers', params)
+    },
+    editManger: params =>{
+        return API.POST('/boss/v1.0/system/managers/edit', params)
+    },
+    editMangerRoles: params =>{
+        return API.POST('/boss/v1.0/system/managerRoles/edit', params)
     }
+
+    
+    
 }
