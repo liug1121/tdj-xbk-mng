@@ -20,8 +20,13 @@ export default {
     },
     editMangerRoles: params =>{
         return API.POST('/boss/v1.0/system/managerRoles/edit', params)
+    },
+    getRoleFunctions: params =>{
+        return API.POST('/boss/v1.0/system/role/functions', params)
+    },
+    editRoleFunctions: params =>{
+        return API.POST('/boss/v1.0/system/role/functions/modify', params)
     }
 
-    
     
 }

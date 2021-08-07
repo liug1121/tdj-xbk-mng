@@ -124,7 +124,6 @@ export default {
         apiSystem.getSysManagerRoles(params).then(res=>{
             if(res.resultCode == 0){
                 this.roles = res.data
-                console.log(JSON.stringify(this.roles))
                 this.loading = false
             }
         })
@@ -188,7 +187,6 @@ export default {
     editManager:function(row, type){
         this.manager2Edit = row
         this.managerDlgShow = true
-        // this.roleDlgShow = true
     },
     roleSel:function(row){
         this.roleDlgShow = true
@@ -234,7 +232,6 @@ export default {
     handleSelectionChange (val) {
     },
     handleRoleSelectionChange (val) {
-        console.log('val:' + JSON.stringify(val))
         this.managerRoles2Modify = val
     },
     handleSizeChange (newPage) {
