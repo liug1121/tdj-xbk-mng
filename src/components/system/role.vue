@@ -5,7 +5,7 @@
       <el-form  :inline="true">
       </el-form>
       <div class="button_content">
-        <el-button size="medium" type="primary" icon="el-icon-edit" >新增角色</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" @click="toAddRoleClick">新增角色</el-button>
       </div>
       <!-- 列表区域 -->
       <div class="cardNos">
@@ -21,6 +21,7 @@
               <div v-html="scope.row[p.prop]" />
               <div v-if="p.prop == 'operations'">
                 <el-button  size="mini" type="warning" plain @click="functionSel(scope.row)">设置角色功能</el-button>
+                <el-button  size="mini" type="warning" plain @click="removeRole(scope.row)">删除角色</el-button>
               </div>
           </template>
         </el-table-column>
@@ -45,6 +46,17 @@
         <el-button type="primary" @click="editRoleFunctionOk">确 定</el-button>
       </span>
     </el-dialog>
+    <el-dialog title="角色" :visible.sync="roleDlgShow" width="430px" >
+      <el-form  :model="roleInfo" label-width="120px">
+        <el-form-item label="角色名称">
+          <el-input size="small"  placeholder="请输入角色名称" v-model="roleInfo.roleName"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeRoleDlg">取 消</el-button>
+        <el-button type="primary" @click="editRoleClick">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -62,6 +74,8 @@ export default {
     roleFunctions:[],
     roleFunctions2Edit:[],
     functionDlgShow:false,
+    roleDlgShow:false,
+    roleInfo:{},
     // id:'',
     // name:'',
     // appId:'',
@@ -71,7 +85,7 @@ export default {
       total: 0,
       // 列表，标题、字段
       table_column: [
-        { prop: 'platformName', label: '平台类型', width: 200, fixed: 'left'},
+        // { prop: 'platformName', label: '平台类型', width: 200, fixed: 'left'},
         { prop: 'name', label: '角色名称', width: 300, fixed: 'left'},
         { prop: 'id', label: 'ID', width: 300, fixed: 'left'},
         { prop: 'operations', label: '操作', width: 300}
@@ -103,6 +117,68 @@ export default {
      this.refreshRoleFunctionsSelected() 
   },
   methods: {
+    removeRole:function(role){
+        console.log(JSON.stringify(role))
+        let that = this
+        let roleId = role.id
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            let params = {}
+            params.roleId = roleId
+            apiSystem.removeRole(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryAllRoles()
+                    alert('删除成功')
+                }else{
+                    alert('删除失败:' + res.resultInfo)
+                }
+            })
+        }).catch(() => {
+        });
+    },
+    toAddRoleClick:function(){
+        this.roleInfo = {}
+        this.roleDlgShow = true
+    },
+    toEditRoleClick:function(role){
+        this.roleInfo = {}
+        roleInfo.id = role.id
+        roleInfo.roleName = role.name
+        this.roleDlgShow = true
+
+    },
+    closeRoleDlg:function(){
+       this.roleDlgShow = false 
+    },
+    editRoleClick:function(){
+        if(this.roleInfo.id == '' || this.roleInfo.id == undefined){
+            if(this.roleInfo.roleName == '' || this.roleInfo.roleName == undefined){
+                alert('角色名称不能为空')
+                return
+            }
+            let that = this
+            this.$confirm('您确认要此操作, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                that.addRole(that.roleInfo.roleName, res=>{
+                    that.roleDlgShow = false
+                    that.queryAllRoles()
+                    alert('新增成功')
+                }, res=>{
+                    alert('新增失败:' + res.resultInfo)
+                })
+            }).catch(() => {
+            });
+        }else{
+            //TODO edit
+        }
+
+    },
     refreshRoleFunctionsSelected:function(){
         this.roleFunctions.forEach(roleFunction => {
             if (roleFunction.has == true) {    
@@ -121,6 +197,19 @@ export default {
     },
     handleSelectBranchCom:function(item){
         console.log('handleSelectBranchCom:' + item)
+    },
+    addRole:function(roleName, mSuccess, mError){
+        let params = {}
+        params.roleName = roleName
+        apiSystem.addRole(params).then(res=>{
+            if(res.resultCode == 0){
+                if(mSuccess != null && mSuccess != undefined)
+                    mSuccess(res)
+            }else{
+                if(mError != null && mError != undefined)
+                    mError(res)
+            }
+        })
     },
     getRoleFunctions:function(roleId){
         this.loading = true
