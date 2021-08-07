@@ -31,7 +31,7 @@
         :total="total">
       </el-pagination> -->
     </el-card>
-    <el-dialog title="角色功能" :visible.sync="functionDlgShow" width="430px" >
+    <el-dialog title="角色功能" :visible.sync="functionDlgShow" width="630px" >
       <el-table ref="functionSelTable" v-loading="loading"  :data="roleFunctions" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" @selection-change="handleRoleFunctionsSelectionChange">
         <el-table-column type="selection" width="55">
         </el-table-column>
@@ -76,33 +76,21 @@ export default {
     functionDlgShow:false,
     roleDlgShow:false,
     roleInfo:{},
-    // id:'',
-    // name:'',
-    // appId:'',
       page: 1,
       pageSize: 10,
       // 列表总条数
       total: 0,
       // 列表，标题、字段
       table_column: [
-        // { prop: 'platformName', label: '平台类型', width: 200, fixed: 'left'},
         { prop: 'name', label: '角色名称', width: 300, fixed: 'left'},
-        { prop: 'id', label: 'ID', width: 300, fixed: 'left'},
         { prop: 'operations', label: '操作', width: 300}
       ],
       function_column: [
-        { prop: 'functionName', label: '功能名称', width: 200}
-        // { prop: 'function_id', label: '', width: 300, fixed: 'left'},
-        // { prop: 'id', label: 'ID', width: 300, fixed: 'left'},
-        // { prop: 'operations', label: '操作', width: 300}
+          
+        { prop: 'plateformTypeName', label: '平台类型', width: 200},
+        { prop: 'functionName', label: '功能名称', width: 200},
+        { prop: 'typeName', label: '类型', width: 100}
       ]
-
-
-    //   private Integer id;
-	// private Integer role_id;
-	// private Integer function_id;
-	// private Boolean has = false;
-	// private String functionName;
     };
     
   },
