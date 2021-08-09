@@ -41,8 +41,11 @@
           </el-date-picker>
           <el-button size="medium" type="primary" icon="el-icon-search" @click="queryCardChanges">查询</el-button>
         </el-form-item>
-          
       </el-form>
+      <div class="button_content">
+        <el-button size="medium" type="primary" icon="el-icon-download" 
+        v-permission="{indentity:'bigflowCardChange-export'}">导出</el-button>
+      </div>
       <!-- 列表区域 -->
       <div class="cardNos">
         <div class="cardNosList">
@@ -141,6 +144,12 @@ export default {
   },
   watch: {},
   methods: {
+    startTimeChange () {
+      this.changeStartDateTime = `${this.changeStartDateTime}`
+    },
+    endTimeChange () {
+      this.changeEndDateTime = `${this.changeEndDateTime}`
+    },
     getAllChannels:function(){
         let params = {}
         apiBigflow.getAllChannels(params).then(res=>{

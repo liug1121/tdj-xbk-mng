@@ -19,6 +19,16 @@
           <el-button size="medium" type="primary" icon="el-icon-search" @click="queryFlowPools">搜索</el-button>
         </el-form-item>
       </el-form>
+      <div class="button_content">
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowFlowPool-add'}">增加</el-button>
+
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowFlowPool-orderProduct'}">订购套餐</el-button>
+        
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowFlowPool-useChange'}">调整用量</el-button>
+      </div>
       <!-- 列表区域 -->
       <div class="cardNos">
         <div class="cardNosList">

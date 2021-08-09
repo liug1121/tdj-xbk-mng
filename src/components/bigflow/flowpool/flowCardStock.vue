@@ -31,6 +31,14 @@
           <el-button size="medium" type="primary" icon="el-icon-search" @click="queryFlowCardStocks">搜索</el-button>
         </el-form-item>
       </el-form>
+      <div class="button_content">
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowFlowCardStock-cardDistribution'}">卡片划拨</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowFlowCardStock-distributionForIccid'}">首尾ICCID划拨</el-button>
+        
+        
+      </div>
       <!-- 列表区域 -->
       <div class="cardNos">
         <div class="cardNosList">

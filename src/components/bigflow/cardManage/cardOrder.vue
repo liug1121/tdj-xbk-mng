@@ -39,10 +39,14 @@
       </el-form>
       <!-- 按钮区域 -->
       <div class="button_content">
-        <el-button size="medium" type="primary" icon="el-icon-download" >导出</el-button>
-        <el-button size="medium" type="primary" icon="el-icon-edit" >创建订单并分配渠道</el-button>
-        <el-button size="medium" type="primary" icon="el-icon-edit" >首尾分配渠道</el-button>
-        <el-button size="medium" type="primary" icon="el-icon-edit" >按首尾条件导出</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-download" 
+        v-permission="{indentity:'bigflowCardOrder-export'}">导出</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowCardOrder-createAndDistribution'}">创建订单并分配渠道</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowCardOrder-distribution'}">首尾分配渠道</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowCardOrder-exportFor'}">按首尾条件导出</el-button>
       </div>
       <!-- 列表区域 -->
       <div class="cardNos">
@@ -129,9 +133,6 @@ export default {
 
   },
   created(){
-      console.log('****AuthMenus:' + window.sessionStorage.getItem('AuthMenus'))
-      console.log('****AuthOpts:' + window.sessionStorage.getItem('AuthOpts'))
-      
       this.getAllChannels()
       this.queryCardOrders()
   },

@@ -14,6 +14,10 @@
         </el-form-item>  
         <el-button size="medium" type="primary" icon="el-icon-search" @click="queryAccessWechats">查询</el-button>
       </el-form>
+      <div class="button_content">
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowAccessWechat-add'}">添加</el-button>
+      </div>
       <!-- 列表区域 -->
       <div class="cardNos">
         <div class="cardNosList">

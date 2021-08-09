@@ -34,6 +34,20 @@
           <el-button size="medium" type="primary" icon="el-icon-search" @click="queryBigflowStocks">查询</el-button>
         </el-form-item>
       </el-form>
+      <div class="button_content">
+        <el-button size="medium" type="primary" icon="el-icon-download" 
+        v-permission="{indentity:'bigflowStockMng-export'}">导出</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowStockMng-import'}">导入</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowStockMng-moveNet'}">迁移网路</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowStockMng-distributeForChannel'}">分配渠道</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowStockMng-distributeForHeadAndTail'}">首尾分配渠道</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowStockMng-exportFor'}">按首尾条件导出</el-button>
+      </div>
       <!-- 列表区域 -->
       <div class="cardNos">
         <div class="cardNosList">
@@ -111,6 +125,12 @@ export default {
   },
   watch: {},
   methods: {
+    startTimeChange () {
+      this.startDateTime = `${this.startDateTime}`
+    },
+    endTimeChange () {
+      this.endDateTime = `${this.endDateTime}`
+    },
     getAllChannels:function(){
         let params = {}
         apiBigflow.getAllChannels(params).then(res=>{
