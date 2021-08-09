@@ -74,7 +74,10 @@ export default {
             window.sessionStorage.setItem('usingInDevice', res.data.usingInDevice)
             window.sessionStorage.setItem('usingInXuebaka', res.data.usingInXuebaka)
             window.sessionStorage.setItem('managerType', res.data.managerType)
-            window.sessionStorage.setItem('Auths', JSON.stringify(res.data.managerAuthResp))
+            window.sessionStorage.setItem('AuthMenus', JSON.stringify(res.data.managerAuthResp))
+            window.sessionStorage.setItem('AuthOpts', JSON.stringify(res.data.managerAuthOpts))
+
+              
             this.$router.push('/main');
           } else {
             this.$message.error(res.resultInfo)

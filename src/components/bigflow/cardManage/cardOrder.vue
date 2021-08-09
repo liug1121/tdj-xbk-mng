@@ -129,6 +129,9 @@ export default {
 
   },
   created(){
+      console.log('****AuthMenus:' + window.sessionStorage.getItem('AuthMenus'))
+      console.log('****AuthOpts:' + window.sessionStorage.getItem('AuthOpts'))
+      
       this.getAllChannels()
       this.queryCardOrders()
   },

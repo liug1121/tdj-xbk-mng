@@ -62,13 +62,20 @@
       </el-form>
       <!-- 按钮区域 -->
       <div class="button_content">
-        <el-button size="medium" type="primary" icon="el-icon-download" >卡状态变更</el-button>
-        <el-button size="medium" type="primary" icon="el-icon-edit" >解绑</el-button>
-        <el-button size="medium" type="primary" icon="el-icon-edit" >可用量清零</el-button>
-        <el-button size="medium" type="primary" icon="el-icon-edit" >可用量变更</el-button>
-        <el-button size="medium" type="primary" icon="el-icon-edit" >变更卡套餐</el-button>
-        <el-button size="medium" type="primary" icon="el-icon-edit" >变更卡通讯计划</el-button>
-        <el-button size="medium" type="primary" icon="el-icon-edit" >有效期延长</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-download" 
+        v-permission="{indentity:'bigflowCardInfo-changeStatus'}">卡状态变更</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowCardInfo-unbind'}">解绑</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowCardInfo-flowClear'}">可用量清零</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowCardInfo-flowChange'}">可用量变更</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowCardInfo-productChange'}">变更卡套餐</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowCardInfo-planChange'}">变更卡通讯计划</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowCardInfo-validityExtend'}">有效期延长</el-button>
       </div>
       <!-- 列表区域 -->
       <div class="cardNos">

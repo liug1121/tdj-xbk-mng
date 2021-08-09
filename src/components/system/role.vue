@@ -347,7 +347,6 @@ export default {
         this.onRoleFunctionsSelect(rows, null)
     },
     onRoleFunctionsSelect(rows, row){
-        // console.log("rows:" + JSON.stringify(rows))
         this.roleMenus.forEach(roleMenu=>{
             roleMenu.has = false
             rows.forEach(row=>{
@@ -360,7 +359,6 @@ export default {
     handleRoleFunctionsSelectionChange (val) {
     },
     onOptsSelect(rows, row){
-        console.log('rows:' + JSON.stringify(rows))
         let that = this
         this.selectedMenu.opts.forEach(opt=>{
             opt.has = false

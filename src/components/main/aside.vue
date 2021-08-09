@@ -223,7 +223,7 @@ export default {
     this.userType = window.sessionStorage.getItem('userType')
     this.usingInDevice = window.sessionStorage.getItem('usingInDevice')
     this.usingInXuebaka = window.sessionStorage.getItem('usingInXuebaka')
-    this.nav_menu_data = JSON.parse(window.sessionStorage.getItem('Auths'))
+    this.nav_menu_data = JSON.parse(window.sessionStorage.getItem('AuthMenus'))
     this.xuebakaMenus = this.nav_menu_data.filter(menu=>{
       if(menu.type == 0){
         return true
@@ -254,9 +254,6 @@ export default {
       }
       return false
     })
-    
-    
-    // console.log('*****' + JSON.stringify(this.deviceMenus ))
   },
   methods: {
     onRouteChanged () {
@@ -264,9 +261,6 @@ export default {
       that.path = that.$route.path;
     },
     handleOpen (key, keyPath) {
-      console.log('handleOpen')
-      console.log(key, keyPath);
-      // this.openedMenus = []
       if(key === 'root-xbk'){
         this.openedMenus = ['root-xbk', key]
       } else if(key === 'root-device'){
@@ -280,11 +274,10 @@ export default {
       } 
     },
     handleClose (key, keyPath) {
-      // console.log(key, keyPath);
+
     },
     handlselect (index, indexPath) {
-      console.log('handlselect')
-      console.log(index, indexPath);
+
     },
     // 调用 注册vuex内注册的editableTabs方法
     // ...mapActions({
