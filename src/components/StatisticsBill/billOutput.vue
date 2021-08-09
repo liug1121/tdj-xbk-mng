@@ -5,7 +5,8 @@
       <!-- 按钮 -->
       <div class="heraderTop">
         <div class="button_content">
-          <el-button class="upload-btn" size="medium" icon="el-icon-download" slot="trigger" type="primary" @click="exportButton">导出</el-button>
+          <el-button class="upload-btn" size="medium" icon="el-icon-download" slot="trigger" type="primary" @click="exportButton" 
+          v-permission="{indentity:'xbkBillOutput-export'}">导出</el-button>
         </div>
         <!-- 查询区域 -->
         <el-form :inline="true" ref="queryBillFormRef" :model="queryBillForm" class="queryForm">

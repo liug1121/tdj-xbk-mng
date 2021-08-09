@@ -28,8 +28,10 @@
           </el-select>
         </el-form-item>
         <el-form-item class="queryFormItem">
-          <el-button type="primary" size="mini" icon="el-icon-search" @click="queryLBSbutton">查询</el-button>
-          <el-button type="primary" size="mini" icon="el-icon-download" @click="exportButton()">导出</el-button>
+          <el-button type="primary" size="mini" icon="el-icon-search" @click="queryLBSbutton" 
+          v-permission="{indentity:'xbkLBSRecordList-query'}">查询</el-button>
+          <el-button type="primary" size="mini" icon="el-icon-download" @click="exportButton()" 
+          v-permission="{indentity:'xbkLBSRecordList-export'}">导出</el-button>
         </el-form-item>
       </el-form>
       <!-- 按钮区域 -->

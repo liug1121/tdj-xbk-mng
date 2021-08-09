@@ -29,7 +29,8 @@
       </el-form>
       <!-- 按钮区域 -->
       <div class="button_content">
-        <el-button size="medium" type="primary" icon="el-icon-download" @click="exportCardInfo">导出</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-download" @click="exportCardInfo" 
+        v-permission="{indentity:'xbkFlowOrder-export'}">导出</el-button>
       </div>
       <!-- table表格区域 -->
       <el-table v-loading="loading" :data="orderList" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}">

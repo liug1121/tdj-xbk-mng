@@ -4,7 +4,8 @@
     <el-card class="all_list">
       <div class="heraderTop">
         <div class="button_content">
-          <el-button size="medium" type="primary" icon="el-icon-plus" @click="addaccessWechatShow">新增</el-button>
+          <el-button size="medium" type="primary" icon="el-icon-plus" @click="addaccessWechatShow" 
+          v-permission="{indentity:'xbkAccessWechatList-add'}">新增</el-button>
         </div>
         <!-- 查询区域 -->
         <el-form :inline="true" ref="queryPushlistFormRef" :model="queryaccessWechatFormModel" class="queryForm">

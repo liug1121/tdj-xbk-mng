@@ -16,8 +16,10 @@
       </el-form>
       <!-- 按钮区域 -->
       <div class="button_content">
-        <el-button size="medium" type="primary" icon="el-icon-plus" @click="addHoneycombShow">添加</el-button>
-        <el-button size="medium" type="primary" icon="el-icon-download">导出</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-plus" @click="addHoneycombShow" 
+        v-permission="{indentity:'xbkHoneyComb-add'}">添加</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-download" 
+        v-permission="{indentity:'xbkHoneyComb-export'}">导出</el-button>
       </div>
       <!-- table表格区域 -->
       <el-table v-loading="loading" :data="honeycombList" border max-height="550" align="center" :cell-style="{height: '38px',padding:0}">

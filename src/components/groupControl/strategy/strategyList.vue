@@ -10,7 +10,7 @@
           </el-input>
         </el-col>
         <el-col :span="4">
-          <el-button size="medium" type="primary" icon="el-icon-plus" @click="addStrategy">添加</el-button>
+          <el-button size="medium" type="primary" icon="el-icon-plus" @click="addStrategy" v-permission="{indentity:'xbkStrategyList-add'}">添加</el-button>
         </el-col>
       </el-row>
       <el-row :gutter="20" style="min-width:600px;">

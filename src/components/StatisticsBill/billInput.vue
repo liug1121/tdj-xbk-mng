@@ -4,7 +4,8 @@
     <el-card class="all_list">
       <!-- 按钮 -->
       <div class="button_content">
-        <el-button class="upload-btn" size="medium" icon="el-icon-upload2" slot="trigger" type="primary" @click="openImportModal">导入</el-button>
+        <el-button class="upload-btn" size="medium" icon="el-icon-upload2" slot="trigger" type="primary" @click="openImportModal" 
+        v-permission="{indentity:'xbkBillInput-import'}">导入</el-button>
       </div>
     </el-card>
     <!-- 文件导入弹出框 -->

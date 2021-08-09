@@ -52,8 +52,10 @@
 
       <!-- 按钮区域 -->
       <div class="button_content">
-        <el-button size="medium" type="primary" icon="el-icon-plus" @click="addProduct">新增</el-button>
-        <el-button size="medium" type="primary" icon="el-icon-download" @click="exportPackage">导出</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-plus" @click="addProduct" 
+        v-permission="{indentity:'xbkGoods-add'}">新增</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-download" @click="exportPackage" 
+        v-permission="{indentity:'xbkGoods-export'}">导出</el-button>
       </div>
       <!-- 表格区域 -->
       <el-table v-loading="loading" :data="GoodsList" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}">

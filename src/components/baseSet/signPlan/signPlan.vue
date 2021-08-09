@@ -31,9 +31,9 @@
       </el-form>
       <!-- 按钮区域 -->
       <div class="button_content">
-        <el-button size="medium" type="primary" icon="el-icon-plus" @click="addSignPlan">添加</el-button>
-        <el-button size="medium" type="primary" icon="el-icon-upload2" @click="importData">批量导入</el-button>
-        <el-button size="medium" type="primary" icon="el-icon-download">导出</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-plus" @click="addSignPlan" v-permission="{indentity:'xbkSignPlan-add'}">添加</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-upload2" @click="importData" v-permission="{indentity:'xbkSignPlan-import'}">批量导入</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-download" v-permission="{indentity:'xbkSignPlan-export'}">导出</el-button>
       </div>
       <!-- table表格区域 -->
       <el-table :data="signalList" border max-height="550" align="center" :cell-style="{height: '38px',padding:0}">

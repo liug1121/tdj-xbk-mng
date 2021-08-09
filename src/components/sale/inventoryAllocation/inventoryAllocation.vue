@@ -31,10 +31,14 @@
           </el-form>
           <!-- 按钮区域 -->
           <div class="button_content">
-            <el-button size="medium" type="primary" icon="el-icon-plus" @click="exportAllocationShow">分配渠道</el-button>
-            <el-button size="medium" type="primary" icon="el-icon-upload2" @click="SWdistributeShow">首尾分配渠道</el-button>
-            <el-button size="medium" type="primary" icon="el-icon-download">导出</el-button>
-            <el-button size="medium" type="primary" icon="el-icon-download" @click="exportInventoryShow">按首尾条件导出</el-button>
+            <el-button size="medium" type="primary" icon="el-icon-plus" @click="exportAllocationShow" 
+            v-permission="{indentity:'xbkInventoryAllocation-distribute'}">分配渠道</el-button>
+            <el-button size="medium" type="primary" icon="el-icon-upload2" @click="SWdistributeShow" 
+            v-permission="{indentity:'xbkInventoryAllocation-distributeFor'}">首尾分配渠道</el-button>
+            <el-button size="medium" type="primary" icon="el-icon-download" 
+            v-permission="{indentity:'xbkInventoryAllocation-export'}">导出</el-button>
+            <el-button size="medium" type="primary" icon="el-icon-download" @click="exportInventoryShow" 
+            v-permission="{indentity:'xbkInventoryAllocation-exportFor'}">按首尾条件导出</el-button>
             <!-- <el-button size="medium" type="primary" icon="el-icon-search" @click="queryInventoryShow">查询</el-button> -->
           </div>
           <!-- table表格区域 -->

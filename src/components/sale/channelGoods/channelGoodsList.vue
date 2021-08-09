@@ -21,7 +21,8 @@
           </el-form>
           <!-- 按钮区域 -->
           <div class="button_content">
-            <el-button size="medium" type="primary" icon="el-icon-plus" @click="addChannelPackageShow">新增</el-button>
+            <el-button size="medium" type="primary" icon="el-icon-plus" @click="addChannelPackageShow" 
+            v-permission="{indentity:'xbkChannelGoodList-add'}">新增</el-button>
           </div>
           <!-- table表格区域 -->
           <el-table v-loading="loading" :data="channelPackageAllocationList" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">

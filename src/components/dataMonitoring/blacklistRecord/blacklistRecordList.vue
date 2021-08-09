@@ -29,7 +29,8 @@
       </el-form>
       <!-- 按钮区域 -->
       <div class="button_content">
-        <el-button size="medium" type="primary" icon="el-icon-plus" @click="addBlackShow">新增</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-plus" @click="addBlackShow" 
+        v-permission="{indentity:'xbkBlackListRecordList-add'}">新增</el-button>
       </div>
       <!-- 卡库存 List 区域 -->
       <el-table v-loading="loading" :data="blacklist" border max-height="510px" align="center" :cell-style="{height: '38px',padding:0}">

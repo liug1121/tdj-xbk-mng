@@ -4,7 +4,8 @@
     <el-card class="all_list">
       <!-- 按钮区域 -->
       <div class="button_content">
-        <el-button size="medium" type="primary" icon="el-icon-plus" @click="addDialogShow">添加</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-plus" @click="addDialogShow" 
+        v-permission="{indentity:'xbkPackageType-add'}">添加</el-button>
       </div>
       <!-- table表格区域 -->
       <el-table :data="packageTypeList" border max-height="420" align="center" :cell-style="{height: '38px',padding:0}">

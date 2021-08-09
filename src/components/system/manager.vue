@@ -17,8 +17,8 @@
           <template slot-scope="scope">
               <div v-html="scope.row[p.prop]" />
               <div v-if="p.prop == 'operations'">
-                <el-button  size="mini" type="warning" plain @click="editManager(scope.row, 0)">编辑</el-button>
-                <el-button  size="mini" type="warning" plain @click="roleSel(scope.row)">分配角色</el-button>
+                <el-button  size="mini" type="warning" plain @click="editManager(scope.row, 0)" v-permission="{indentity:'systemManager-edit'}">编辑</el-button>
+                <el-button  size="mini" type="warning" plain @click="roleSel(scope.row)" v-permission="{indentity:'systemManager-distribution'}">分配角色</el-button>
               </div>
           </template>
         </el-table-column>

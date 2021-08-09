@@ -30,16 +30,27 @@
       </el-form>
       <!-- 按钮区域 -->
       <div class="button_content">
-        <el-button v-if="selectListNumber !==1" size="medium" type="primary" icon="el-icon-edit" disabled>机卡锁定</el-button>
+        <div v-permission="{indentity:'xbkEquipmentList-lock'}">
+          <el-button v-if="selectListNumber !==1" size="medium" type="primary" icon="el-icon-edit" disabled>机卡锁定</el-button>
         <el-button v-else size="medium" type="primary" icon="el-icon-edit" @click="StatusModify(0)">机卡锁定</el-button>
-        <el-button v-if="selectListNumber !==1" size="medium" type="primary" icon="el-icon-edit" disabled>机卡解锁</el-button>
-        <el-button v-else size="medium" type="primary" icon="el-icon-edit" @click="StatusModify(1)">机卡解锁</el-button>
-        <el-button v-if="selectListNumber !==1" size="medium" type="primary" icon="el-icon-edit" disabled>锁小区</el-button>
-        <el-button v-else size="medium" type="primary" icon="el-icon-edit" @click="StatusModify(2)">锁小区</el-button>
-        <el-button v-if="selectListNumber !==1" size="medium" type="primary" icon="el-icon-edit" disabled>解锁小区</el-button>
-        <el-button v-else size="medium" type="primary" icon="el-icon-edit" @click="StatusModify(3)">解锁小区</el-button>
+        </div>
+        
+        <div v-permission="{indentity:'xbkEquipmentList-unlock'}">
+          <el-button v-if="selectListNumber !==1" size="medium" type="primary" icon="el-icon-edit" disabled>机卡解锁</el-button>
+          <el-button v-else size="medium" type="primary" icon="el-icon-edit" @click="StatusModify(1)">机卡解锁</el-button>
+        </div>
+
+        <div v-permission="{indentity:'xbkEquipmentList-lockArea'}">
+          <el-button v-if="selectListNumber !==1" size="medium" type="primary" icon="el-icon-edit" disabled>锁小区</el-button>
+          <el-button v-else size="medium" type="primary" icon="el-icon-edit" @click="StatusModify(2)">锁小区</el-button>
+        </div>
+        <div v-permission="{indentity:'xbkEquipmentList-unlockArea'}">
+          <el-button v-if="selectListNumber !==1" size="medium" type="primary" icon="el-icon-edit" disabled>解锁小区</el-button>
+          <el-button v-else size="medium" type="primary" icon="el-icon-edit" @click="StatusModify(3)">解锁小区</el-button>
+        </div>
         <!-- managerType 超强管理员 -->
-        <el-button v-if="managerType === '0'" size="medium" type="primary" icon="el-icon-refresh" @click="refreshAll">刷新全部设备</el-button>
+        <el-button v-if="managerType === '0'" size="medium" type="primary" icon="el-icon-refresh" @click="refreshAll" 
+        v-permission="{indentity:'xbkEquipmentList-refreshAll'}">刷新全部设备</el-button>
       </div>
       <!-- 列表区域 -->
       <!-- 选中 -->

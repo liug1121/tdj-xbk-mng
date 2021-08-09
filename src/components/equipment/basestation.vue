@@ -3,7 +3,7 @@
     <el-card class="all_list">
       <!-- 按钮区域 -->
       <div class="button_content">
-        <el-button size="medium" type="primary" icon="el-icon-upload2">导入基站列表</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-upload2" v-permission="{indentity:'xbkBasestation-import'}">导入基站列表</el-button>
       </div>
       <!-- 列表区域 -->
       <el-table v-loading="loading" :data="basestationList" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}">

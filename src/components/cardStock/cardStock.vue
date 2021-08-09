@@ -38,8 +38,10 @@
       </el-form>
       <!-- button 区域 -->
       <div class="button_content">
-        <el-button size="medium" type="primary" icon="el-icon-download" @click="exportCardStock">导出</el-button>
-        <el-button class="upload-btn" size="medium" icon="el-icon-upload2" slot="trigger" type="primary" @click="openImportModal">导入</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-download" @click="exportCardStock" 
+        v-permission="{indentity:'xbkCardStock-export'}">导出</el-button>
+        <el-button class="upload-btn" size="medium" icon="el-icon-upload2" slot="trigger" type="primary" @click="openImportModal" 
+        v-permission="{indentity:'xbkCardStock-import'}">导入</el-button>
       </div>
       <!-- 卡库存 List 区域 -->
       <el-table v-loading="loading" :data="cardStockList" border max-height="550px" align="center" :cell-style="{height: '38px',padding:0}">

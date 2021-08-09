@@ -42,7 +42,8 @@
       <div class="button_content">
         <!-- <el-button size="medium" type="primary" icon="el-icon-download">导出</el-button> -->
         <!-- <el-button size="medium" type="primary" icon="el-icon-download" @click="exportOrderShow">按首尾条件导出</el-button> -->
-        <el-button size="medium" type="primary" @click="PreOpeningCardButton()">预开卡</el-button>
+        <el-button size="medium" type="primary" @click="PreOpeningCardButton()" 
+        v-permission="{indentity:'xbkOrder-preOpen'}">预开卡</el-button>
       </div>
       <!-- table表格区域 -->
       <el-table v-loading="loading" :data="orderList" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}">

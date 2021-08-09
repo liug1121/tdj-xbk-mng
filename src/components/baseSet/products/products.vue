@@ -11,7 +11,8 @@
             </el-input>
           </el-col>
           <el-col :span="4">
-            <el-button size="medium" type="primary" icon="el-icon-plus" @click="addDialogShow">添加</el-button>
+            <el-button size="medium" type="primary" icon="el-icon-plus" @click="addDialogShow" 
+            v-permission="{indentity:'xbkProduct-add'}">添加</el-button>
           </el-col>
         </el-row>
         <!-- table表格区域 -->
