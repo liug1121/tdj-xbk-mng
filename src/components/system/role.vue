@@ -6,7 +6,7 @@
       </el-form>
       <div class="button_content">
         <el-button size="medium" type="primary" icon="el-icon-edit" @click="toAddRoleClick" 
-        v-permission="{indentity:'systemRole-add'}">新增角色</el-button>
+        >新增角色</el-button>
       </div>
       <!-- 列表区域 -->
       <div class="cardNos">
@@ -21,8 +21,8 @@
           <template slot-scope="scope">
               <div v-html="scope.row[p.prop]" />
               <div v-if="p.prop == 'operations'">
-                <el-button  size="mini" type="warning" plain @click="functionSel(scope.row)" v-permission="{indentity:'systemRole-setting'}">设置角色功能</el-button>
-                <el-button  size="mini" type="warning" plain @click="removeRole(scope.row)" v-permission="{indentity:'systemRole-delete'}">删除角色</el-button>
+                <el-button  size="mini" type="warning" plain @click="functionSel(scope.row)" >设置角色功能</el-button>
+                <el-button  size="mini" type="warning" plain @click="removeRole(scope.row)" >删除角色</el-button>
               </div>
           </template>
         </el-table-column>

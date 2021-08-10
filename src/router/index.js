@@ -155,7 +155,7 @@ const router = new Router({
       name: 'index',
       component: (resolve) => require(['components/index.vue'], resolve),
       meta: {
-        title: '学霸卡后台'
+        title: '卡后台'
       },
       children: [
         {

@@ -56,25 +56,24 @@
       <div class="button_content">
         <el-button size="medium" type="primary" icon="el-icon-download" @click="exportCardInfo"
         v-permission="{indentity:'xbkCardInfo-export'}">导出</el-button>
-        <!-- <el-button v-if="selectListNumber ==0" size="medium" type="primary" icon="el-icon-edit" disabled>编辑选中</el-button> -->
-        <!-- <el-button v-else size="medium" type="primary" icon="el-icon-edit" @click="editSelected()">编辑选中</el-button> -->
-        <div v-permission="{indentity:'xbkCardInfo-changeAccoutBalance'}">
-          <el-button v-if="selectListNumber !==1" size="medium" type="primary" icon="el-icon-edit" disabled >调整余额</el-button>
-        <el-button v-else size="medium" type="primary" icon="el-icon-edit" @click="AccountBalanceShow">调整余额</el-button>
-        </div>
         
-        <div v-permission="{indentity:'xbkCardInfo-useageChange'}">
-          <el-button v-if="selectListNumber !==1" size="medium" type="primary" icon="el-icon-edit" disabled>用量变更</el-button>
-          <el-button v-else size="medium" type="primary" icon="el-icon-edit" @click="UsagebalanceShow">用量变更</el-button>
-        </div>
-        <div v-permission="{indentity:'xbkCardInfo-productChange'}">
-          <el-button v-if="selectListNumber !==1" size="medium" type="primary" icon="el-icon-edit" disabled>套餐变更</el-button>
-          <el-button v-else size="medium" type="primary" icon="el-icon-edit" @click="PackagesChangeShow">套餐变量</el-button>
-        </div>
-        <div v-permission="{indentity:'xbkCardInfo-realStatusChange'}">
-          <el-button v-if="selectListNumber !==1" size="medium" type="primary" icon="el-icon-edit" disabled>实名状态修改</el-button>
-          <el-button v-else size="medium" type="primary" icon="el-icon-edit" @click="RealstatusShow">实名状态修改</el-button>
-        </div>
+        <!-- <div v-permission="{indentity:'xbkCardInfo-changeAccoutBalance'}"> -->
+        <el-button v-if="selectListNumber !==1" size="medium" type="primary" icon="el-icon-edit" disabled v-permission="{indentity:'xbkCardInfo-changeAccoutBalance'}">调整余额</el-button>
+        <el-button v-else size="medium" type="primary" icon="el-icon-edit" @click="AccountBalanceShow" v-permission="{indentity:'xbkCardInfo-changeAccoutBalance'}">调整余额</el-button>
+        <!-- </div> -->
+        
+        <!-- <div v-permission="{indentity:'xbkCardInfo-useageChange'}"> -->
+          <el-button v-if="selectListNumber !==1" size="medium" type="primary" icon="el-icon-edit" disabled v-permission="{indentity:'xbkCardInfo-useageChange'}">用量变更</el-button>
+          <el-button v-else size="medium" type="primary" icon="el-icon-edit" @click="UsagebalanceShow" v-permission="{indentity:'xbkCardInfo-useageChange'}">用量变更</el-button>
+        <!-- </div> -->
+        <!-- <div v-permission="{indentity:'xbkCardInfo-productChange'}"> -->
+          <el-button v-if="selectListNumber !==1" size="medium" type="primary" icon="el-icon-edit" disabled v-permission="{indentity:'xbkCardInfo-productChange'}">套餐变更</el-button>
+          <el-button v-else size="medium" type="primary" icon="el-icon-edit" @click="PackagesChangeShow" v-permission="{indentity:'xbkCardInfo-productChange'}">套餐变量</el-button>
+        <!-- </div> -->
+        <!-- <div v-permission="{indentity:'xbkCardInfo-realStatusChange'}"> -->
+          <el-button v-if="selectListNumber !==1" size="medium" type="primary" icon="el-icon-edit" disabled v-permission="{indentity:'xbkCardInfo-realStatusChange'}">实名状态修改</el-button>
+          <el-button v-else size="medium" type="primary" icon="el-icon-edit" @click="RealstatusShow" v-permission="{indentity:'xbkCardInfo-realStatusChange'}">实名状态修改</el-button>
+        <!-- </div> -->
       </div>
       <!-- 列表区域 -->
       <div class="cardNos">

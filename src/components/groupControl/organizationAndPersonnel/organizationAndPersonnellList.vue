@@ -964,7 +964,7 @@ export default {
   box-sizing: border-box;
   margin: 2px 0; */
 }
-/deep/.el-card__body {
+.el-card__body {
   margin: 0;
   padding: 0;
 }
