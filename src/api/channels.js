@@ -87,5 +87,8 @@ export default {
   // 套餐查询
   apiPackagesList: params => {
     return API.POST('boss/v1.0/packages', params)
+  },
+  apiAddChannelManager:params =>{
+    return API.POST('boss/v1.0/channels/manager/add', params)
   }
 }
