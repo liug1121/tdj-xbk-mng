@@ -63,7 +63,7 @@
       <!-- 按钮区域 -->
       <div class="button_content">
         <el-button size="medium" type="primary" icon="el-icon-download" 
-        v-permission="{indentity:'bigflowCardInfo-changeStatus'}">卡状态变更</el-button>
+        v-permission="{indentity:'bigflowCardInfo-changeStatus'}" @click="openChangeStatusDlg">卡状态变更</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-unbind'}">解绑</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
@@ -97,6 +97,26 @@
         :total="total">
       </el-pagination>
     </el-card>
+
+
+    <el-dialog title="调整余额" :visible.sync="showChangeStatusDlg" width="450px" @close="closeChangeStatusDlg">
+      <!-- 内容主体区域 -->
+      <el-form :model="changeStatusForm"  label-width="110px">
+        <el-form-item label="卡状态" class="queryFormItem">
+          <el-select class="queryFormInput"  clearable placeholder="请选择卡状态" v-model="changeStatusForm.chargeStatus">
+            <el-option v-for="item in statusForOpt" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="原因">
+          <el-input style="width:300px;" v-model="changeStatusForm.reason" placeholder="请输入调整原因" ></el-input>
+        </el-form-item>
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeChangeStatusDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okChangeStatus" :disabled="btnEnable">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -109,13 +129,22 @@ export default {
   },
   data () {
     return {
+        iccids2Opt:'',
+        showChangeStatusDlg:false,
+        changeStatusForm:{},
         loading: false,
+        btnEnable:false,
         iccid:'',
         msisdn:'',
         cardStatus:'',
         statusOptions:[
             { label: "未激活", value: "willActivat" },
             { label: "已消户", value: 'close' },
+            { label: "卡启用", value: 'open' },
+            { label: "卡停用", value: 'stopusing' },
+            { label: "永久停用", value: 'forever_stopusing' }
+        ],
+        statusForOpt:[
             { label: "卡启用", value: 'open' },
             { label: "卡停用", value: 'stopusing' },
             { label: "永久停用", value: 'forever_stopusing' }
@@ -178,6 +207,40 @@ export default {
   },
   watch: {},
   methods: {
+    openChangeStatusDlg:function(){
+        if(this.iccids2Opt == ''){
+            alert('iccid必须填')
+            return
+        }
+        this.showChangeStatusDlg = true
+    },
+    closeChangeStatusDlg:function(){
+        this.showChangeStatusDlg = false
+    },
+    okChangeStatus:function(){
+        let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = {}
+            params.iccids = this.iccids2Opt
+            params.reason = this.changeStatusForm.reason
+            params.chargeStatus = this.changeStatusForm.chargeStatus
+            apiBigflow.changeCardStatus(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryCardInfos()
+                    alert('操作成功')
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        });
+    },
     queryCardInfos:function(){
         this.loading = true
         let params = {}
@@ -244,7 +307,12 @@ export default {
       this.openCardEndDate = `${this.openCardEndDate}`
     },
     handleSelectionChange (val) {
-      
+      this.iccids2Opt = ''
+      if(val.length > 0){
+          for(let i = 0; i < val.length; i++){
+              this.iccids2Opt = this.iccids2Opt + val[i].iccid +','
+          }
+      }
     },
     handleSizeChange (newPage) {
       this.page = newPage;
