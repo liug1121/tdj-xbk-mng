@@ -73,5 +73,14 @@ export default {
     },
     changeProduct: params =>{
         return API.POST('/bigflow/manage/v1.0/card/updateProduct', params)
+    },
+    getComunPlanTypes2Change: params =>{
+        return API.POST('/bigflow/manage/v1.0/card/communPlanTypes', params)
+    },
+    changeCommunPlanType: params =>{
+        return API.POST('/bigflow/manage/v1.0/card/communPlan', params)
+    },
+    expiredateextend: params =>{
+        return API.POST('/bigflow/manage/v1.0/card/expiredateextend', params)
     }
 }

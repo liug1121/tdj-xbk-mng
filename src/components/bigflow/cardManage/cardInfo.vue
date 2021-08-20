@@ -73,9 +73,9 @@
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-productChange'}" @click="openChangeProductDlg">变更卡套餐</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
-        v-permission="{indentity:'bigflowCardInfo-planChange'}">变更卡通讯计划</el-button>
+        v-permission="{indentity:'bigflowCardInfo-planChange'}" @click="openChangeCommonTypeDlg">变更卡通讯计划</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
-        v-permission="{indentity:'bigflowCardInfo-validityExtend'}">有效期延长</el-button>
+        v-permission="{indentity:'bigflowCardInfo-validityExtend'}" @click="openExpireDateExtendDlg">有效期延长</el-button>
       </div>
       <!-- 列表区域 -->
       <div class="cardNos">
@@ -190,6 +190,42 @@
         <el-button type="primary" @click="okChangeProduct" :disabled="btnEnable">确 定</el-button>
       </span> 
     </el-dialog>
+
+    <el-dialog title="变更通讯计划" :visible.sync="showChangeCommonTypeDlg" width="450px" @close="closeChangeCommonTypeDlg">
+      <!-- 内容主体区域 -->
+      <el-form :model="changeCommonTypeForm"  label-width="110px">
+        <el-form-item label="变更通讯计划">
+          <el-select class="queryFormInput"  clearable placeholder="请选择通讯计划" v-model="changeCommonTypeForm.communPlanType">
+            <el-option v-for="item in communPlanTypes2Change" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="原因">
+          <el-input style="width:300px;" v-model="changeCommonTypeForm.reason" placeholder="请输入调整原因" ></el-input>
+        </el-form-item>
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeChangeCommonTypeDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okChangeCommonType" :disabled="btnEnable">确 定</el-button>
+      </span> 
+    </el-dialog>
+
+    <el-dialog title="延长有效期" :visible.sync="showExpireDateExtendDlg" width="450px" @close="closeExpireDateExtendDlg">
+      <!-- 内容主体区域 --> 
+      <el-form :model="expireDateExtendForm"  label-width="110px">
+        <el-form-item label="时长（月）">
+          <el-input style="width:300px;" onkeyup="value=value.replace(/[^\d]/g,'')" v-model="expireDateExtendForm.extendTime" placeholder="请输入时长" ></el-input>
+        </el-form-item>
+        <el-form-item label="原因">
+          <el-input style="width:300px;" v-model="expireDateExtendForm.reason" placeholder="请输入调整原因" ></el-input>
+        </el-form-item>
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeExpireDateExtendDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okExpireDateExtend" :disabled="btnEnable">确 定</el-button>
+      </span>  
+    </el-dialog> 
   </div> 
 </template>
 
@@ -202,6 +238,13 @@ export default {
   },
   data () {
     return {
+        showExpireDateExtendDlg:false,
+        expireDateExtendForm:{},
+
+        showChangeCommonTypeDlg :false,
+        changeCommonTypeForm:{},
+        communPlanTypes2Change:[],
+
         showChangeProductDlg :false,
         changeProductForm:{},
         products2Change:[],
@@ -295,6 +338,80 @@ export default {
   },
   watch: {},
   methods: {
+    openExpireDateExtendDlg:function(){
+        if(this.iccids2Opt == ''){
+            alert('iccid必须填')
+            return
+        }
+        this.showExpireDateExtendDlg = true
+    },
+    closeExpireDateExtendDlg:function(){
+        this.showExpireDateExtendDlg = false
+    }, 
+    okExpireDateExtend:function(){
+        let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = {}
+            params.iccids = this.iccids2Opt
+            params.reason = this.expireDateExtendForm.reason
+            params.extendTime = this.expireDateExtendForm.extendTime
+            apiBigflow.expiredateextend(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryCardInfos()
+                    alert('操作成功')
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        }); 
+    },
+    openChangeCommonTypeDlg:function(){
+        if(this.iccids2Opt == ''){
+            alert('iccid必须填')
+            return
+        }
+        if(this.iccids2Opt.length > 20){
+            alert('一次只能操作一张卡')
+            return
+        }
+        this.getCommunPlanTypes2Change(this.iccids2Opt)
+        this.showChangeCommonTypeDlg = true
+    },  
+    closeChangeCommonTypeDlg:function(){
+        this.showChangeCommonTypeDlg = false
+    }, 
+    okChangeCommonType:function(){
+        let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = {}
+            params.iccids = this.iccids2Opt
+            params.reason = this.changeCommonTypeForm.reason
+            params.communPlanType = this.changeCommonTypeForm.communPlanType
+            apiBigflow.changeCommunPlanType(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryCardInfos()
+                    alert('操作成功')
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        }); 
+    },
+
     openChangeProductDlg:function(){
         if(this.iccids2Opt == ''){
             alert('iccid必须填')
@@ -333,6 +450,15 @@ export default {
             })
         }).catch(() => {
         }); 
+    },
+    getCommunPlanTypes2Change:function(iccid){
+        let params = {}
+        params.iccid = iccid
+        apiBigflow.getComunPlanTypes2Change(params).then(res=>{
+            if(res.resultCode == 0){
+              this.communPlanTypes2Change = res.data
+          }
+        })
     },
     getProduct2Change:function(iccid){
         let params = {}
