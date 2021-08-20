@@ -82,5 +82,13 @@ export default {
     },
     expiredateextend: params =>{
         return API.POST('/bigflow/manage/v1.0/card/expiredateextend', params)
+    },
+    getPdCodes: params =>{
+        return API.GET('/bigflow/manage/v1.0/flowpools/pdcode', params)
+    },
+    addFlowPool: params =>{
+        return API.POST('/bigflow/manage/v1.0/flowpools/add', params)
     }
+
+    
 }

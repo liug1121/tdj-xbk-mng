@@ -21,7 +21,7 @@
       </el-form>
       <div class="button_content">
         <el-button size="medium" type="primary" icon="el-icon-edit" 
-        v-permission="{indentity:'bigflowFlowPool-add'}">增加</el-button>
+        v-permission="{indentity:'bigflowFlowPool-add'}" @click="openAddFlowPoolDlg">增加</el-button>
 
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowFlowPool-orderProduct'}">订购套餐</el-button>
@@ -50,6 +50,41 @@
         :total="total">
       </el-pagination>
     </el-card>
+
+    <el-dialog title="添加流量池" :visible.sync="showAddFlowPoolDlg" width="450px" @close="closeAddFlowPoolDlg">
+      <!-- 内容主体区域 --> 
+      <el-form :model="addFlowPoolForm"  label-width="110px">
+          <el-form-item label="流量池编号">
+          <el-input style="width:300px;" v-model="addFlowPoolForm.poolId" placeholder="请输入流量池编号" ></el-input>
+        </el-form-item>
+        <el-form-item label="流量池名称">
+          <el-input style="width:300px;"  v-model="addFlowPoolForm.poolName" placeholder="请输入流量池名称" ></el-input>
+        </el-form-item>
+        <el-form-item label="渠道">
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword
+          class="queryFormInput"  placeholder="请输入调整原因" v-model="addFlowPoolForm.saleChannel">
+            <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="卡的默认限量">
+            <el-select 
+            filterable
+          clearable
+          reserve-keyword
+            class="queryFormInput"  placeholder="请输入卡的默认限量" v-model="addFlowPoolForm.cardDefaultPdCode">
+            <el-option v-for="item in getPdCodes" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeAddFlowPoolDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okAddFlowPool" :disabled="btnEnable">确 定</el-button>
+      </span>  
+    </el-dialog> 
   </div>
 </template>
 
@@ -61,6 +96,10 @@ export default {
   },
   data () {
     return {
+    pdCodes:[],
+    showAddFlowPoolDlg:false, 
+    addFlowPoolForm:{},
+    btnEnable: false,
     loading: false,
     status:'',
     saleChannel:'',
@@ -97,9 +136,50 @@ export default {
   created(){
       this.getAllChannels()
       this.queryFlowPools()
+      this.getPdCodes()
   },
   watch: {},
   methods: {
+    openAddFlowPoolDlg:function(){
+        this.showAddFlowPoolDlg = true
+    },
+    closeAddFlowPoolDlg:function(){
+        this.showAddFlowPoolDlg = false
+    },
+    okAddFlowPool:function(){
+        let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = {}
+            params.poolName = this.addFlowPoolForm.poolName
+            params.poolId = this.addFlowPoolForm.poolId
+            params.saleChannel = this.addFlowPoolForm.saleChannel
+            params.cardDefaultPdCode = this.addFlowPoolForm.cardDefaultPdCode
+            apiBigflow.addFlowPool(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryFlowPools()
+                    alert('操作成功')
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        }); 
+    },
+    
+    getPdCodes:function(){
+        let params = {}
+        apiBigflow.getPdCodes(params).then(res=>{
+            if(res.resultCode == 0){
+                this.getPdCodes = res.data
+            }
+        })
+    },
     getAllChannels:function(){
         let params = {}
         apiBigflow.getAllChannels(params).then(res=>{
