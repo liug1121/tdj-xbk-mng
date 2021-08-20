@@ -58,5 +58,14 @@ export default {
     },
     changeCardStatus: params =>{
         return API.POST('/bigflow/manage/v1.0/card/changeCardStatus', params)
+    },
+    unbindCard: params =>{
+        return API.POST('/bigflow/manage/v1.0/card/untying', params)
+    },
+    dosClear: params =>{
+        return API.POST('/bigflow/manage/v1.0/card/dosClear', params)
+    },
+    dosChange: params =>{
+        return API.POST('/bigflow/manage/v1.0/card/dosChange', params)
     }
 }
