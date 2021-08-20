@@ -94,7 +94,20 @@ export default {
     },
     updateFlowPoolUse: params =>{
         return API.POST('/bigflow/manage/v1.0/flowpools/updateuse', params)
+    },
+    movePool: params =>{
+        return API.POST('/bigflow/manage/v1.0/flowpools/move', params)
+    },
+    movePoolIccidsBetween: params =>{
+        return API.POST('/bigflow/manage/v1.0/flowpools/move/iccidbetween', params)
+    },
+    stock2Channel: params =>{
+        return API.POST('/bigflow/manage/v1.0/bigflowcardstocks/tochannel', params)
     }
+
+    
+
+    
 
     
 }

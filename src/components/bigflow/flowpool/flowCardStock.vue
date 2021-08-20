@@ -35,7 +35,9 @@
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowFlowCardStock-cardDistribution'}">卡片划拨</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
-        v-permission="{indentity:'bigflowFlowCardStock-distributionForIccid'}">首尾ICCID划拨</el-button>
+        v-permission="{indentity:'bigflowFlowCardStock-distributionForIccid'}" @click="openMovePoolByIccidsDlg">首尾ICCID划拨</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowFlowCardStock-distributionForIccid'}" @click="openMovePoolDlg">迁移卡池</el-button>
         
         
       </div>
@@ -60,6 +62,78 @@
         :total="total">
       </el-pagination>
     </el-card>
+
+    <el-dialog title="迁移卡池" :visible.sync="showMovePoolDlg" width="450px" @close="closeMovePoolDlg">
+      <!-- 内容主体区域 --> 
+      <el-form :model="movePoolForm"  label-width="110px">
+        <el-form-item label="流量池">
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword
+          class="queryFormInput"  placeholder="请输入流量池" v-model="movePoolForm.poolId">
+            <el-option v-for="item in pools" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="超量是否关停">
+          <el-select 
+          class="queryFormInput"  placeholder="请输入超量是否关停" v-model="movePoolForm.useLimitStatus">
+            <el-option v-for="item in useLimitStatus" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="变更原因">
+          <el-input style="width:300px;" v-model="movePoolForm.reason" placeholder="请输入变更原因" ></el-input>
+        </el-form-item>
+      </el-form>
+      <span>
+          <p>1）超量是否关停是指卡有自身套餐情况下，用量超限后的操作指示</p>
+            <p>2）变更原因请认真填写。</p>
+      </span>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeMovePoolDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okMovePoolPool" :disabled="btnEnable">确 定</el-button>
+      </span>   
+    </el-dialog>
+
+    <el-dialog title="首尾ICCID划拨" :visible.sync="showMovePoolByIccidsDlg" width="450px" @close="closeMovePoolByIccidsDlg">
+      <!-- 内容主体区域 -->  
+      <el-form :model="movePoolByIccidsForm"  label-width="110px">
+        <el-form-item label="流量池">
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword
+          class="queryFormInput"  placeholder="请输入流量池" v-model="movePoolByIccidsForm.poolId">
+            <el-option v-for="item in pools" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="首iccid(19位)">
+          <el-input style="width:300px;" v-model="movePoolByIccidsForm.iccidStart" placeholder="请输入首iccid" ></el-input>
+        </el-form-item>
+        <el-form-item label="尾iccid(19位)">
+          <el-input style="width:300px;" v-model="movePoolByIccidsForm.iccidEnd" placeholder="请输入尾iccid" ></el-input>
+        </el-form-item>
+        <el-form-item label="超量是否关停">
+          <el-select 
+          class="queryFormInput"  placeholder="请输入超量是否关停" v-model="movePoolByIccidsForm.useLimitStatus">
+            <el-option v-for="item in useLimitStatus" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="变更原因">
+          <el-input style="width:300px;" v-model="movePoolByIccidsForm.reason" placeholder="请输入变更原因" ></el-input>
+        </el-form-item>
+      </el-form>
+      <span>
+          <p>1）超量是否关停是指卡有自身套餐情况下，用量超限后的操作指示</p>
+            <p>2）变更原因请认真填写。</p>
+      </span>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeMovePoolByIccidsDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okMovePoolByIccids" :disabled="btnEnable">确 定</el-button>
+      </span>   
+    </el-dialog>
   </div>
 </template>
 
@@ -71,6 +145,17 @@ export default {
   },
   data () {
     return {
+    btnEnable:false,
+    showMovePoolByIccidsDlg:false, 
+    movePoolByIccidsForm:{},
+
+    iccids2Opt:'',
+    showMovePoolDlg:false,  
+    movePoolForm:{},
+    useLimitStatus:[
+        {value: 1, name:"不关停"},
+        {value: 2, name:"关停"}
+    ],
     loading: false,
     iccid:'',
     cardStatus:'',
@@ -113,6 +198,78 @@ export default {
   },
   watch: {},
   methods: {
+    openMovePoolByIccidsDlg:function(){
+        if(this.iccids2Opt == ''){
+            alert("请选择要操作的卡")
+            return
+        }
+        this.showMovePoolByIccidsDlg = true
+    },  
+    closeMovePoolByIccidsDlg :function(){
+        this.showMovePoolByIccidsDlg = false
+    }, 
+    okMovePoolByIccids:function(){
+        let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = {}
+            params.iccidStart = this.movePoolByIccidsForm.iccidStart
+            params.iccidEnd = this.movePoolByIccidsForm.iccidEnd
+            params.reason = this.movePoolByIccidsForm.reason
+            params.poolId = this.movePoolByIccidsForm.poolId
+            params.useLimitStatus = this.movePoolByIccidsForm.useLimitStatus
+            
+            apiBigflow.movePoolIccidsBetween(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryFlowCardStocks()
+                    alert('操作成功')
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        });
+    },
+    closeMovePoolDlg:function(){
+        this.showMovePoolDlg = false
+    } ,
+    okMovePoolPool:function(){
+        let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = {}
+            params.iccids = this.iccids2Opt
+            params.reason = this.movePoolForm.reason
+            params.poolId = this.movePoolForm.poolId
+            params.useLimitStatus = this.movePoolForm.useLimitStatus
+            apiBigflow.movePool(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryFlowCardStocks()
+                    alert('操作成功')
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        }); 
+    },   
+    openMovePoolDlg:function(){
+        if(this.iccids2Opt == ''){
+            alert("请选择要操作的卡")
+            return
+        }
+        this.showMovePoolDlg = true
+    },
     getAllPools:function(){
         let params = {}
         apiBigflow.getAllPools(params).then(res=>{
@@ -154,6 +311,13 @@ export default {
         })
     },
     handleSelectionChange (val) {
+      this.iccids2Opt = ''
+      if(val.length > 0){
+          for(let i = 0; i < val.length; i++){
+              this.iccids2Opt = this.iccids2Opt + val[i].iccid +','
+          }
+          this.iccids2Opt =this.iccids2Opt.substr(0,this.iccids2Opt.length -1 );
+      }
     },
     handleSizeChange (newPage) {
       this.page = newPage;

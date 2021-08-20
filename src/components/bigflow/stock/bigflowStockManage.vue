@@ -44,7 +44,7 @@
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowStockMng-distributeForChannel'}">分配渠道</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
-        v-permission="{indentity:'bigflowStockMng-distributeForHeadAndTail'}">首尾分配渠道</el-button>
+        v-permission="{indentity:'bigflowStockMng-distributeForHeadAndTail'}" @click="openStock2ChannelDlg">首尾分配渠道</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowStockMng-exportFor'}">按首尾条件导出</el-button>
       </div>
@@ -69,6 +69,36 @@
         :total="total">
       </el-pagination>
     </el-card>
+
+    <el-dialog title="渠道分配" :visible.sync="showStock2ChannelDlg" width="450px" @close="closeStock2ChannelDlg">
+      <!-- 内容主体区域 -->  
+      <el-form :model="stock2ChannelForm"  label-width="110px">
+        <el-form-item label="分配渠道">
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword
+          class="queryFormInput"  placeholder="请输入渠道" v-model="stock2ChannelForm.channelId">
+            <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="首iccid(19位)">
+          <el-input style="width:300px;" v-model="stock2ChannelForm.iccidStart" placeholder="请输入首iccid" ></el-input>
+        </el-form-item>
+        <el-form-item label="尾iccid(19位)">
+          <el-input style="width:300px;" v-model="stock2ChannelForm.iccidEnd" placeholder="请输入尾iccid" ></el-input>
+        </el-form-item>
+      </el-form>
+      <span>
+          <p>1）注意：请输入19位数的ICCID，每次分配不能超过2万张卡</p>
+            <p>2）系统会根据输入的首ICCID（包含），和尾ICCID（包含），查询出这之间的数据进行分配渠道</p>
+      </span>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeStock2ChannelDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okStock2Channel" :disabled="btnEnable">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -80,6 +110,9 @@ export default {
   },
   data () {
     return {
+    btnEnable:false,
+    showStock2ChannelDlg:false, 
+    stock2ChannelForm:{},
     loading: false,
     statusOptions:[
         {label:'录入', value:1},
@@ -125,6 +158,36 @@ export default {
   },
   watch: {},
   methods: {
+      openStock2ChannelDlg:function(){
+          this.showStock2ChannelDlg = true
+      },    
+      closeStock2ChannelDlg:function(){
+          this.showStock2ChannelDlg = false
+      },    
+      okStock2Channel:function(){
+         let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = {}
+            params.iccidStart = this.stock2ChannelForm.iccidStart
+            params.iccidEnd = this.stock2ChannelForm.iccidEnd
+            params.channelId = this.stock2ChannelForm.channelId
+            apiBigflow.stock2Channel(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryBigflowStocks()
+                    alert('操作成功')
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        }); 
+      },  
     startTimeChange () {
       this.startDateTime = `${this.startDateTime}`
     },
