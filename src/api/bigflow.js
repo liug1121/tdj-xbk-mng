@@ -88,6 +88,12 @@ export default {
     },
     addFlowPool: params =>{
         return API.POST('/bigflow/manage/v1.0/flowpools/add', params)
+    },
+    addFlowPoolOrder: params =>{
+        return API.POST('/bigflow/manage/v1.0/flowpools/order', params)
+    },
+    updateFlowPoolUse: params =>{
+        return API.POST('/bigflow/manage/v1.0/flowpools/updateuse', params)
     }
 
     

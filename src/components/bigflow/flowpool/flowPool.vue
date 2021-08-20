@@ -24,10 +24,10 @@
         v-permission="{indentity:'bigflowFlowPool-add'}" @click="openAddFlowPoolDlg">增加</el-button>
 
         <el-button size="medium" type="primary" icon="el-icon-edit" 
-        v-permission="{indentity:'bigflowFlowPool-orderProduct'}">订购套餐</el-button>
+        v-permission="{indentity:'bigflowFlowPool-orderProduct'}" @click="openOrderDlg">订购套餐</el-button>
         
         <el-button size="medium" type="primary" icon="el-icon-edit" 
-        v-permission="{indentity:'bigflowFlowPool-useChange'}">调整用量</el-button>
+        v-permission="{indentity:'bigflowFlowPool-useChange'}" @click="openUpdateuseDlg">调整用量</el-button>
       </div>
       <!-- 列表区域 -->
       <div class="cardNos">
@@ -85,6 +85,66 @@
         <el-button type="primary" @click="okAddFlowPool" :disabled="btnEnable">确 定</el-button>
       </span>  
     </el-dialog> 
+
+    <el-dialog title="流量池订购套餐" :visible.sync="showOrderDlg" width="450px" @close="closeOrderDlg">
+      <!-- 内容主体区域 --> 
+      <el-form :model="addOrderForm"  label-width="110px">
+        <el-form-item label="订购套餐">
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword
+          class="queryFormInput"  placeholder="请输入订购套餐" v-model="addOrderForm.productCode">
+            <el-option v-for="item in getPdCodes" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="变更原因">
+          <el-input style="width:300px;" v-model="addOrderForm.reason" placeholder="请输入变更原因" ></el-input>
+        </el-form-item>
+      </el-form>
+      <span>
+          <p>1）订购套餐为立即生效，会复盖之前的可用量及有效时间；</p>
+
+            <p>2）加油包用量是当月有效，27号清0；</p>
+
+            <p>3）变更原因请认真填写；</p>
+
+            <p>4）订购成功后，并不会启用流量池，如需要请手动启用。</p>
+      </span>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeOrderDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okOrderPool" :disabled="btnEnable">确 定</el-button>
+      </span>  
+    </el-dialog> 
+
+    <el-dialog title="调整用量" :visible.sync="showUpdateuseDlg" width="450px" @close="closeUpdateuseDlg">
+      <!-- 内容主体区域 -->  
+      <el-form :model="updateuseForm"  label-width="110px">
+        <el-form-item label="高速可用量">
+          <el-input style="width:300px;" onkeyup="value=value.replace(/[^\d]/g,'')" v-model="updateuseForm.flowHighDose" placeholder="请输入变更原因" ></el-input>
+        </el-form-item>
+        <el-form-item label="变更原因">
+          <el-input style="width:300px;" v-model="updateuseForm.reason" placeholder="请输入变更原因" ></el-input>
+        </el-form-item>
+      </el-form>
+      <span>
+          <p>1）变更以G为单位，例如：输入1，代表1G</p>
+
+            <p>2）变更逻辑：在原来基础上加上变更的用量。</p>
+
+            <p>例如：原来有10G，变更1G，最后会变成11G</p>
+
+            <p>输入负数就是减： 输入-1，就会变成9G。</p>
+
+            <p>3）必填参数如果不需要变更，输入0即可</p>
+      </span>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeUpdateuseDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okUpdateuse" :disabled="btnEnable">确 定</el-button>
+      </span>  
+    </el-dialog> 
   </div>
 </template>
 
@@ -96,6 +156,11 @@ export default {
   },
   data () {
     return {
+    showUpdateuseDlg:false,
+    updateuseForm:{},
+    showOrderDlg:false,
+    addOrderForm:{},
+    poolId:'',
     pdCodes:[],
     showAddFlowPoolDlg:false, 
     addFlowPoolForm:{},
@@ -140,6 +205,82 @@ export default {
   },
   watch: {},
   methods: {
+      openUpdateuseDlg:function(){
+          if(this.poolId == ""){
+            alert('请先选择要操作的流量池')
+            return
+        }
+        if(this.poolId.indexOf(',') != -1){
+            alert('一次只能操作一个流量池')
+            return
+        }
+        this.showUpdateuseDlg = true
+      }, 
+      closeUpdateuseDlg:function(){
+          this.showUpdateuseDlg = false
+      },
+      okUpdateuse:function(){
+          let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = {}
+            params.flowHighDose = this.updateuseForm.flowHighDose
+            params.reason = this.updateuseForm.reason
+            params.poolId = this.poolId
+            apiBigflow.updateFlowPoolUse(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryFlowPools()
+                    alert('操作成功')
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        });
+      },
+    openOrderDlg:function(){
+        if(this.poolId == ""){
+            alert('请先选择要操作的流量池')
+            return
+        }
+        if(this.poolId.indexOf(',') != -1){
+            alert('一次只能操作一个流量池')
+            return
+        }
+        this.showOrderDlg = true
+    },  
+    closeOrderDlg:function(){
+        this.showOrderDlg = false
+    },
+    okOrderPool:function(){
+        let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = {}
+            params.productCode = this.addOrderForm.productCode
+            params.reason = this.addOrderForm.reason
+            params.poolId = this.poolId
+            apiBigflow.addFlowPoolOrder(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryFlowPools()
+                    alert('操作成功')
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        });
+    },
     openAddFlowPoolDlg:function(){
         this.showAddFlowPoolDlg = true
     },
@@ -209,6 +350,13 @@ export default {
         })
     },
     handleSelectionChange (val) {
+        this.poolId = ''
+      if(val.length > 0){
+          for(let i = 0; i < val.length; i++){
+              this.poolId = this.poolId + val[i].poolId +','
+          }
+          this.poolId =this.poolId.substr(0,this.poolId.length -1);
+      }
     },
     handleSizeChange (newPage) {
       this.page = newPage;
