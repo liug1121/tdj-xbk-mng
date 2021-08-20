@@ -71,7 +71,7 @@
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-flowChange'}" @click="openDosChangeDlg">可用量变更</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
-        v-permission="{indentity:'bigflowCardInfo-productChange'}">变更卡套餐</el-button>
+        v-permission="{indentity:'bigflowCardInfo-productChange'}" @click="openChangeProductDlg">变更卡套餐</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-planChange'}">变更卡通讯计划</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
@@ -161,18 +161,33 @@
       </el-form>
       <div class="notice">
         <p>1）变更以G为单位，例如：输入1，代表1G</p>
-
-            <p>2）变更逻辑：在原来基础上加上变更的用量。 例如：原来有10G，变更1G，最后会变成11G</p>
-
-            <p>输入负数就是减： 输入-1，就会变成9G。</p>
-
-            <p>3）必填参数如果不需要变更，输入0即可</p>
-        
+        <p>2）变更逻辑：在原来基础上加上变更的用量。 例如：原来有10G，变更1G，最后会变成11G</p>
+        <p>输入负数就是减： 输入-1，就会变成9G。</p>
+        <p>3）必填参数如果不需要变更，输入0即可</p>
       </div>
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeDosChangeDlg" :disabled="btnEnable">取 消</el-button>
         <el-button type="primary" @click="okDosChange" :disabled="btnEnable">确 定</el-button>
+      </span> 
+    </el-dialog>
+
+    <el-dialog title="变更卡套餐" :visible.sync="showChangeProductDlg" width="450px" @close="closeChangeProductDlg">
+      <!-- 内容主体区域 -->
+      <el-form :model="changeProductForm"  label-width="110px">
+        <el-form-item label="变更套餐">
+          <el-select class="queryFormInput"  clearable placeholder="请选择套餐" v-model="changeProductForm.updateProductCode">
+            <el-option v-for="item in products2Change" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="原因">
+          <el-input style="width:300px;" v-model="changeProductForm.reason" placeholder="请输入调整原因" ></el-input>
+        </el-form-item>
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeChangeProductDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okChangeProduct" :disabled="btnEnable">确 定</el-button>
       </span> 
     </el-dialog>
   </div> 
@@ -187,6 +202,11 @@ export default {
   },
   data () {
     return {
+        showChangeProductDlg :false,
+        changeProductForm:{},
+        products2Change:[],
+
+
         iccids2Opt:'',
         showChangeStatusDlg:false,
         changeStatusForm:{},
@@ -275,6 +295,54 @@ export default {
   },
   watch: {},
   methods: {
+    openChangeProductDlg:function(){
+        if(this.iccids2Opt == ''){
+            alert('iccid必须填')
+            return
+        }
+        if(this.iccids2Opt.length > 20){
+            alert('一次只能操作一张卡')
+            return
+        }
+        this.showChangeProductDlg = true
+        this.getProduct2Change(this.iccids2Opt)
+    },
+    closeChangeProductDlg:function(){
+        this.showChangeProductDlg = false
+    },
+    okChangeProduct:function(){
+        let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = {}
+            params.iccids = this.iccids2Opt
+            params.reason = this.changeProductForm.reason
+            params.updateProductCode = this.changeProductForm.updateProductCode
+            apiBigflow.changeProduct(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryCardInfos()
+                    alert('操作成功')
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        }); 
+    },
+    getProduct2Change:function(iccid){
+        let params = {}
+        params.iccid = iccid
+        apiBigflow.getProduct2Change(params).then(res=>{
+            if(res.resultCode == 0){
+              this.products2Change = res.data
+          }
+        })
+    },
     openDosChangeDlg:function(){
         if(this.iccids2Opt == ''){
             alert('iccid必须填')
@@ -483,6 +551,7 @@ export default {
           for(let i = 0; i < val.length; i++){
               this.iccids2Opt = this.iccids2Opt + val[i].iccid +','
           }
+          this.iccids2Opt =this.iccids2Opt.substr(0,this.iccids2Opt.length -1 );
       }
     },
     handleSizeChange (newPage) {

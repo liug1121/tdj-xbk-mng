@@ -67,5 +67,11 @@ export default {
     },
     dosChange: params =>{
         return API.POST('/bigflow/manage/v1.0/card/dosChange', params)
+    },
+    getProduct2Change: params =>{
+        return API.POST('/bigflow/manage/v1.0/card/product2change', params)
+    },
+    changeProduct: params =>{
+        return API.POST('/bigflow/manage/v1.0/card/updateProduct', params)
     }
 }
