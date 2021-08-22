@@ -237,11 +237,9 @@ export default {
         let seletedChannels = this.channels.filter(channel=>{
             return channel.value === channelId
         })
-        // console.log('seletedChannel:' + JSON.stringify(seletedChannels))
         this.salePersons = []
         seletedChannels.forEach(seletedChannel => {
             let salePoints = seletedChannel.children
-            // console.log('salePoints:' + JSON.stringify(salePoints))
             let salePersons = []
             if(salePoints != undefined && 
                 salePoints != null && salePoints.length > 0){
@@ -252,10 +250,8 @@ export default {
                 
             }
         });
-        // console.log('salePersons:' + JSON.stringify(this.salePersons))
     },
     handleSelectBranchCom:function(item){
-        // console.log('handleSelectBranchCom:' + item)
         this.getChannelSalePersions(item)
     },
     handleSelectChannel:function(item){
@@ -265,11 +261,9 @@ export default {
     getProducts2Change:function(saleChannel){
         let params = {}
         params.saleChannel = saleChannel
-        // console.log('params.saleChannel:' + params.saleChannel)
         apiBigflow.getAllProduct2Change(params).then(res=>{
             if(res.resultCode == 0){
               this.products2Change = res.data
-            //   console.log('products2Change:' + JSON.stringify(this.products2Change))
           }
         })
     },
@@ -278,7 +272,6 @@ export default {
         apiBigflow.getAllChannels(params).then(res=>{
             if(res.resultCode == 0){
               this.channels = res.data
-            //   console.log('****' + this.channels.length )
           }
         })
     },
