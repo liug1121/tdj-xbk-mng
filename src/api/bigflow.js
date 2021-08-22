@@ -103,11 +103,11 @@ export default {
     },
     stock2Channel: params =>{
         return API.POST('/bigflow/manage/v1.0/bigflowcardstocks/tochannel', params)
-    }
-
-    
-
-    
-
-    
+    },
+    getAllProduct2Change: params =>{
+        return API.POST('/bigflow/manage/v1.0/order/products2change', params)
+    } ,
+    moveOrderByIccidsBetween: params =>{
+        return API.POST('/bigflow/manage/v1.0/order/move/iccidbetween', params)
+    },
 }

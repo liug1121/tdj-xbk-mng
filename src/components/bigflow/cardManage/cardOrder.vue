@@ -44,7 +44,7 @@
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardOrder-createAndDistribution'}">创建订单并分配渠道</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
-        v-permission="{indentity:'bigflowCardOrder-distribution'}">首尾分配渠道</el-button>
+        v-permission="{indentity:'bigflowCardOrder-distribution'}" @click="openMoveOrderDlg">首尾分配渠道</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardOrder-exportFor'}">按首尾条件导出</el-button>
       </div>
@@ -69,6 +69,55 @@
         :total="total">
       </el-pagination>
     </el-card>
+    <el-dialog title="渠道分配" :visible.sync="showMoveOrderDlg" width="450px" @close="closeMoveOrderDlg">
+
+      <el-form :model="moveOrderForm"  label-width="110px">
+        <el-form-item label="买家姓名">
+          <el-input style="width:300px;"  v-model="moveOrderForm.name" placeholder="请输入买家姓名" ></el-input>
+        </el-form-item>
+        <el-form-item label="分配渠道">
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword
+          class="queryFormInput"  placeholder="请选择分配渠道" v-model="moveOrderForm.saleChannel" @change="handleSelectChannel">
+            <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="销售员">
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword
+          class="queryFormInput"   placeholder="请选择销售员" v-model="moveOrderForm.salePerson2">
+            <el-option v-for="item in salePersons" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="首ICCID">
+          <el-input style="width:300px;"  v-model="moveOrderForm.iccidStart" placeholder="请输入首ICCID" ></el-input>
+        </el-form-item>
+        <el-form-item label="尾ICCID">
+          <el-input style="width:300px;"  v-model="moveOrderForm.iccidEnd" placeholder="请输入尾ICCID" ></el-input>
+        </el-form-item>
+        <!-- <el-form-item label="预充值套餐">
+          <el-select class="queryFormInput"  clearable placeholder="请选择预充值套餐" v-model="moveOrderForm.productCode">
+            <el-option v-for="item in products2Change" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item> -->
+        <el-form-item label="赠送流量（MB）">
+          <el-input style="width:300px;"  v-model="moveOrderForm.giveUsage" onkeyup="value=value.replace(/[^\d]/g,'')" placeholder="请输入赠送流量" ></el-input>
+        </el-form-item>
+        <el-form-item label="赠送用量类型">
+          <el-select class="queryFormInput"  clearable placeholder="赠送用量类型" v-model="moveOrderForm.giveUsageType">
+            <el-option v-for="item in giveTypes" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeMoveOrderDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okMoveOrder" :disabled="btnEnable">确 定</el-button>
+      </span>  
+    </el-dialog> 
   </div>
 </template>
 
@@ -83,7 +132,9 @@ export default {
   },
   data () {
     return {
-
+        showMoveOrderDlg:false, 
+        moveOrderForm:{}, 
+        btnEnable:false,
         cardStatus:'',
         orderStartDate:'',
         orderEndDate:'',
@@ -91,8 +142,8 @@ export default {
         iccid:'',
         msisdn:'',
         channel:'',
+        salePersons:[],
         loading: false,
-
 
     statusOptions: [
         { label: "已录入", value: 1 },
@@ -103,8 +154,16 @@ export default {
         { label: "已销毁", value: 6 },
         { label: "支付成功", value: 30 }
       ],
+    giveTypes:[{
+        value:1,
+        name:'包含套餐'
+    },
+    {
+        value:2,
+        name:'不包含套餐'
+    }],
     channels:[],
-      
+      products2Change:[],
       cardOrders: [],
       page: 1,
       pageSize: 10,
@@ -135,18 +194,91 @@ export default {
   created(){
       this.getAllChannels()
       this.queryCardOrders()
+      this.getProducts2Change()
   },
   watch: {},
   methods: {
+    openMoveOrderDlg:function(){
+        this.showMoveOrderDlg = true
+    }, 
+    closeMoveOrderDlg:function(){
+        this.showMoveOrderDlg = false
+    },
+    okMoveOrder:function(){
+        let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = {}
+            params.name = this.moveOrderForm.name
+            params.saleChannel = this.moveOrderForm.saleChannel
+            params.salePerson2 = this.moveOrderForm.salePerson2
+            params.iccidStart = this.moveOrderForm.iccidStart
+            params.iccidEnd = this.moveOrderForm.iccidEnd
+            params.productCode = this.moveOrderForm.productCode
+            params.giveUsage = this.moveOrderForm.giveUsage
+            params.giveUsageType = this.moveOrderForm.giveUsageType
+            apiBigflow.moveOrderByIccidsBetween(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryCardOrders()
+                    alert('操作成功')
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        }); 
+    },
+    getChannelSalePersions:function(channelId){
+        let seletedChannels = this.channels.filter(channel=>{
+            return channel.value === channelId
+        })
+        // console.log('seletedChannel:' + JSON.stringify(seletedChannels))
+        this.salePersons = []
+        seletedChannels.forEach(seletedChannel => {
+            let salePoints = seletedChannel.children
+            // console.log('salePoints:' + JSON.stringify(salePoints))
+            let salePersons = []
+            if(salePoints != undefined && 
+                salePoints != null && salePoints.length > 0){
+                salePoints.forEach(salePoint=>{
+                    let salePersonsInPoint = salePoint.children
+                    this.salePersons.push.apply(this.salePersons, salePersonsInPoint)
+                })
+                
+            }
+        });
+        // console.log('salePersons:' + JSON.stringify(this.salePersons))
+    },
     handleSelectBranchCom:function(item){
-        console.log('handleSelectBranchCom:' + item)
+        // console.log('handleSelectBranchCom:' + item)
+        this.getChannelSalePersions(item)
+    },
+    handleSelectChannel:function(item){
+        this.getProducts2Change(item)
+        this.getChannelSalePersions(item)
+    },
+    getProducts2Change:function(saleChannel){
+        let params = {}
+        params.saleChannel = saleChannel
+        // console.log('params.saleChannel:' + params.saleChannel)
+        apiBigflow.getAllProduct2Change(params).then(res=>{
+            if(res.resultCode == 0){
+              this.products2Change = res.data
+            //   console.log('products2Change:' + JSON.stringify(this.products2Change))
+          }
+        })
     },
     getAllChannels:function(){
         let params = {}
         apiBigflow.getAllChannels(params).then(res=>{
             if(res.resultCode == 0){
               this.channels = res.data
-              console.log('****' + this.channels.length )
+            //   console.log('****' + this.channels.length )
           }
         })
     },
