@@ -104,15 +104,30 @@
             <el-option v-for="item in products2Change" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item> -->
-        <el-form-item label="赠送流量（MB）">
+        <el-form-item label="赠送流量(MB)">
           <el-input style="width:300px;"  v-model="moveOrderForm.giveUsage" onkeyup="value=value.replace(/[^\d]/g,'')" placeholder="请输入赠送流量" ></el-input>
         </el-form-item>
+        <span>
+            请按照单位填写正确的用量(1GB=1024MB)，不要带上单位！！！
+        </span>
         <el-form-item label="赠送用量类型">
           <el-select class="queryFormInput"  clearable placeholder="赠送用量类型" v-model="moveOrderForm.giveUsageType">
             <el-option v-for="item in giveTypes" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
+        <span>
+            包含套餐：卡激活成功后，只有套餐用量，赠送的用量清零。不包含就进行叠加
+        </span>
       </el-form>
+      <span>
+          <p>1）注意：请输入19位数的ICCID，每次分配不能超过2万张卡</p>
+
+            <p>2）系统会根据提交的信息和输入的首ICCID（包含），和尾ICCID（包含）查询出这之间的数据进行分配渠道、销售员,并创建订单</p>
+
+            <p>3）如果订单存在，库存也已经分配过了。会进行覆盖更新</p>
+
+            <p>4）卡状态不是 “可销售” 的不能进行操作，“已激活” 的也不可以。请确保提交的文件或所选择的信息是符合条件的</p>
+      </span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeMoveOrderDlg" :disabled="btnEnable">取 消</el-button>
         <el-button type="primary" @click="okMoveOrder" :disabled="btnEnable">确 定</el-button>
