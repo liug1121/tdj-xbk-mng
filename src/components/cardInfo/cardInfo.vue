@@ -434,6 +434,7 @@ export default {
     // this.getCardInfolist();
     this.getPorductsListOptions()
     this.getfwUnionAccountOptions()
+    this.queryCardInfo()
   },
   watch: {},
   methods: {

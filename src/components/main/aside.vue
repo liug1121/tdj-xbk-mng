@@ -6,7 +6,7 @@
     </div>
     <el-menu :default-active="path" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" @select="handlselect" background-color="#001529" active-background-color="#1890ff" router active-text-color="#fff"
       :collapse="isCollapse" :unique-opened="true" :default-openeds="openedMenus">
-      <el-submenu index="root-xbk">
+      <el-submenu index="root-xbk" v-show="xuebakaMenus.length > 0">
         <template slot="title">
           <i class="el-icon-s-home"></i>
           <span>学霸卡</span>
@@ -29,7 +29,7 @@
         </template>
       </el-submenu>
 
-      <el-submenu index="root-device">
+      <el-submenu index="root-device" v-show="deviceMenus.length > 0">
         <template slot="title">
           <i class="el-icon-s-home"></i>
           <span>设备管理</span>
@@ -52,7 +52,7 @@
         </template>
       </el-submenu>
 
-      <el-submenu index="root-groupControl">
+      <el-submenu index="root-groupControl" v-show="groupControlMenus.length > 0">
         <template slot="title">
           <i class="el-icon-s-home"></i>
           <span>群控管理</span>
@@ -75,7 +75,7 @@
         </template>
       </el-submenu>
 
-      <el-submenu index="root-bigflow">
+      <el-submenu index="root-bigflow" v-show="bigflowMenus.length > 0">
         <template slot="title">
           <i class="el-icon-s-home"></i>
           <span>大流量卡</span>
@@ -98,7 +98,7 @@
         </template>
       </el-submenu>
 
-      <el-submenu index="root-sys">
+      <el-submenu index="root-sys" v-show="sysMenus.length > 0">
         <template slot="title">
           <i class="el-icon-s-home"></i>
           <span>系统管理</span>
