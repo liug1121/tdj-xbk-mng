@@ -38,11 +38,11 @@
         <el-button size="medium" type="primary" icon="el-icon-download" 
         v-permission="{indentity:'bigflowStockMng-export'}">导出</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
-        v-permission="{indentity:'bigflowStockMng-import'}">导入</el-button>
+        v-permission="{indentity:'bigflowStockMng-import'}" @click="openCardImportDlg">导入</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
-        v-permission="{indentity:'bigflowStockMng-moveNet'}">迁移网路</el-button>
+        v-permission="{indentity:'bigflowStockMng-moveNet'}" @click="openCardMoveDlg">迁移网路</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
-        v-permission="{indentity:'bigflowStockMng-distributeForChannel'}">分配渠道</el-button>
+        v-permission="{indentity:'bigflowStockMng-distributeForChannel'}" @click="openMoveCard2ChannelDlg">分配渠道</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowStockMng-distributeForHeadAndTail'}" @click="openStock2ChannelDlg">首尾分配渠道</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
@@ -99,6 +99,124 @@
         <el-button type="primary" @click="okStock2Channel" :disabled="btnEnable">确 定</el-button>
       </span>
     </el-dialog>
+
+     <el-dialog title="文件导入" :visible.sync="showCardImportDlg" width="450px" @close="closeCardImportDlg">
+      <el-form :model="cardImportForm"  label-width="110px">
+        <el-form-item label="蜂窝平台账户"> 
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword
+          class="queryFormInput"  placeholder="请输入蜂窝平台账户" v-model="cardImportForm.serviceName">
+            <el-option v-for="item in serviceInfos" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="类型">
+          <el-select class="queryFormInput"  clearable placeholder="类型" v-model="cardImportForm.type">
+            <el-option v-for="item in types" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form  label-width="120px">
+            <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadFile" :on-remove="removeUploadedFile">
+            <el-button size="small" type="primary">点击上传</el-button>
+            </el-upload>
+        </el-form>
+      </el-form>
+      <span>
+          <p>1、下载模板后，填写数据。ICCID、卡号为必须字段，卡号可以带86。</p>
+
+            <p>2、如果数据存在则做更新操作，只会更新：级别与状态两个字段，请注意。</p>
+
+            <p>3、如果需要迁移网格，请使用迁移网络功能。</p>
+
+            <p>4、卡号码状态对应编码 1:录入2:可销售5:已分配3:已开卡6:已激活7:已注销9:已销毁。</p>
+      </span>
+      
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeCardImportDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okCardImport" :disabled="btnEnable">确 定</el-button>
+      </span>  
+    </el-dialog>
+
+    <el-dialog title="迁移网络" :visible.sync="showCardMoveDlg" width="450px" @close="closeCardMoveDlg">
+      <el-form :model="cardMoveForm"  label-width="110px">
+        <el-form-item label="蜂窝平台账户"> 
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword
+          class="queryFormInput"  placeholder="请输入蜂窝平台账户" v-model="cardMoveForm.serviceName">
+            <el-option v-for="item in serviceInfos" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form  label-width="120px">
+            <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadMoveCardFile" :on-remove="removeUploadedMoveCardFile">
+            <el-button size="small" type="primary">点击上传</el-button>
+            </el-upload>
+        </el-form>
+        
+      </el-form>
+      <span>
+          <p>1）下载模板后，填写数据。ICCID、卡号 字段为必填。</p>
+
+            <p>2）提交后会先修改卡库存表网格数据；</p>
+
+            <p>3）发起任务去检查本次更新的卡与蜂窝平台的配置是否一致</p>
+      </span>
+      
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeCardMoveDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okCardMove" :disabled="btnEnable">确 定</el-button>
+      </span>  
+    </el-dialog>
+
+    <el-dialog title="分配渠道" :visible.sync="showMoveCard2ChannelDlg" width="450px" @close="closeMoveCard2ChannelDlg">
+      <el-form :model="moveCard2ChannelForm"  label-width="110px">
+        <el-form-item label="分配渠道">  
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword
+          class="queryFormInput"  placeholder="请输入渠道" v-model="moveCard2ChannelForm.channelId">
+            <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form  label-width="120px">
+            <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadMoveStockCard2ChannelFile" :on-remove="removeUploadedMoveStockCard2ChannelFile">
+            <el-button size="small" type="primary">点击上传</el-button>
+            </el-upload>
+        </el-form>
+      </el-form>
+      <span>
+          <p>1）1）下载模板后，填写数据。ICCID 字段为必填。</p>
+      </span>
+        <!-- <el-form-item label="蜂窝平台账户">  
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword
+          class="queryFormInput"  placeholder="请输入蜂窝平台账户" v-model="cardMoveForm.serviceName">
+            <el-option v-for="item in serviceInfos" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form  label-width="120px">
+            <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadMoveCardFile" :on-remove="removeUploadedMoveCardFile">
+            <el-button size="small" type="primary">点击上传</el-button>
+            </el-upload>
+        </el-form>
+        
+      </el-form>
+      <span>
+          <p>1）1）下载模板后，填写数据。ICCID 字段为必填。</p>
+
+           
+      </span> -->
+      
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeMoveCard2ChannelDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okMoveCard2Channel" :disabled="btnEnable">确 定</el-button>
+      </span>  
+    </el-dialog>
   </div>
 </template>
 
@@ -110,10 +228,21 @@ export default {
   },
   data () {
     return {
+    showMoveCard2ChannelDlg:false, 
+    moveCard2ChannelForm:{},
+    showCardMoveDlg:false,  
+    cardMoveForm:{},
+    showCardImportDlg:false,
+    cardImportForm:{},
     btnEnable:false,
     showStock2ChannelDlg:false, 
     stock2ChannelForm:{},
     loading: false,
+    serviceInfos:[],
+    types:[
+        {value:'bigflow',name:'大流量卡'},
+        {value:'bigflow',name:'学霸卡'}
+    ],
     statusOptions:[
         {label:'录入', value:1},
         {label:'可销售', value:2},
@@ -155,9 +284,147 @@ export default {
   created(){
       this.getAllChannels()
       this.queryBigflowStocks()
+      this.getAllServiceInfo()
   },
   watch: {},
   methods: {
+    openMoveCard2ChannelDlg:function(){
+        this.showMoveCard2ChannelDlg = true
+    }, 
+    closeMoveCard2ChannelDlg:function(){
+        this.showMoveCard2ChannelDlg = false
+    }, 
+    okMoveCard2Channel:function(){
+        if(this.moveCard2ChannelForm.fileToken == undefined || this.moveCard2ChannelForm.fileToken == ''){
+            alert('请先上传要操作的excel文件')
+            return
+        }
+        let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = {}
+            params.channelId = this.moveCard2ChannelForm.channelId
+            params.fileToken = this.moveCard2ChannelForm.fileToken
+            apiBigflow.moveStockCards2Channel(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryBigflowStocks()
+                    alert('操作成功')
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        }); 
+    },
+    openCardMoveDlg:function(){
+        this.showCardMoveDlg = true
+    },
+    closeCardMoveDlg:function(){
+        this.showCardMoveDlg = false
+    }, 
+    okCardMove:function(){
+        if(this.cardMoveForm.fileToken == undefined || this.cardMoveForm.fileToken == ''){
+            alert('请先上传要操作的excel文件')
+            return
+        }
+        let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = {}
+            params.serviceName = this.cardMoveForm.serviceName
+            params.fileToken = this.cardMoveForm.fileToken
+            apiBigflow.moveStockCards(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryBigflowStocks()
+                    alert('操作成功')
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        }); 
+    },
+    removeUploadedMoveStockCard2ChannelFile(file,fileList){
+        this.moveCard2ChannelForm.fileToken = ''
+    },
+    uploadMoveStockCard2ChannelFile (item) {
+        let params = new FormData()
+        params.append('file', item.file)
+        apiBigflow.uploadFile(params).then(res=>{
+            if(res.resultCode == 0){
+               this.moveCard2ChannelForm.fileToken = res.data
+            }
+        })
+    },
+    removeUploadedMoveCardFile(file,fileList){
+        this.cardMoveForm.fileToken = ''
+    },
+    uploadMoveCardFile (item) {
+        let params = new FormData()
+        params.append('file', item.file)
+        apiBigflow.uploadFile(params).then(res=>{
+            if(res.resultCode == 0){
+               this.cardMoveForm.fileToken = res.data
+            }
+        })
+    },
+    removeUploadedFile(file,fileList){
+        this.cardImportForm.fileToken = ''
+    },
+    uploadFile (item) {
+        let params = new FormData()
+        params.append('file', item.file)
+        apiBigflow.uploadFile(params).then(res=>{
+            if(res.resultCode == 0){
+               this.cardImportForm.fileToken = res.data
+            }
+        })
+    },
+      closeCardImportDlg:function(){
+          this.showCardImportDlg = false
+      }, 
+      okCardImport:function(){
+        //   importPoolCards
+        if(this.cardImportForm.fileToken == undefined || this.cardImportForm.fileToken == ''){
+            alert('请先上传要操作的excel文件')
+            return
+        }
+        let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = {}
+            params.serviceName = this.cardImportForm.serviceName
+            params.type = this.cardImportForm.type
+            params.fileToken = this.cardImportForm.fileToken
+            apiBigflow.importStockCards(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryBigflowStocks()
+                    alert('操作成功')
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        }); 
+      }, 
+      openCardImportDlg:function(){
+          this.showCardImportDlg = true
+          },
       openStock2ChannelDlg:function(){
           this.showStock2ChannelDlg = true
       },    
@@ -200,6 +467,14 @@ export default {
             if(res.resultCode == 0){
                 this.channels = res.data
                 this.total = res.rowNum
+            }
+        })
+    },
+    getAllServiceInfo:function(){
+        let params = {}
+        apiBigflow.getAllServiceInfo(params).then(res=>{
+            if(res.resultCode == 0){
+                this.serviceInfos = res.data
             }
         })
     },

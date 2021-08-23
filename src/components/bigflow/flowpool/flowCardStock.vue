@@ -160,51 +160,6 @@
             <el-button size="small" type="primary">点击上传</el-button>
             </el-upload>
         </el-form>
-        <!-- <el-form-item label="买家姓名"> 
-          <el-input style="width:300px;"  v-model="orderImportForm.name" placeholder="请输入买家姓名" ></el-input>
-        </el-form-item>
-        <el-form-item label="分配渠道">
-          <el-select 
-          filterable
-          clearable
-          reserve-keyword
-          class="queryFormInput"  placeholder="请选择分配渠道" v-model="orderImportForm.saleChannel" @change="handleSelectChannel">
-            <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="销售员">
-          <el-select 
-          filterable
-          clearable
-          reserve-keyword
-          class="queryFormInput"   placeholder="请选择销售员" v-model="orderImportForm.salePerson2">
-            <el-option v-for="item in salePersons" :key="item.value" :label="item.name" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="预充值套餐">
-          <el-select class="queryFormInput"  clearable placeholder="请选择预充值套餐" v-model="orderImportForm.productCode">
-            <el-option v-for="item in products2Change" :key="item.value" :label="item.name" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="赠送流量(MB)">
-          <el-input style="width:300px;"  v-model="orderImportForm.giveUsage" onkeyup="value=value.replace(/[^\d]/g,'')" placeholder="请输入赠送流量" ></el-input>
-        </el-form-item>
-        <span>
-            请按照单位填写正确的用量(1GB=1024MB)，不要带上单位！！！
-        </span>
-        <el-form-item label="赠送用量类型">
-          <el-select class="queryFormInput"  clearable placeholder="赠送用量类型" v-model="orderImportForm.giveUsageType">
-            <el-option v-for="item in giveTypes" :key="item.value" :label="item.name" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <span>
-            包含套餐：卡激活成功后，只有套餐用量，赠送的用量清零。不包含就进行叠加
-        </span>
-        <el-form  label-width="120px">
-        <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadFile" :on-remove="removeUploadedFile">
-          <el-button size="small" type="primary">点击上传</el-button>
-        </el-upload>
-      </el-form> -->
       </el-form>
       
       <span slot="footer" class="dialog-footer">
@@ -284,7 +239,7 @@ export default {
     uploadFile (item) {
         let params = new FormData()
         params.append('file', item.file)
-        apiBigflow.uploadOrderFile(params).then(res=>{
+        apiBigflow.uploadFile(params).then(res=>{
             if(res.resultCode == 0){
                this.poolCardImortForm.fileToken = res.data
             }

@@ -14,6 +14,10 @@ export default {
     getAllPools: params =>{
         return API.GET('/bigflow/manage/v1.0/pools', params)
     },
+    getAllServiceInfo: params =>{
+        return API.GET('/bigflow/manage/v1.0/serviceinfos', params)
+    },
+    
     getCardInfos:params =>{
         return API.POST('/bigflow/manage/v1.0/card/infos', params)
     },
@@ -110,7 +114,7 @@ export default {
     moveOrderByIccidsBetween: params =>{
         return API.POST('/bigflow/manage/v1.0/order/move/iccidbetween', params)
     },
-    uploadOrderFile: (params) => {
+    uploadFile: (params) => {
       return API.POST('/bigflow/manage/v1.0/order/file/upload', params, {
         headers: {
           'content-type': 'multipart/form-data'
@@ -122,7 +126,15 @@ export default {
     },
     importPoolCards: params =>{
         return API.POST('/bigflow/manage/v1.0/flowpools/card/import', params)
+    },
+    importStockCards: params =>{
+        return API.POST('/bigflow/manage/v1.0/stock/card/import', params)
+    },
+    moveStockCards: params =>{
+        return API.POST('/bigflow/manage/v1.0/stock/card/move', params)
+    },
+    moveStockCards2Channel: params =>{
+        return API.POST('/bigflow/manage/v1.0/stock/card/channel/move', params)
     }
-
     
 }
