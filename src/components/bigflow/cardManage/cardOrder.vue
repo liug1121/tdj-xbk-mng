@@ -297,7 +297,6 @@ export default {
             if(res.resultCode == 0){
                this.orderImportForm.fileToken = res.data
             }
-            that.btnEnable = false
         })
     },
     openOrderImportDlg:function(){

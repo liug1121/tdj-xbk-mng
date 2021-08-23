@@ -33,7 +33,7 @@
       </el-form>
       <div class="button_content">
         <el-button size="medium" type="primary" icon="el-icon-edit" 
-        v-permission="{indentity:'bigflowFlowCardStock-cardDistribution'}">卡片划拨</el-button>
+        v-permission="{indentity:'bigflowFlowCardStock-cardDistribution'}" @click="openPoolCardImortDlg">卡片划拨</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowFlowCardStock-distributionForIccid'}" @click="openMovePoolByIccidsDlg">首尾ICCID划拨</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
@@ -134,6 +134,84 @@
         <el-button type="primary" @click="okMovePoolByIccids" :disabled="btnEnable">确 定</el-button>
       </span>   
     </el-dialog>
+
+
+    <el-dialog title="卡片划拨" :visible.sync="showPoolCardImortDlg" width="450px" @close="closePoolCardImortDlg">
+      <el-form :model="poolCardImortForm"  label-width="110px">
+        <el-form-item label="流量池">
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword
+          class="queryFormInput"  placeholder="请输入流量池" v-model="poolCardImortForm.poolId">
+            <el-option v-for="item in pools" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="超量是否关停">
+          <el-select class="queryFormInput"  clearable placeholder="超量是否关停" v-model="poolCardImortForm.useLimitStatus">
+            <el-option v-for="item in useLimitStatus" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="变更原因"> 
+          <el-input style="width:300px;"  v-model="poolCardImortForm.reason" placeholder="请输入变更原因" ></el-input>
+        </el-form-item>
+        <el-form  label-width="120px">
+            <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadFile" :on-remove="removeUploadedFile">
+            <el-button size="small" type="primary">点击上传</el-button>
+            </el-upload>
+        </el-form>
+        <!-- <el-form-item label="买家姓名"> 
+          <el-input style="width:300px;"  v-model="orderImportForm.name" placeholder="请输入买家姓名" ></el-input>
+        </el-form-item>
+        <el-form-item label="分配渠道">
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword
+          class="queryFormInput"  placeholder="请选择分配渠道" v-model="orderImportForm.saleChannel" @change="handleSelectChannel">
+            <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="销售员">
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword
+          class="queryFormInput"   placeholder="请选择销售员" v-model="orderImportForm.salePerson2">
+            <el-option v-for="item in salePersons" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="预充值套餐">
+          <el-select class="queryFormInput"  clearable placeholder="请选择预充值套餐" v-model="orderImportForm.productCode">
+            <el-option v-for="item in products2Change" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="赠送流量(MB)">
+          <el-input style="width:300px;"  v-model="orderImportForm.giveUsage" onkeyup="value=value.replace(/[^\d]/g,'')" placeholder="请输入赠送流量" ></el-input>
+        </el-form-item>
+        <span>
+            请按照单位填写正确的用量(1GB=1024MB)，不要带上单位！！！
+        </span>
+        <el-form-item label="赠送用量类型">
+          <el-select class="queryFormInput"  clearable placeholder="赠送用量类型" v-model="orderImportForm.giveUsageType">
+            <el-option v-for="item in giveTypes" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <span>
+            包含套餐：卡激活成功后，只有套餐用量，赠送的用量清零。不包含就进行叠加
+        </span>
+        <el-form  label-width="120px">
+        <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadFile" :on-remove="removeUploadedFile">
+          <el-button size="small" type="primary">点击上传</el-button>
+        </el-upload>
+      </el-form> -->
+      </el-form>
+      
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closePoolCardImortDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okPoolCardImort" :disabled="btnEnable">确 定</el-button>
+      </span>  
+    </el-dialog>
   </div>
 </template>
 
@@ -145,6 +223,8 @@ export default {
   },
   data () {
     return {
+    showPoolCardImortDlg:false, 
+    poolCardImortForm:{},
     btnEnable:false,
     showMovePoolByIccidsDlg:false, 
     movePoolByIccidsForm:{},
@@ -198,6 +278,55 @@ export default {
   },
   watch: {},
   methods: {
+    removeUploadedFile(file,fileList){
+        this.poolCardImortForm.fileToken = ''
+    },
+    uploadFile (item) {
+        let params = new FormData()
+        params.append('file', item.file)
+        apiBigflow.uploadOrderFile(params).then(res=>{
+            if(res.resultCode == 0){
+               this.poolCardImortForm.fileToken = res.data
+            }
+        })
+    },
+    openPoolCardImortDlg:function(){
+        this.showPoolCardImortDlg = true
+    },  
+    closePoolCardImortDlg:function(){
+        this.showPoolCardImortDlg = false
+    },  
+    okPoolCardImort:function(){
+        let that = this
+        // importPoolCards
+        if(this.poolCardImortForm.fileToken == undefined || this.poolCardImortForm.fileToken == ''){
+            alert('请先上传要操作的excel文件')
+            return
+        }
+        
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = {}
+            params.poolId = this.poolCardImortForm.poolId
+            params.useLimitStatus = this.poolCardImortForm.useLimitStatus
+            params.reason = this.poolCardImortForm.reason
+            params.fileToken = this.poolCardImortForm.fileToken
+            apiBigflow.importPoolCards(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryFlowCardStocks()
+                    alert('操作成功')
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        }); 
+    },
     openMovePoolByIccidsDlg:function(){
         if(this.iccids2Opt == ''){
             alert("请选择要操作的卡")
@@ -222,7 +351,7 @@ export default {
             params.reason = this.movePoolByIccidsForm.reason
             params.poolId = this.movePoolByIccidsForm.poolId
             params.useLimitStatus = this.movePoolByIccidsForm.useLimitStatus
-            
+
             apiBigflow.movePoolIccidsBetween(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryFlowCardStocks()
