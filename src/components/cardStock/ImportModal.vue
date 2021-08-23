@@ -21,7 +21,7 @@
       </el-form-item>
 
       <el-form ref="ImportForm" :model="ImportForm" label-width="120px">
-        <el-upload class="unload-demo" accept=".xls, .xlsx" action="#" :file-list="fileList" :http-request="uploadFile">
+        <el-upload class="unload-demo" accept=".xls, .xlsx" action="#" :file-list="fileList" :http-request="uploadFile" >
           <el-button size="small" type="primary">点击上传</el-button>
         </el-upload>
       </el-form>
@@ -93,7 +93,6 @@ export default {
       const that = this
       that.file = item.file
     },
-    // 导入文件
     uploadIt () {
       this.$refs["ImportForm"].validate(valid => {
         if (!valid) return

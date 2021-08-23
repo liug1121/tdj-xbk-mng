@@ -42,7 +42,7 @@
         <el-button size="medium" type="primary" icon="el-icon-download" 
         v-permission="{indentity:'bigflowCardOrder-export'}">导出</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
-        v-permission="{indentity:'bigflowCardOrder-createAndDistribution'}">创建订单并分配渠道</el-button>
+        v-permission="{indentity:'bigflowCardOrder-createAndDistribution'}" @click="openOrderImportDlg">创建订单并分配渠道</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardOrder-distribution'}" @click="openMoveOrderDlg">首尾分配渠道</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
@@ -99,11 +99,11 @@
         <el-form-item label="尾ICCID">
           <el-input style="width:300px;"  v-model="moveOrderForm.iccidEnd" placeholder="请输入尾ICCID" ></el-input>
         </el-form-item>
-        <!-- <el-form-item label="预充值套餐">
+        <el-form-item label="预充值套餐">
           <el-select class="queryFormInput"  clearable placeholder="请选择预充值套餐" v-model="moveOrderForm.productCode">
             <el-option v-for="item in products2Change" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
-        </el-form-item> -->
+        </el-form-item>
         <el-form-item label="赠送流量(MB)">
           <el-input style="width:300px;"  v-model="moveOrderForm.giveUsage" onkeyup="value=value.replace(/[^\d]/g,'')" placeholder="请输入赠送流量" ></el-input>
         </el-form-item>
@@ -133,7 +133,79 @@
         <el-button type="primary" @click="okMoveOrder" :disabled="btnEnable">确 定</el-button>
       </span>  
     </el-dialog> 
+
+     <el-dialog title="文件导入" :visible.sync="showOrderImportDlg" width="450px" @close="closeOrderImportDlg">
+      <el-form :model="orderImportForm"  label-width="110px">
+        <el-form-item label="买家姓名">
+          <el-input style="width:300px;"  v-model="orderImportForm.name" placeholder="请输入买家姓名" ></el-input>
+        </el-form-item>
+        <el-form-item label="分配渠道">
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword
+          class="queryFormInput"  placeholder="请选择分配渠道" v-model="orderImportForm.saleChannel" @change="handleSelectChannel">
+            <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="销售员">
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword
+          class="queryFormInput"   placeholder="请选择销售员" v-model="orderImportForm.salePerson2">
+            <el-option v-for="item in salePersons" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="预充值套餐">
+          <el-select class="queryFormInput"  clearable placeholder="请选择预充值套餐" v-model="orderImportForm.productCode">
+            <el-option v-for="item in products2Change" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="赠送流量(MB)">
+          <el-input style="width:300px;"  v-model="orderImportForm.giveUsage" onkeyup="value=value.replace(/[^\d]/g,'')" placeholder="请输入赠送流量" ></el-input>
+        </el-form-item>
+        <span>
+            请按照单位填写正确的用量(1GB=1024MB)，不要带上单位！！！
+        </span>
+        <el-form-item label="赠送用量类型">
+          <el-select class="queryFormInput"  clearable placeholder="赠送用量类型" v-model="orderImportForm.giveUsageType">
+            <el-option v-for="item in giveTypes" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <span>
+            包含套餐：卡激活成功后，只有套餐用量，赠送的用量清零。不包含就进行叠加
+        </span>
+        <el-form  label-width="120px">
+        <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadFile" :on-remove="removeUploadedFile">
+          <el-button size="small" type="primary">点击上传</el-button>
+        </el-upload>
+      </el-form>
+      </el-form>
+      <span>
+          <p>1）下载模板后，填写数据。ICCID 字段为必填。</p>
+
+            <p>2）会根据提交的信息创建订单，并分配库存渠道、销售员</p>
+
+            <p>3）如果订单存在，库存也已经分配过了。会进行覆盖更新</p>
+
+            <p>4）卡状态不是 “可销售” 的不能进行操作，“已激活” 的也不可以。请确保提交的文件或所选择的信息是符合条件的</p>
+      </span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeOrderImportDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okOrderImport" :disabled="btnEnable">确 定</el-button>
+      </span>  
+    </el-dialog>
   </div>
+
+  <!-- private String name;
+	private String saleChannel;
+	private String salePerson2;
+	private String productCode;
+	private Integer giveUsage;
+	private Integer giveUsageType;
+	private String fileToken;
+	private String type; -->
 </template>
 
 <script>
@@ -147,6 +219,8 @@ export default {
   },
   data () {
     return {
+        showOrderImportDlg:false,  
+        orderImportForm:{},
         showMoveOrderDlg:false, 
         moveOrderForm:{}, 
         btnEnable:false,
@@ -213,6 +287,58 @@ export default {
   },
   watch: {},
   methods: {
+    removeUploadedFile(file,fileList){
+        this.orderImportForm.fileToken = ''
+    },
+    uploadFile (item) {
+        let params = new FormData()
+        params.append('file', item.file)
+        apiBigflow.uploadOrderFile(params).then(res=>{
+            if(res.resultCode == 0){
+               this.orderImportForm.fileToken = res.data
+            }
+            that.btnEnable = false
+        })
+    },
+    openOrderImportDlg:function(){
+        this.showOrderImportDlg = true
+    },
+    closeOrderImportDlg:function (){
+        this.showOrderImportDlg = false
+    },
+    okOrderImport:function(){
+        if(this.orderImportForm.fileToken == undefined || this.orderImportForm.fileToken == ''){
+            alert('请先上传要操作的excel文件')
+            return
+        }
+        let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = {}
+            params.name = this.orderImportForm.name
+            params.saleChannel = this.orderImportForm.saleChannel
+            params.salePerson2 = this.orderImportForm.salePerson2
+            params.giveUsage = this.orderImportForm.giveUsage
+            params.giveUsageType = this.orderImportForm.giveUsageType
+            params.productCode = this.orderImportForm.productCode
+            params.fileToken = this.orderImportForm.fileToken
+            params.type = this.orderImportForm.type
+            apiBigflow.importOrder2Channel(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryCardOrders()
+                    alert('操作成功')
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        }); 
+    },
     openMoveOrderDlg:function(){
         this.showMoveOrderDlg = true
     }, 

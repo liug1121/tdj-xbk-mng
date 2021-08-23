@@ -110,4 +110,14 @@ export default {
     moveOrderByIccidsBetween: params =>{
         return API.POST('/bigflow/manage/v1.0/order/move/iccidbetween', params)
     },
+    uploadOrderFile: (params) => {
+      return API.POST('/bigflow/manage/v1.0/order/file/upload', params, {
+        headers: {
+          'content-type': 'multipart/form-data'
+        }
+      })
+    },
+    importOrder2Channel: params =>{
+        return API.POST('/bigflow/manage/v1.0/order/channel/import', params)
+    },
 }
