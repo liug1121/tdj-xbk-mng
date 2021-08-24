@@ -409,7 +409,19 @@ export default {
                     that.btnEnable = false
                 })
             }else if(that.optType == 2){
-
+                let params = new FormData()
+                params.append('file', this.uploadedFile)
+                let reason = this.expireDateExtendForm.reason
+                let extendTime = this.expireDateExtendForm.extendTime
+                apiBigflow.file2ExpiredateExtend(params, reason, extendTime).then(res=>{
+                    if(res.resultCode == 0){
+                        that.queryCardInfos()
+                        alert('操作成功')
+                    }else{
+                        alert('操作失败:' + res.resultInfo)
+                    }
+                    that.btnEnable = false
+                })
             }
             
         }).catch(() => {

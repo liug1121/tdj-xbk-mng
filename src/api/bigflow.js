@@ -124,6 +124,13 @@ export default {
         }
       })
     },
+    file2ExpiredateExtend: (params, reason, extendTime) => {
+        return API.POST(`/bigflow/manage/v1.0/card/expiredate/file2Extend?extendTime=${extendTime}&reason=${reason}`, params, {
+          headers: {
+            'content-type': 'multipart/form-data'
+          }
+        })
+      },
     importOrder2Channel: params =>{
         return API.POST('/bigflow/manage/v1.0/order/channel/import', params)
     },
