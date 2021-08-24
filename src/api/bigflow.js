@@ -145,6 +145,12 @@ export default {
     },
     moveStockCards2Channel: params =>{
         return API.POST('/bigflow/manage/v1.0/stock/card/channel/move', params)
-    }
-    
+    },
+    file2CardUsageCheck: (params) => {
+        return API.POST('/bigflow/manage/v1.0/card/useage/check/file', params, {
+            headers: {
+            'content-type': 'multipart/form-data'
+            }
+        })
+    } 
 }
