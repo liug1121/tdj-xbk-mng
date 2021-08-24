@@ -416,7 +416,7 @@ export default {
                 apiBigflow.file2ExpiredateExtend(params, reason, extendTime).then(res=>{
                     if(res.resultCode == 0){
                         that.queryCardInfos()
-                        alert('操作成功')
+                        alert('操作成功,请在任务：' + res.data + "中查询处理结果")
                     }else{
                         alert('操作失败:' + res.resultInfo)
                     }
