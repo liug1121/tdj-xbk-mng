@@ -44,7 +44,7 @@
       </el-form>
       <div class="button_content">
         <el-button size="medium" type="primary" icon="el-icon-download" 
-        v-permission="{indentity:'bigflowCardChange-export'}">导出</el-button>
+        v-permission="{indentity:'bigflowCardChange-export'}" disabled>导出</el-button>
       </div>
       <!-- 列表区域 -->
       <div class="cardNos">

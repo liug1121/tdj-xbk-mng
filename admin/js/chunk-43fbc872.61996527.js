@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-43fbc872"],{"1e71":function(t,n,c){"use strict";c.r(n);var e=function(){var t=this,n=t.$createElement,c=t._self._c||n;return c("div",[c("el-card",{staticClass:"all_list"},[c("span",{staticStyle:{"font-size":"20px"}},[t._v("欢迎进入卡管理平台")])])],1)},a=[],s={data:function(){return{}}},i=s,u=(c("971a"),c("2877")),l=Object(u["a"])(i,e,a,!1,null,"2fdc07cf",null);n["default"]=l.exports},"3b9d":function(t,n,c){},"971a":function(t,n,c){"use strict";c("3b9d")}}]);
+//# sourceMappingURL=chunk-43fbc872.61996527.js.map

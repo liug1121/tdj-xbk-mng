@@ -40,13 +40,13 @@
       <!-- 按钮区域 -->
       <div class="button_content">
         <el-button size="medium" type="primary" icon="el-icon-download" 
-        v-permission="{indentity:'bigflowCardOrder-export'}">导出</el-button>
+        v-permission="{indentity:'bigflowCardOrder-export'}" disabled>导出</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardOrder-createAndDistribution'}" @click="openOrderImportDlg">创建订单并分配渠道</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardOrder-distribution'}" @click="openMoveOrderDlg">首尾分配渠道</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
-        v-permission="{indentity:'bigflowCardOrder-exportFor'}">按首尾条件导出</el-button>
+        v-permission="{indentity:'bigflowCardOrder-exportFor'}" disabled>按首尾条件导出</el-button>
       </div>
       <!-- 列表区域 -->
       <div class="cardNos">
@@ -293,7 +293,7 @@ export default {
     uploadFile (item) {
         let params = new FormData()
         params.append('file', item.file)
-        apiBigflow.uploadOrderFile(params).then(res=>{
+        apiBigflow.uploadFile(params).then(res=>{
             if(res.resultCode == 0){
                this.orderImportForm.fileToken = res.data
             }

@@ -36,7 +36,7 @@
       </el-form>
       <div class="button_content">
         <el-button size="medium" type="primary" icon="el-icon-download" 
-        v-permission="{indentity:'bigflowStockMng-export'}">导出</el-button>
+        v-permission="{indentity:'bigflowStockMng-export'}" disabled>导出</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowStockMng-import'}" @click="openCardImportDlg">导入</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
@@ -46,7 +46,7 @@
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowStockMng-distributeForHeadAndTail'}" @click="openStock2ChannelDlg">首尾分配渠道</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
-        v-permission="{indentity:'bigflowStockMng-exportFor'}">按首尾条件导出</el-button>
+        v-permission="{indentity:'bigflowStockMng-exportFor'}" disabled>按首尾条件导出</el-button>
       </div>
       <!-- 列表区域 -->
       <div class="cardNos">
@@ -308,7 +308,7 @@ export default {
             that.btnEnable = true
             let params = {}
             params.channelId = this.moveCard2ChannelForm.channelId
-            params.fileToken = this.moveCard2ChannelForm.fileToken
+            params.fileToken = this.moveCard2ChannelForm.fileTokeng
             apiBigflow.moveStockCards2Channel(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryBigflowStocks()

@@ -16,7 +16,7 @@
       </el-form>
       <div class="button_content">
         <el-button size="medium" type="primary" icon="el-icon-edit" 
-        v-permission="{indentity:'bigflowAccessWechat-add'}">添加</el-button>
+        v-permission="{indentity:'bigflowAccessWechat-add'}" disabled>添加</el-button>
       </div>
       <!-- 列表区域 -->
       <div class="cardNos">

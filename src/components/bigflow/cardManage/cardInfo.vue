@@ -213,6 +213,14 @@
     <el-dialog title="延长有效期" :visible.sync="showExpireDateExtendDlg" width="450px" @close="closeExpireDateExtendDlg">
       <!-- 内容主体区域 --> 
       <el-form :model="expireDateExtendForm"  label-width="110px">
+        <el-form-item label="操作类型">
+          <el-select class="queryFormInput"  clearable placeholder="请选择操作类型" v-model="optType">
+            <el-option v-for="item in optTypes" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-upload v-if="optType == 2" class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadFile" :on-remove="removeUploadedFile">
+          <el-button size="small" type="primary">点击上传</el-button>
+        </el-upload>
         <el-form-item label="时长（月）">
           <el-input style="width:300px;" onkeyup="value=value.replace(/[^\d]/g,'')" v-model="expireDateExtendForm.extendTime" placeholder="请输入时长" ></el-input>
         </el-form-item>
@@ -238,6 +246,7 @@ export default {
   },
   data () {
     return {
+        
         showExpireDateExtendDlg:false,
         expireDateExtendForm:{},
 
@@ -287,6 +296,13 @@ export default {
             {label:'认证失败', value:'authedFail'},
             {label:'取消实名', value:'close'}
         ],
+        optTypes:[
+            {value:'0', name:'已勾选的卡'},
+            {value:'1', name:'已查询出的全部卡'},
+            {value:'2', name:'文件导入'}
+        ],
+        optType:'',
+        uploadedFile:null,
         poolId:'',
         pools:[] ,
         packageCode:'',
@@ -338,41 +354,70 @@ export default {
   },
   watch: {},
   methods: {
+    removeUploadedFile(file,fileList){
+        this.uploadedFile = null
+    },
+    uploadFile (item) {
+        this.uploadedFile = item.file
+    },
     openExpireDateExtendDlg:function(){
-        if(this.iccids2Opt == ''){
-            alert('iccid必须填')
-            return
-        }
+        this.optType = ''
+        this.uploadedFile = null
         this.showExpireDateExtendDlg = true
     },
     closeExpireDateExtendDlg:function(){
         this.showExpireDateExtendDlg = false
     }, 
     okExpireDateExtend:function(){
+        // let params = this.createQueryParams()
         let that = this
         this.$confirm('您确认要此操作, 是否继续?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
         }).then(() => {
-            that.btnEnable = true
-            let params = {}
-            params.iccids = this.iccids2Opt
-            params.reason = this.expireDateExtendForm.reason
-            params.extendTime = this.expireDateExtendForm.extendTime
-            apiBigflow.expiredateextend(params).then(res=>{
-                if(res.resultCode == 0){
-                    that.queryCardInfos()
-                    alert('操作成功')
-                }else{
-                    alert('操作失败:' + res.resultInfo)
+            if(that.optType == 0){
+                if(this.iccids2Opt == ''){
+                    alert('iccid必须填')
+                    return
                 }
-                that.btnEnable = false
-            })
+                that.btnEnable = true
+                let params = {}
+                params.iccids = this.iccids2Opt
+                params.reason = this.expireDateExtendForm.reason
+                params.extendTime = this.expireDateExtendForm.extendTime
+                apiBigflow.expiredateextend(params).then(res=>{
+                    if(res.resultCode == 0){
+                        that.queryCardInfos()
+                        alert('操作成功')
+                    }else{
+                        alert('操作失败:' + res.resultInfo)
+                    }
+                    that.btnEnable = false
+                })
+            }else if(that.optType == 1){
+                let params = this.createQueryParams()
+                params.reason = this.expireDateExtendForm.reason
+                params.extendTime = this.expireDateExtendForm.extendTime
+                apiBigflow.batchExpiredateExtend(params).then(res=>{
+                    if(res.resultCode == 0){
+                        that.queryCardInfos()
+                        alert('操作成功')
+                    }else{
+                        alert('操作失败:' + res.resultInfo)
+                    }
+                    that.btnEnable = false
+                })
+            }else if(that.optType == 2){
+
+            }
+            
         }).catch(() => {
         }); 
     },
     openChangeCommonTypeDlg:function(){
+        this.optType = ''
+        this.uploadedFile = null
         if(this.iccids2Opt == ''){
             alert('iccid必须填')
             return
@@ -413,6 +458,8 @@ export default {
     },
 
     openChangeProductDlg:function(){
+        this.optType = ''
+        this.uploadedFile = null
         if(this.iccids2Opt == ''){
             alert('iccid必须填')
             return
@@ -470,6 +517,8 @@ export default {
         })
     },
     openDosChangeDlg:function(){
+        this.optType = ''
+        this.uploadedFile = null
         if(this.iccids2Opt == ''){
             alert('iccid必须填')
             return
@@ -505,6 +554,8 @@ export default {
         }); 
     },
     openDosClearDlg:function(){
+        this.optType = ''
+        this.uploadedFile = null
         if(this.iccids2Opt == ''){
             alert('iccid必须填')
             return
@@ -564,6 +615,8 @@ export default {
         });
     },
     openUnbindDlg:function(){
+        this.optType = ''
+        this.uploadedFile = null
         if(this.iccids2Opt == ''){
             alert('iccid必须填')
             return
@@ -573,6 +626,8 @@ export default {
 
 
     openChangeStatusDlg:function(){
+        this.optType = ''
+        this.uploadedFile = null
         if(this.iccids2Opt == ''){
             alert('iccid必须填')
             return
@@ -606,8 +661,7 @@ export default {
         }).catch(() => {
         });
     },
-    queryCardInfos:function(){
-        this.loading = true
+    createQueryParams:function(){
         let params = {}
         params.page = this.page
         if(this.iccid != '')
@@ -630,6 +684,11 @@ export default {
             params.gmtActivateStart = this.openCardStartDate
         if(this.openCardEndDate != '')
             params.gmtActivateEnd = this.openCardEndDate
+        return params
+    },
+    queryCardInfos:function(){
+        this.loading = true
+        let params = this.createQueryParams()
         apiBigflow.getCardInfos(params).then(res=>{
             if(res.resultCode == 0){
                 this.cardInfos = res.data
