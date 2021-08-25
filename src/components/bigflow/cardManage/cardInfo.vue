@@ -237,7 +237,7 @@
       </span>  
     </el-dialog> 
 
-    <el-dialog title="延长有效期" :visible.sync="showFile2CheckDlg" width="450px" @close="closeFile2CheckDlg">
+    <el-dialog title="与CMP进行用量核查" :visible.sync="showFile2CheckDlg" width="450px" @close="closeFile2CheckDlg">
         <el-upload class="unload-demo" accept=".xls, .xlsx" action="#" :file-list="file2CheckFiles" :http-request="uploadFile2CheckFile" :on-remove="removeUploadedFile2Check">
           <el-button size="small" type="primary">点击上传</el-button>
         </el-upload>
