@@ -11,7 +11,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="商品名" prop="goodId">
-        <el-select size="small" v-model="addChanelPCGForm.goodId" filterable placeholder="请选择商品" style="width:100%">
+        <el-select size="small" v-model="addChanelPCGForm.goodId" filterable placeholder="请选择商品" style="width:100%" @change="goodChange">
           <el-option v-for="item in packageList" :key="item.id" :label="item.name" :value="item.id">
           </el-option>
         </el-select>
@@ -84,6 +84,7 @@ export default {
       cardFeeList: [],
       cardFeeShow: true,
       provinceShow: true,
+      goodType:-1,
       addChanelPCGRules: {
         type: [
           { required: true, message: '请选择商品类型', trigger: 'change' }
@@ -111,7 +112,29 @@ export default {
     this.getGoodsList();
   },
   methods: {
+    goodChange:function(goodId){
+      this.provinceShow = false
+      this.packageList.filter(item=>{
+        if(item.id === goodId){
+          let pkg = null
+          if(item.type === 0){
+            pkg = item.pkg
+          }else if(item.type === 1){
+            pkg = item.addedPackage
+          }
+          if(pkg != null){
+            let areaType = pkg.area_type
+          if(areaType === 0){
+            this.provinceShow = true
+          }else{
+            this.provinceShow = false
+          }
+          }
+        }
+      })
+    },
     goodsTypeChange (vId) {
+      this.goodType = vId
       if (vId === 0) {
         this.packageList = this.GoodsList.filter(item => {
           return item.type === 0
@@ -119,7 +142,7 @@ export default {
           return item
         })
         this.cardFeeShow = true
-        this.provinceShow = true
+        // this.provinceShow = true
       }
       if (vId === 1) {
         this.packageList = this.GoodsList.filter(item => {
@@ -128,7 +151,7 @@ export default {
           return item
         })
         this.cardFeeShow = false
-        this.provinceShow = true
+        // this.provinceShow = true
       }
       if (vId === 2) {
         this.packageList = this.GoodsList.filter(item => {
@@ -137,7 +160,7 @@ export default {
           return item
         })
         this.cardFeeShow = false
-        this.provinceShow = false
+        // this.provinceShow = false
       }
     },
     getGoodsList () {
@@ -172,7 +195,6 @@ export default {
           salePrice: this.addChanelPCGForm.salePrice,
           status: this.addChanelPCGForm.status
         }
-        console.log(data);
         this.$emit("addChanelPCGSuccess", data);
         this.dialogVisible = false;
         this.$refs.addChanelPCGRef.resetFields()
