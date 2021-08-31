@@ -318,7 +318,7 @@ export default {
             apiBigflow.file2OrdersDelete(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryCardOrders()
-                    alert('操作成功')
+                    alert('操作成功,请在任务：' + res.data + "中查询处理结果")
                 }else{
                     alert('操作失败:' + res.resultInfo)
                 }
