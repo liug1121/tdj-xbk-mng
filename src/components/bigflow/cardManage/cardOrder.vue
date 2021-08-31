@@ -47,6 +47,8 @@
         v-permission="{indentity:'bigflowCardOrder-distribution'}" @click="openMoveOrderDlg">首尾分配渠道</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardOrder-exportFor'}" disabled>按首尾条件导出</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowCardOrder-exportFor'}" @click="openBatchDeleteOrderDlg">批量删除订单</el-button>
       </div>
       <!-- 列表区域 -->
       <div class="cardNos">
@@ -196,16 +198,21 @@
         <el-button type="primary" @click="okOrderImport" :disabled="btnEnable">确 定</el-button>
       </span>  
     </el-dialog>
-  </div>
 
-  <!-- private String name;
-	private String saleChannel;
-	private String salePerson2;
-	private String productCode;
-	private Integer giveUsage;
-	private Integer giveUsageType;
-	private String fileToken;
-	private String type; -->
+    <el-dialog title="批量删除订单" :visible.sync="showBatchDeleteOrder" width="450px" @close="closeBatchDeleteOrderDlg">
+      <el-form  label-width="110px"> 
+        <el-form  label-width="120px">
+        <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadBatchDeleteOrderFile" :on-remove="removeBatchDeleteOrderFile">
+          <el-button size="small" type="primary">点击上传</el-button>
+        </el-upload>
+      </el-form>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeBatchDeleteOrderDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okBatchDeleteOrder" :disabled="btnEnable">确 定</el-button>
+      </span>  
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -219,6 +226,7 @@ export default {
   },
   data () {
     return {
+        showBatchDeleteOrder:false,
         showOrderImportDlg:false,  
         orderImportForm:{},
         showMoveOrderDlg:false, 
@@ -287,6 +295,45 @@ export default {
   },
   watch: {},
   methods: {
+    openBatchDeleteOrderDlg:function(){
+        this.showBatchDeleteOrder = true
+    },
+    closeBatchDeleteOrderDlg:function(){
+        this.showBatchDeleteOrder = false
+    }, 
+    okBatchDeleteOrder:function(){
+        if(this.batchDeleteOrderFile == null){
+            alert('请先上传要操作的excel文件')
+            return
+        }
+        let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = new FormData()
+            params.append('file', this.batchDeleteOrderFile)
+            apiBigflow.file2OrdersDelete(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryCardOrders()
+                    alert('操作成功')
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        });  
+    },
+    removeBatchDeleteOrderFile(file,fileList){
+        this.batchDeleteOrderFile = null
+    },
+    uploadBatchDeleteOrderFile (item) {
+        console.log('aaa')
+        this.batchDeleteOrderFile = item.file
+    },
     removeUploadedFile(file,fileList){
         this.orderImportForm.fileToken = ''
     },
@@ -306,7 +353,7 @@ export default {
         this.showOrderImportDlg = false
     },
     okOrderImport:function(){
-        if(this.orderImportForm.fileToken == undefined || this.orderImportForm.fileToken == ''){
+         if(this.orderImportForm.fileToken == undefined || this.orderImportForm.fileToken == ''){
             alert('请先上传要操作的excel文件')
             return
         }
