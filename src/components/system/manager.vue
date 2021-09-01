@@ -3,6 +3,22 @@
     <el-card class="all_list">
       <!-- 查询区域 -->
       <el-form  :inline="true">
+        <el-form-item label="">
+                <el-select 
+                filterable
+                clearable
+                reserve-keyword
+                class="queryFormInput"   placeholder="请选择用户名" v-model="queryName">
+                    <el-option v-for="item in allManagers" :key="item.id" :label="item.name" :value="item.name"></el-option>
+                </el-select>
+            </el-form-item>
+        <el-button size="medium" type="primary" icon="el-icon-search" @click="queryManagers">查询</el-button>
+      </el-form>
+      <el-form  :inline="true">
+            <div class="button_content">
+                <el-button size="medium" type="primary" icon="el-icon-edit" @click="showAddMangerDlg" 
+                >新增管理员</el-button>
+            </div>
       </el-form>
       <!-- 列表区域 -->
       <div class="cardNos">
@@ -60,6 +76,32 @@
         <el-button type="primary" @click="roleSelDlgOk">确 定</el-button>
       </span>
     </el-dialog>
+    <el-dialog title="新增管理员" :visible.sync="addManagerDlgShow" width="430px" >
+      <el-form  :model="addManager" label-width="120px">
+        <el-form-item label="用户名">
+          <el-input size="small"  placeholder="请输入用户名" v-model="addManager.userName"></el-input>
+        </el-form-item>
+        <el-form-item label="姓名">
+          <el-input size="small"  placeholder="请输入姓名" v-model="addManager.name"></el-input>
+        </el-form-item>
+        <el-form-item label="密码">
+          <el-input size="small"  placeholder="请输入密码" v-model="addManager.pwd"></el-input>
+        </el-form-item>
+        <el-form-item label="角色">
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword
+          class="queryFormInput"   placeholder="请选择角色" v-model="addManager.roleId">
+            <el-option v-for="item in allRoles" :key="item.id" :label="item.name" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeAddMangerDlg">取 消</el-button>
+        <el-button type="primary" @click="addManagerClick">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -71,9 +113,14 @@ export default {
   },
   data () {
     return {
+    addManagerDlgShow:false,
+    addManager:{},
+    queryName:'',
     loading: false,
     managers:[],
+    allManagers:[],
     roles:[],
+    allRoles:[],
     managerDlgShow:false,
     roleDlgShow:false,
     manager2Edit:{},
@@ -101,6 +148,7 @@ export default {
   },
   created(){
       this.queryAllManagers()
+      this.getAllSysRoles()
   },
   watch: {},
   updated(){
@@ -110,10 +158,71 @@ export default {
 
   },
   methods: {
+    queryManagers:function(){
+        this.queryManagers()
+    },
+    closeAddMangerDlg:function(){
+        this.addManagerDlgShow = false
+    },
+    showAddMangerDlg:function(){
+        this.addManagerDlgShow = true
+    },
     refreshRolesSelected:function(){
         this.roles.forEach(role => {
             if (role.has == true) {    
                 this.$refs.roleSelTable.toggleRowSelection(role, true) 
+            }
+        })
+    },
+    addManagerClick:function(){
+        let userName = this.addManager.userName
+        if(userName === '' || userName == undefined){
+            alert('用户名不能为空')
+            return
+        }
+        let nickName = this.addManager.name
+        if(nickName === '' || nickName == undefined){
+            alert('姓名不能为空')
+            return
+        }
+        let pwd = this.addManager.pwd
+        if(pwd === '' || pwd == undefined){
+            alert('密码不能为空')
+            return
+        }
+        let roleId = this.addManager.roleId
+        if(roleId === '' || roleId == undefined){
+            alert('角色不能为空')
+            return
+        }
+
+        let params = {}
+        params.userName = userName
+        params.name = nickName
+        params.pwd = pwd
+        params.roleId = roleId
+        let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            apiSystem.addManager(params).then(res=>{
+            if(res.resultCode == 0){
+                that.queryAllManagers()
+                alert('添加成功')
+            }else{
+                alert('添加失败:' + res.resultInfo)
+            }
+        })   
+        }).catch(() => {
+        });
+    },
+    getAllSysRoles:function(){
+        let params = {}
+        apiSystem.getAllSysRoles(params).then(res=>{
+            if(res.resultCode == 0){
+                this.allRoles = res.data
             }
         })
     },
@@ -218,12 +327,25 @@ export default {
     handleSelectBranchCom:function(item){
         console.log('handleSelectBranchCom:' + item)
     },
+    queryManagers:function(){
+        this.loading = true
+        let params = {}
+        params.name = this.queryName
+        apiSystem.getAllSysManagers(params).then(res=>{
+            if(res.resultCode == 0){
+                this.managers = res.data
+                this.total = res.rowNum
+                this.loading = false
+            }
+        })
+    },
     queryAllManagers:function(){
         this.loading = true
         let params = {}
         apiSystem.getAllSysManagers(params).then(res=>{
             if(res.resultCode == 0){
                 this.managers = res.data
+                this.allManagers = res.data
                 this.total = res.rowNum
                 this.loading = false
             }

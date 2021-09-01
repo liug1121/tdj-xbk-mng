@@ -13,7 +13,7 @@ export default {
         return API.POST('boss/v1.0/system/managerRoles', params)
     },
     getAllSysManagers: params =>{
-        return API.GET('boss/v1.0/system/managers', params)
+        return API.POST('boss/v1.0/system/managers', params)
     },
     editManger: params =>{
         return API.POST('boss/v1.0/system/managers/edit', params)
@@ -32,5 +32,8 @@ export default {
     },
     removeRole: params =>{
         return API.POST('boss/v1.0/system/roles/remove', params)
+    },
+    addManager: params =>{
+        return API.POST('boss/v1.0/system/managers/add', params)
     }  
 }
