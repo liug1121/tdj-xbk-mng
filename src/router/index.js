@@ -58,6 +58,22 @@ const router = new Router({
           meta: {
             title: '用户'
           }
+        },
+        {
+          path: '/gateway/pushlog',
+          name: '推送日志',
+          component: (resolve) => require(['components/gateway/pushLog.vue'], resolve),
+          meta: {
+            title: '推送日志'
+          }
+        },
+        {
+          path: '/gateway/pushInfo',
+          name: '推送配置',
+          component: (resolve) => require(['components/gateway/channelPushInfo.vue'], resolve),
+          meta: {
+            title: '推送配置'
+          }
         }
       ]},
     {

@@ -68,7 +68,7 @@
       </el-table>
       <!-- 分页区域 -->
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="[10,20,30]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
-        :total="total">
+        :total="total">  
       </el-pagination>
     </el-card>
     <el-dialog title="渠道分配" :visible.sync="showMoveOrderDlg" width="450px" @close="closeMoveOrderDlg">

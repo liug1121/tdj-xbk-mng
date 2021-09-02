@@ -35,5 +35,19 @@ export default {
     },
     addManager: params =>{
         return API.POST('boss/v1.0/system/managers/add', params)
-    }  
+    },
+    getPushLogs: params =>{
+        return API.POST('boss/v1.0/gateway/pushLogs', params)
+    },
+    getPushInfos: params =>{
+        return API.GET('boss/v1.0/gateway/pushinfo/all', params)
+    } ,
+    addPushInfo: params =>{
+        return API.POST('boss/v1.0/gateway/pushInfo/add', params)
+    },
+    modifyPushInfo: params =>{
+        return API.POST('boss/v1.0/gateway/pushInfo/modify', params)
+    }
+    
+    
 }
