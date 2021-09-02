@@ -25,6 +25,15 @@
             <el-option v-for="item in allStatus" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="渠道" class="queryFormItem">
+          <el-select class="queryFormInput"  
+          filterable
+          clearable
+          reserve-keyword
+           placeholder="请选择渠道" v-model="queryPushLog.channelId">
+            <el-option v-for="item in pushInfos" :key="item.id" :label="item.channelName" :value="item.channelId"></el-option>
+          </el-select>
+        </el-form-item>
         <el-button size="medium" type="primary" icon="el-icon-search" @click="queryPushLogClick">查询</el-button>
       </el-form>
       
@@ -66,6 +75,7 @@ export default {
         
     loading: false,
     pushLogs:[],
+    pushInfos:[],
     queryPushLog:{},
     allStatus:[
         {value:1, name:"推送成功"},
@@ -77,10 +87,12 @@ export default {
       total: 0,
       // 列表，标题、字段
       table_column: [
+          
+        { prop: 'channelName', label: '渠道', width: 200, fixed: 'left', sortable: true },
         { prop: 'iccid', label: 'iccid', width: 200, fixed: 'left', sortable: true },
-        { prop: 'duration', label: '耗时(毫秒)', width: 190, fixed: 'left', sortable: true },
-        { prop: 'statusName', label: '状态', width: 200, sortable: true },
-        { prop: 'createTime', label: '推送时间', width: 150, sortable: true },
+        { prop: 'duration', label: '耗时(毫秒)', width: 100, fixed: 'left', sortable: true },
+        { prop: 'statusName', label: '状态', width: 100, sortable: true },
+        { prop: 'createTime', label: '推送时间', width: 200, sortable: true },
         { prop: 'data', label: '推送信息', width: 300, sortable: true }
       ],
     };
@@ -90,26 +102,38 @@ export default {
   },
   created(){
     this.queryPushLogs()
+    this.queryPushInfos()
   },
   watch: {},
   methods: {
-
+      queryPushInfos:function(){
+        let params = {}
+        
+        apiSystem.getPushInfos(params).then(res=>{
+            if(res.resultCode == 0){
+                this.pushInfos = res.data
+            }
+        })
+      },
       queryPushLogClick:function(){
           this.queryPushLogs()
       },
 
       queryPushLogs:function(){
+        this.loading = true
         let params = {}
         params.iccid = this.queryPushLog.iccid
         params.startDate = this.queryPushLog.startDate
         params.endDate = this.queryPushLog.endDate
         params.status = this.queryPushLog.status
+        params.channelId = this.queryPushLog.channelId
         params.page = this.page
         params.pageSize = this.pageSize
         apiSystem.getPushLogs(params).then(res=>{
             if(res.resultCode == 0){
                 this.pushLogs = res.data
                 this.total = res.rowNum
+                this.loading = false
             }
         })
       },
