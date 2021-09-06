@@ -273,6 +273,7 @@ export default {
             apiBigflow.importPoolCards(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryFlowCardStocks()
+                    that.showPoolCardImortDlg = false
                     alert('操作成功')
                 }else{
                     alert('操作失败:' + res.resultInfo)
@@ -310,6 +311,7 @@ export default {
             apiBigflow.movePoolIccidsBetween(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryFlowCardStocks()
+                    that.showMovePoolByIccidsDlg = false
                     alert('操作成功')
                 }else{
                     alert('操作失败:' + res.resultInfo)
@@ -338,6 +340,7 @@ export default {
             apiBigflow.movePool(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryFlowCardStocks()
+                    that.showMovePoolDlg = false
                     alert('操作成功')
                 }else{
                     alert('操作失败:' + res.resultInfo)

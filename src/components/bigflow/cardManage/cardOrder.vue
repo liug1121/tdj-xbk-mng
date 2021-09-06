@@ -318,6 +318,7 @@ export default {
             apiBigflow.file2OrdersDelete(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryCardOrders()
+                    that.showBatchDeleteOrder = false
                     alert('操作成功,请在任务：' + res.data + "中查询处理结果")
                 }else{
                     alert('操作失败:' + res.resultInfo)
@@ -376,6 +377,7 @@ export default {
             apiBigflow.importOrder2Channel(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryCardOrders()
+                    that.showOrderImportDlg = false
                     alert('操作成功')
                 }else{
                     alert('操作失败:' + res.resultInfo)
@@ -411,6 +413,7 @@ export default {
             apiBigflow.moveOrderByIccidsBetween(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryCardOrders()
+                    that.showMoveOrderDlg = false
                     alert('操作成功')
                 }else{
                     alert('操作失败:' + res.resultInfo)

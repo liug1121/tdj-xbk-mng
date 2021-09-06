@@ -234,6 +234,7 @@ export default {
             apiBigflow.updateFlowPoolUse(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryFlowPools()
+                    that.showUpdateuseDlg = false
                     alert('操作成功')
                 }else{
                     alert('操作失败:' + res.resultInfo)
@@ -272,6 +273,7 @@ export default {
             apiBigflow.addFlowPoolOrder(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryFlowPools()
+                    that.showOrderDlg = false
                     alert('操作成功')
                 }else{
                     alert('操作失败:' + res.resultInfo)
@@ -303,6 +305,7 @@ export default {
             apiBigflow.addFlowPool(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryFlowPools()
+                    that.showAddFlowPoolDlg = false
                     alert('操作成功')
                 }else{
                     alert('操作失败:' + res.resultInfo)

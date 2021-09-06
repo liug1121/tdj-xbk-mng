@@ -312,6 +312,7 @@ export default {
             apiBigflow.moveStockCards2Channel(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryBigflowStocks()
+                    that.showMoveCard2ChannelDlg = false
                     alert('操作成功')
                 }else{
                     alert('操作失败:' + res.resultInfo)
@@ -345,6 +346,7 @@ export default {
             apiBigflow.moveStockCards(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryBigflowStocks()
+                    that.showCardMoveDlg = false
                     alert('操作成功')
                 }else{
                     alert('操作失败:' + res.resultInfo)
@@ -413,6 +415,7 @@ export default {
             apiBigflow.importStockCards(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryBigflowStocks()
+                    that.showCardImportDlg = false
                     alert('操作成功')
                 }else{
                     alert('操作失败:' + res.resultInfo)
@@ -446,6 +449,7 @@ export default {
             apiBigflow.stock2Channel(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryBigflowStocks()
+                    that.showStock2ChannelDlg = false
                     alert('操作成功')
                 }else{
                     alert('操作失败:' + res.resultInfo)

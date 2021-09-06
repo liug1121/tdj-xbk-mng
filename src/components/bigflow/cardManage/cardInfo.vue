@@ -393,6 +393,7 @@ export default {
         apiBigflow.file2CardUsageCheck(params).then(res=>{
             if(res.resultCode == 0){
                 that.queryCardInfos()
+                that.showFile2CheckDlg = false
                 alert('操作成功,请在任务：' + res.data + "中查询处理结果")
             }else{
                 alert('操作失败:' + res.resultInfo)
@@ -443,6 +444,7 @@ export default {
                 apiBigflow.expiredateextend(params).then(res=>{
                     if(res.resultCode == 0){
                         that.queryCardInfos()
+                        that.showExpireDateExtendDlg = false
                         alert('操作成功')
                     }else{
                         alert('操作失败:' + res.resultInfo)
@@ -513,6 +515,7 @@ export default {
             apiBigflow.changeCommunPlanType(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryCardInfos()
+                    that.showChangeCommonTypeDlg = false
                     alert('操作成功')
                 }else{
                     alert('操作失败:' + res.resultInfo)
@@ -555,6 +558,7 @@ export default {
             apiBigflow.changeProduct(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryCardInfos()
+                    that.showChangeProductDlg = false
                     alert('操作成功')
                 }else{
                     alert('操作失败:' + res.resultInfo)
@@ -610,6 +614,7 @@ export default {
             apiBigflow.dosChange(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryCardInfos()
+                    that.showDosChangeDlg = false
                     alert('操作成功')
                 }else{
                     alert('操作失败:' + res.resultInfo)
@@ -645,6 +650,7 @@ export default {
             apiBigflow.dosClear(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryCardInfos()
+                    that.showDosClearDlg = false
                     alert('操作成功')
                 }else{
                     alert('操作失败:' + res.resultInfo)
@@ -671,6 +677,7 @@ export default {
             apiBigflow.unbindCard(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryCardInfos()
+                    that.showUnbindDlg = false
                     alert('操作成功')
                 }else{
                     alert('操作失败:' + res.resultInfo)
@@ -718,6 +725,7 @@ export default {
             apiBigflow.changeCardStatus(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryCardInfos()
+                    that.showChangeStatusDlg = false
                     alert('操作成功')
                 }else{
                     alert('操作失败:' + res.resultInfo)
