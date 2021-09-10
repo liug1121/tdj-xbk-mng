@@ -11,12 +11,14 @@
           <!-- <el-breadcrumb-item v-for="bread in breadList" v-bind:key="bread">{{bread}}</el-breadcrumb-item> -->
         </el-breadcrumb>
       </div>
+  
       <div class="top_right">
         <span @click="logout()" style="cursor:pointer;">退出登录</span>
         <span style="margin-left:20px;"><img style="position: relative;top: 8px;" src="@/assets/images/male.png" /></span>
         <span style="padding-left:10px;">{{username}}</span>
       </div>
     </el-header>
+    
     <zgzTabs></zgzTabs>
     <!-- <router-view></router-view> -->
   </el-container>
@@ -102,5 +104,9 @@ export default {
   float: right;
   margin-right: 20px;
   z-index: 999;
+}
+.company{
+  background-color: red;
+  /* height:100px; */
 }
 </style>

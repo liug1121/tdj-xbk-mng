@@ -4,6 +4,7 @@
       <img src="@/assets/images/logo.png" />
       <b class="title">卡管理后台</b>
     </div>
+    <div class="company">南京天地杰实业有限公司</div>
     <el-menu :default-active="path" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" @select="handlselect" background-color="#001529" active-background-color="#1890ff" router active-text-color="#fff"
       :collapse="isCollapse" :unique-opened="true" :default-openeds="openedMenus">
       <el-submenu index="root-xbk" v-show="xuebakaMenus.length > 0">
@@ -121,6 +122,7 @@
         </template>
       </el-submenu>
       </el-menu>
+      <!-- <div class="company">Copyright ©2019 南京天地杰实业有限公司 All Rights Reserved 苏ICP备18059126号-1</div> -->
   </div>
 </template>
 
@@ -257,5 +259,12 @@ export default {
 .isCollapse .title {
   display: none;
   transition: all 0.5s;
+}
+.company{
+  height: 30px;
+  bottom:0;
+  text-align: center;
+  font-size: 5px;
+  color:silver;
 }
 </style>

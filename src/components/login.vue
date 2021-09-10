@@ -25,6 +25,7 @@
         </el-form-item>
       </el-form>
     </div>
+    <div class="company">Copyright ©2019 南京天地杰实业有限公司 All Rights Reserved</div>
   </div>
 </template>
 
@@ -91,6 +92,7 @@ export default {
 
 <style scoped>
 .login_container {
+  /* background-color: red; */
   background-color: #fff;
   height: 100%;
 }
@@ -157,5 +159,13 @@ export default {
 }
 .btns {
   padding-top: 40px;
+}
+.company{
+  height: 30px;
+  position:absolute;
+  bottom:0;
+  width: 100%;
+  text-align: center;
+  font-size: 15px;
 }
 </style>
