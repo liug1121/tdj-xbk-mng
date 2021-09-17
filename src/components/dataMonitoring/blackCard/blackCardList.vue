@@ -9,16 +9,16 @@
         </div>
         <!-- 查询区域 -->
         <el-form :inline="true" ref="queryBlackCardFormRef" :model="queryBlackCardFormModel" class="queryForm">
-          <el-form-item label="组分类" class="queryFormItem">
-            <el-select class="queryFormInput" v-model="queryBlackCardFormModel.groupId" placeholder="请选择组分类">
+          <el-form-item label="监控组名称" class="queryFormItem">
+            <el-select class="queryFormInput" v-model="queryBlackCardFormModel.groupId" placeholder="请选择监控组名称">
               <el-option v-for="item in blackCardlist" :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="状态" class="queryFormItem">
+          <!-- <el-form-item label="状态" class="queryFormItem">
             <el-select class="queryFormInput" v-model="queryBlackCardFormModel.status" placeholder="请选择状态">
               <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item class="queryFormItem">
             <el-button type="primary" size="mini" icon="el-icon-search" @click="getBlackCardlist()">查询</el-button>
           </el-form-item>
@@ -29,15 +29,15 @@
       <el-table v-loading="loading" :data="blackCardlist" border max-height="510px" align="center" :cell-style="{height: '38px',padding:0}" @row-dblclick='handledbClick'>
         <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false">
           <template slot-scope="scope">
-            <div v-if="p.prop =='statusCL'">
+            <!-- <div v-if="p.prop =='statusCL'">
               <span v-if="scope.row.status == 0">停用</span>
               <span v-else-if="scope.row.status == 1">启用</span>
-            </div>
+            </div> -->
             <div v-if="p.prop == 'operation'">
-              <el-button v-if="scope.row.status == 1" size="mini" type="danger" plain @click="deactivation(scope.row,0)">停用</el-button>
-              <el-button v-if="scope.row.status == 0" size="mini" type="warning" plain @click="deactivation(scope.row,1)">启用</el-button>
+              <!-- <el-button v-if="scope.row.status == 1" size="mini" type="danger" plain @click="deactivation(scope.row,0)">停用</el-button>
+              <el-button v-if="scope.row.status == 0" size="mini" type="warning" plain @click="deactivation(scope.row,1)">启用</el-button> -->
               <el-button size="mini" type="primary" plain @click="importData(scope.row)">导入卡</el-button>
-              <!-- <el-button size="mini" type="danger" plain>删除</el-button> -->
+              
             </div>
             <div v-else>
               <div v-html="scope.row[p.prop]" />
@@ -53,11 +53,33 @@
       <el-dialog title="新增" :visible.sync="addDialogVisible" width="430px" @close="addDialogClosed">
         <!-- 内容主体区域 -->
         <el-form :model="addForm" ref="addFormRef" label-width="90px">
-          <el-form-item label="组分类">
+          <el-form-item label="监控组名称">
             <el-input style="width:300px;" v-model="addForm.name" placeholder="请输入组分类"></el-input>
           </el-form-item>
-          <el-form-item label="定位间隔">
+          <!-- <el-form-item label="定位间隔">
             <el-input style="width:300px;" v-model.number="addForm.lbsRate" placeholder="请输入定位间隔"></el-input>
+          </el-form-item> -->
+          <el-form-item label="监控类型">
+            <el-select  size="small" v-model="selectedPositionTypeLabel" filterable placeholder="请输入监控类型" style="width:100%" @change="positionTypeChange">
+              <el-option v-for="item in positionTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="省份" class="queryFormItem">
+            <el-select class="queryFormInput" v-model="selectedProvince" clearable filterable placeholder="请选择省份" @change="provinceChange">
+              <el-option v-for="item in provinceOptions" :key="item.provinceId" :label="item.provinceName" :value="item.provinceId"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="城市" class="queryFormItem">
+            <el-select class="queryFormInput" v-model="selectedCities" multiple clearable filterable placeholder="请选择城市名" style="width:100%" @change="cityChange">
+              <el-option v-for="item in PoisCitiesList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="" class="queryFormItem">
+          </el-form-item>
+          <el-form-item label="" class="queryFormItem">
+          </el-form-item>
+          <el-form-item label="" class="queryFormItem">
           </el-form-item>
         </el-form>
         <!-- 底部区域 -->
@@ -97,10 +119,12 @@ export default {
       total: 0,
       // 表格
       table_column: [
-        { prop: 'groupName', label: '组分类', },
+        { prop: 'groupName', label: '监控组名称', },
+        {prop:'positionTypeName', label:'监控类型'},
+        {prop:'positionCityNames', label:'已选择的城市'},
         { prop: 'cardTotalNum', label: '卡数', width: 150 },
-        { prop: 'lbsRate', label: '定位间隔', width: 150 },
-        { prop: 'statusCL', label: '状态', width: 150 },
+        // { prop: 'lbsRate', label: '定位间隔', width: 150 },
+        // { prop: 'statusCL', label: '状态', width: 150 },
         { prop: 'operation', label: '操作', width: 200 }
       ],
       // 处理策略
@@ -108,8 +132,18 @@ export default {
         { label: "使用", value: 1 },
         { label: "停用", value: 0 }
       ],
+      positionTypes:[
+        { label: "指定城市可以使用", value: 1 },
+        { label: "指定城市不可以使用", value: 0 }
+      ],
+      selectedPositionTypeValue:'',
+      selectedPositionTypeLabel:'',
+      selectedProvince:'',
+      selectedCities:'',
       // 省份
       provinceOptions: [],
+
+      PoisCitiesList: [],
       // 查询表字段
       queryBlackCardFormModel: {
         groupId: null,
@@ -129,6 +163,60 @@ export default {
     this.getprovinceOptions()
   },
   methods: {
+    cityChange: function(vId){
+      console.log(JSON.stringify(this.selectedCities))
+    },
+    provinceChange (vId) {
+      let obj = {};
+      obj = this.provinceOptions.find((item) => { // 这里的userList就是上面遍历的数据源
+        return item.provinceId === vId; // 筛选出匹配数据
+      });
+      // console.log(obj.provinceId);
+      // console.log(obj.provinceName); // 这边的name就是对应label
+      if(obj == undefined)
+        obj = {}
+      this.getPoisCitiesList(obj.provinceId)
+    },
+    // 获取省份
+    getprovinceOptions () {
+      API.apiProvincesList().then(res => {
+        if (res.resultCode === 0) {
+          this.provinceOptions = res.data
+          const provinceId = this.provinceOptions[0].provinceId
+          this.getPoisCitiesList(provinceId)
+        } else {
+          this.$message.error(res.resultInfo)
+        }
+      })
+    },
+    // 获取需市
+    getPoisCitiesList (provinceId) {
+      const data = {
+        provinceId: provinceId
+      }
+      API.apiPoisCitiesList(data).then(res => {
+        if (res.resultCode === 0) {
+          this.PoisCitiesList = res.data
+          console.log(this.PoisCitiesList);
+        } else {
+          this.$message.error(res.resultInfo)
+        }
+      })
+    },
+    positionTypeChange (vId) {
+      console.log(vId)
+      for(let i = 0; i < this.positionTypes.length; i++){
+        if(this.positionTypes[i].value === vId){
+          this.selectedPositionTypeValue = this.positionTypes[i].value
+          this.selectedPositionTypeLabel = this.positionTypes[i].label
+        }
+      }
+      // let filterTypes = this.positionTypes.filter(position => {
+      //     return position.value === vId
+      // })
+      // this.selectedPositionType = filterTypes[0]
+      console.log(JSON.stringify(this.positionTypes))
+    },
     handledbClick (row, event, column) {
       console.log(row.groupId)
       const groupId = row.groupId
@@ -195,6 +283,8 @@ export default {
     addUser () {
       this.$refs.addFormRef.validate(valid => {
         if (!valid) return
+        this.addForm.positionType = this.selectedPositionTypeValue
+        this.addForm.poiIds = this.selectedCities
         const data = JSON.stringify(this.addForm)
         console.log(data);
         API.apiLbsGroupAdd(data).then(res => {
