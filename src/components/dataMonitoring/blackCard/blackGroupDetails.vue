@@ -31,13 +31,13 @@
       <el-table v-loading="loading" :data="blackGrouplist" border max-height="510px" align="center" :cell-style="{height: '38px',padding:0}" @row-dblclick='handledbClick'>
         <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false">
           <template slot-scope="scope">
-            <div v-if="p.prop =='statusCL'">
+            <!-- <div v-if="p.prop =='statusCL'">
               <span v-if="scope.row.status == 0">停用</span>
               <span v-else-if="scope.row.status == 1">启用</span>
-            </div>
+            </div> -->
             <div v-if="p.prop == 'operation'">
-              <el-button v-if="scope.row.status == 1" size="mini" type="danger" plain @click="deactivation(scope.row,0)">停用</el-button>
-              <el-button v-if="scope.row.status == 0" size="mini" type="warning" plain @click="deactivation(scope.row,1)">启用</el-button>
+              <el-button v-if="scope.row.status == 1" size="mini" type="warning" plain >正常</el-button>
+              <el-button v-if="scope.row.status == 0" size="mini" type="danger" plain >异常</el-button>
             </div>
             <div v-else>
               <div v-html="scope.row[p.prop]" />
@@ -73,7 +73,7 @@ export default {
         { prop: 'city', label: '市', width: 100 },
         { prop: 'address', label: '详细地址' },
         { prop: 'lbsTime', label: '定位时间', width: 180 },
-        { prop: 'statusCL', label: '状态', width: 100 },
+        // { prop: 'statusCL', label: '状态', width: 100 },
         { prop: 'operation', label: '操作', width: 100 }
       ],
       // 处理策略
