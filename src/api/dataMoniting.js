@@ -53,6 +53,10 @@ export default {
   apiLbsStatusModify: params => {
     return API.POST('boss/v1.0/lbs/status/modify', params)
   },
+
+  apiGroupCards:params =>{
+    return API.POST('boss/v1.0/lbs/group/cards', params)
+  },
   // 黑名单卡明细导出
   apiLbsGroupCardDownload: (groupId, iccid) => {
     const groupId1 = groupId
@@ -61,7 +65,7 @@ export default {
   },
   // 导入黑名单卡
   apiLbsGroupCardUpload: (params, groupId) => {
-    return API.POST(`boss/v1.0/lbs/group/card/upload?groupId=${groupId}`, params, {
+    return API.POST(`boss/v1.0/lbs/group/card/upload`, params, {
       headers: {
         'content-type': 'multipart/form-data'
       }

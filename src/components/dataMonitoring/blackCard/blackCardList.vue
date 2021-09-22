@@ -9,7 +9,7 @@
           v-permission="{indentity:'xbkBlackCardList-add'}">监控组</el-button>
         </div>
         <el-form :inline="true"  :model="queryCardsForm" class="queryForm">
-          <el-form-item label="iccid" class="queryFormItem">
+          <el-form-item label="iccid" class="queryFormItem"> 
            <el-input class="queryFormInput" v-model="queryCardsForm.iccid" clearable placeholder="请输入ICCID" style="width:202px"></el-input>
           </el-form-item>
           <el-form-item label="渠道" class="queryFormItem">
@@ -18,12 +18,12 @@
             </el-select>
           </el-form-item>
           <el-form-item label="LBS监控组" class="queryFormItem">
-            <el-select class="queryFormInput" v-model="queryCardsForm.groupId" placeholder="请选择LBS监控组">
+            <el-select class="queryFormInput" v-model="queryCardsForm.lbsGroupId" placeholder="请选择LBS监控组">
               <el-option v-for="item in blackCardlist" :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="IMEI监控组" class="queryFormItem">
-            <el-select class="queryFormInput" v-model="queryCardsForm.groupId" placeholder="请选择IMEI监控组">
+            <el-select class="queryFormInput" v-model="queryCardsForm.IMEIGroupId" placeholder="请选择IMEI监控组">
               <el-option v-for="item in blackCardlist" :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
             </el-select>
           </el-form-item>
@@ -126,7 +126,7 @@
             <el-select class="queryFormInput" v-model="ImportForm.lbsGroupId" placeholder="请选择LBS监控组">
               <el-option v-for="item in blackCardlist" :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> 
           <el-form-item label="IMEI监控组">
           <el-select class="queryFormInput" v-model="ImportForm.IMEIGroupId"  placeholder="请选择IMEI监控组">
               <el-option v-for="item in blackCardlist" :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
@@ -143,7 +143,7 @@
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" >确 定</el-button>
+          <el-button type="primary" @click="toImport">确 定</el-button>
         </span>
       </el-dialog>
   
@@ -259,9 +259,7 @@ export default {
   },
   data () {
     return {
-      uploadFile (item) {
-       
-      },
+      
       groupAddForm:{},
       groupDlgVisible:false,
       ImportForm: {},
@@ -289,10 +287,10 @@ export default {
         { prop: 'channelName', label: '渠道', width: 150},
         {prop:'iccid', label:'iccid', width: 220},
         {prop:'status', label:'状态',width: 300 },
-        { prop: 'currentCity', label: '当前城市', width: 100 },
-        { prop: 'currentIMEI', label: 'IMEI', width: 200 },
-        { prop: 'lbsGroups', label: 'LBS监控组', width: 200 },
-        { prop: 'IMEIGroups', label: 'IMEI监控组', width: 200 },
+        { prop: 'cityName', label: '当前城市', width: 100 },
+        { prop: 'imei', label: 'IMEI', width: 200 },
+        { prop: 'lbsGroupName', label: 'LBS监控组', width: 200 },
+        { prop: 'imeiGroupName', label: 'IMEI监控组', width: 200 },
         { prop: 'opts', label: '操作'}
       ],
       tableGroupColum:[
@@ -345,29 +343,30 @@ export default {
     this.getprovinceOptions()
   },
   created(){
-    this.cardMonitors = [
-      {channelName:'天地杰自营',
-      iccid:'11111111111111111111',
-      status:'使用中',
-      currentCity:'南京',
-      currentIMEI:'357403043690945',
-      lbsGroups:'深圳出漳州不能使用',
-      IMEIGroups:'IMEI一对一精确绑定'},
-      {channelName:'天地杰自营',
-      iccid:'21111111111111111111',
-      status:'卡停用(超出使用城市)',
-      currentCity:'南京',
-      currentIMEI:'357403043690945',
-      lbsGroups:'深圳出漳州不能使用',
-      IMEIGroups:'IMEI一对一精确绑定'},
-      {channelName:'天地杰自营',
-      iccid:'31111111111111111111',
-      status:'卡停用(绑定的IMEI不符合监控规则)',
-      currentCity:'南京',
-      currentIMEI:'357403043690945',
-      lbsGroups:'深圳出漳州不能使用',
-      IMEIGroups:'IMEI一对一精确绑定'}
-    ]
+    this.queryCards()
+    // this.cardMonitors = [
+    //   {channelName:'天地杰自营',
+    //   iccid:'11111111111111111111',
+    //   status:'使用中',
+    //   currentCity:'南京',
+    //   currentIMEI:'357403043690945',
+    //   lbsGroups:'深圳出漳州不能使用',
+    //   IMEIGroups:'IMEI一对一精确绑定'},
+    //   {channelName:'天地杰自营',
+    //   iccid:'21111111111111111111',
+    //   status:'卡停用(超出使用城市)',
+    //   currentCity:'南京',
+    //   currentIMEI:'357403043690945',
+    //   lbsGroups:'深圳出漳州不能使用',
+    //   IMEIGroups:'IMEI一对一精确绑定'},
+    //   {channelName:'天地杰自营',
+    //   iccid:'31111111111111111111',
+    //   status:'卡停用(绑定的IMEI不符合监控规则)',
+    //   currentCity:'南京',
+    //   currentIMEI:'357403043690945',
+    //   lbsGroups:'深圳出漳州不能使用',
+    //   IMEIGroups:'IMEI一对一精确绑定'}
+    // ]
 
     this.groupList=[
       {groupName:'lbs出市区与IMEI精确绑定监控组',
@@ -396,6 +395,72 @@ export default {
     //     { prop: 'opts', label: '操作'}
   },
   methods: {
+    queryCards:function(){
+
+      this.loading = true
+      console.log('sds')
+      // 获取后台数据
+      let params = {}
+      params.iccid = this.queryCardsForm.iccid
+      params.channelId = this.queryCardsForm.channelId
+      params.lbsGroupId = this.queryCardsForm.lbsGroupId
+      params.IMEIGroupId = this.queryCardsForm.IMEIGroupId
+      params.status = this.queryCardsForm.status
+      params.page = this.queryInfo.page
+      params.pageSize = this.queryInfo.pageSize
+      API.apiGroupCards(params).then(res => {
+        if (res.resultCode === 0) {
+          this.cardMonitors = res.data
+          this.total = res.rowNum
+          this.loading = false
+        } else {
+          this.$message.error(res.resultInfo)
+        }
+      })
+    },
+    uploadFile (item) {
+      this.ImportForm.file = item.file
+    },
+    toImport:function(){
+      if(this.ImportForm.file == undefined){
+        that.$message.error({
+          message: "请选择文件",
+          type: "error",
+          duration: 2000
+        })
+        return
+      }
+      if(this.ImportForm.lbsGroupId == undefined){
+        that.$message.error({
+          message: "请lbs监控组",
+          type: "error",
+          duration: 2000
+        })
+        return
+      }
+      if(this.ImportForm.IMEIGroupId == undefined){
+        that.$message.error({
+          message: "请IMEI监控组",
+          type: "error",
+          duration: 2000
+        })
+        return
+      }
+       
+      const param = new FormData()
+      param.append('file', this.ImportForm.file)
+      param.append('lbsGroupId', this.ImportForm.lbsGroupId)
+      param.append('IMEIGroupId', this.ImportForm.IMEIGroupId)
+      API.apiLbsGroupCardUpload(param, this.groupId).then(res => {
+        if (res.resultCode === 0) {
+          this.$message.success('导入成功！')
+          this.getBlackCardlist()
+        } else {
+          this.$message.error(res.resultInfo)
+        }
+      })
+
+    },
     groupDlgShow:function(){
       this.groupDlgVisible = true
     },
@@ -489,13 +554,13 @@ export default {
     // 监听 pagesize 改变的事件
     handleSizeChange (newSize) {
       this.queryInfo.pageSize = newSize
-      this.getBlackCardlist()
+      this.queryCards()
     },
     // 监听 页码值 改变的事件
     handleCurrentChange (newPage) {
       console.log(newPage)
       this.queryInfo.page = newPage - 1
-      this.getBlackCardlist()
+      this.queryCards()
     },
     // 获取省份
     getprovinceOptions () {
