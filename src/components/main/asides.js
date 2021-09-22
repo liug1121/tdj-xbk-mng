@@ -92,7 +92,7 @@ export default {
         },
         {
           icon: 'el-icon-s-help',
-          title: '黑名单卡',
+          title: '卡监控',
           path: '/blackCardList',
           type: 0
         }

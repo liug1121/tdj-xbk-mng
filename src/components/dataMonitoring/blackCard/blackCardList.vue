@@ -1,41 +1,204 @@
 <template>
-  <!-- 黑名单卡 刘珍利  -->
   <div class="box_subject">
+    <el-card class="all_list">
+      <div class="heraderTop">
+        <div class="button_content">
+          <el-button size="medium" type="primary"  @click="importCardsToGroup()" 
+          v-permission="{indentity:'xbkBlackCardList-add'}">卡导入</el-button>
+          <el-button size="medium" type="primary"  @click="groupDlgShow" 
+          v-permission="{indentity:'xbkBlackCardList-add'}">监控组</el-button>
+        </div>
+        <el-form :inline="true"  :model="queryCardsForm" class="queryForm">
+          <el-form-item label="iccid" class="queryFormItem">
+           <el-input class="queryFormInput" v-model="queryCardsForm.iccid" clearable placeholder="请输入ICCID" style="width:202px"></el-input>
+          </el-form-item>
+          <el-form-item label="渠道" class="queryFormItem">
+            <el-select class="queryFormInput" v-model="queryCardsForm.channelId" placeholder="请输入渠道">
+              <el-option v-for="item in channels" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="LBS监控组" class="queryFormItem">
+            <el-select class="queryFormInput" v-model="queryCardsForm.groupId" placeholder="请选择LBS监控组">
+              <el-option v-for="item in blackCardlist" :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="IMEI监控组" class="queryFormItem">
+            <el-select class="queryFormInput" v-model="queryCardsForm.groupId" placeholder="请选择IMEI监控组">
+              <el-option v-for="item in blackCardlist" :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="卡状态" class="queryFormItem">
+            <el-select class="queryFormInput" v-model="queryCardsForm.status" placeholder="请选择卡状态">
+              <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item class="queryFormItem">
+            <el-button type="primary" size="mini" icon="el-icon-search" @click="getBlackCardlist()">查询</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+      <el-table v-loading="loading" :data="cardMonitors" border max-height="510px" align="center" :cell-style="{height: '38px',padding:0}" @row-dblclick='handledbClick'>
+        <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false">
+          <template slot-scope="scope">
+            <div v-if="p.prop == 'opts'">
+              <el-button size="mini" type="primary" plain @click="importData(scope.row)">查看与编辑</el-button>
+            </div>
+            <div v-else>
+              <div v-html="scope.row[p.prop]" />
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="[10,20,30]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
+        :total="total">
+      </el-pagination>
+      <el-dialog title="新增" :visible.sync="addDialogVisible" width="430px" @close="addDialogClosed">
+        <el-form :model="groupAddForm" ref="addFormRef" label-width="90px">
+          <el-form-item label="名称">
+           <el-input style="width:300px;" v-model="groupAddForm.name" placeholder="请输入监控组名称"></el-input>
+          </el-form-item>
+          <el-form-item>
+          </el-form-item>
+          <el-form-item>
+          </el-form-item>
+          <el-form-item label="LBS监控">
+             <el-select  size="small" v-model="groupAddForm.selectedPositionTypeLabel" filterable placeholder="请输入监控类型" style="width:100%" @change="positionTypeChange">
+              <el-option v-for="item in positionTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+            <el-select class="queryFormInput" v-model="groupAddForm.selectedProvince" clearable filterable placeholder="请选择省份" style="width:100%" @change="provinceChange">
+              <el-option v-for="item in provinceOptions" :key="item.provinceId" :label="item.provinceName" :value="item.provinceId"></el-option>
+            </el-select>
+            <el-select class="queryFormInput" v-model="groupAddForm.selectedCities" multiple clearable filterable placeholder="请选择城市名" style="width:100%" @change="cityChange">
+              <el-option v-for="item in PoisCitiesList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+          </el-form-item>
+          <el-form-item>
+          </el-form-item>
+          <el-form-item label="IMEI监控">
+            <!-- <el-input style="width:300px;" v-model="addForm.name" placeholder="请输入组分类"></el-input> -->
+             <el-select  size="small" v-model="groupAddForm.IMEIType" filterable placeholder="请输入监控类型" style="width:100%" @change="positionTypeChange">
+              <el-option v-for="item in IMEITypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+            <div v-if="groupAddForm.IMEIType == 1">
+              <el-input style="width:300px;" v-model="groupAddForm.name" placeholder="请输入前6位IMEI"></el-input>
+            </div>
+            <div v-if="groupAddForm.IMEIType == 2">
+              <el-input style="width:300px;" v-model="groupAddForm.name" placeholder="请输入后6位IMEI"></el-input>
+            </div>
+            
+          </el-form-item>
+          <!-- <el-form-item label="监控类型">
+            <el-select  size="small" v-model="selectedPositionTypeLabel" filterable placeholder="请输入监控类型" style="width:100%" @change="positionTypeChange">
+              <el-option v-for="item in positionTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </el-form-item> -->
+
+          <!-- <el-form-item label="省份" class="queryFormItem">
+            <el-select class="queryFormInput" v-model="selectedProvince" clearable filterable placeholder="请选择省份" @change="provinceChange">
+              <el-option v-for="item in provinceOptions" :key="item.provinceId" :label="item.provinceName" :value="item.provinceId"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="城市" class="queryFormItem">
+            <el-select class="queryFormInput" v-model="selectedCities" multiple clearable filterable placeholder="请选择城市名" style="width:100%" @change="cityChange">
+              <el-option v-for="item in PoisCitiesList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
+          </el-form-item> -->
+          <el-form-item label="" class="queryFormItem">
+          </el-form-item>
+          <el-form-item label="" class="queryFormItem">
+          </el-form-item>
+          <el-form-item label="" class="queryFormItem">
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="addDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="addUser">确 定</el-button>
+        </span>
+      </el-dialog>
+      <!-- <ImportModal ref="ImportModal" :groupId="groupId" @InportModalSuccess="InportModalSuccess"></ImportModal> -->
+      
+      
+      <el-dialog title="卡导入" :visible.sync="dialogVisible" width="412px" :close-on-click-modal="false" :destroy-on-close="true">
+        <el-form  :model="ImportForm" label-width="120px">
+          <el-form-item label="LBS监控组">
+            <el-select class="queryFormInput" v-model="ImportForm.lbsGroupId" placeholder="请选择LBS监控组">
+              <el-option v-for="item in blackCardlist" :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="IMEI监控组">
+          <el-select class="queryFormInput" v-model="ImportForm.IMEIGroupId"  placeholder="请选择IMEI监控组">
+              <el-option v-for="item in blackCardlist" :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-upload class="unload-demo" accept=".xls, .xlsx" action="#" :file-list="fileList" :http-request="uploadFile">
+            <el-button size="small" type="primary">点击上传要导入的文件</el-button>
+          </el-upload>
+        </el-form>
+        <div class="notice">
+          <p>
+            <a>下载模板文件</a> 仅支持xlsx,xls格式的文件.
+          </p>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" >确 定</el-button>
+        </span>
+      </el-dialog>
+  
+      <el-dialog title="监控组" :visible.sync="groupDlgVisible" width="80%" height="1000px" :close-on-click-modal="false" :destroy-on-close="true">
+        <div class="el-dialog-div">
+          <div class="button_content">
+            <el-button size="medium" type="primary" @click="addShow" 
+            v-permission="{indentity:'xbkBlackCardList-add'}">新增</el-button>
+          </div>
+          <el-table v-loading="loading" :data="groupList" border max-height="510px" align="center" :cell-style="{height: '38px',padding:0}" @row-dblclick='handledbClick'>
+          <el-table-column v-for="(p, key) in tableGroupColum" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false">
+            <template slot-scope="scope">
+              <div v-if="p.prop == 'opts'">
+                <el-button size="mini" type="primary" plain >编辑</el-button>
+                <el-button size="mini" type="primary" plain >删除</el-button>
+              </div>
+              <div v-else>
+                <div v-html="scope.row[p.prop]" />
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+        </div>
+         <span slot="footer" class="dialog-footer">
+            <el-button @click="groupDlgHide">取 消</el-button>
+            <el-button type="primary" >确 定</el-button>
+          </span>
+      </el-dialog>
+    </el-card>
+  </div>
+
+
+
+  <!-- <div class="box_subject">
     <el-card class="all_list">
       <div class="heraderTop">
         <div class="button_content">
           <el-button size="medium" type="primary" icon="el-icon-plus" @click="addShow" 
           v-permission="{indentity:'xbkBlackCardList-add'}">新增</el-button>
         </div>
-        <!-- 查询区域 -->
         <el-form :inline="true" ref="queryBlackCardFormRef" :model="queryBlackCardFormModel" class="queryForm">
           <el-form-item label="监控组名称" class="queryFormItem">
             <el-select class="queryFormInput" v-model="queryBlackCardFormModel.groupId" placeholder="请选择监控组名称">
               <el-option v-for="item in blackCardlist" :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
             </el-select>
           </el-form-item>
-          <!-- <el-form-item label="状态" class="queryFormItem">
-            <el-select class="queryFormInput" v-model="queryBlackCardFormModel.status" placeholder="请选择状态">
-              <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-            </el-select>
-          </el-form-item> -->
           <el-form-item class="queryFormItem">
             <el-button type="primary" size="mini" icon="el-icon-search" @click="getBlackCardlist()">查询</el-button>
           </el-form-item>
         </el-form>
       </div>
-
-      <!-- 卡库存 List 区域 -->
       <el-table v-loading="loading" :data="blackCardlist" border max-height="510px" align="center" :cell-style="{height: '38px',padding:0}" @row-dblclick='handledbClick'>
         <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false">
           <template slot-scope="scope">
-            <!-- <div v-if="p.prop =='statusCL'">
-              <span v-if="scope.row.status == 0">停用</span>
-              <span v-else-if="scope.row.status == 1">启用</span>
-            </div> -->
             <div v-if="p.prop == 'operation'">
-              <!-- <el-button v-if="scope.row.status == 1" size="mini" type="danger" plain @click="deactivation(scope.row,0)">停用</el-button>
-              <el-button v-if="scope.row.status == 0" size="mini" type="warning" plain @click="deactivation(scope.row,1)">启用</el-button> -->
               <el-button size="mini" type="primary" plain @click="importData(scope.row)">导入卡</el-button>
               
             </div>
@@ -45,20 +208,14 @@
           </template>
         </el-table-column>
       </el-table>
-      <!-- 分页 区域 -->
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="[10,20,30]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
         :total="total">
       </el-pagination>
-      <!-- 新增对话框 -->
       <el-dialog title="新增" :visible.sync="addDialogVisible" width="430px" @close="addDialogClosed">
-        <!-- 内容主体区域 -->
         <el-form :model="addForm" ref="addFormRef" label-width="90px">
           <el-form-item label="监控组名称">
             <el-input style="width:300px;" v-model="addForm.name" placeholder="请输入组分类"></el-input>
           </el-form-item>
-          <!-- <el-form-item label="定位间隔">
-            <el-input style="width:300px;" v-model.number="addForm.lbsRate" placeholder="请输入定位间隔"></el-input>
-          </el-form-item> -->
           <el-form-item label="监控类型">
             <el-select  size="small" v-model="selectedPositionTypeLabel" filterable placeholder="请输入监控类型" style="width:100%" @change="positionTypeChange">
               <el-option v-for="item in positionTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
@@ -82,16 +239,14 @@
           <el-form-item label="" class="queryFormItem">
           </el-form-item>
         </el-form>
-        <!-- 底部区域 -->
         <span slot="footer" class="dialog-footer">
           <el-button @click="addDialogVisible = false">取 消</el-button>
           <el-button type="primary" @click="addUser">确 定</el-button>
         </span>
       </el-dialog>
-      <!-- 导入 -->
       <ImportModal ref="ImportModal" :groupId="groupId" @InportModalSuccess="InportModalSuccess"></ImportModal>
     </el-card>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -104,8 +259,20 @@ export default {
   },
   data () {
     return {
+      uploadFile (item) {
+       
+      },
+      groupAddForm:{},
+      groupDlgVisible:false,
+      ImportForm: {},
+      fileList: [],
+      dialogVisible:false,
+      queryCardsForm:{},
+      channels:[],
       // 列表显示
+      cardMonitors:[],
       blackCardlist: [],
+      groupList:[],
       // 获取用户列表的参数对象
       queryInfo: {
         // 当前的页数
@@ -119,13 +286,23 @@ export default {
       total: 0,
       // 表格
       table_column: [
-        { prop: 'groupName', label: '监控组名称', },
-        {prop:'positionTypeName', label:'监控类型'},
-        {prop:'positionCityNames', label:'已选择的城市'},
-        { prop: 'cardTotalNum', label: '卡数', width: 150 },
-        // { prop: 'lbsRate', label: '定位间隔', width: 150 },
-        // { prop: 'statusCL', label: '状态', width: 150 },
-        { prop: 'operation', label: '操作', width: 200 }
+        { prop: 'channelName', label: '渠道', width: 150},
+        {prop:'iccid', label:'iccid', width: 220},
+        {prop:'status', label:'状态',width: 300 },
+        { prop: 'currentCity', label: '当前城市', width: 100 },
+        { prop: 'currentIMEI', label: 'IMEI', width: 200 },
+        { prop: 'lbsGroups', label: 'LBS监控组', width: 200 },
+        { prop: 'IMEIGroups', label: 'IMEI监控组', width: 200 },
+        { prop: 'opts', label: '操作'}
+      ],
+      tableGroupColum:[
+        // { prop: 'groupType', label: '组类型', width: 150},
+        { prop: 'groupName', label: '组名称', width: 350},
+        { prop: 'lbsType', label: 'lbs监控类型', width: 250},
+        { prop: 'lbsInfos', label: 'lbs组配置信息', width: 250},
+        { prop: 'IMEIType', label: 'IMEI监控类型', width: 250},
+        { prop: 'IMEIInfos', label: 'IMEI组配置信息', width: 250},
+        { prop: 'opts', label: '操作'}
       ],
       // 处理策略
       statusOptions: [
@@ -135,6 +312,11 @@ export default {
       positionTypes:[
         { label: "指定城市可以使用", value: 1 },
         { label: "指定城市不可以使用", value: 0 }
+      ],
+      IMEITypes:[
+        { label: "IMEI一对一精确绑定", value: 0 },
+        { label: "IMEI前6位数模糊匹配", value: 1 },
+        { label: "IMEI后6位数模糊匹配", value: 2 }
       ],
       selectedPositionTypeValue:'',
       selectedPositionTypeLabel:'',
@@ -162,7 +344,64 @@ export default {
     this.getBlackCardlist()
     this.getprovinceOptions()
   },
+  created(){
+    this.cardMonitors = [
+      {channelName:'天地杰自营',
+      iccid:'11111111111111111111',
+      status:'使用中',
+      currentCity:'南京',
+      currentIMEI:'357403043690945',
+      lbsGroups:'深圳出漳州不能使用',
+      IMEIGroups:'IMEI一对一精确绑定'},
+      {channelName:'天地杰自营',
+      iccid:'21111111111111111111',
+      status:'卡停用(超出使用城市)',
+      currentCity:'南京',
+      currentIMEI:'357403043690945',
+      lbsGroups:'深圳出漳州不能使用',
+      IMEIGroups:'IMEI一对一精确绑定'},
+      {channelName:'天地杰自营',
+      iccid:'31111111111111111111',
+      status:'卡停用(绑定的IMEI不符合监控规则)',
+      currentCity:'南京',
+      currentIMEI:'357403043690945',
+      lbsGroups:'深圳出漳州不能使用',
+      IMEIGroups:'IMEI一对一精确绑定'}
+    ]
+
+    this.groupList=[
+      {groupName:'lbs出市区与IMEI精确绑定监控组',
+      lbsInfos:'城市列表：南京、扬州、镇江 ',
+      lbsType:'指定城市可以使用',
+      IMEIType:'IMEI一对一精确绑定',
+      IMEIInfos:'一对一精确绑定'},
+      {groupName:'lbs出市区与IMEI前6位模糊匹配',
+      lbsInfos:'城市列表：南京、扬州、镇江 ',
+      lbsType:'指定城市可以使用',
+      IMEIType:'IMEI前6位精确绑定',
+      IMEIInfos:'357403'},
+      {groupName:'lbs出市区与IMEI后6位模糊匹配',
+      lbsInfos:'城市列表：南京、扬州、镇江 ',
+      lbsType:'指定城市可以使用',
+      IMEIType:'IMEI后6位精确绑定',
+      IMEIInfos:'690945'}
+    ]
+    //  { prop: 'channelName', label: '渠道', width: 150},
+    //     {prop:'iccid', label:'iccid', width: 120},
+    //     {prop:'status', label:'状态',width: 100 },
+    //     { prop: 'currentCity', label: '当前城市', width: 100 },
+    //     { prop: 'currentIMEI', label: 'IMEI', width: 200 },
+    //     { prop: 'lbsGroups', label: 'LBS监控组', width: 200 },
+    //     { prop: 'IMEIGroups', label: 'IMEI监控组', width: 200 },
+    //     { prop: 'opts', label: '操作'}
+  },
   methods: {
+    groupDlgShow:function(){
+      this.groupDlgVisible = true
+    },
+    groupDlgHide:function(){
+      this.groupDlgVisible = false
+    },
     cityChange: function(vId){
       console.log(JSON.stringify(this.selectedCities))
     },
@@ -314,6 +553,9 @@ export default {
         }
       })
     },
+    importCardsToGroup () {
+      this.dialogVisible = true;
+    },
     // 导入弹框
     importData ($item) {
       console.log($item);
@@ -343,4 +585,8 @@ export default {
 .el-table__body-wrapper is-scrolling-left {
   max-height: 487px !important;
 }
+.el-dialog-div{
+  height: 300px;
+}
+
 </style>

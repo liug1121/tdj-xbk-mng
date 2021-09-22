@@ -310,9 +310,9 @@ const router = new Router({
         },
         {
           path: '/blackCardList',
-          name: '黑名单卡',
+          name: '卡监控',
           component: (resolve) => require(['components/dataMonitoring/blackCard/blackCardList.vue'], resolve),
-          meta: { title: '黑名单卡' },
+          meta: { title: '卡监控' },
         },
         {
           path: '/blackGroupDetails',
