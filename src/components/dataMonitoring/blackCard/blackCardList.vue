@@ -383,7 +383,7 @@ export default {
       const param = new FormData()
       param.append('file', this.ImportForm.file)
       param.append('lbsGroupId', this.ImportForm.lbsGroupId)
-      param.append('IMEIGroupId', this.ImportForm.IMEIGroupId)
+      // param.append('IMEIGroupId', this.ImportForm.IMEIGroupId)
       API.apiLbsGroupCardUpload(param, this.groupId).then(res => {
         if (res.resultCode === 0) {
           this.$message.success('导入成功！')
