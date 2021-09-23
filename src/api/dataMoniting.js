@@ -25,6 +25,12 @@ export default {
   apiLbsDelete: params => {
     return API.POST('boss/v1.0/lbs/delete', params)
   },
+  apiLbsDeleteGroup: params =>{
+    return API.POST('boss/v1.0/lbs/group/remove', params)
+  },
+  apiLbsGroupModify: params =>{
+    return API.POST('boss/v1.0/lbs/group/modify', params)
+  },
   // boss新增lbs组
   apiLbsGroupAdd: params => {
     return API.POST('boss/v1.0/lbs/group/add', params)
