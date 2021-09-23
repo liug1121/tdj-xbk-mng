@@ -9,16 +9,16 @@
           <el-form-item label="渠道" class="queryFormItem">
             <channelSelect style="width:150px !important" @channelSelectId="channelSelectId"></channelSelect>
           </el-form-item>
-          <el-form-item label="LBS监控组" class="queryFormItem">
+          <el-form-item label="监控组" class="queryFormItem">
             <el-select class="queryFormInput" v-model="queryCardsForm.lbsGroupId" clearable placeholder="请选择LBS监控组">
               <el-option v-for="item in blackCardlist" :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="IMEI监控组" class="queryFormItem">
+          <!-- <el-form-item label="IMEI监控组" class="queryFormItem">
             <el-select class="queryFormInput" v-model="queryCardsForm.IMEIGroupId" clearable placeholder="请选择IMEI监控组">
               <el-option v-for="item in blackCardlist" :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="卡状态" class="queryFormItem">
             <el-select class="queryFormInput" v-model="queryCardsForm.status" clearable placeholder="请选择卡状态">
               <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
