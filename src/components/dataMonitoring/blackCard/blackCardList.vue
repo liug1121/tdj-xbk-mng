@@ -261,7 +261,7 @@ export default {
         { prop: 'cityName', label: '当前城市', width: 100 },
         { prop: 'imei', label: 'IMEI', width: 200 },
         { prop: 'lbsGroupName', label: 'LBS监控组', width: 200 },
-        { prop: 'imeiGroupName', label: 'IMEI监控组', width: 200 },
+        // { prop: 'imeiGroupName', label: 'IMEI监控组', width: 200 },
         { prop: 'opts', label: '操作'}
       ],
 
@@ -318,6 +318,7 @@ export default {
     this.getprovinceOptions()
   },
   created(){
+    this.getBlackCardlist()
     this.queryCards()
   },
   methods: {
