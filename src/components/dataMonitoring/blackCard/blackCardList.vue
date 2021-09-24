@@ -157,11 +157,11 @@
               <el-option v-for="item in blackCardlist" :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
             </el-select>
           </el-form-item> 
-          <el-form-item label="IMEI监控组">
+          <!-- <el-form-item label="IMEI监控组">
           <el-select class="queryFormInput" v-model="ImportForm.IMEIGroupId"  placeholder="请选择IMEI监控组">
               <el-option v-for="item in blackCardlist" :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-upload class="unload-demo" accept=".xls, .xlsx" action="#" :file-list="fileList" :http-request="uploadFile">
             <el-button size="small" type="primary">点击上传要导入的文件</el-button>
           </el-upload>
@@ -255,11 +255,12 @@ export default {
       total: 0,
       // 表格
       table_column: [
-        { prop: 'channelName', label: '渠道', width: 150},
+        { prop: 'channelName', label: '渠道', width: 100},
         {prop:'iccid', label:'iccid', width: 220},
-        {prop:'status', label:'状态',width: 300 },
+        {prop:'status', label:'状态',width: 60 },
         { prop: 'cityName', label: '当前城市', width: 100 },
-        { prop: 'imei', label: 'IMEI', width: 200 },
+        { prop: 'imei', label: 'IMEI', width: 150 },
+        { prop: 'imeiUsing', label: '当前设备imei', width: 150 },
         { prop: 'lbsGroupName', label: 'LBS监控组', width: 200 },
         // { prop: 'imeiGroupName', label: 'IMEI监控组', width: 200 },
         { prop: 'opts', label: '操作'}
@@ -356,7 +357,7 @@ export default {
     },
     toImport:function(){
       if(this.ImportForm.file == undefined){
-        that.$message.error({
+        this.$message.error({
           message: "请选择文件",
           type: "error",
           duration: 2000
@@ -364,21 +365,21 @@ export default {
         return
       }
       if(this.ImportForm.lbsGroupId == undefined){
-        that.$message.error({
-          message: "请lbs监控组",
+        this.$message.error({
+          message: "请选择监控组",
           type: "error",
           duration: 2000
         })
         return
       }
-      if(this.ImportForm.IMEIGroupId == undefined){
-        that.$message.error({
-          message: "请IMEI监控组",
-          type: "error",
-          duration: 2000
-        })
-        return
-      }
+      // if(this.ImportForm.IMEIGroupId == undefined){
+      //   this.$message.error({
+      //     message: "请IMEI监控组",
+      //     type: "error",
+      //     duration: 2000
+      //   })
+      //   return
+      // }
        
       const param = new FormData()
       param.append('file', this.ImportForm.file)
