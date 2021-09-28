@@ -6,7 +6,7 @@
       <el-form :inline="true" ref="queryCardInfoRef" :model="querySignalForm">
         <el-form-item label="蜂窝账号" class="queryFormItem">
           <el-select class="queryFormInput" v-model="querySignalForm.fwAccount" filterable placeholder="请输入蜂窝账号关键词">
-            <el-option v-for="item in areaOptions" :key="item.id" :label="item.productName" :value="item.id">
+            <el-option v-for="item in honeycombList" :key="item.id" :label="item.account" :value="item.account">
             </el-option>
           </el-select>
         </el-form-item>
@@ -128,11 +128,11 @@ export default {
       total: 0,
       // 表格 label 字段名称
       table_column: [
-        { prop: 'fwAccount', label: '蜂窝平台', width: 200, fixed: 'left' },
+        { prop: 'fwAccountName', label: '蜂窝平台', width: 200, fixed: 'left' },
         { prop: 'planName', label: '通信计划', width: 200 },
         { prop: 'planCode', label: '通信计划码', width: 200 },
         // { prop: 'planId', label: '通信计划ID', width: 150 },
-        { prop: 'id', label: '编码', width: 150 },
+        // { prop: 'id', label: '编码', width: 150 },
         { prop: 'planNickName', label: '计划别名', width: 150 },
         { prop: 'areaCL', label: '区域', width: 150 },
         { prop: 'canRecvMsgCL', label: '收短信(mt)', width: 100 },
