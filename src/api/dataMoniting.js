@@ -66,6 +66,9 @@ export default {
   apiCardScanPools:params =>{
     return API.GET('boss/v1.0/card/scan/pool/all', params)
   },
+  apiCardScanPoolImeis:params=>{
+    return API.POST('boss/v1.0/card/scan/pool/details', params)
+  },
   // 黑名单卡明细导出
   apiLbsGroupCardDownload: (groupId, iccid) => {
     const groupId1 = groupId
