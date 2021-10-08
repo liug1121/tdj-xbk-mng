@@ -40,7 +40,7 @@
         <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :show-overflow-tooltip='true'>
           <template slot-scope="scope">
             <div v-if="p.prop =='areaCL'">
-              <span v-if="scope.row.area === 0">省内</span>
+              <span v-if="scope.row.area === '0'">省内</span>
               <span v-else>全国</span>
             </div>
             <div v-if="p.prop == 'canRecvMsgCL'">
@@ -99,7 +99,7 @@
     <ImportModal ref="ImportModal" @InportModalSuccess="InportModalSuccess" :fwAccountOptions="fwAccountOptions"></ImportModal>
     <!-- 编辑 -->
     <el-dialog title="修改通信计划" :visible.sync="editVisible" width="1040px" :close-on-click-modal="false" :destroy-on-close="true" top="5vh">
-      <editSignPlan :list="chooseList" @editSignPlanSuccess="editSignPlanSuccess" :honeycombList="honeycombList"></editSignPlan>
+      <editSignPlan :list="chooseList" @editSignPlanSuccess="editSignPlanSuccess" @editSignPlanCancel="editSignPlanCancel" :honeycombList="honeycombList"></editSignPlan>
     </el-dialog>
   </div>
 </template>
@@ -241,6 +241,9 @@ export default {
           this.$message.error(res.resultInfo)
         }
       })
+    },
+    editSignPlanCancel(data){
+      this.editVisible = false
     },
     // 
 

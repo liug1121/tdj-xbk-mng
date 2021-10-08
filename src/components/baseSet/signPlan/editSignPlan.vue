@@ -70,7 +70,7 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer" style="text-align: right;display: block;margin-right: 10px;">
-      <el-button @click="editVisible = false">取 消</el-button>
+      <el-button @click="close">取 消</el-button>
       <el-button type="primary" @click="editIt()">确 定</el-button>
     </span>
   </div>
@@ -116,14 +116,15 @@ export default {
     this.init();
   },
   watch: {
-    "editForm.area": {
+    "list": {
       handler (val) {
-        // console.log(val);
+        this.init();
       }
     }
   },
   methods: {
     init () {
+      console.log('init')
       this.$nextTick(() => {
         this.editForm.id = this.list.id
         this.editForm.area = this.list.area
@@ -158,13 +159,15 @@ export default {
     editIt () {
       this.$refs.editFormRef.validate(valid => {
         if (!valid) return
-        this.editForm.area = this.list.area
-        // console.log(JSON.stringify(this.editForm))
         const data = JSON.stringify(this.editForm)
         this.$emit('editSignPlanSuccess', data)
         this.$refs.editFormRef.resetFields()
       })
     },
+    close(){
+      const data = JSON.stringify(this.editForm)
+      this.$emit('editSignPlanCancel', data)
+    }
   }
 }
 </script>
