@@ -180,8 +180,8 @@
       <el-dialog title="监控组" :visible.sync="groupDlgVisible" width="80%" height="1000px" :close-on-click-modal="false" :destroy-on-close="true">
         <div class="el-dialog-div">
           <div class="button_content">
-            <el-button size="medium" type="primary" @click="addShow" 
-            v-permission="{indentity:'xbkBlackCardList-add'}">新增</el-button>
+            <el-button size="medium" type="primary" @click="addShow" >新增</el-button>
+            <el-button size="medium" type="primary" @click="showImeiPool" >IMEI监控池管理</el-button>
           </div>
           <el-table v-loading="loading" :data="blackCardlist" border max-height="510px" align="center" :cell-style="{height: '38px',padding:0}" >
           <el-table-column v-for="(p, key) in tableGroupColum" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false">
@@ -204,6 +204,38 @@
 
           </span>
       </el-dialog>
+
+      <el-dialog title="IMEI监控池" :visible.sync="imeiPoolShow" width="40%" height="1000px" :close-on-click-modal="false" :destroy-on-close="true">
+        <div class="el-dialog-div">
+          <div class="button_content">
+            <el-button size="medium" type="primary" >新增</el-button>
+            <!-- <el-button size="medium" type="primary" @click="imeiPoolShow" >IMEI监控池管理</el-button> -->
+          </div>
+          <el-table v-loading="loading" :data="imeiPools" border max-height="510px" align="center" :cell-style="{height: '38px',padding:0}" >
+          <el-table-column v-for="(p, key) in tableImeiPoolColum" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false">
+            <template slot-scope="scope">
+              <div v-if="p.prop == 'opts'">
+                <el-button size="mini" type="primary" plain >imei信息编辑</el-button>
+                <el-button size="mini" type="primary" plain >删除</el-button>
+              </div>
+              <!-- <div v-if="p.prop == 'opts'">
+                <el-button size="mini" type="primary" plain @click="modifyDialogShow(scope.row)">编辑</el-button>
+                <el-button size="mini" type="primary" plain @click="removeGroup(scope.row['groupId'])">删除</el-button>
+              </div>
+              <div v-if="p.prop == 'positionType' || p.prop == 'positionCityIds' || p.prop == 'imeiType'" style="display: none;">
+              </div> -->
+              <div v-else>
+                <div v-html="scope.row[p.prop]" />
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+        </div>
+         <span slot="footer" class="dialog-footer">
+            <el-button @click="hideImeiPool">取 消</el-button>
+
+          </span>
+      </el-dialog>
     </el-card>
   </div>
 </template>
@@ -220,7 +252,8 @@ export default {
   },
   data () {
     return {
-      
+      imeiPools:[],
+      imeiPoolShow:false,
       groupAddForm:{},
       groupModifyForm:{},
 
@@ -279,6 +312,11 @@ export default {
         // { prop: 'positionCityIds', label: '监控城市id'},
         // { prop: 'imeiType', label: 'imei监控类型'}
       ],
+      tableImeiPoolColum:[
+        {prop:'name', label:'池名称', width:200},
+        {prop:'typeName', label:'类型', width:200},
+        {prop:'opts', label:'操作', width:320}
+      ],
       // 处理策略
       statusOptions: [
         { label: "使用", value: 0 },
@@ -321,9 +359,19 @@ export default {
   created(){
     this.getBlackCardlist()
     this.queryCards()
+    this.getAllCardScanPools()
   },
   methods: {
-    
+    getAllCardScanPools:function(){
+      API.apiCardScanPools().then(res => {
+        if (res.resultCode === 0) {
+          this.imeiPools = res.data
+          console.log('***' + JSON.stringify(this.imeiPools))
+        } else {
+          this.$message.error(res.resultInfo)
+        }
+      })
+    },
     channelSelectId (channelSelectId) {
       this.queryCardsForm.channelId = channelSelectId
     },
@@ -502,6 +550,12 @@ export default {
     },
     addShow () {
       this.addDialogVisible = true
+    },
+    showImeiPool:function(){
+      this.imeiPoolShow = true
+    },
+    hideImeiPool:function(){
+      this.imeiPoolShow = false
     },
     // 监听添加用户对话框的关闭事件
     addDialogClosed () {
