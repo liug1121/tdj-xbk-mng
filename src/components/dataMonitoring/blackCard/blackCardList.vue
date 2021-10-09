@@ -88,7 +88,7 @@
             </div>
             <div v-if="groupAddForm.IMEIType == 3">
               <el-select  size="small" v-model="groupAddForm.cardScanPool" filterable placeholder="请选择imei监控池" style="width:100%" >
-                <el-option v-for="item in imeiPools" :key="item.id" :label="item.typeName" :value="item.id"></el-option>
+                <el-option v-for="item in imeiPools" :key="item.id" :label="item.name" :value="item.id"></el-option>
               </el-select>
             </div>
           </el-form-item>
@@ -142,8 +142,8 @@
               <el-input style="width:300px;" v-model="imeiToMachToUpdate" placeholder="请输入后6位IMEI"></el-input>
             </div>
             <div v-if="IMEITypeToUpdate == 3">
-              <el-select  size="small" v-model="groupAddForm.cardScanPool" filterable placeholder="请选择imei监控池" style="width:100%" >
-                <el-option v-for="item in imeiPools" :key="item.id" :label="item.typeName" :value="item.id"></el-option>
+              <el-select  size="small" v-model="cardScanPoolToUpdate" filterable placeholder="请选择imei监控池" style="width:100%" >
+                <el-option v-for="item in imeiPools" :key="item.id" :label="item.name" :value="item.id"></el-option>
               </el-select>
             </div>
           </el-form-item>
@@ -187,7 +187,7 @@
         </span>
       </el-dialog>
   
-      <el-dialog title="监控组" :visible.sync="groupDlgVisible" width="80%" height="1000px" :close-on-click-modal="false" :destroy-on-close="true">
+      <el-dialog title="监控组" :visible.sync="groupDlgVisible" width="90%" height="1000px" :close-on-click-modal="false" :destroy-on-close="true">
         <div class="el-dialog-div">
           <div class="button_content">
             <el-button size="medium" type="primary" @click="addShow" >新增</el-button>
@@ -215,7 +215,7 @@
           </span>
       </el-dialog>
 
-      <el-dialog title="IMEI监控池" :visible.sync="imeiPoolShow" width="40%" height="1000px" :close-on-click-modal="false" :destroy-on-close="true">
+      <el-dialog title="IMEI监控池" :visible.sync="imeiPoolShow" width="55%" height="1000px" :close-on-click-modal="false" :destroy-on-close="true">
         <div class="el-dialog-div">
           <div class="button_content">
             <el-button size="medium" type="primary" @click="showCardScanPoolDlg">新增</el-button>
@@ -225,7 +225,7 @@
             <template slot-scope="scope">
               <div v-if="p.prop == 'opts'">
                 <el-button size="mini" type="primary" plain @click="showEditCardScanPoolImeiDlg(scope.row['id'])">imei信息编辑</el-button>
-                <el-button size="mini" type="primary" plain >删除</el-button>
+                <el-button size="mini" type="primary" plain @click="removeCardScanPool(scope.row['id'])">删除</el-button>
               </div>
               <div v-else>
                 <div v-html="scope.row[p.prop]" />
@@ -253,17 +253,25 @@
         </el-form>
         </div>
          <span slot="footer" class="dialog-footer">
+           <!-- apiAddCardScanPool -->
+           <el-button @click="addCardScanPoolOk">确 定</el-button>
             <el-button @click="hideCardScanPoolDlg">取 消</el-button>
           </span>
       </el-dialog>
 
-      <el-dialog title="imei信息配置" :visible.sync="editCardScanPoolImeiDlgShow" width="50%" height="1200px" :close-on-click-modal="false" :destroy-on-close="true">
+      <el-dialog title="imei信息配置" :visible.sync="editCardScanPoolImeiDlgShow" width="67%" height="1200px" :close-on-click-modal="false" :destroy-on-close="true">
          <el-form :inline="true"  :model="queryCardScanPoolForm" class="queryForm">
           <el-form-item label="IMEI" class="queryFormItem"> 
            <el-input style="width:200px;" v-model="queryCardScanPoolForm.imeiLike" placeholder="请输入imei内容"></el-input>
           </el-form-item>
           <el-form-item class="queryFormItem">
-            <el-button size="medium" type="primary">查询</el-button>
+            <el-button size="medium" type="primary" @click="queryPoolImeis">查询</el-button>
+          </el-form-item>
+          <el-form-item class="queryFormItem">
+            <!-- <el-button size="medium" type="primary">导入IMEI信息</el-button> -->
+            <el-upload class="unload-demo" accept=".xls, .xlsx" action="#" :file-list="editCardScanImeisFileList" :http-request="CardScanPoolImeisUploadFile">
+              <el-button size="small" type="primary">通过excel导入IMEI信息</el-button>
+            </el-upload>
           </el-form-item>
         </el-form>
         <div class="el-dialog-div">
@@ -271,7 +279,7 @@
           <el-table-column v-for="(p, key) in tableCardScanPoolImeisColum" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false">
             <template slot-scope="scope">
               <div v-if="p.prop == 'opts'">
-                <el-button size="mini" type="primary" plain >删除</el-button>
+                <el-button size="mini" type="primary" plain @click="removePoolImei(scope.row['id'])">删除</el-button>
               </div> 
               <div>
                 <div v-html="scope.row[p.prop]" />
@@ -303,6 +311,9 @@ export default {
   },
   data () {
     return {
+      cardScanPoolToUpdate:'',
+      cardScanPoolImeisFile:'',
+      editCardScanImeisFileList:[],
       editCardScanPoolImeiDlgShow:false,
       queryCardScanPoolForm:{},
       cardScanPoolImeis:[],
@@ -375,6 +386,7 @@ export default {
         { prop: 'positionCityNames', label: 'lbs组配置信息', width: 200},
         { prop: 'imeiTypeName', label: 'IMEI监控类型', width: 200},
         { prop: 'imei', label: 'IMEI组配置信息', width: 100},
+        { prop: 'cardScanPoolName', label: 'IMEI池', width: 100},
         { prop: 'opts', label: '操作'}
         // { prop: 'positionType', label: '监控类型id'},
         // { prop: 'positionCityIds', label: '监控城市id'},
@@ -431,9 +443,29 @@ export default {
     this.getAllCardScanPools()
   },
   methods: {
-    getCardScanPoolImeis:function(poolId){
+    CardScanPoolImeisUploadFile (item) {
+      this.$confirm('您确认要导入吗？')
+        .then(() => {
+          const param = new FormData()
+          param.append('file', item.file)
+          param.append('poolId', this.selectedCardScanPoolId)
+          API.apiImportPoolImeisUpload(param).then(res => {
+            if (res.resultCode === 0) {
+              this.$message.success('导入任务提交成功，请在任务管理中查看结果，任务编号：' + res.data)
+              this.getCardScanPoolImeis(this.selectedCardScanPoolId, this.queryCardScanPoolForm.imeiLike)
+            } else {
+              this.$message.error(res.resultInfo)
+            }
+          })
+        })
+        .catch(() => {
+        });
+
+    },
+    getCardScanPoolImeis:function(poolId, imeiLike){
       let params = {}
       params.poolId = poolId
+      params.imeiLike = imeiLike
       params.page = this.PoolImeiPage
       params.pageSize = this.PoolImeiPageSize
       API.apiCardScanPoolImeis(params).then(res => {
@@ -446,21 +478,44 @@ export default {
       })
 
     },
+    removePoolImei:function(poolImeiId){
+      // apiRemoveCardScanPoolImei
+      this.$confirm('您确认要删除吗？')
+        .then(() => {
+          let params = {}
+          params.poolImeiId=poolImeiId
+          API.apiRemoveCardScanPoolImei(params).then(res => {
+            if (res.resultCode === 0) {
+              this.addCardScanPoolDlgShow = false
+              this.$message.success('删除成功！')
+              this.getCardScanPoolImeis(this.selectedCardScanPoolId, this.queryCardScanPoolForm.imeiLike)
+            } else {
+              this.$message.error(res.resultInfo)
+            }
+          })
+        })
+        .catch(() => {
+        });
+    },
+    queryPoolImeis:function(){
+      this.getCardScanPoolImeis(this.selectedCardScanPoolId, this.queryCardScanPoolForm.imeiLike)
+    },
     showEditCardScanPoolImeiDlg:function(poolId){
       this.editCardScanPoolImeiDlgShow = true
-      this.getCardScanPoolImeis(poolId)
+      this.selectedCardScanPoolId = poolId
+      this.getCardScanPoolImeis(poolId, null)
     },
     hideEditCardScanPoolImeiDlg:function(){
       this.editCardScanPoolImeiDlgShow = false
     },
     handlePoolImeiSizeChange (newSize) {
       this.PoolImeiPageSize = newSize
-      this.getCardScanPoolImeis()
+      this.getCardScanPoolImeis(this.selectedCardScanPoolId, null)
     },
     // 监听 页码值 改变的事件
     handlePoolImeiCurrentChange (newPage) {
       this.PoolImeiPage = newPage - 1
-      this.getCardScanPoolImeis()
+      this.getCardScanPoolImeis(this.selectedCardScanPoolId, null)
     },
 
 // handleSizeChange (newSize) {
@@ -480,6 +535,44 @@ export default {
     },
     hideCardScanPoolDlg:function(){
       this.addCardScanPoolDlgShow = false
+    },
+    removeCardScanPool:function(poolId){
+      // apiRemoveCardScanPool
+      this.$confirm('您确认要删除吗？')
+        .then(() => {
+          let params = {}
+          params.poolId=poolId
+          API.apiRemoveCardScanPool(params).then(res => {
+            if (res.resultCode === 0) {
+              this.addCardScanPoolDlgShow = false
+              this.$message.success('删除成功！')
+              this.getAllCardScanPools()
+            } else {
+              this.$message.error(res.resultInfo)
+            }
+          })
+        })
+        .catch(() => {
+        });
+    },
+    addCardScanPoolOk:function(){
+      this.$confirm('您确认要新增吗？')
+        .then(() => {
+          let params = {}
+          params.name=this.addCardScanPoolForm.name
+          params.type=this.addCardScanPoolForm.type
+          API.apiAddCardScanPool(params).then(res => {
+            if (res.resultCode === 0) {
+              this.addCardScanPoolDlgShow = false
+              this.$message.success('添加成功！')
+              this.getAllCardScanPools()
+            } else {
+              this.$message.error(res.resultInfo)
+            }
+          })
+        })
+        .catch(() => {
+        });
     },
     getAllCardScanPools:function(){
       API.apiCardScanPools().then(res => {
@@ -670,6 +763,7 @@ export default {
     },
     addShow () {
       this.addDialogVisible = true
+      this.groupAddForm = {}
     },
     showImeiPool:function(){
       this.imeiPoolShow = true
@@ -701,6 +795,12 @@ export default {
           params.poiIds = this.selectedCitiesToUpdate
           params.imeiType = this.IMEITypeToUpdate
           params.imeiToMatch = this.imeiToMachToUpdate
+          params.cardScanPoolId = this.cardScanPoolToUpdate
+          if(params.imeiType == 3){
+            params.imeiToMatch = ''
+          }else{
+            params.cardScanPoolId = -1
+          }
           API.apiLbsGroupModify(params).then(res => {
             if (res.resultCode === 0) {
               this.modifyDialogVisible = false
@@ -754,7 +854,17 @@ export default {
       }
       param.imeiType = this.groupAddForm.IMEIType
       param.imeiToMatch = this.groupAddForm.imeiToMach
-      if(param.imeiType != undefined && param.imeiType != 0 && (param.imeiToMatch == undefined || param.imeiToMatch == '')){
+      param.cardScanPoolId = this.groupAddForm.cardScanPool
+      if(param.imeiType == 3){
+        if(this.groupAddForm.cardScanPool == undefined || this.groupAddForm.cardScanPool == null){
+          this.$message.error({
+          message: "必须选择相应的imei池",
+          type: "error",
+          duration: 2000
+        })
+        return
+        }
+      }else if(param.imeiType != undefined && param.imeiType != 0 && (param.imeiToMatch == undefined || param.imeiToMatch == '')){
         this.$message.error({
           message: "必须填写相应的imei信息",
           type: "error",

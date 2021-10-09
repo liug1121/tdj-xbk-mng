@@ -66,8 +66,24 @@ export default {
   apiCardScanPools:params =>{
     return API.GET('boss/v1.0/card/scan/pool/all', params)
   },
+  apiAddCardScanPool:params=>{
+    return API.POST('boss/v1.0/card/scan/pool/add', params)
+  },
+  apiRemoveCardScanPool:params=>{
+    return API.POST('boss/v1.0/card/scan/pool/delete', params)
+  },
   apiCardScanPoolImeis:params=>{
     return API.POST('boss/v1.0/card/scan/pool/details', params)
+  },
+  apiRemoveCardScanPoolImei:params=>{
+    return API.POST('boss/v1.0/card/scan/pool/details/delete', params)
+  },
+  apiImportPoolImeisUpload: (params, groupId) => {
+    return API.POST(`boss/v1.0/card/scan/pool/detail/upload`, params, {
+      headers: {
+        'content-type': 'multipart/form-data'
+      }
+    })
   },
   // 黑名单卡明细导出
   apiLbsGroupCardDownload: (groupId, iccid) => {
