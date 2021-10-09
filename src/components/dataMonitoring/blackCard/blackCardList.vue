@@ -408,9 +408,10 @@ export default {
       ],
       IMEITypes:[
         { label: "IMEI池匹配", value: 3 },
-        { label: "IMEI一对一精确绑定", value: 0 },
-        { label: "IMEI前6位数模糊匹配", value: 1 },
-        { label: "IMEI后6位数模糊匹配", value: 2 }
+        { label: "IMEI一对一精确绑定", value: 0 }
+        // ,
+        // { label: "IMEI前6位数模糊匹配", value: 1 },
+        // { label: "IMEI后6位数模糊匹配", value: 2 }
       ],
       selectedPositionTypeValue:'',
       selectedPositionTypeLabel:'',
@@ -476,10 +477,8 @@ export default {
           this.$message.error(res.resultInfo)
         }
       })
-
     },
     removePoolImei:function(poolImeiId){
-      // apiRemoveCardScanPoolImei
       this.$confirm('您确认要删除吗？')
         .then(() => {
           let params = {}
@@ -588,6 +587,8 @@ export default {
       this.queryCardsForm.channelId = channelSelectId
     },
     queryOk:function(){
+      this.queryInfo.page = 0
+      this.queryInfo.pageSize = 10
       this.queryCards();
     },
     queryCards:function(){
@@ -595,7 +596,8 @@ export default {
       console.log('sds')
       // 获取后台数据
       let params = {}
-      params.iccid = this.queryCardsForm.iccid
+      if(this.queryCardsForm.iccid != undefined && this.queryCardsForm.iccid != null && this.queryCardsForm.iccid != '')
+        params.iccid = this.queryCardsForm.iccid
       params.channelId = this.queryCardsForm.channelId
       params.lbsGroupId = this.queryCardsForm.lbsGroupId
       params.IMEIGroupId = this.queryCardsForm.IMEIGroupId
