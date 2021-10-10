@@ -115,10 +115,10 @@
           <el-form-item>
           </el-form-item>
           <el-form-item label="LBS监控">
-             <el-select  size="small" v-model="selectedPositionTypeLabelToUpdate" filterable placeholder="请输入监控类型" style="width:100%" @click="positionTypeChange">
+             <el-select  size="small" v-model="selectedPositionTypeLabelToUpdate" filterable placeholder="请输入监控类型" style="width:100%" @change="positionTypeChange">
               <el-option v-for="item in positionTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
-            <div v-if="selectedPositionTypeLabelToUpdate != undefined">
+            <div v-if="selectedPositionTypeLabelToUpdate != undefined"> 
               <el-select class="queryFormInput" v-model="selectedProvinceToUpdate" clearable filterable placeholder="请选择省份" style="width:100%" @change="provinceChange">
                 <el-option v-for="item in provinceOptions" :key="item.provinceId" :label="item.provinceName" :value="item.provinceId"></el-option>
               </el-select>
@@ -132,7 +132,7 @@
           <el-form-item>
           </el-form-item>
           <el-form-item label="IMEI监控">
-             <el-select  size="small" v-model="IMEITypeToUpdate" filterable placeholder="请输入监控类型" style="width:100%" @change="positionTypeChange">
+             <el-select  size="small" v-model="IMEITypeToUpdate" filterable placeholder="请输入监控类型" style="width:100%" @change="imeiTypeChange">
               <el-option v-for="item in IMEITypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
             <div v-if="IMEITypeToUpdate == 1">
@@ -369,7 +369,8 @@ export default {
       table_column: [
         { prop: 'channelName', label: '渠道', width: 100},
         {prop:'iccid', label:'iccid', width: 220},
-        {prop:'status', label:'状态',width: 60 },
+        {prop:'status', label:'状态',width: 150 },
+        {prop:'description', label:'说明',width: 300 },
         { prop: 'cityName', label: '当前城市', width: 100 },
         { prop: 'imei', label: 'IMEI', width: 150 },
         { prop: 'imeiUsing', label: '当前设备imei', width: 150 },
@@ -403,10 +404,12 @@ export default {
         { label: "停用", value: 1 }
       ],
       positionTypes:[
+        { label: "不使用位置定位", value: null },
         { label: "指定城市可以使用", value: 1 },
         { label: "指定城市不可以使用", value: 0 }
       ],
       IMEITypes:[
+        { label: "不使用IMEI定位", value: null },
         { label: "IMEI池匹配", value: 3 },
         { label: "IMEI一对一精确绑定", value: 0 }
         // ,
@@ -703,8 +706,17 @@ export default {
         }
       })
     },
+    imeiTypeChange(vId){
+      if(vId == null){
+        this.cardScanPoolToUpdate = null
+        this.imeiToMachToUpdate = null
+      }
+    },
     positionTypeChange (vId) {
-      
+      if(vId == null){
+        this.selectedProvinceToUpdate = null
+        this.selectedCitiesToUpdate = null
+      }
     },
     handledbClick (row, event, column) {
       console.log(row.groupId)
@@ -786,6 +798,7 @@ export default {
       this.selectedCitiesToUpdate = row['positionCityIds']
       this.IMEITypeToUpdate = row['imeiType']
       this.imeiToMachToUpdate = row['imei']
+      this.cardScanPoolToUpdate = row['cardScanPoolId']
     },
     modifyGroup:function(){
       this.$confirm('您确认要修改吗？')
@@ -794,8 +807,33 @@ export default {
           params.groupId = this.groupIdToUpdate
           params.name = this.nameToUpdate
           params.positionType = this.selectedPositionTypeLabelToUpdate
+          if(params.positionType != undefined && (this.selectedCitiesToUpdate == undefined || this.selectedCitiesToUpdate == '')){
+            this.$message.error({
+              message: "选择lbs定位类型的情况下，必须填写相应的使用城市",
+              type: "error",
+              duration: 2000
+            })
+            return
+          }
           params.poiIds = this.selectedCitiesToUpdate
           params.imeiType = this.IMEITypeToUpdate
+          if(params.imeiType == 3){
+            if(this.cardScanPoolToUpdate == undefined || this.cardScanPoolToUpdate == null){
+              this.$message.error({
+              message: "必须选择相应的imei池",
+              type: "error",
+              duration: 2000
+            })
+            return
+            }
+          }else if(params.imeiType != undefined && params.imeiType != 0 && (this.imeiToMachToUpdate == undefined || this.imeiToMachToUpdate == '')){
+            this.$message.error({
+              message: "必须填写相应的imei信息",
+              type: "error",
+              duration: 2000
+            })
+            return
+          }
           params.imeiToMatch = this.imeiToMachToUpdate
           params.cardScanPoolId = this.cardScanPoolToUpdate
           if(params.imeiType == 3){
