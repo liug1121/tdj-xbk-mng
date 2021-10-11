@@ -297,7 +297,7 @@ export default {
         type: 'warning'
       }).then(() => {
         const data = {
-          packageId: row.id,
+          id: row.id,
           status: type
         }
         API.apiChannelsPackagesStatusModify(data).then(res => {
