@@ -61,7 +61,7 @@
                   <el-button size="mini" v-if="scope.row.status===0 || scope.row.status===2" @click="deactivation(scope.row,1)">上架</el-button>
                   <el-button size="mini" v-if="scope.row.status===1 || scope.row.status===0" @click="deactivation(scope.row,2)">上架不显示</el-button>
                   <el-button size="mini" v-if="scope.row.status===2 || scope.row.status===1" @click="deactivation(scope.row,0)">下架</el-button>
-                  <el-button size="mini" @click="modityChannelGoods(scope.row)">编辑</el-button>
+                  <el-button size="mini" @click="modityChannelGoods(scope.row)" v-permission="{indentity:'xbkChannelGoodList-add'}">编辑</el-button>
                 </div>
                 <div v-else>
                   <div v-html="scope.row[p.prop]" />
