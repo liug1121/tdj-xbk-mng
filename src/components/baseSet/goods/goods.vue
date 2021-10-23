@@ -198,7 +198,7 @@ export default {
       ],
       // 用量清算方式
       usageClearingMethodOptions: [
-        { label: '自然月', value: 0 },
+        // { label: '自然月', value: 0 },
         { label: '27号', value: 1 }
       ],
       // 状态
