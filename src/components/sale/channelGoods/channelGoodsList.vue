@@ -8,7 +8,7 @@
       <el-col :span="18">
         <el-card>
           <!-- 查询区域 -->
-          <el-form :inline="true" v-model="queryInventoryForm" ref="queryInventoryForm">
+          <!-- <el-form :inline="true" v-model="queryInventoryForm" ref="queryInventoryForm">
             <el-form-item label="套餐名" class="queryFormItem">
               <el-select v-model="queryInventoryForm.packageId" filterable placeholder="请输入套餐关键词">
                 <el-option v-for="item in porductsListOptions" :key="item.packageId" :label="item.packageName" :value="item.packageId">
@@ -18,7 +18,7 @@
             <el-form-item class="queryFormItem">
               <el-button type="primary" size="mini" icon="el-icon-search" @click="getchannelPackageAllocationList(channelIdTree)">查询</el-button>
             </el-form-item>
-          </el-form>
+          </el-form> -->
           <!-- 按钮区域 -->
           <div class="button_content">
             <el-button size="medium" type="primary" icon="el-icon-plus" @click="addChannelPackageShow" 
@@ -193,8 +193,9 @@ export default {
     channelChick (channel) {
       if (!channel) return
       const parentChannelId = channel.channelId
-      sessionStorage.setItem('channelId', parentChannelId)
-      this.channelIdTree = sessionStorage.getItem('channelId')
+      // sessionStorage.setItem('channelId', parentChannelId)
+      // this.channelIdTree = sessionStorage.getItem('channelId')
+      this.channelIdTree = parentChannelId
       this.getchannelPackageAllocationList(parentChannelId)
     },
     // 子组件传来的点击渠道事件
