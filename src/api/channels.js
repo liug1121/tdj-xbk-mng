@@ -90,5 +90,8 @@ export default {
   },
   apiAddChannelManager:params =>{
     return API.POST('boss/v1.0/channels/manager/add', params)
+  },
+  apiRemoveChannel:params =>{
+    return API.POST('boss/v1.0/channel/remove', params)
   }
 }

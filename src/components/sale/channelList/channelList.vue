@@ -35,6 +35,8 @@
             v-permission="{indentity:'xbkChannelList-add'}">添加</el-button>
             <el-button size="medium" type="primary" icon="el-icon-plus" @click="addChannelManagerShow" 
             v-permission="{indentity:'xbkChannelList-add'}">添加管理员</el-button>
+            <el-button size="medium" type="primary" icon="el-icon-plus" @click="removeChannel" 
+            v-permission="{indentity:'xbkChannelList-add'}">删除该渠道</el-button>
           </div>
           <!-- table表格区域 -->
           <el-table v-loading="loading" :data="channelList" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
@@ -425,6 +427,50 @@ export default {
     addChannelManagerShow(){
       this.addManagerDialogVisible = true
       this.dialogTitle = '新增渠道管理员'
+    },
+    removeChannel(){
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let params = {}
+        params.channelId = localStorage.getItem('channelId');
+        API.apiRemoveChannel(params).then(res => {
+          // console.log('add...' + JSON.stringify(res))
+            if (res.resultCode === 0) {
+              this.$message.success('删除成功！')
+              // that.addManagerDialogVisible = false
+              // that.getChannelList(localStorage.getItem('channelId'))
+              // that.getChannelList();
+              this.$refs.channerTreeRef.getChannelTree()
+            } else {
+              this.$message.error(res.resultInfo)
+            }
+          })
+        
+        // console.log('add...')
+        // let params = {}
+        // params.channelId = this.channelId
+        // params.userName = this.managerPhone
+        // params.name = this.manager
+        // params.type = 1
+        // params.phone = this.managerPhone
+        // params.pwd = this.pwd
+
+        // API.apiAddChannelManager(params).then(res => {
+        //   console.log('add...' + JSON.stringify(res))
+        //     if (res.resultCode === 0) {
+        //       this.$message.success('新增成功！')
+        //       that.addManagerDialogVisible = false
+        //       that.getChannelList(localStorage.getItem('channelId'))
+        //     } else {
+        //       this.$message.error(res.resultInfo)
+        //     }
+        //   })
+        
+      }).catch(() => {
+      });
     },
     closeChannelManagerButton(){
       this.addManagerDialogVisible = false
