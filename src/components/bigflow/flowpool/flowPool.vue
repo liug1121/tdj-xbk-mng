@@ -41,7 +41,14 @@
         </el-table-column>
         <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
           <template slot-scope="scope">
+            <div v-if="p.prop == 'operation'">
+              <el-button type="text" size="small" @click="stopPool(scope.row.poolId)" v-if="scope.row.status=='open'">停用</el-button>
+              <el-button type="text" size="small" @click="openPool(scope.row.poolId)" v-else>启用</el-button>
+              <el-button type="text" size="small" @click="removePool(scope.row.poolId)">删除</el-button>
+            </div>
+            <div v-else>
               <div v-html="scope.row[p.prop]" />
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -190,7 +197,8 @@ export default {
         { prop: 'flowHighUsedName', label: '当月已使用', width: 180, sortable: true },
         { prop: 'surplusUsedName', label: '剩余总流量', width: 180, sortable: true },
         { prop: 'expireDate', label: '有效期', width: 300 },
-        { prop: 'gmtCreate', label: '创建时间', width: 300 }
+        { prop: 'gmtCreate', label: '创建时间', width: 300 },
+        { prop: 'operation', label: '操作', width: 100, fixed: 'right' }
         
       ],
     };
@@ -205,6 +213,76 @@ export default {
   },
   watch: {},
   methods: {
+    removePool:function(poolId){
+      // removeFlowPool
+      let that = this
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+          that.btnEnable = true
+          let params = {}
+          params.poolId = poolId
+          apiBigflow.removeFlowPool(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryFlowPools()
+                    alert('操作成功')
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        });
+    },
+    openPool:function(poolId){
+      let that = this
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+          that.btnEnable = true
+          let params = {}
+          params.poolId = poolId
+          params.status = 1
+          apiBigflow.modifyFlowPoolStatus(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryFlowPools()
+                    alert('操作成功')
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        });
+    },
+    stopPool:function(poolId){
+      let that = this
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+          that.btnEnable = true
+          let params = {}
+          params.poolId = poolId
+          params.status = 0
+          apiBigflow.modifyFlowPoolStatus(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryFlowPools()
+                    alert('操作成功')
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        });
+    },
+    
       openUpdateuseDlg:function(){
           if(this.poolId == ""){
             alert('请先选择要操作的流量池')

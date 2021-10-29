@@ -102,6 +102,12 @@ export default {
     updateFlowPoolUse: params =>{
         return API.POST('/bigflow/manage/v1.0/flowpools/updateuse', params)
     },
+    modifyFlowPoolStatus: params =>{
+        return API.POST('/bigflow/manage/v1.0/pools/status/modify', params)
+    },
+    removeFlowPool:params =>{
+        return API.POST('/bigflow/manage/v1.0/pools/remove', params)
+    },
     movePool: params =>{
         return API.POST('/bigflow/manage/v1.0/flowpools/move', params)
     },
