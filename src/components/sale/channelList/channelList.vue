@@ -149,6 +149,11 @@
         <el-form-item label="密码" >
           <el-input size="small" v-model="pwd" placeholder="请输入管理员密码"></el-input>
         </el-form-item>
+        <el-form-item label="管理员角色" prop="usingInDevice" v-show="isUsingIn">
+          <el-select size="small" style="width:100%;" v-model="roleId" placeholder="请选择管理员角色">
+            <el-option v-for="item in channelRoles" :key="item.id" :label="item.name" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
         <!-- <el-form-item label="学霸卡渠道" prop="usingInXuebaka" v-show="isUsingIn">
           <el-select size="small" style="width:100%;" v-model="addChannelForm.usingInXuebaka" placeholder="请选择是否为学霸卡渠道" @change="usingInXuebakaChange">
             <el-option v-for="item in usingInXuebakaOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
@@ -177,6 +182,7 @@
 import channelTree from "./../channelTree"
 import SelectTree from './../treeSelect'
 import API from 'api/channels'
+import APISYS from 'api/system'
 export default {
   name: 'channelList',
   components: {
@@ -186,6 +192,8 @@ export default {
   data () {
     return {
       // 渠道管理列表
+      channelRoles:[],
+      roleId:'',
       channelId:'',
       managerPhone:'', 
       manager:'' ,
@@ -277,8 +285,24 @@ export default {
   mounted () {
     this.getChannelList();
     this.getParentChannelOptions()
+    this.getChannelRoles()
   },
   methods: {
+    getChannelRoles:function(){
+      let params = {}
+      APISYS.getAllSysRoles(params).then(res => {
+        if (res.resultCode === 0) {
+          let allRoles = res.data;
+          this.channelRoles = allRoles.filter(role=>{
+            if(role.type === 0)
+                return true
+            return false
+        })
+        } else {
+          this.$message.error('获取公众号二维码失败: 获取不到accesstoken')
+        }
+      })
+    },
     channelChick (channel) {
       console.log(channel);
       if (!channel) return
@@ -490,7 +514,7 @@ export default {
         params.type = 1
         params.phone = this.managerPhone
         params.pwd = this.pwd
-
+        params.roleId = this.roleId
         API.apiAddChannelManager(params).then(res => {
           console.log('add...' + JSON.stringify(res))
             if (res.resultCode === 0) {
