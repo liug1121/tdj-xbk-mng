@@ -42,7 +42,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="蜂窝账号" class="queryFormItem">
+        <el-form-item label="蜂窝账号" class="queryFormItem" v-permission="{indentity:'xbkFwAccount'}">
           <el-select class="queryFormInput" v-model="queryCardInfoForm.fwAccount" clearable filterable placeholder="请输入蜂窝账号关键词" style="width:230px" @change="fwUnionAccount">
             <el-option v-for="item in fwUnionAccountOptions" :key="item.id" :label="item.fwAccount" :value="item.id">
             </el-option>
