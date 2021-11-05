@@ -10,12 +10,12 @@
         </div>
         <!-- 查询区域 -->
         <el-form :inline="true" ref="queryBillFormRef" :model="queryBillForm" class="queryForm">
-          <el-form-item label="运营商ID" class="queryFormItem">
+          <!-- <el-form-item label="运营商ID" class="queryFormItem">
             <el-select style="width:140px" size="small" v-model="queryBillForm.unionId" clearable filterable placeholder="请输入运营商ID关键词">
               <el-option v-for="item in UnionidsOptions" :key="item" :label="item" :value="item">
               </el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="子账户" class="queryFormItem">
             <el-select style="width:140px" size="small" v-model="queryBillForm.subAccount" clearable filterable placeholder="请输入子账户关键词">
               <el-option v-for="item in subAccountOptions" :key="item" :label="item" :value="item">
@@ -23,17 +23,21 @@
             </el-select>
           </el-form-item>
           <el-form-item label="渠道" class="queryFormItem">
-            <channelSelect v-model="queryBillForm.channelId" style="width:120px !important" @channelSelectId="channelSelectId"></channelSelect>
+            <el-select style="width:140px" size="small" v-model="queryBillForm.channelName" clearable filterable placeholder="请输入子账户关键词">
+              <el-option v-for="item in channelNames" :key="item" :label="item" :value="item">
+              </el-option>
+            </el-select>
+            <!-- <channelSelect v-model="queryBillForm.channelId" style="width:120px !important" @channelSelectId="channelSelectId"></channelSelect> -->
           </el-form-item>
           <el-form-item label="账期" class="queryFormItem">
             <el-date-picker style="width:140px" v-model="queryBillForm.cycleId" type="month" placeholder="选择账期" value-format="yyyyMM">
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="用量" class="queryFormItem">
+          <!-- <el-form-item label="用量" class="queryFormItem">
             <el-select style="width:112px" size="small" v-model="queryBillForm.usageType" clearable filterable placeholder="请选择用量">
               <el-option v-for="item in usageTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item class="queryFormItem">
             <el-button type="primary" size="mini" icon="el-icon-search" @click="queryBillButton">查询</el-button>
           </el-form-item>
@@ -44,7 +48,7 @@
         <el-table-column label="CMP账单数据">
           <el-table-column prop="iccid" label="SIM卡" width="180">
           </el-table-column>
-          <el-table-column prop="union_id" label="蜂窝账号" width="130">
+          <el-table-column prop="union_id" label="蜂窝账号" width="200">
           </el-table-column>
           <el-table-column prop="sub_account" label="子账户" width="170">
           </el-table-column>
@@ -64,13 +68,13 @@
           </el-table-column>
           <el-table-column prop="card_status" label="实名状态" width="80">
           </el-table-column>
-          <el-table-column label="一级渠道" width="80">
+          <el-table-column label="渠道" width="200">
             <template slot-scope="scope">
               <span v-if="scope.row.channels.length >= 1"></span>
               {{scope.row.channels[0]}}
             </template>
           </el-table-column>
-          <el-table-column label="二级渠道" width="120">
+          <!-- <el-table-column label="二级渠道" width="120">
             <template slot-scope="scope">
               <span v-if="scope.row.channels.length >= 2"></span>
               {{scope.row.channels[1]}}
@@ -87,7 +91,7 @@
               <span v-if="scope.row.channels.length >= 4"></span>
               {{scope.row.channels[3]}}
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table-column>
       </el-table>
       <!-- 分页 区域 -->
@@ -109,10 +113,12 @@ export default {
       // 列表总条数
       total: 0,
       billList: [],
+      channelNames:[],
       UnionidsOptions: [],
       subAccountOptions: [],
       queryBillForm: {
         channelId: null,
+        channelName:null,
         cycleId: null,
         unionId: null,
         usageType: null,
@@ -135,8 +141,19 @@ export default {
     this.getUnionidsOptions()
     this.getsubAccountOptions()
     this.getBillList()
+    this.getChannelNames()
   },
   methods: {
+
+    getChannelNames(){
+      API.apiChannelNames().then(res => {
+        if (res.resultCode === 0) {
+          this.channelNames = res.data
+        } else {
+          this.$message.error(res.resultInfo)
+        }
+      })
+    },
     // 获取蜂窝平台信息
     getUnionidsOptions () {
       API.apiUnionidsList().then(res => {
@@ -187,12 +204,19 @@ export default {
     },
     // 导出
     exportButton () {
-      API.apiBillExport(this.queryBillForm).then(res => {
-        if (!res) {
-          return
-        }
-        this.$message.success(`请前往“我的任务”中查询，id值为${res.data}`)
-      })
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        API.apiBillExport(this.queryBillForm).then(res => {
+          if (!res) {
+            return
+          }
+          this.$message.success(`请前往“我的任务”中查询，id值为${res.data}`)
+        })
+        }).catch(() => {
+        });
     },
     // 渠道
     channelSelectId (channelSelectId) {

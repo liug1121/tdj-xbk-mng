@@ -5,6 +5,11 @@ export default {
   apiFwAccountList: params => {
     return API.POST('boss/v1.0/fw/accounts', params)
   },
+
+  // 渠道
+  apiChannelNames: params => {
+    return API.GET('boss/v1.0/cards/compare/channelnames', params)
+  },
   // 运营商
   apiUnionidsList: params => {
     return API.GET('boss/v1.0/cards/compare/unionids', params)
