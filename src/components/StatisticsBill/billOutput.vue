@@ -23,8 +23,8 @@
             </el-select>
           </el-form-item>
           <el-form-item label="渠道" class="queryFormItem">
-            <el-select style="width:140px" size="small" v-model="queryBillForm.channelName" clearable filterable placeholder="请输入子账户关键词">
-              <el-option v-for="item in channelNames" :key="item" :label="item" :value="item">
+            <el-select style="width:140px" size="small" v-model="queryBillForm.channelId" clearable filterable placeholder="请输入子账户关键词">
+              <el-option v-for="item in channelNames" :key="item.strId" :label="item.name" :value="item.strId">
               </el-option>
             </el-select>
             <!-- <channelSelect v-model="queryBillForm.channelId" style="width:120px !important" @channelSelectId="channelSelectId"></channelSelect> -->
