@@ -81,8 +81,7 @@ export default {
         {value:1, name:"推送成功"},
         {value:-1, name:"推送失败"}
     ],
-      page: 1,
-      pageSize: 10,
+      
       // 列表总条数
       total: 0,
       // 列表，标题、字段
