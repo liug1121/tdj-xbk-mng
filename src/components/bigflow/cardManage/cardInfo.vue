@@ -338,6 +338,7 @@ export default {
         { prop: 'phoneNumber', label: 'MSISDN', width: 190, fixed: 'left', sortable: true },
         { prop: 'statusName', label: '卡状态', width: 200, sortable: true },
        { prop: 'flowHighDose', label: '高速可用量', width: 150, sortable: true },
+       { prop: 'flowMonthHighUsed', label: '当月已用量', width: 110, sortable: true },
         { prop: 'flowHighUsed', label: '高速已用量', width: 110, sortable: true },
         { prop: 'flowMediumDose', label: '中速可用量', width: 200, sortable: true },
         { prop: 'flowMediumUsed', label: '中速已用量', width: 180, sortable: true },
