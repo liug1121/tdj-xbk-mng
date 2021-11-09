@@ -195,6 +195,7 @@ export default {
         { prop: 'productCodeName', label: '当前套餐', width: 200, sortable: true },
         { prop: 'flowHighDoseName', label: '可用量', width: 180, sortable: true },
         { prop: 'flowHighUsedName', label: '当月已使用', width: 180, sortable: true },
+        { prop: 'flowHightotalUsedName', label: '累计已使用', width: 180, sortable: true },
         { prop: 'surplusUsedName', label: '剩余总流量', width: 180, sortable: true },
         { prop: 'expireDate', label: '有效期', width: 300 },
         { prop: 'gmtCreate', label: '创建时间', width: 300 },
