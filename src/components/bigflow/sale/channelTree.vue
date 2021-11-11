@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import API from 'api/channels'
+import API from './../../../api/bigflow'
 export default {
   data () {
     return {
@@ -61,8 +61,11 @@ export default {
     // 获取所有渠道
     getChannelTree () {
       this.loading = true
-      API.apiChannelsAllList().then(res => {
+      let params = {}
+      params.page=1
+      API.getSaleChannels(params).then(res => {
         if (res.resultCode === 0) {
+          console.log(JSON.stringify(res.data))
           // var treeList = res.data.filter((item) => {
           //   if (item.parentChannelId !== 0) {
           //     return item
@@ -71,7 +74,7 @@ export default {
           this.channelTreeList = Object.values(res.data).map(function (e) {
             return {
               channelId: e.channelId,
-              channelName: e.channelName,
+              channelName: e.name,
               manager: e.manager,
               parentChannelId: e.parentChannelId
             }

@@ -165,5 +165,8 @@ export default {
               'content-type': 'multipart/form-data'
             }
           })
-    }  
+    } ,
+    getSaleChannels: params =>{
+        return API.POST('/bigflow/manage/v1.0/salechannel/salechannels', params)
+    }, 
 }
