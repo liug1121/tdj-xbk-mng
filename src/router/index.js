@@ -85,6 +85,33 @@ const router = new Router({
       },
       children: [
         {
+          path: '/bigflowChannelList',
+          name: '渠道列表',
+          component: (resolve) => require(['components/bigflow/sale/bigflowChannelList.vue'], resolve),
+          meta: {
+            title: '渠道列表'
+          }
+        },
+        {
+          path: '/bigflowChannelSaler',
+          name: '渠道销售员',
+          component: (resolve) => require(['components/bigflow/sale/bigflowChannelSaler.vue'], resolve),
+          meta: {
+            title: '渠道销售员'
+          }
+        },
+        {
+          path: '/bigflowStockDistrubute',
+          name: '库存分配',
+          component: (resolve) => require(['components/bigflow/sale/bigflowStockDistrubute.vue'], resolve),
+          meta: {
+            title: '库存分配'
+          }
+        },
+
+
+
+        {
           path: '/bigflowCardOrder',
           name: '大流量卡订单',
           component: (resolve) => require(['components/bigflow/cardManage/cardOrder.vue'], resolve),
