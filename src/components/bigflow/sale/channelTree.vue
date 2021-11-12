@@ -65,12 +65,6 @@ export default {
       params.page=1
       API.getSaleChannels(params).then(res => {
         if (res.resultCode === 0) {
-          console.log(JSON.stringify(res.data))
-          // var treeList = res.data.filter((item) => {
-          //   if (item.parentChannelId !== 0) {
-          //     return item
-          //   }
-          // })
           this.channelTreeList = Object.values(res.data).map(function (e) {
             return {
               channelId: e.channelId,

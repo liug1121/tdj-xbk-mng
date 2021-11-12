@@ -5,86 +5,39 @@
       <el-col :span="6">
         <channelTree ref="channerTreeRef" @channelChick="channelChick" @getChannelId="getChannelId" style="max-height:680px;overflow: auto"></channelTree>
       </el-col>
-      <!-- <el-col :span="18">
+      <el-col :span="18">
         <el-card>
           <el-form :inline="true" ref="queryChannelRef" :model="queryChannelForm">
-            <el-form-item label="渠道名称" class="queryFormItem">
-              <el-input class="queryFormInput" v-model="queryChannelForm.channelName" placeholder="请输入渠道名称"></el-input>
+            <!-- <el-form-item label="姓名" class="queryFormItem">
+              <el-input class="queryFormInput" v-model="queryChannelForm.name" placeholder="请输入姓名"></el-input>
             </el-form-item>
-            <el-form-item label="渠道编码" class="queryFormItem">
-              <el-input class="queryFormInput" v-model="queryChannelForm.channelId" placeholder="请输入渠道编码"></el-input>
-            </el-form-item>
-            <el-form-item label="管理员姓名" class="queryFormItem">
-              <el-input class="queryFormInput" v-model="queryChannelForm.manager" placeholder="请输入管理员姓名"></el-input>
-            </el-form-item>
-            <el-form-item label="创建时间" class="queryFormItem">
-              <el-date-picker v-model="queryChannelForm.startDate" style="width:135px" type="date" placeholder="开始日期">
-              </el-date-picker>
-              <span class="time-line">-</span>
-              <el-date-picker v-model="queryChannelForm.endDate" style="width:135px" type="date" placeholder="结束日期">
-              </el-date-picker>
+            <el-form-item label="手机号码" class="queryFormItem">
+              <el-input class="queryFormInput" v-model="queryChannelForm.phone" placeholder="请输入手机号码"></el-input>
             </el-form-item>
             <el-form-item class="queryFormItem">
               <el-button type="primary" size="mini" icon="el-icon-search" @click="queryChannelButton">查询</el-button>
-            </el-form-item>
+            </el-form-item> -->
           </el-form>
           <div class="button_content">
-            <el-button size="medium" type="primary" icon="el-icon-plus" @click="addChannelShow" 
-            v-permission="{indentity:'xbkChannelList-add'}">添加</el-button>
-            <el-button size="medium" type="primary" icon="el-icon-plus" @click="addChannelManagerShow" 
-            v-permission="{indentity:'xbkChannelList-add'}">添加管理员</el-button>
-            <el-button size="medium" type="primary" icon="el-icon-plus" @click="removeChannel" 
-            v-permission="{indentity:'xbkChannelList-add'}">删除该渠道</el-button>
+            <el-button size="medium" type="primary" icon="el-icon-plus" @click="showAddChannel">添加渠道</el-button>
           </div>
-          <el-table v-loading="loading" :data="channelList" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
+          <el-table v-loading="loading" :data="salePersons" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
             <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :show-overflow-tooltip='true'>
               <template slot-scope="scope">
-                <div v-if="p.prop == 'usingInDeviceCL'">
-                  <span v-if="scope.row.usingInDevice == 0">否</span>
-                  <span v-else>是</span>
-                </div>
-                <div v-if="p.prop == 'usingInXuebakaCL'">
-                  <span v-if="scope.row.usingInXuebaka == 0">否</span>
-                  <span v-else>是</span>
-                </div>
-                <div v-if="p.prop == 'statusCL'">
-                  <span v-if="scope.row.status === 1"> 启用</span>
-                  <span v-else-if="scope.row.status === 0">停用</span>
-                </div>
-                <div v-if="p.prop == 'twoCodeUrlCL'">
-                  <el-popover placement="top-start" width="150" trigger="hover">
-                    <div class="hoverQrcodeBox">
-                      <img :src="ChannelsQrcode" width="150" height="150">
-                      <p class="hoverQrcodeBoxNo">{{scope.row.channelNo}}</p>
-                    </div>
-                    <el-button size="mini" slot="reference">预览</el-button>
-                  </el-popover>
-                  <el-button size="mini" @click="ChannelsQrcodeAdd(scope.row.channelId)" style="margin-left:10px">生成</el-button>
-                </div>
-                <div v-if="p.prop == 'parentChannelCL'">
-                  {{parentChannnelName}}
-                </div>
-                <div v-if="p.prop == 'operation'">
-                  <el-button size="mini" @click="channelEdit(scope.row)">编辑</el-button>
-                  <el-button size="mini" @click="channelDetail(scope.$index, scope.row)">详情</el-button>
-                  <div class="list-button" v-if="scope.row.status == 1">
-                    <el-button size="mini" type="danger" plain @click="deactivation(scope.row, 0)">停用</el-button>
+                  <div v-if="p.prop == 'channelName'">
+                    <span>{{selectedChannelName}}</span>
                   </div>
-                  <div class="list-button" v-else>
-                    <el-button size="mini" type="warning" plain @click="deactivation(scope.row,1)">启用</el-button>
+                  <div v-else>
+                      <div v-html="scope.row[p.prop]" />
                   </div>
-                </div>
-                <div v-else>
-                  <div v-html="scope.row[p.prop]" />
-                </div>
               </template>
             </el-table-column>
           </el-table>
-          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="[10,20,30]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
+          <!-- <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="[10,20,30]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
             :total="total">
-          </el-pagination>
+          </el-pagination> -->
         </el-card>
-      </el-col> -->
+      </el-col>
     </el-row>
     <!-- <el-dialog :title="dialogTitle" :visible.sync="addDialogVisible" width="430px" @close="addDialogClosed">
       <el-form ref="addChannelRef" :model="addChannelForm" :rules="addChannelRules" label-width="120px">
@@ -147,7 +100,37 @@
           <el-button @click="closeChannelManagerButton">取 消</el-button>
           <el-button type="primary" @click="addChannelManagerButton">确 定</el-button>
         </span>
-      </el-dialog> -->
+      </el-dialog> --> 
+       <el-dialog title="新增渠道" :visible.sync="showAddChannelDlg" width="450px" @close="hideAddChannelDlg">
+      <el-form :model="addChannelForm"  label-width="110px">
+          <el-form-item label="渠道名称">
+          <el-input style="width:300px;" v-model="addChannelForm.name" placeholder="请输入渠道名称" ></el-input>
+        </el-form-item>
+        <el-form-item label="父渠道">
+            <el-select 
+            filterable
+          clearable
+          reserve-keyword
+            placeholder="请输入父渠道" v-model="addChannelForm.parentId">
+            <el-option v-for="item in channels" :key="item.channelId" :label="item.name" :value="item.channelId"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="联系人姓名">
+          <el-input style="width:300px;"  v-model="addChannelForm.salePerson" placeholder="请输入联系人姓名" ></el-input>
+        </el-form-item>
+        <el-form-item label="联系人手机号">
+          <el-input style="width:300px;"  v-model="addChannelForm.phone" placeholder="请输入联系人手机号" ></el-input>
+        </el-form-item>
+         <el-form-item label="登录密码">
+          <el-input style="width:300px;"  v-model="addChannelForm.pwd" placeholder="请输入登录密码" ></el-input>
+        </el-form-item>
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="hideAddChannelDlg">取 消</el-button>
+        <el-button type="primary" @click="okAddChannel">确 定</el-button>
+      </span>  
+    </el-dialog>
   </div>
 </template>
 
@@ -155,6 +138,7 @@
 import channelTree from "./channelTree"
 // import SelectTree from './../treeSelect'
 import API from 'api/channels'
+import apiBigflow from 'api/bigflow'
 import APISYS from 'api/system'
 export default {
   name: 'channelList',
@@ -164,6 +148,12 @@ export default {
   },
   data () {
     return {
+      channels:[],
+      showAddChannelDlg:false,
+      addChannelForm:{},
+      salePersons:[],
+      selecedChannelCode:null,
+      selectedChannelName:null,
       // 渠道管理列表
       channelRoles:[],
       roleId:'',
@@ -178,27 +168,24 @@ export default {
       total: 0,
       // 表格 label 字段名称
       table_column: [
-        { prop: 'channelNo', label: '渠道编号', width: 110, fixed: "left" },
-        { prop: 'channelName', label: '渠道名称', width: 200 },
-        { prop: 'usingInXuebakaCL', label: '学霸卡渠道', width: 100 },
-        { prop: 'usingInDeviceCL', label: '设备渠道', width: 100 },
-        { prop: 'parentChannelCL', label: '父渠道', width: 100 },
-        { prop: 'manager', label: '管理员姓名', width: 100 },
-        { prop: 'managerPhone', label: '管理员手机号码', width: 140 },
-        { prop: 'twoCodeUrlCL', label: '带参数的永久二维码', width: 220 },
-        { prop: '', label: '微信公众号', width: 150 },
-        { prop: 'date', label: '创建时间', width: 150 },
-        { prop: 'statusCL', label: '状态', width: 80 },
-        { prop: 'operation', label: "操作", width: 220, fixed: "right" }
+        { prop: 'channelName', label: '渠道名称', width: 300 },
+        { prop: 'name', label: '姓名', width: 100 },
+        { prop: 'mobile', label: '手机号', width: 100 },
+        { prop: 'type', label: '类型', width: 100 },
+        { prop: 'qrCode', label: '推荐码', width: 180 },
+        { prop: 'openId', label: '微信openId', width: 240 },
+        { prop: 'status', label: '状态', width: 220 }
       ],
       queryChannelForm: {
-        channelId: null,
-        channelName: null,
-        endDate: null,
-        manager: null,
-        startDate: null,
-        page: 0,
-        pageSize: 10
+          name:null,
+          phone:null
+        // channelId: null,
+        // channelName: null,
+        // endDate: null,
+        // manager: null,
+        // startDate: null,
+        // page: 0,
+        // pageSize: 10
       },
       ChannelsQrcode: '',
       addDialogVisible: false,
@@ -259,8 +246,96 @@ export default {
     this.getChannelList();
     this.getParentChannelOptions()
     this.getChannelRoles()
+    this.getChannelTree()
   },
   methods: {
+    getChannelTree () {
+      let params = {}
+      params.page=1
+      apiBigflow.getSaleChannels(params).then(res => {
+        if (res.resultCode === 0) {
+            this.channels = res.data
+        } else {
+          this.$message.error(res.resultInfo)
+        }
+      })
+    },
+    hideAddChannelDlg:function(){
+        this.showAddChannelDlg = false
+    },
+    okAddChannel:function(){
+        if(this.addChannelForm.name == undefined || this.addChannelForm.name == '' || this.addChannelForm.name == null){
+            this.$message.error('渠道名必须填写')
+            return
+        }
+        if(this.addChannelForm.parentId == undefined || this.addChannelForm.parentId == '' || this.addChannelForm.parentId == null){
+            this.$message.error('父渠道必须填写')
+            return
+        }
+        if(this.addChannelForm.salePerson == undefined || this.addChannelForm.salePerson == '' || this.addChannelForm.salePerson == null){
+            this.$message.error('联系人姓名必须填写')
+            return
+        }
+        if(this.addChannelForm.phone == undefined || this.addChannelForm.phone == '' || this.addChannelForm.phone == null){
+            this.$message.error('联系人电话必须填写')
+            return
+        }
+        if(this.addChannelForm.pwd == undefined || this.addChannelForm.pwd == '' || this.addChannelForm.pwd == null){
+            this.$message.error('登录密码必须填写')
+            return
+        }
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let params = {}
+        params.name = this.addChannelForm.name
+        params.parentId = this.addChannelForm.parentId
+        params.contactMobile = this.addChannelForm.phone
+        params.contactName = this.addChannelForm.salePerson
+        params.password = this.addChannelForm.pwd
+
+        params.channelId = localStorage.getItem('channelId');
+        apiBigflow.addSaleChannel(params).then(res => {
+            if (res.resultCode === 0) {
+              this.$message.success('添加成功！')
+              this.$refs.channerTreeRef.getChannelTree()
+              this.hideAddChannelDlg()
+            } else {
+              this.$message.error(res.resultInfo)
+            }
+          })
+      }).catch(() => {
+      });
+
+        
+    },
+    showAddChannel:function(){
+        this.showAddChannelDlg = true;
+    },
+    getSalePerson:function(){
+        // getSalePersons
+    //     private String qtype;
+	// private String saleChannel;
+	// private Integer page;
+        let params = {}
+        params.qtype = 'channel'
+        params.page = 1
+        params.saleChannel = this.selecedChannelCode
+      apiBigflow.getSalePersons(params).then(res => {
+        if (res.resultCode === 0) {
+          this.salePersons = res.data;
+        //   this.channelRoles = allRoles.filter(role=>{
+        //     if(role.type === 0)
+        //         return true
+        //     return false
+        // })
+        } else {
+          this.$message.error('查询失败')
+        }
+      })
+    },
     getChannelRoles:function(){
       let params = {}
       APISYS.getAllSysRoles(params).then(res => {
@@ -277,23 +352,28 @@ export default {
       })
     },
     channelChick (channel) {
-      console.log(channel);
-      if (!channel) return
-      this.parentChannnelName = channel.channelName
-      const channelNew = localStorage.getItem('channelId')
-      if (channelNew === '' || channelNew === null) {
-        localStorage.setItem('channelId', channel.channelId)
-        this.addChannelForm.parentChannelId = Number(localStorage.getItem('channelId'))
-        this.getChannelList(localStorage.getItem('channelId'))
-      }
+    //   console.log(channel)
+    //   this.selecedChannelCode = channel
+    //   if (!channel) return
+    //   this.parentChannnelName = channel.channelName
+    //   const channelNew = localStorage.getItem('channelId')
+    //   if (channelNew === '' || channelNew === null) {
+    //     localStorage.setItem('channelId', channel.channelId)
+    //     this.addChannelForm.parentChannelId = Number(localStorage.getItem('channelId'))
+    //     this.getChannelList(localStorage.getItem('channelId'))
+    //   }
     },
     // 点击 tree 从子组件 获取 对应的 渠道id
     getChannelId (channelsID, channelName) {
-      this.parentChannnelName = channelName
-      // this.addChannelForm.parentChannelId = channelsID
-      localStorage.setItem('channelId', channelsID)
-      this.addChannelForm.parentChannelId = Number(localStorage.getItem('channelId'))
-      this.getChannelList(localStorage.getItem('channelId'))
+        // console.log('***' + channelsID + '  ' + channelName)
+        this.selecedChannelCode = channelsID
+        this.selectedChannelName = channelName
+        this.getSalePerson()
+    //   this.parentChannnelName = channelName
+    //   // this.addChannelForm.parentChannelId = channelsID
+    //   localStorage.setItem('channelId', channelsID)
+    //   this.addChannelForm.parentChannelId = Number(localStorage.getItem('channelId'))
+    //   this.getChannelList(localStorage.getItem('channelId'))
     },
     // 获取列表
     getChannelList (parentChannelId) {
