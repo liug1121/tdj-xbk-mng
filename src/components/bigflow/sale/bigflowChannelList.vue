@@ -8,15 +8,6 @@
       <el-col :span="18">
         <el-card>
           <el-form :inline="true" ref="queryChannelRef" :model="queryChannelForm">
-            <!-- <el-form-item label="姓名" class="queryFormItem">
-              <el-input class="queryFormInput" v-model="queryChannelForm.name" placeholder="请输入姓名"></el-input>
-            </el-form-item>
-            <el-form-item label="手机号码" class="queryFormItem">
-              <el-input class="queryFormInput" v-model="queryChannelForm.phone" placeholder="请输入手机号码"></el-input>
-            </el-form-item>
-            <el-form-item class="queryFormItem">
-              <el-button type="primary" size="mini" icon="el-icon-search" @click="queryChannelButton">查询</el-button>
-            </el-form-item> -->
           </el-form>
           <div class="button_content">
             <el-button size="medium" type="primary" icon="el-icon-plus" @click="showAddChannel">添加渠道</el-button>
@@ -33,74 +24,9 @@
               </template>
             </el-table-column>
           </el-table>
-          <!-- <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="[10,20,30]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
-            :total="total">
-          </el-pagination> -->
         </el-card>
       </el-col>
     </el-row>
-    <!-- <el-dialog :title="dialogTitle" :visible.sync="addDialogVisible" width="430px" @close="addDialogClosed">
-      <el-form ref="addChannelRef" :model="addChannelForm" :rules="addChannelRules" label-width="120px">
-        <el-form-item label="渠道名称" prop="channelName">
-          <el-input size="small" v-model="addChannelForm.channelName" placeholder="请输入渠道名称"></el-input>
-        </el-form-item>
-        <el-form-item label="父渠道" prop="parentChannelId">
-          <SelectTree :props="props" :options="optionData" :value="addChannelForm.parentChannelId" :clearable="isClearable" :accordion="isAccordion" @getValue="getValue($event)" height="200" style="width:100%">
-          </SelectTree>
-        </el-form-item>
-        <el-form-item label="管理员手机号" prop="managerPhone">
-          <el-input size="small" v-model="addChannelForm.managerPhone" placeholder="请输入管理员手机号"></el-input>
-        </el-form-item>
-        <el-form-item label="管理员姓名" prop="manager">
-          <el-input size="small" v-model="addChannelForm.manager" placeholder="请输入管理员姓名"></el-input>
-        </el-form-item>
-        <el-form-item label="学霸卡渠道" prop="usingInXuebaka" v-show="isUsingIn">
-          <el-select size="small" style="width:100%;" v-model="addChannelForm.usingInXuebaka" placeholder="请选择是否为学霸卡渠道" @change="usingInXuebakaChange">
-            <el-option v-for="item in usingInXuebakaOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="设备渠道" prop="usingInDevice" v-show="isUsingIn">
-          <el-select size="small" style="width:100%;" v-model="addChannelForm.usingInDevice" placeholder="请选择是否为设备渠道" @change="usingInDeviceChange">
-            <el-option v-for="item in usingInDeviceOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="分配带参数的永久二维码" label-width="200">
-          <el-switch v-model="addChannelForm.twoCodeEnable" active-color="#13ce66" inactive-color="#eee">
-          </el-switch>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="closeButton">取 消</el-button>
-        <el-button type="primary" @click="addUser">确 定</el-button>
-      </span>
-    </el-dialog> -->
-    <!-- <el-dialog :title="dialogTitle" :visible.sync="addManagerDialogVisible" width="430px" @close="addDialogClosed">
-      <el-form ref="addChannelRef"  label-width="120px">
-        <el-form-item label="渠道" >
-          <SelectTree :props="props" :options="optionData" :value="channelId" :clearable="isClearable" :accordion="isAccordion" @getValue="getManagerChannelId($event)" height="200" style="width:100%">
-          </SelectTree>
-        </el-form-item>
-        <el-form-item label="管理员手机号" >
-          <el-input size="small" v-model="managerPhone" placeholder="请输入管理员手机号"></el-input>
-        </el-form-item>
-        <el-form-item label="管理员姓名" >
-          <el-input size="small" v-model="manager" placeholder="请输入管理员姓名"></el-input>
-        </el-form-item>
-        <el-form-item label="密码" >
-          <el-input size="small" v-model="pwd" placeholder="请输入管理员密码"></el-input>
-        </el-form-item>
-        <el-form-item label="管理员角色" prop="usingInDevice" v-show="isUsingIn">
-          <el-select size="small" style="width:100%;" v-model="roleId" placeholder="请选择管理员角色">
-            <el-option v-for="item in channelRoles" :key="item.id" :label="item.name" :value="item.id"></el-option>
-          </el-select>
-        </el-form-item>
-        </el-form>
-
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="closeChannelManagerButton">取 消</el-button>
-          <el-button type="primary" @click="addChannelManagerButton">确 定</el-button>
-        </span>
-      </el-dialog> --> 
        <el-dialog title="新增渠道" :visible.sync="showAddChannelDlg" width="450px" @close="hideAddChannelDlg">
       <el-form :model="addChannelForm"  label-width="110px">
           <el-form-item label="渠道名称">
@@ -179,13 +105,6 @@ export default {
       queryChannelForm: {
           name:null,
           phone:null
-        // channelId: null,
-        // channelName: null,
-        // endDate: null,
-        // manager: null,
-        // startDate: null,
-        // page: 0,
-        // pageSize: 10
       },
       ChannelsQrcode: '',
       addDialogVisible: false,
@@ -218,13 +137,6 @@ export default {
         manager: [{ required: true, message: "联系人名称", trigger: "blur" }],
         channelNo: [{ required: true, message: "请输入渠道编码", trigger: "blur" }]
       },
-      // ,
-      // addChannelManagerRules: {
-      //   channelId: [{ required: true, message: "请输入渠道名称", trigger: "blur" }],
-      //   managerPhone: [{ required: true, message: "请输入联系人手机", trigger: "blur" }],
-      //   manager: [{ required: true, message: "联系人名称", trigger: "blur" }],
-      //   pwd: [{ required: true, message: "请输入管理员密码", trigger: "blur" }]
-      // },
       mineStatusValue: [],
       isClearable: true, // 可清空（可选）
       isAccordion: true, // 可收起（可选）
@@ -315,10 +227,7 @@ export default {
         this.showAddChannelDlg = true;
     },
     getSalePerson:function(){
-        // getSalePersons
-    //     private String qtype;
-	// private String saleChannel;
-	// private Integer page;
+        
         let params = {}
         params.qtype = 'channel'
         params.page = 1
@@ -326,11 +235,7 @@ export default {
       apiBigflow.getSalePersons(params).then(res => {
         if (res.resultCode === 0) {
           this.salePersons = res.data;
-        //   this.channelRoles = allRoles.filter(role=>{
-        //     if(role.type === 0)
-        //         return true
-        //     return false
-        // })
+        
         } else {
           this.$message.error('查询失败')
         }
@@ -352,28 +257,13 @@ export default {
       })
     },
     channelChick (channel) {
-    //   console.log(channel)
-    //   this.selecedChannelCode = channel
-    //   if (!channel) return
-    //   this.parentChannnelName = channel.channelName
-    //   const channelNew = localStorage.getItem('channelId')
-    //   if (channelNew === '' || channelNew === null) {
-    //     localStorage.setItem('channelId', channel.channelId)
-    //     this.addChannelForm.parentChannelId = Number(localStorage.getItem('channelId'))
-    //     this.getChannelList(localStorage.getItem('channelId'))
-    //   }
+    
     },
     // 点击 tree 从子组件 获取 对应的 渠道id
     getChannelId (channelsID, channelName) {
-        // console.log('***' + channelsID + '  ' + channelName)
         this.selecedChannelCode = channelsID
         this.selectedChannelName = channelName
         this.getSalePerson()
-    //   this.parentChannnelName = channelName
-    //   // this.addChannelForm.parentChannelId = channelsID
-    //   localStorage.setItem('channelId', channelsID)
-    //   this.addChannelForm.parentChannelId = Number(localStorage.getItem('channelId'))
-    //   this.getChannelList(localStorage.getItem('channelId'))
     },
     // 获取列表
     getChannelList (parentChannelId) {
@@ -514,38 +404,13 @@ export default {
         let params = {}
         params.channelId = localStorage.getItem('channelId');
         API.apiRemoveChannel(params).then(res => {
-          // console.log('add...' + JSON.stringify(res))
             if (res.resultCode === 0) {
               this.$message.success('删除成功！')
-              // that.addManagerDialogVisible = false
-              // that.getChannelList(localStorage.getItem('channelId'))
-              // that.getChannelList();
               this.$refs.channerTreeRef.getChannelTree()
             } else {
               this.$message.error(res.resultInfo)
             }
           })
-        
-        // console.log('add...')
-        // let params = {}
-        // params.channelId = this.channelId
-        // params.userName = this.managerPhone
-        // params.name = this.manager
-        // params.type = 1
-        // params.phone = this.managerPhone
-        // params.pwd = this.pwd
-
-        // API.apiAddChannelManager(params).then(res => {
-        //   console.log('add...' + JSON.stringify(res))
-        //     if (res.resultCode === 0) {
-        //       this.$message.success('新增成功！')
-        //       that.addManagerDialogVisible = false
-        //       that.getChannelList(localStorage.getItem('channelId'))
-        //     } else {
-        //       this.$message.error(res.resultInfo)
-        //     }
-        //   })
-        
       }).catch(() => {
       });
     },

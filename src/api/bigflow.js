@@ -174,6 +174,9 @@ export default {
     },
     addSaleChannel: params =>{
         return API.POST('/bigflow/manage/v1.0/salechannel/add', params)
+    },
+    getChannelStocks: params =>{
+        return API.POST('/bigflow/manage/v1.0/channels/stocks', params)
     }
     
 }
