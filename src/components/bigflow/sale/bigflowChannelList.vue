@@ -7,8 +7,6 @@
       </el-col>
       <el-col :span="18">
         <el-card>
-          <el-form :inline="true" ref="queryChannelRef" :model="queryChannelForm">
-          </el-form>
           <div class="button_content">
             <el-button size="medium" type="primary" icon="el-icon-plus" @click="showAddChannel">添加渠道</el-button>
           </div>
@@ -219,9 +217,7 @@ export default {
             }
           })
       }).catch(() => {
-      });
-
-        
+      }); 
     },
     showAddChannel:function(){
         this.showAddChannelDlg = true;

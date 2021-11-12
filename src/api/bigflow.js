@@ -177,6 +177,8 @@ export default {
     },
     getChannelStocks: params =>{
         return API.POST('/bigflow/manage/v1.0/channels/stocks', params)
+    },
+    distributeChannelCardsBetween: params =>{
+        return API.POST('/bigflow/manage/v1.0/channels/stocks/distrubute', params)
     }
-    
 }
