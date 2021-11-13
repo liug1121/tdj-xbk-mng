@@ -1,6 +1,21 @@
 <template>
   <!-- 输出 2021-01月 刘珍利  -->
   <div class="box_subject">
+     <el-row :gutter="20">
+    <el-col :span="7">
+      <div class="heraderTop">
+        <div class="button_content">
+          <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 0}" @click="treeSelect(0)">学霸卡渠道</div>
+          <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 1}" @click="treeSelect(1)">大流量卡渠道</div>
+          <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 2}" @click="treeSelect(2)">子账户</div>
+          <!-- <el-button class="upload-btn" size="medium" icon="el-icon-download" slot="trigger" type="primary" @click="exportButton" 
+          v-permission="{indentity:'xbkBillOutput-export'}">导出</el-button> -->
+        </div>
+      </div >
+      <xbChannelTree v-if="treeSelectedType == 0" ref="xbChannerTreeRef" @channelChick="xbChannelChick" @getChannelId="getXbChannelId" style="max-height:680px;overflow: auto"></xbChannelTree>
+        <channelTree v-else ref="channerTreeRef" @channelChick="channelChick" @getChannelId="getChannelId" style="max-height:680px;overflow: auto"></channelTree>
+    </el-col>
+    <el-col :span="17">
     <el-card class="all_list">
       <!-- 按钮 -->
       <div class="heraderTop">
@@ -99,15 +114,25 @@
         :total="total">
       </el-pagination>
     </el-card>
+    </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
-import channelSelect from './../sale/channelSelect'
+// import channelSelect from './../sale/channelSelect'
+import channelTree from "./channelTree"
+import xbChannelTree from "./xbChannelTree"
 import API from 'api/StatisticsBill'
 export default {
+  components: {
+    // channelSelect,
+    channelTree,
+    xbChannelTree
+  },
   data () {
     return {
+      treeSelectedType:0,
       page: 1,
       pageSize: 10,
       // 列表总条数
@@ -134,9 +159,7 @@ export default {
       loading: false
     }
   },
-  components: {
-    channelSelect
-  },
+
   mounted () {
     this.getUnionidsOptions()
     this.getsubAccountOptions()
@@ -144,7 +167,25 @@ export default {
     this.getChannelNames()
   },
   methods: {
-
+    treeSelect:function(type){
+      this.treeSelectedType = type
+    },
+    xbChannelChick (channel) {
+    },
+    // // 点击 tree 从子组件 获取 对应的 渠道id
+    getXbChannelId (channelsID, channelName) {
+      this.queryBillForm = {}
+      this.queryBillForm.channelName = channelName
+      this.getBillList()
+    },
+    channelChick (channel) {
+    },
+    // // 点击 tree 从子组件 获取 对应的 渠道id
+    getChannelId (channelsID, channelName) {
+      this.queryBillForm = {}
+      this.queryBillForm.channelName = channelName
+      this.getBillList()
+    },
     getChannelNames(){
       API.apiChannelNames().then(res => {
         if (res.resultCode === 0) {
@@ -247,4 +288,30 @@ export default {
 </script>
 
 <style scoped>
+/* .tree-tab-selected {
+  display:inline-block;
+  background:#6ab3fc;
+  color: white;
+  margin: 5px;
+  margin-top: 10px;
+  padding: 5px;
+  border-radius:5px;
+  width: 90px;
+  text-align: center;
+} */
+.tree-tab-unselected {
+  display:inline-block;
+  background:silver;
+  color:white;
+  margin: 5px;
+  margin-top: 10px;
+  padding: 5px;
+  border-radius:5px;
+  width: 90px;
+  text-align: center;
+}
+.tree-selected {
+  background:#6ab3fc;
+  color: white;
+}
 </style>
