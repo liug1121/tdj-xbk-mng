@@ -8,8 +8,6 @@
           <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 0}" @click="treeSelect(0)">学霸卡渠道</div>
           <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 1}" @click="treeSelect(1)">大流量卡渠道</div>
           <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 2}" @click="treeSelect(2)">子账户</div>
-          <!-- <el-button class="upload-btn" size="medium" icon="el-icon-download" slot="trigger" type="primary" @click="exportButton" 
-          v-permission="{indentity:'xbkBillOutput-export'}">导出</el-button> -->
         </div>
       </div >
       <xbChannelTree v-if="treeSelectedType == 0" ref="xbChannerTreeRef" @channelChick="xbChannelChick" @getChannelId="getXbChannelId" style="max-height:680px;overflow: auto"></xbChannelTree>
@@ -25,12 +23,6 @@
         </div>
         <!-- 查询区域 -->
         <el-form :inline="true" ref="queryBillFormRef" :model="queryBillForm" class="queryForm">
-          <!-- <el-form-item label="运营商ID" class="queryFormItem">
-            <el-select style="width:140px" size="small" v-model="queryBillForm.unionId" clearable filterable placeholder="请输入运营商ID关键词">
-              <el-option v-for="item in UnionidsOptions" :key="item" :label="item" :value="item">
-              </el-option>
-            </el-select>
-          </el-form-item> -->
           <el-form-item label="子账户" class="queryFormItem">
             <el-select style="width:140px" size="small" v-model="queryBillForm.subAccount" clearable filterable placeholder="请输入子账户关键词">
               <el-option v-for="item in subAccountOptions" :key="item" :label="item" :value="item">
@@ -42,17 +34,11 @@
               <el-option v-for="item in channels" :key="item.channelId" :label="item.channelName" :value="item.channelId">
               </el-option>
             </el-select>
-            <!-- <channelSelect v-model="queryBillForm.channelId" style="width:120px !important" @channelSelectId="channelSelectId"></channelSelect> -->
           </el-form-item>
           <el-form-item label="账期" class="queryFormItem">
             <el-date-picker style="width:140px" v-model="queryBillForm.cycleId" type="month" placeholder="选择账期" value-format="yyyyMM">
             </el-date-picker>
           </el-form-item>
-          <!-- <el-form-item label="用量" class="queryFormItem">
-            <el-select style="width:112px" size="small" v-model="queryBillForm.usageType" clearable filterable placeholder="请选择用量">
-              <el-option v-for="item in usageTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-            </el-select>
-          </el-form-item> -->
           <el-form-item class="queryFormItem">
             <el-button type="primary" size="mini" icon="el-icon-search" @click="queryBillButton">查询</el-button>
           </el-form-item>
@@ -89,24 +75,6 @@
               {{scope.row.channels[0]}}
             </template>
           </el-table-column>
-          <!-- <el-table-column label="二级渠道" width="120">
-            <template slot-scope="scope">
-              <span v-if="scope.row.channels.length >= 2"></span>
-              {{scope.row.channels[1]}}
-            </template>
-          </el-table-column>
-          <el-table-column label="三级渠道" width="120">
-            <template slot-scope="scope">
-              <span v-if="scope.row.channels.length >= 3"></span>
-              {{scope.row.channels[2]}}
-            </template>
-          </el-table-column>
-          <el-table-column label="四级渠道" width="120">
-            <template slot-scope="scope">
-              <span v-if="scope.row.channels.length >= 4"></span>
-              {{scope.row.channels[3]}}
-            </template>
-          </el-table-column> -->
         </el-table-column>
       </el-table>
       <!-- 分页 区域 -->
@@ -175,28 +143,31 @@ export default {
     // // 点击 tree 从子组件 获取 对应的 渠道id
     getXbChannelId (channelsID, channelName,allSubNodes) {
       this.queryBillForm = {}
-      this.queryBillForm.channelName = channelName
       this.channels = allSubNodes
+      let channelIds = []
+      for(let i = 0; i < this.channels.length; i++){
+        channelIds.push(this.channels[i].channelId)
+      }
+      this.queryBillForm.channelIds = channelIds
       this.getBillList()
     },
     channelChick (channel) {
     },
     // // 点击 tree 从子组件 获取 对应的 渠道id
     getChannelId (channelsID, channelName,allSubNodes) {
+      console.log('***')
       this.queryBillForm = {}
-      this.queryBillForm.channelName = channelName
+      console.log('***')
       this.channels = allSubNodes
+      console.log(JSON.stringify(this.channels))
+      let channelIds = []
+      for(let i = 0; i < this.channels.length; i++){
+        channelIds.push(this.channels[i].channelId)
+      }
+      this.queryBillForm.channelIds = channelIds
       this.getBillList()
     },
-    // getChannelNames(){
-    //   API.apiChannelNames().then(res => {
-    //     if (res.resultCode === 0) {
-    //       this.channelNames = res.data
-    //     } else {
-    //       this.$message.error(res.resultInfo)
-    //     }
-    //   })
-    // },
+
     // 获取蜂窝平台信息
     getUnionidsOptions () {
       API.apiUnionidsList().then(res => {
@@ -282,6 +253,12 @@ export default {
       }
       if (this.queryBillForm.usageType === '') {
         this.queryBillForm.usageType = null
+      }
+      this.queryBillForm.channelIds = null
+      if(this.queryBillForm.channelId != null){
+        let channelIds = []
+        channelIds.push(this.queryBillForm.channelId )
+        this.queryBillForm.channelIds = channelIds
       }
       this.getBillList()
     }
