@@ -61,6 +61,16 @@ export default {
     }
   },
   methods: {
+    getAllTrees:function(root, allNodes){
+      allNodes.push(root)
+      let childrens = root['children']
+      if(childrens){
+        for(let i = 0; i < childrens.length; i++){
+          // allNodes.push(childrens[i])
+          this.getAllTrees(childrens[i], allNodes)
+        }
+      }
+    },
     // 获取所有渠道
     getChannelTree () {
       this.loading = true
@@ -96,7 +106,9 @@ export default {
     handleNodeClick (data) {
       const channelsID = data.channelId
       const channelName = data.channelName
-      this.$emit("getChannelId", channelsID, channelName)
+      let allSubNodes = []
+      this.getAllTrees(data, allSubNodes)
+      this.$emit("getChannelId", channelsID, channelName, allSubNodes)
     }
   }
 }

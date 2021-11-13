@@ -39,7 +39,7 @@
           </el-form-item>
           <el-form-item label="渠道" class="queryFormItem">
             <el-select style="width:140px" size="small" v-model="queryBillForm.channelId" clearable filterable placeholder="请输入子账户关键词">
-              <el-option v-for="item in channelNames" :key="item.strId" :label="item.name" :value="item.strId">
+              <el-option v-for="item in channels" :key="item.channelId" :label="item.channelName" :value="item.channelId">
               </el-option>
             </el-select>
             <!-- <channelSelect v-model="queryBillForm.channelId" style="width:120px !important" @channelSelectId="channelSelectId"></channelSelect> -->
@@ -138,7 +138,7 @@ export default {
       // 列表总条数
       total: 0,
       billList: [],
-      channelNames:[],
+      channels:[],
       UnionidsOptions: [],
       subAccountOptions: [],
       queryBillForm: {
@@ -164,7 +164,7 @@ export default {
     this.getUnionidsOptions()
     this.getsubAccountOptions()
     this.getBillList()
-    this.getChannelNames()
+    // this.getChannelNames()
   },
   methods: {
     treeSelect:function(type){
@@ -173,28 +173,30 @@ export default {
     xbChannelChick (channel) {
     },
     // // 点击 tree 从子组件 获取 对应的 渠道id
-    getXbChannelId (channelsID, channelName) {
+    getXbChannelId (channelsID, channelName,allSubNodes) {
       this.queryBillForm = {}
       this.queryBillForm.channelName = channelName
+      this.channels = allSubNodes
       this.getBillList()
     },
     channelChick (channel) {
     },
     // // 点击 tree 从子组件 获取 对应的 渠道id
-    getChannelId (channelsID, channelName) {
+    getChannelId (channelsID, channelName,allSubNodes) {
       this.queryBillForm = {}
       this.queryBillForm.channelName = channelName
+      this.channels = allSubNodes
       this.getBillList()
     },
-    getChannelNames(){
-      API.apiChannelNames().then(res => {
-        if (res.resultCode === 0) {
-          this.channelNames = res.data
-        } else {
-          this.$message.error(res.resultInfo)
-        }
-      })
-    },
+    // getChannelNames(){
+    //   API.apiChannelNames().then(res => {
+    //     if (res.resultCode === 0) {
+    //       this.channelNames = res.data
+    //     } else {
+    //       this.$message.error(res.resultInfo)
+    //     }
+    //   })
+    // },
     // 获取蜂窝平台信息
     getUnionidsOptions () {
       API.apiUnionidsList().then(res => {
