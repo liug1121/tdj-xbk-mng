@@ -38,8 +38,6 @@
         v-permission="{indentity:'bigflowFlowCardStock-distributionForIccid'}" @click="openMovePoolByIccidsDlg">首尾ICCID划拨</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowFlowCardStock-distributionForIccid'}" @click="openMovePoolDlg">迁移卡池</el-button>
-        
-        
       </div>
       <!-- 列表区域 -->
       <div class="cardNos">
@@ -361,7 +359,15 @@ export default {
         let params = {}
         apiBigflow.getAllPools(params).then(res=>{
             if(res.resultCode == 0){
-                this.pools = res.data
+                // this.pools = res.data
+                let noPool = {
+                  value:-1,
+                  name:'移出流量池'
+                }
+                this.pools.push(noPool)
+                for(let i = 0; i < res.data.length; i++){
+                  this.pools.push(res.data[i])
+                }
             }
         })
     },
