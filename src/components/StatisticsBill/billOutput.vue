@@ -2,18 +2,19 @@
   <!-- 输出 2021-01月 刘珍利  -->
   <div class="box_subject">
      <el-row :gutter="20">
-    <el-col :span="7">
+    <el-col :span="5">
       <div class="heraderTop">
         <div class="button_content">
-          <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 0}" @click="treeSelect(0)">学霸卡渠道</div>
-          <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 1}" @click="treeSelect(1)">大流量卡渠道</div>
+          <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 0}" @click="treeSelect(0)">学霸卡</div>
+          <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 1}" @click="treeSelect(1)">大流量</div>
           <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 2}" @click="treeSelect(2)">子账户</div>
+          <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 3}" @click="treeSelect(3)">无渠道</div>
         </div>
       </div >
       <xbChannelTree v-if="treeSelectedType == 0" ref="xbChannerTreeRef" @channelChick="xbChannelChick" @getChannelId="getXbChannelId" style="max-height:680px;overflow: auto"></xbChannelTree>
-        <channelTree v-else ref="channerTreeRef" @channelChick="channelChick" @getChannelId="getChannelId" style="max-height:680px;overflow: auto"></channelTree>
+        <channelTree v-else-if="treeSelectedType == 1" ref="channerTreeRef" @channelChick="channelChick" @getChannelId="getChannelId" style="max-height:680px;overflow: auto"></channelTree>
     </el-col>
-    <el-col :span="17">
+    <el-col :span="19">
     <el-card class="all_list">
       <!-- 按钮 -->
       <div class="heraderTop">
@@ -23,20 +24,23 @@
         </div>
         <!-- 查询区域 -->
         <el-form :inline="true" ref="queryBillFormRef" :model="queryBillForm" class="queryForm">
+          <el-form-item label="ICCID" class="queryFormItem">
+            <el-input style="width:150px" class="queryFormInput" v-model="queryBillForm.iccid" placeholder="请输入iccid"></el-input>
+          </el-form-item>
           <el-form-item label="子账户" class="queryFormItem">
-            <el-select style="width:140px" size="small" v-model="queryBillForm.subAccount" clearable filterable placeholder="请输入子账户关键词">
+            <el-select style="width:150px" size="small" v-model="queryBillForm.subAccount" clearable filterable placeholder="请输入子账户关键词">
               <el-option v-for="item in subAccountOptions" :key="item" :label="item" :value="item">
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="渠道" class="queryFormItem">
-            <el-select style="width:140px" size="small" v-model="queryBillForm.channelId" clearable filterable placeholder="请输入子账户关键词">
+          <el-form-item label="渠道" class="queryFormItem" v-if="treeSelectedType != 3">
+            <el-select style="width:100px" size="small" v-model="queryBillForm.channelId" clearable filterable placeholder="请输入子账户关键词">
               <el-option v-for="item in channels" :key="item.channelId" :label="item.channelName" :value="item.channelId">
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="账期" class="queryFormItem">
-            <el-date-picker style="width:140px" v-model="queryBillForm.cycleId" type="month" placeholder="选择账期" value-format="yyyyMM">
+            <el-date-picker style="width:100px" v-model="queryBillForm.cycleId" type="month" placeholder="选择账期" value-format="yyyyMM">
             </el-date-picker>
           </el-form-item>
           <el-form-item class="queryFormItem">
@@ -44,6 +48,12 @@
           </el-form-item>
         </el-form>
       </div>
+      <!-- <div class="heraderTop" v-if="treeSelectedType == 3">
+        <div class="button_content">
+          <el-button class="upload-btn" size="medium" slot="trigger" type="primary" 
+          v-permission="{indentity:'xbkBillOutput-export'}" @click="showDistributeChannel">分配渠道</el-button>
+        </div>
+      </div> -->
       <!-- 表格 -->
       <el-table v-loading="loading" :data="billList" style="width: 100%">
         <el-table-column label="CMP账单数据">
@@ -84,6 +94,33 @@
     </el-card>
     </el-col>
     </el-row>
+    <el-dialog title="分配渠道" :visible.sync="showDistributeChannelDlg" width="450px" @close="hideDistributeChannelDlg">
+      <el-form :model="distributeChannelForm"  label-width="110px">
+        <el-form-item label="类型">
+          <el-select style="width:100px" size="small" v-model="distributeChannelForm.type" clearable filterable placeholder="请输入类型">
+              <el-option v-for="item in distributeTypes" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+        </el-form-item>
+          <el-form-item label="渠道名称" v-if="distributeChannelForm.type == 0">
+          <el-select style="width:200px"  size="small" v-model="distributeChannelForm.channelId" clearable filterable placeholder="请输入子账户关键词" >
+              <el-option v-for="item in allXbChannels" :key="item.channelId" :label="item.channelName" :value="item.channelId">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="渠道名称" v-else-if="distributeChannelForm.type == 1">
+            <el-select style="width:200px"  size="small" v-model="distributeChannelForm.channelId" clearable filterable placeholder="请输入子账户关键词" >
+              <el-option v-for="item in allBigflowChannels" :key="item.channelId" :label="item.channelName" :value="item.channelId">
+              </el-option>
+            </el-select>
+          </el-form-item>
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="hideDistributeChannelDlg">取 消</el-button>
+        <el-button type="primary" @click="okDistributeChannel">确 定</el-button>
+      </span>  
+    </el-dialog>
   </div>
 </template>
 
@@ -92,6 +129,8 @@
 import channelTree from "./channelTree"
 import xbChannelTree from "./xbChannelTree"
 import API from 'api/StatisticsBill'
+import apiXbChannel from 'api/channels'
+import apiBigflowChannel from 'api/bigflow'
 export default {
   components: {
     // channelSelect,
@@ -100,6 +139,10 @@ export default {
   },
   data () {
     return {
+      allXbChannels:[],
+      allBigflowChannels:[],
+      showDistributeChannelDlg:false,
+      distributeChannelForm:{},
       treeSelectedType:0,
       page: 1,
       pageSize: 10,
@@ -124,6 +167,10 @@ export default {
         { label: "无用量", value: 0 },
         { label: "有用量", value: 1 }
       ],
+      distributeTypes: [
+        { label: "学霸卡", value: 0 },
+        { label: "大流量卡", value: 1 }
+      ],
       loading: false
     }
   },
@@ -132,13 +179,94 @@ export default {
     this.getUnionidsOptions()
     this.getsubAccountOptions()
     this.getBillList()
+    this.getXbChannels()
+    this.getBigflowChannels()
     // this.getChannelNames()
   },
   methods: {
+    getXbChannels:function(){
+      apiXbChannel.apiChannelsAllList().then(res => {
+        if (res.resultCode === 0) {
+          this.allXbChannels = Object.values(res.data).map(function (e) {
+            return {
+              channelId: e.channelId,
+              channelName: e.channelName,
+              manager: e.manager,
+              parentChannelId: e.parentChannelId
+            }
+          })
+          
+        } else {
+          this.$message.error(res.resultInfo)
+        }
+      })
+    },
+    getBigflowChannels:function(){
+      let params = {}
+      params.page=1
+      apiBigflowChannel.getSaleChannels(params).then(res => {
+        if (res.resultCode === 0) {
+          this.allBigflowChannels = Object.values(res.data).map(function (e) {
+            return {
+              channelId: e.channelId,
+              channelName: e.name,
+              manager: e.manager,
+              parentChannelId: e.parentChannelId
+            }
+          })
+        } else {
+          this.$message.error(res.resultInfo)
+        }
+      })
+    },
+    showDistributeChannel:function(){
+      this.showDistributeChannelDlg = true
+    },
+    hideDistributeChannelDlg:function(){
+      this.showDistributeChannelDlg = false
+    },
+    okDistributeChannel:function(){
+
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // let params = {}
+        // params.name = this.addChannelForm.name
+        // params.parentId = this.addChannelForm.parentId
+        // params.contactMobile = this.addChannelForm.phone
+        // params.contactName = this.addChannelForm.salePerson
+        // params.password = this.addChannelForm.pwd
+
+        // params.channelId = localStorage.getItem('channelId');
+        // apiBigflow.addSaleChannel(params).then(res => {
+        //     if (res.resultCode === 0) {
+        //       this.$message.success('添加成功！')
+        //       this.$refs.channerTreeRef.getChannelTree()
+        //       this.hideAddChannelDlg()
+        //     } else {
+        //       this.$message.error(res.resultInfo)
+        //     }
+        //   })
+      }).catch(() => {
+      }); 
+
+    },
     treeSelect:function(type){
       this.treeSelectedType = type
+      if(type == 3){
+        this.getUnChannelsList()
+      }
     },
     xbChannelChick (channel) {
+    },
+    getUnChannelsList:function(){
+      this.queryBillForm = {}
+      let channelIds = []
+      channelIds.push('-1')
+      this.queryBillForm.channelIds = channelIds
+      this.getBillList()
     },
     // // 点击 tree 从子组件 获取 对应的 渠道id
     getXbChannelId (channelsID, channelName,allSubNodes) {
@@ -260,6 +388,11 @@ export default {
         channelIds.push(this.queryBillForm.channelId )
         this.queryBillForm.channelIds = channelIds
       }
+      if(this.treeSelectedType == 3){
+        let channelIds = []
+        channelIds.push('-1')
+        this.queryBillForm.channelIds = channelIds
+      }
       this.getBillList()
     }
   }
@@ -286,7 +419,8 @@ export default {
   margin-top: 10px;
   padding: 5px;
   border-radius:5px;
-  width: 90px;
+  width: 40px;
+  font-size: 5px;
   text-align: center;
 }
 .tree-selected {
