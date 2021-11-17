@@ -29,6 +29,7 @@
           <template slot-scope="scope">
               <div v-if="p.prop == 'operation'">
               <el-button  size="mini" type="danger" plain @click="toEditClick(scope.row)">编辑</el-button>
+              <el-button  size="mini" type="danger" plain @click="toDeleteClick(scope.row)">删除</el-button>
             </div>
               <div v-else v-html="scope.row[p.prop]" />
           </template>
@@ -162,8 +163,6 @@ export default {
           this.showEditPushInfoDlg = false
       }, 
       okEditPushInfo:function(){
-
-
         let that = this
         this.$confirm('您确认要此操作, 是否继续?', '提示', {
             confirmButtonText: '确定',
@@ -182,6 +181,24 @@ export default {
         }).catch(() => {
         }); 
         
+      },
+      toDeleteClick:function(row){
+        let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            let params = {}
+            params.pushId = row.id
+            apiSystem.removePushInfo(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryPushInfos()
+                    alert('删除成功')
+                }
+            })
+        }).catch(() => {
+        }); 
       },
       toEditClick:function(row){
         this.pushId2Edit = row.id
@@ -247,18 +264,12 @@ export default {
         })
       },
       startTimeChange () {
-        // this.queryPushLog.startDate = `${this.queryPushLog.startDate}`
       },
       endTimeChange () {
-        // this.queryPushLog.endDate = `${this.queryPushLog.endDate}`
       },
       handleSizeChange (newPage) {
-        // this.page = newPage;
-        // this.queryPushLogs()
       },
       handleCurrentChange (newPage) {
-        // this.page = newPage;
-        // this.queryPushLogs()
       }
   }
 };

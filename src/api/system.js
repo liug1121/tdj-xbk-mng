@@ -47,7 +47,8 @@ export default {
     },
     modifyPushInfo: params =>{
         return API.POST('boss/v1.0/gateway/pushInfo/modify', params)
-    }
-    
-    
+    },
+    removePushInfo: params =>{
+        return API.POST('boss/v1.0/gateway/pushInfo/remove', params)
+    } 
 }
