@@ -1,40 +1,24 @@
 <template>
   <div class="box_subject">
     <el-card class="all_list">
-      <!-- 查询区域 -->
-      <el-form  :inline="true" :model="queryPushInfo">
-        <!-- <el-form-item label="iccid" class="queryFormItem" >
-          <el-input class="queryFormInput" clearable placeholder="请输入iccid" style="width:150px" v-model="queryPushLog.iccid"></el-input>
-        </el-form-item>    
-        <el-form-item label="开始时间" class="queryFormItem" >
-            
-          <el-input class="queryFormInput" clearable placeholder="请输入开始时间" style="width:150px" v-model="queryPushLog.startDate"></el-input>
-        </el-form-item> 
-        <el-form-item label="结束时间" class="queryFormItem" >
-           
-          <el-input class="queryFormInput" clearable placeholder="请输入结束时间" style="width:150px" v-model="queryPushLog.endDate"></el-input>
-        </el-form-item> 
-        <el-form-item label="推送状态" class="queryFormItem">
-          <el-select class="queryFormInput"  
-          filterable
-          clearable
-          reserve-keyword
-           placeholder="请选择推送状态" v-model="queryPushLog.status">
-            <el-option v-for="item in allStatus" :key="item.value" :label="item.name" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-button size="medium" type="primary" icon="el-icon-search" @click="queryPushLogClick">查询</el-button> -->
+      <el-col :span="5">
+        <div class="button_content">
+          <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 0}" @click="treeSelect(0)">学霸卡</div>
+          <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 1}" @click="treeSelect(1)">大流量</div>
+        </div>
+        <xbChannelTree v-if="treeSelectedType == 0" ref="xbChannerTreeRef" @channelChick="xbChannelChick" @getChannelId="getXbChannelId" style="max-height:680px;overflow: auto"></xbChannelTree>
+        <channelTree v-else-if="treeSelectedType == 1" ref="channerTreeRef" @channelChick="channelChick" @getChannelId="getChannelId" style="max-height:680px;overflow: auto"></channelTree>
+      </el-col>
+      <el-col :span="19">
+        <el-form  :inline="true" :model="queryPushInfo">
       </el-form>
 
       <div class="button_content">
         <el-button size="medium" type="primary" icon="el-icon-edit" @click="addPushInfoClick">添加</el-button>
-        
       </div>
-      
       <!-- 列表区域 -->
       <div class="cardNos">
         <div class="cardNosList">
-         
         </div>
         <div class="cardNosNumber">选中<span class="red">0</span>条数据</div>
       </div>
@@ -54,14 +38,22 @@
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="[10,20,30]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
         :total="total">
       </el-pagination>
+      </el-col>
+      <!-- 查询区域 -->
     </el-card>
 
     <el-dialog title="新增配置" :visible.sync="showAddPushInfoDlg" width="450px" @close="closeAddPushInfoDlg">
       <!-- 内容主体区域 -->  
       <el-form :model="addPushInfo"  label-width="110px">
-        <el-form-item label="推送名称">
+        <!-- <el-form-item label="类型" >
+            <el-select style="width:200px"  size="small" v-model="addPushInfo.type" clearable filterable placeholder="请输入子账户关键词" >
+              <el-option v-for="item in types" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item> -->
+        <!-- <el-form-item label="推送名称">
           <el-input style="width:300px;" v-model="addPushInfo.channelName" placeholder="请输入推送名称" ></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="推送地址">
           <el-input style="width:300px;" v-model="addPushInfo.pushUrl" placeholder="请输推送地址" ></el-input>
         </el-form-item>
@@ -92,13 +84,18 @@
 </template>
 
 <script>
+import channelTree from "./channelTree"
+import xbChannelTree from "./xbChannelTree"
 import apiSystem from './../../api/system'
 export default {
   components: {
-
+    channelTree,
+    xbChannelTree
   },
   data () {
     return {
+    selectedChannelId:null,
+    treeSelectedType:0,
     showEditPushInfoDlg:false,
     editPushInfo:{},
     pushId2Edit:-1,
@@ -120,9 +117,13 @@ export default {
       total: 0,
       // 列表，标题、字段
       table_column: [
-        { prop: 'channelName', label: '渠道名称', width: 200, fixed: 'left', sortable: true },
-        { prop: 'pushUrl', label: '推送链接', width: 390, fixed: 'left', sortable: true },
-        { prop: 'operation', label: '操作', width: 390, fixed: 'left', sortable: true }
+        // { prop: 'channelName', label: '渠道名称', width: 200, fixed: 'left', sortable: true },
+        { prop: 'pushUrl', label: '推送链接', width: 450, fixed: 'left', sortable: true },
+        { prop: 'operation', label: '操作', width: 440, fixed: 'left', sortable: true }
+      ],
+      types: [
+        { label: "学霸卡", value: 0 },
+        { label: "大流量卡", value: 1 }
       ],
     };
   },
@@ -130,10 +131,32 @@ export default {
 
   },
   created(){
-    this.queryPushInfos()
+    // this.queryPushInfos()
   },
   watch: {},
   methods: {
+
+    treeSelect:function(type){
+      this.treeSelectedType = type
+    },
+
+    xbChannelChick (channel) {
+    },
+    getUnChannelsList:function(){
+    },
+    // // 点击 tree 从子组件 获取 对应的 渠道id
+    getXbChannelId (channelsID, channelName,allSubNodes) {
+      this.selectedChannelId = channelsID
+      this.queryPushInfos()
+    },
+    channelChick (channel) {
+      
+    },
+    // // 点击 tree 从子组件 获取 对应的 渠道id
+    getChannelId (channelsID, channelName,allSubNodes) {
+      this.selectedChannelId = channelsID
+      this.queryPushInfos()
+    },
 
       closeEditPushInfoDlg:function(){
           this.showEditPushInfoDlg = false
@@ -168,6 +191,10 @@ export default {
         this.showEditPushInfoDlg = true
       },
       addPushInfoClick:function(){
+        if(this.selectedChannelId == null || this.selectedChannelId == undefined || this.selectedChannelId == ''){
+              this.$message.error('请选择相应的渠道')
+              return 
+            }
           this.showAddPushInfoDlg = true
       },
       closeAddPushInfoDlg:function(){
@@ -182,8 +209,19 @@ export default {
             type: 'warning'
         }).then(() => {
             let params = {}
-            params.name = this.addPushInfo.channelName
+            params.channelId = this.selectedChannelId
+            params.type = this.treeSelectedType
+            // params.name = this.addPushInfo.channelName
             params.url = this.addPushInfo.pushUrl
+            
+            // if(params.type == null || params.type == undefined || params.type == ''){
+            //   this.$message.error('请选择相应的类型')
+            //   return 
+            // }
+            if(params.url == null || params.url == undefined || params.url == ''){
+              this.$message.error('请输入推送地址')
+              return 
+            }
             apiSystem.addPushInfo(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryPushInfos()
@@ -200,7 +238,8 @@ export default {
 
       queryPushInfos:function(){
         let params = {}
-        
+        params.channelId = this.selectedChannelId
+        params.type = this.treeSelectedType
         apiSystem.getPushInfos(params).then(res=>{
             if(res.resultCode == 0){
                 this.pushInfos = res.data
@@ -225,4 +264,20 @@ export default {
 };
 </script>
 <style scoped>
+.tree-tab-unselected {
+  display:inline-block;
+  background:silver;
+  color:white;
+  margin: 5px;
+  margin-top: 10px;
+  padding: 5px;
+  border-radius:5px;
+  width: 40px;
+  font-size: 5px;
+  text-align: center;
+}
+.tree-selected {
+  background:#6ab3fc;
+  color: white;
+}
 </style>
