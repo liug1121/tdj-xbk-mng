@@ -50,5 +50,10 @@ export default {
     },
     removePushInfo: params =>{
         return API.POST('boss/v1.0/gateway/pushInfo/remove', params)
+    } ,
+    getPushStaticsInfo: params =>{
+        return API.POST('boss/v1.0/gateway/pushinfo/statics', params)
     } 
+
+    
 }
