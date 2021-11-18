@@ -52,7 +52,7 @@
             <el-option v-for="item in allStatus" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="渠道" class="queryFormItem">
+        <!-- <el-form-item label="渠道" class="queryFormItem">
           <el-select class="queryFormInput"  
           filterable
           clearable
@@ -60,7 +60,7 @@
            placeholder="请选择渠道" v-model="queryPushLog.channelId">
             <el-option v-for="item in pushInfos" :key="item.id" :label="item.channelName" :value="item.channelId"></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-button size="medium" type="primary" icon="el-icon-search" @click="queryPushLogClick">查询</el-button>
       </el-form>
       
@@ -71,8 +71,8 @@
         <div class="cardNosNumber">选中<span class="red">0</span>条数据</div>
       </div>
       <el-table v-loading="loading" :data="pushLogs" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" >
-        <el-table-column type="selection" width="55">
-        </el-table-column>
+        <!-- <el-table-column type="selection" width="55">
+        </el-table-column> -->
         <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
           <template slot-scope="scope">
               <div v-html="scope.row[p.prop]" />
@@ -115,12 +115,12 @@ export default {
       total: 0,
       // 列表，标题、字段
       table_column: [
-        { prop: 'channelName', label: '渠道', width: 200, fixed: 'left', sortable: true },
-        { prop: 'iccid', label: 'iccid', width: 200, fixed: 'left', sortable: true },
+        // { prop: 'channelName', label: '渠道', width: 200, fixed: 'left', sortable: true },
+        { prop: 'iccid', label: 'iccid', width: 300, fixed: 'left', sortable: true },
         { prop: 'duration', label: '耗时(毫秒)', width: 100, fixed: 'left', sortable: true },
-        { prop: 'statusName', label: '状态', width: 100, sortable: true },
+        { prop: 'statusName', label: '状态', width: 175, sortable: true },
         { prop: 'createTime', label: '推送时间', width: 200, sortable: true },
-        { prop: 'data', label: '推送信息', width: 300, sortable: true }
+        { prop: 'data', label: '推送信息', width: 900, sortable: true }
       ],
       table_statics_column: [
         { prop: 'channelName', label: '渠道', width: 400, fixed: 'left', sortable: true },
