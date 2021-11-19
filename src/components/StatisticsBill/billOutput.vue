@@ -55,6 +55,7 @@
         </div>
       </div> -->
       <!-- 表格 -->
+      <div class="total-usage"> 当前记录总用量：{{totalDataUsage}}（MB）</div>
       <el-table v-loading="loading" :data="billList" style="width: 100%">
         <el-table-column label="CMP账单数据">
           <el-table-column prop="iccid" label="SIM卡" width="180">
@@ -149,6 +150,7 @@ export default {
       // 列表总条数
       total: 0,
       billList: [],
+      totalDataUsage:"0",
       channels:[],
       UnionidsOptions: [],
       subAccountOptions: [],
@@ -322,7 +324,10 @@ export default {
       this.loading = true
       API.apiBillList(params).then(res => {
         if (res.resultCode === 0) {
-          this.billList = res.data
+          let data = res.data
+          this.billList = data.records
+          this.totalDataUsage = data.dataUsage
+          // this.billList = res.data
           for (let i = 0; i < this.billList.length; i++) {
             this.billList[i].channels.reverse()
           }
@@ -426,5 +431,11 @@ export default {
 .tree-selected {
   background:#6ab3fc;
   color: white;
+}
+.total-usage{
+  margin: 10px;
+  font-size: 15px;
+  color: #6ab3fc;
+  font-weight: bolder;
 }
 </style>
