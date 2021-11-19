@@ -17,11 +17,14 @@
     <el-col :span="19">
     <el-card class="all_list">
       <!-- 按钮 -->
-      <div class="heraderTop">
-        <div class="button_content">
+      <div class="button_content">
           <el-button class="upload-btn" size="medium" icon="el-icon-download" slot="trigger" type="primary" @click="exportButton" 
           v-permission="{indentity:'xbkBillOutput-export'}">导出</el-button>
+          <el-button class="upload-btn" size="medium" icon="el-icon-download" slot="trigger" type="primary" @click="refreshCardsChannels" 
+          v-permission="{indentity:'xbkBillOutput-export'}">重新刷新卡渠道</el-button>
         </div>
+      <div class="heraderTop">
+        
         <!-- 查询区域 -->
         <el-form :inline="true" ref="queryBillFormRef" :model="queryBillForm" class="queryForm">
           <el-form-item label="ICCID" class="queryFormItem">
@@ -55,7 +58,7 @@
         </div>
       </div> -->
       <!-- 表格 -->
-      <div class="total-usage"> 当前记录总用量：{{totalDataUsage}}（MB）</div>
+      <div class="total-usage"> 当前记录总用量：{{totalDataUsage}}（MB）</div>
       <el-table v-loading="loading" :data="billList" style="width: 100%">
         <el-table-column label="CMP账单数据">
           <el-table-column prop="iccid" label="SIM卡" width="180">
@@ -348,6 +351,22 @@ export default {
     handleCurrentChange (newPage) {
       this.queryBillForm.page = newPage - 1
       this.getBillList()
+    },
+    refreshCardsChannels:function(){
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let params = {}
+        API.apiRefreshCardCompareChannels(params).then(res => {
+          if (!res) {
+            return
+          }
+          this.$message.success(`请前往“我的任务”中查询，id值为${res.data}`)
+        })
+        }).catch(() => {
+        });
     },
     // 导出
     exportButton () {

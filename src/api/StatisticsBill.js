@@ -22,6 +22,9 @@ export default {
   apiBillList: params => {
     return API.POST('boss/v1.0/cards/compare/list', params)
   },
+  apiRefreshCardCompareChannels: params => {
+    return API.POST('boss/v1.0/cards/compare/channel/refresh', params)
+  },
   // 导入卡
   apiBillUploadAdd: (fwAccount, cycle, params) => {
     return API.POST(`boss/v1.0/card/billing/details/import?cycle=${cycle}&fwAccount=${fwAccount}`, params, {
