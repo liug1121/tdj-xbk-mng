@@ -27,9 +27,9 @@
         
         <!-- 查询区域 -->
         <el-form :inline="true" ref="queryBillFormRef" :model="queryBillForm" class="queryForm">
-          <el-form-item label="ICCID" class="queryFormItem">
+          <!-- <el-form-item label="ICCID" class="queryFormItem">
             <el-input style="width:150px" class="queryFormInput" v-model="queryBillForm.iccid" placeholder="请输入iccid"></el-input>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="子账户" class="queryFormItem">
             <el-select style="width:150px" size="small" v-model="queryBillForm.subAccount" clearable filterable placeholder="请输入子账户关键词">
               <el-option v-for="item in subAccountOptions" :key="item" :label="item" :value="item">
