@@ -62,4 +62,7 @@ export default {
   apichannelsPackagesList: params => {
     return API.POST('boss/v1.0/channels/packages', params)
   },
+  apiFwAccountTree: params => {
+    return API.GET('boss/v1.0/card/billing/fwaccounttree', params)
+  },
 }

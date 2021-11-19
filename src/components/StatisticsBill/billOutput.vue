@@ -13,6 +13,7 @@
       </div >
       <xbChannelTree v-if="treeSelectedType == 0" ref="xbChannerTreeRef" @channelChick="xbChannelChick" @getChannelId="getXbChannelId" style="max-height:680px;overflow: auto"></xbChannelTree>
         <channelTree v-else-if="treeSelectedType == 1" ref="channerTreeRef" @channelChick="channelChick" @getChannelId="getChannelId" style="max-height:680px;overflow: auto"></channelTree>
+        <fwAccountTree v-else-if="treeSelectedType == 2" ref="channerTreeRef" @channelChick="channelChick" @getChannelId="getFwAccount" style="max-height:680px;overflow: auto"></fwAccountTree>
     </el-col>
     <el-col :span="19">
     <el-card class="all_list">
@@ -132,6 +133,7 @@
 // import channelSelect from './../sale/channelSelect'
 import channelTree from "./channelTree"
 import xbChannelTree from "./xbChannelTree"
+import fwAccountTree from "./fwAccountTree"
 import API from 'api/StatisticsBill'
 import apiXbChannel from 'api/channels'
 import apiBigflowChannel from 'api/bigflow'
@@ -139,10 +141,12 @@ export default {
   components: {
     // channelSelect,
     channelTree,
-    xbChannelTree
+    xbChannelTree,
+    fwAccountTree
   },
   data () {
     return {
+      subAccountView:false,
       allXbChannels:[],
       allBigflowChannels:[],
       showDistributeChannelDlg:false,
@@ -259,7 +263,12 @@ export default {
 
     },
     treeSelect:function(type){
+      this.queryBillForm.subFwAccounts = null
+      this.subAccountView = false
       this.treeSelectedType = type
+      if(type == 2){
+        this.subAccountView = true
+      }
       if(type == 3){
         this.getUnChannelsList()
       }
@@ -271,6 +280,16 @@ export default {
       let channelIds = []
       channelIds.push('-1')
       this.queryBillForm.channelIds = channelIds
+      this.getBillList()
+    },
+    getFwAccount:function(fwAccountID, fwAccountName,allSubNodes){
+      if(allSubNodes.length > 1)
+        return
+      let subAccouts = []
+      for(let i = 0; i < allSubNodes.length; i++){
+        subAccouts.push(allSubNodes[i].channelId)
+      }
+      this.queryBillForm.subFwAccounts = subAccouts
       this.getBillList()
     },
     // // 点击 tree 从子组件 获取 对应的 渠道id
@@ -391,6 +410,8 @@ export default {
     },
     // 查询
     queryBillButton () {
+      this.subAccountView = false
+      this.queryBillForm.subFwAccounts = null
       if (this.queryBillForm.channelId === '') {
         this.queryBillForm.channelId = null
       }
