@@ -7,9 +7,9 @@
         <el-form-item label="ICCID" class="queryFormItem">
           <el-input class="queryFormInput" v-model="queryLBSlistFormModel.iccid" clearable placeholder="请输入ICCID" style="width:202px"></el-input>
         </el-form-item>
-        <el-form-item label="渠道" class="queryFormItem">
+        <!-- <el-form-item label="渠道" class="queryFormItem">
           <channelSelect style="width:120px !important" @channelSelectId="channelSelectId"></channelSelect>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="创建时间" class="queryFormItem">
           <el-date-picker style="width:140px" v-model="queryLBSlistFormModel.startTime" type="date" placeholder="开始日期" value-format="yyyy-MM-dd" @change="startTimeChange">
           </el-date-picker>
@@ -69,8 +69,9 @@ export default {
       loading: false,
       // 表格
       table_column: [
-        { prop: 'channelName', label: '渠道', width: 180, fixed: 'left' },
+        // { prop: 'channelName', label: '渠道', width: 180, fixed: 'left' },
         { prop: 'iccid', label: 'ICCID', width: 180 },
+        { prop: 'lbsMessage', label: 'lbs定位信息', width: 180 },
         { prop: 'provinceName', label: '省份', width: 100 },
         { prop: 'cityName', label: '城市', width: 100 },
         { prop: 'address', label: '详细地址' },
