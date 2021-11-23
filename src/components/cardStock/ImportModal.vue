@@ -3,7 +3,7 @@
     <el-form ref="ImportForm" :model="ImportForm" :rules="ImportRules" label-width="120px">
       <el-form-item label="蜂窝平台账户" prop="fwAccount">
         <el-select v-model="ImportForm.fwAccount" clearable filterable placeholder="请输入蜂窝平台账户关键词" style="width:100%" @change="fwAccountChange">
-          <el-option v-for="item in honeycombOptions" :key="item.id" :label="item.fwAccount" :value="item.id">
+          <el-option v-for="item in honeycombOptions" :key="item.id" :label="item.account" :value="item.id">
           </el-option>
         </el-select>
       </el-form-item>

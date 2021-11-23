@@ -128,7 +128,8 @@ export default {
       total: 0,
       // 表格 label 字段名称
       table_column: [
-        { prop: 'fwAccount', label: '账户ID', width: 180, fixed: 'left' },
+        { prop: 'account', label: '登陆账号', width: 150 ,fixed: 'left' },
+        { prop: 'fwAccount', label: '账户ID', width: 180, },
         { prop: 'openCompanyName', label: '开户公司全称', width: 150 },
         { prop: 'openCompanyDesc', label: '开户公司简称', width: 150 },
         { prop: 'openId', label: 'openId', width: 160 },
@@ -139,7 +140,7 @@ export default {
         { prop: 'area', label: '归属地', width: 80 },
         { prop: 'netWorkProvinceCL', label: '省内流量', width: 80 },
         // { prop: 'version', label: '版本', width: 50 },
-        { prop: 'account', label: '登陆账号', width: 150 },
+        
         { prop: 'accountName', label: '账户名', width: 150 },
         { prop: 'date', label: '时间', width: 160 },
         { prop: 'statusCL', label: '状态', width: 80 },

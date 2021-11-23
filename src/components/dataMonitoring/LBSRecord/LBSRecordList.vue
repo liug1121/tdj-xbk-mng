@@ -27,6 +27,11 @@
             <el-option v-for="item in PoisCitiesList" :key="item.id" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="lbs状态" class="queryFormItem">
+          <el-select class="queryFormInput" v-model="queryLBSlistFormModel.lbsStatus" clearable filterable placeholder="请选择lbs状态">
+            <el-option v-for="item in lbsStatus" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item class="queryFormItem">
           <el-button type="primary" size="mini" icon="el-icon-search" @click="queryLBSbutton" 
           v-permission="{indentity:'xbkLBSRecordList-query'}">查询</el-button>
@@ -76,6 +81,10 @@ export default {
         { prop: 'cityName', label: '城市', width: 100 },
         { prop: 'address', label: '详细地址' },
         { prop: 'lbsTime', label: '定位时间', width: 180 }
+      ],
+      lbsStatus: [
+        { label: "正常", value: 0 },
+        { label: "关停", value: 1 }
       ],
       // 省份
       provinceOptions: [],
