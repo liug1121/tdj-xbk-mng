@@ -20,7 +20,7 @@
             <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="卡类型" class="queryFormItem">
+        <el-form-item label="卡品类" class="queryFormItem">
           <el-select class="queryFormInput" v-model="queryCardStockFormModel.cardType" clearable placeholder="请选择卡类型">
             <el-option v-for="item in cardTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
@@ -47,10 +47,10 @@
       <el-table v-loading="loading" :data="cardStockList" border max-height="550px" align="center" :cell-style="{height: '38px',padding:0}">
         <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false">
           <template slot-scope="scope">
-            <div v-if="p.prop == 'cardTypeCL'">
+            <!-- <div v-if="p.prop == 'cardTypeCL'">
               <span v-if="scope.row.cardType == 0">学霸卡</span>
               <span v-else>大流量卡</span>
-            </div>
+            </div> -->
             <div v-if="p.prop == 'storeNameCL'">
               <span v-if="scope.row.storeName === 'null'">-</span>
               <span v-else>{{scope.row.storeName}}</span>
@@ -106,7 +106,7 @@ export default {
         { prop: 'level', label: '档位', width: 70 },
         { prop: 'fwAccount', label: '蜂窝平台账号' },
         { prop: 'storeNameCL', label: '仓位名称', width: 120 },
-        { prop: 'cardTypeCL', label: '卡类型', width: 80 },
+        { prop: 'cardProductTypeName', label: '卡品类', width: 80 },
         { prop: 'statusCL', label: '卡状态', width: 80 },
         { prop: 'area', label: '归属地', width: 150 },
         { prop: 'stockInDate', label: '入库时间', width: 220 },
@@ -129,8 +129,17 @@ export default {
       ],
       // 卡类型
       cardTypeOptions: [
-        { label: "学霸卡", value: 0 },
-        { label: "大流量", value: 1 }
+        // { label: "学霸卡", value: 0 },
+        // { label: "大流量", value: 1 }
+        {value:2, label:'消费电子级物联网卡_三合一'},
+        {value:3, label:'消费电子级物联网卡_二合一'},
+        {value:4, label:'消费电子级物联网卡_普通'},
+        {value:5, label:'消费电子级物联网贴片卡'},
+        {value:6, label:'车规级物联网贴片卡'},
+        {value:7, label:'工业级物联网卡_普通'},
+        {value:8, label:'工业级物联网贴片卡'},
+        {value:9, label:'工业级物联网卡_Nano'},
+        {value:10, label:'工业级物联网卡_Micro'}
       ],
       // 查询表字段
       queryCardStockFormModel: {

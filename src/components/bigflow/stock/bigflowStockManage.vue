@@ -116,6 +116,12 @@
             <el-option v-for="item in types" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="卡品类型">
+          <el-select class="queryFormInput"  clearable placeholder="类型" v-model="cardImportForm.productType">
+            <el-option v-for="item in productTypes" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        
         <el-form  label-width="120px">
             <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadFile" :on-remove="removeUploadedFile">
             <el-button size="small" type="primary">点击上传</el-button>
@@ -228,6 +234,8 @@ export default {
   },
   data () {
     return {
+    productType:-1,
+    file2Upload:null,
     showMoveCard2ChannelDlg:false, 
     moveCard2ChannelForm:{},
     showCardMoveDlg:false,  
@@ -243,6 +251,18 @@ export default {
         {value:'bigflow',name:'大流量卡'},
         {value:'bigflow',name:'学霸卡'}
     ],
+    productTypes:[
+      {value:0, name:'消费电子级物联网卡_三合一'},
+      {value:1, name:'消费电子级物联网卡_二合一'},
+      {value:2, name:'消费电子级物联网卡_普通'},
+      {value:3, name:'消费电子级物联网贴片卡'},
+      {value:4, name:'车规级物联网贴片卡'},
+      {value:5, name:'工业级物联网卡_普通'},
+      {value:6, name:'工业级物联网贴片卡'},
+      {value:7, name:'工业级物联网卡_Nano'},
+      {value:8, name:'工业级物联网卡_Micro'}
+    ],
+
     statusOptions:[
         {label:'录入', value:1},
         {label:'可销售', value:2},
@@ -267,6 +287,7 @@ export default {
       table_column: [
         { prop: 'phoneNumber', label: '卡号码', width: 200, fixed: 'left', sortable: true },
         { prop: 'iccid', label: 'ICCID', width: 190, fixed: 'left', sortable: true },
+        { prop: 'productTypeName', label: '卡品类', width: 250, fixed: 'left', sortable: true },
         { prop: 'status', label: '档位', width: 200, sortable: true },
         { prop: 'statusName', label: '卡状态', width: 150, sortable: true },
         { prop: 'serviceName', label: '蜂窝平台账户', width: 300, sortable: true },
@@ -381,11 +402,14 @@ export default {
         })
     },
     removeUploadedFile(file,fileList){
-        this.cardImportForm.fileToken = ''
+      this.file2Upload  = null
+      this.cardImportForm.fileToken = ''
     },
     uploadFile (item) {
+      
         let params = new FormData()
         params.append('file', item.file)
+        this.file2Upload = item.file
         apiBigflow.uploadFile(params).then(res=>{
             if(res.resultCode == 0){
                this.cardImportForm.fileToken = res.data
@@ -408,15 +432,17 @@ export default {
             type: 'warning'
         }).then(() => {
             that.btnEnable = true
-            let params = {}
-            params.serviceName = this.cardImportForm.serviceName
-            params.type = this.cardImportForm.type
-            params.fileToken = this.cardImportForm.fileToken
+            let params = new FormData()
+            params.append('file', this.file2Upload)
+            params.append('serviceName', this.cardImportForm.serviceName)
+            params.append('type', this.cardImportForm.type)
+            params.append('fileToken', this.cardImportForm.fileToken)
+            params.append('productType', this.cardImportForm.productType)
             apiBigflow.importStockCards(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryBigflowStocks()
                     that.showCardImportDlg = false
-                    alert('操作成功')
+                    alert('操作成功，请在任务管理中查询执行结果，任务编号：' + res.data)
                 }else{
                     alert('操作失败:' + res.resultInfo)
                 }

@@ -8,7 +8,7 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="卡类型" prop="cardType">
+      <el-form-item label="卡品类" prop="cardType">
         <el-select v-model="ImportForm.cardType" clearable placeholder="请选择卡类型" style="width:100%">
           <el-option v-for="item in cardTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
