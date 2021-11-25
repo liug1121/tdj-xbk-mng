@@ -144,11 +144,11 @@ export default {
         return API.POST('/bigflow/manage/v1.0/flowpools/card/import', params)
     },
     importStockCards: params =>{
-        return API.POST('/bigflow/manage/v1.0/stock/card/import', params, {
+        return API.POST('/bigflow/manage/v1.0/stock/card/import', params,{
             headers: {
-            'content-type': 'multipart/form-data'
+              'content-type': 'multipart/form-data'
             }
-        })
+          })
     },
     moveStockCards: params =>{
         return API.POST('/bigflow/manage/v1.0/stock/card/move', params)
@@ -184,5 +184,11 @@ export default {
     },
     distributeChannelCardsBetween: params =>{
         return API.POST('/bigflow/manage/v1.0/channels/stocks/distrubute', params)
+    },
+    addSaleChannelManager: params =>{
+        return API.POST('/bigflow/manage/v1.0/salechannel/manager/add', params)
     }
+
+
+    
 }

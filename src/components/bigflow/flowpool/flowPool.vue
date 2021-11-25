@@ -44,6 +44,7 @@
             <div v-if="p.prop == 'operation'">
               <el-button type="text" size="small" @click="stopPool(scope.row.poolId)" v-if="scope.row.status=='open'">停用</el-button>
               <el-button type="text" size="small" @click="openPool(scope.row.poolId)" v-else>启用</el-button>
+              <el-button type="text" size="small" >卡用量明细</el-button>
               <el-button type="text" size="small" @click="removePool(scope.row.poolId)">删除</el-button>
             </div>
             <div v-else>
@@ -163,6 +164,7 @@ export default {
   },
   data () {
     return {
+    treeSelectedType:0,
     showUpdateuseDlg:false,
     updateuseForm:{},
     showOrderDlg:false,
@@ -214,6 +216,18 @@ export default {
   },
   watch: {},
   methods: {
+    treeSelect:function(type){
+      this.treeSelectedType = type
+      // this.queryBillForm.subFwAccounts = null
+      // this.subAccountView = false
+      // this.treeSelectedType = type
+      // if(type == 2){
+      //   this.subAccountView = true
+      // }
+      // if(type == 3){
+      //   this.getUnChannelsList()
+      // }
+    },
     removePool:function(poolId){
       // removeFlowPool
       let that = this
@@ -452,4 +466,20 @@ export default {
 };
 </script>
 <style scoped>
+.tree-tab-unselected {
+  display:inline-block;
+  background:silver;
+  color:white;
+  margin: 5px;
+  margin-top: 10px;
+  padding: 5px;
+  border-radius:5px;
+  width: 100px;
+  font-size: 5px;
+  text-align: center;
+}
+.tree-selected {
+  background:#6ab3fc;
+  color: white;
+}
 </style>

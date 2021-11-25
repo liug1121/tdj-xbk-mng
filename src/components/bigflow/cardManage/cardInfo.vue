@@ -28,7 +28,7 @@
             <el-option v-for="item in pools" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="当前套餐" class="queryFormItem">
+        <!-- <el-form-item label="当前套餐" class="queryFormItem">
           <el-select class="queryFormInput"  
           filterable
           clearable
@@ -36,10 +36,10 @@
            placeholder="请选择套餐" v-model="packageCode">
             <el-option v-for="item in packages" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="通讯计划" class="queryFormItem" >
+        </el-form-item> -->
+        <!-- <el-form-item label="通讯计划" class="queryFormItem" >
           <el-input class="queryFormInput" clearable placeholder="请输入msisdn" style="width:150px" v-model="planCode"></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="渠道" class="queryFormItem">
           <el-select class="queryFormInput"  
           filterable

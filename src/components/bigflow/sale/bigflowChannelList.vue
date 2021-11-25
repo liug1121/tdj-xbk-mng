@@ -9,6 +9,7 @@
         <el-card>
           <div class="button_content">
             <el-button size="medium" type="primary" icon="el-icon-plus" @click="showAddChannel">添加渠道</el-button>
+            <el-button size="medium" type="primary" icon="el-icon-plus" @click="showAddManager">添加管理员</el-button>
           </div>
           <el-table v-loading="loading" :data="salePersons" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
             <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :show-overflow-tooltip='true'>
@@ -53,8 +54,32 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="hideAddChannelDlg">取 消</el-button>
         <el-button type="primary" @click="okAddChannel">确 定</el-button>
-      </span>  
+      </span>   
     </el-dialog>
+    <el-dialog :title="dialogTitle" :visible.sync="addManagerDialogVisible" width="430px" @close="closeChannelManagerButton">
+      <!-- 内容主体区域 -->
+      <el-form ref="addChannelRef"  label-width="120px">
+        <el-form-item label="管理员手机号" >
+          <el-input size="small" v-model="managerPhone" placeholder="请输入管理员手机号"></el-input>
+        </el-form-item>
+        <el-form-item label="管理员姓名" >
+          <el-input size="small" v-model="manager" placeholder="请输入管理员姓名"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" >
+          <el-input size="small" v-model="pwd" placeholder="请输入管理员密码"></el-input>
+        </el-form-item>
+        <el-form-item label="管理员角色" prop="usingInDevice" v-show="isUsingIn">
+          <el-select size="small" style="width:100%;" v-model="roleId" placeholder="请选择管理员角色">
+            <el-option v-for="item in channelRoles" :key="item.id" :label="item.name" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+        </el-form>
+        <!-- 底部区域 -->
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="closeChannelManagerButton">取 消</el-button>
+          <el-button type="primary" @click="addManager">确 定</el-button>
+        </span>
+      </el-dialog>
   </div>
 </template>
 
@@ -72,6 +97,11 @@ export default {
   },
   data () {
     return {
+      addManagerDialogVisible:false,
+      managerPhone:'',
+      manager:'',
+      pwd:'', 
+      roleId:'',
       channels:[],
       showAddChannelDlg:false,
       addChannelForm:{},
@@ -96,7 +126,7 @@ export default {
         { prop: 'name', label: '姓名', width: 100 },
         { prop: 'mobile', label: '手机号', width: 100 },
         { prop: 'type', label: '类型', width: 100 },
-        { prop: 'qrCode', label: '推荐码', width: 180 },
+        { prop: 'qrCode', label: '登录密码', width: 180 },
         { prop: 'openId', label: '微信openId', width: 240 },
         { prop: 'status', label: '状态', width: 220 }
       ],
@@ -159,6 +189,58 @@ export default {
     this.getChannelTree()
   },
   methods: {
+    addManager:function(){
+        if(this.selecedChannelCode == null || this.selecedChannelCode == undefined || this.selecedChannelCode  == ''){
+            this.$message.success('渠道不能为空')
+            return
+        }
+        if(this.manager == null || this.manager == undefined || this.manager  == ''){
+            this.$message.success('管理员姓名不能为空')
+            return
+        }
+        if(this.managerPhone == null || this.managerPhone == undefined || this.managerPhone  == ''){
+            this.$message.success('管理员手机号不能为空')
+            return
+        }
+        if(this.pwd == null || this.pwd == undefined || this.pwd  == ''){
+            this.$message.success('管理员登录密码不能为空')
+            return
+        }
+        if(this.roleId == null || this.roleId == undefined || this.roleId  == ''){
+            this.$message.success('管理员角色不能为空')
+            return
+        }
+
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let params = {}
+        params.name = this.manager
+        params.phone = this.managerPhone
+        params.pwd = this.pwd
+        params.saleChannelId = this.selecedChannelCode 
+        params.roleId = this.roleId
+        apiBigflow.addSaleChannelManager(params).then(res => {
+            if (res.resultCode === 0) {
+              this.$message.success('添加成功！')
+              this.addManagerDialogVisible = false;
+              this.getSalePerson()
+            } else {
+              this.$message.error(res.resultInfo)
+            }
+          })
+      }).catch(() => {
+      });
+    },
+    //   addSaleChannelManager
+    closeChannelManagerButton:function(){
+        this.addManagerDialogVisible = false
+    },
+    showAddManager:function(){
+        this.addManagerDialogVisible = true
+    },
     getChannelTree () {
       let params = {}
       params.page=1
@@ -243,7 +325,7 @@ export default {
         if (res.resultCode === 0) {
           let allRoles = res.data;
           this.channelRoles = allRoles.filter(role=>{
-            if(role.type === 0)
+            if(role.type === 2)
                 return true
             return false
         })
