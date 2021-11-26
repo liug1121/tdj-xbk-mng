@@ -130,7 +130,7 @@
       <!-- 内容主体区域 -->  
       <el-form :model="updateuseForm"  label-width="110px">
         <el-form-item label="高速可用量">
-          <el-input style="width:300px;" onkeyup="value=value.replace(/[^\d]/g,'')" v-model="updateuseForm.flowHighDose" placeholder="请输入变更原因" ></el-input>
+          <el-input style="width:300px;" onkeyup="value=value.replace(/[^\-?\d.]/g,'')" v-model="updateuseForm.flowHighDose" placeholder="请输入变更原因" ></el-input>
         </el-form-item>
         <el-form-item label="变更原因">
           <el-input style="width:300px;" v-model="updateuseForm.reason" placeholder="请输入变更原因" ></el-input>
