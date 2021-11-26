@@ -42,10 +42,10 @@
         <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
           <template slot-scope="scope">
             <div v-if="p.prop == 'operation'">
-              <el-button type="text" size="small" @click="stopPool(scope.row.poolId)" v-if="scope.row.status=='open'">停用</el-button>
-              <el-button type="text" size="small" @click="openPool(scope.row.poolId)" v-else>启用</el-button>
-              <el-button type="text" size="small" >卡用量明细</el-button>
-              <el-button type="text" size="small" @click="removePool(scope.row.poolId)">删除</el-button>
+              <el-button v-permission="{indentity:'bigflowFlowPool-sotp'}" type="text" size="small" @click="stopPool(scope.row.poolId)" v-if="scope.row.status=='open'">停用</el-button>
+              <el-button v-permission="{indentity:'bigflowFlowPool-start'}" type="text" size="small" @click="openPool(scope.row.poolId)" v-else>启用</el-button>
+              <el-button v-permission="{indentity:'bigflowFlowPool-detail'}" type="text" size="small" >卡用量明细</el-button>
+              <el-button v-permission="{indentity:'bigflowFlowPool-delete'}" type="text" size="small" @click="removePool(scope.row.poolId)">删除</el-button>
             </div>
             <div v-else>
               <div v-html="scope.row[p.prop]" />
@@ -189,19 +189,19 @@ export default {
       total: 0,
       // 列表，标题、字段
       table_column: [
-        { prop: 'poolId', label: '池ID', width: 200, fixed: 'left', sortable: true },
-        { prop: 'poolName', label: '池名称', width: 190, fixed: 'left', sortable: true },
-        { prop: 'statusName', label: '状态', width: 200, sortable: true },
-        { prop: 'num', label: '总卡片数', width: 150, sortable: true },
-        { prop: 'saleChannelName', label: '渠道', width: 300, sortable: true },
-        { prop: 'productCodeName', label: '当前套餐', width: 200, sortable: true },
-        { prop: 'flowHighDoseName', label: '可用量', width: 180, sortable: true },
-        { prop: 'flowHighUsedName', label: '当月已使用', width: 180, sortable: true },
-        { prop: 'flowHightotalUsedName', label: '累计已使用', width: 180, sortable: true },
-        { prop: 'surplusUsedName', label: '剩余总流量', width: 180, sortable: true },
-        { prop: 'expireDate', label: '有效期', width: 300 },
-        { prop: 'gmtCreate', label: '创建时间', width: 300 },
-        { prop: 'operation', label: '操作', width: 100, fixed: 'right' }
+        { prop: 'poolId', label: '池ID', width: 100, sortable: true },
+        { prop: 'poolName', label: '池名称', width: 100, sortable: true },
+        { prop: 'statusName', label: '状态', width: 80, sortable: true },
+        { prop: 'num', label: '总卡片数', width: 80, sortable: true },
+        { prop: 'saleChannelName', label: '渠道', width: 150, sortable: true },
+        { prop: 'productCodeName', label: '当前套餐', width: 80, sortable: true },
+        { prop: 'flowHighDoseName', label: '可用量', width: 80, sortable: true },
+        { prop: 'flowHighUsedName', label: '当月已使用', width: 80, sortable: true },
+        { prop: 'flowHightotalUsedName', label: '累计已使用', width: 80, sortable: true },
+        { prop: 'surplusUsedName', label: '剩余总流量', width: 80, sortable: true },
+        { prop: 'expireDate', label: '有效期', width: 100 },
+        { prop: 'gmtCreate', label: '创建时间', width: 100 },
+        { prop: 'operation', label: '操作', width: 100}
         
       ],
     };

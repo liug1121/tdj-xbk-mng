@@ -101,12 +101,12 @@ export default {
       pageSize: 20,
       total: 0,
       table_column: [
-        { prop: 'iccid', label: 'ICCID', width: 300 },
-        { prop: 'phoneNumber', label: '卡号码', width: 100 },
-        { prop: 'status', label: '卡状态', width: 100 },
-        { prop: 'channelName', label: '渠道', width: 300 },
-        { prop: 'salePoint', label: '网点', width: 200 },
-        { prop: 'salePersonName', label: '销售员', width: 240 }
+        { prop: 'iccid', label: 'ICCID', width: 200 },
+        { prop: 'phoneNumber', label: '卡号码', width: 120 },
+        { prop: 'status', label: '卡状态', width: 120 },
+        { prop: 'channelName', label: '渠道', width: 120 },
+        { prop: 'salePoint', label: '网点', width: 120 },
+        { prop: 'salePersonName', label: '销售员', width: 120 }
       ],
       statusTypes:[
         {label:'可销售', value:2},

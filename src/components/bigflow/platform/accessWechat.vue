@@ -60,13 +60,13 @@ export default {
       total: 0,
       // 列表，标题、字段
       table_column: [
-        { prop: 'id', label: '接入码', width: 200, fixed: 'left', sortable: true },
-        { prop: 'name', label: '名称', width: 190, fixed: 'left', sortable: true },
-        { prop: 'status', label: '类型', width: 200, sortable: true },
-        { prop: 'appId', label: 'AppId', width: 150, sortable: true },
-        { prop: 'mchId', label: '商户ID', width: 300, sortable: true },
-        { prop: 'status', label: '状态', width: 200, sortable: true },
-        { prop: 'memo', label: '备注说明', width: 180, sortable: true }
+        { prop: 'id', label: '接入码', width: 100, sortable: true },
+        { prop: 'name', label: '名称', width: 100, sortable: true },
+        { prop: 'status', label: '类型', width: 80, sortable: true },
+        { prop: 'appId', label: 'AppId', width: 180, sortable: true },
+        { prop: 'mchId', label: '商户ID', width: 180, sortable: true },
+        { prop: 'status', label: '状态', width: 80, sortable: true },
+        { prop: 'memo', label: '备注说明', width: 100, sortable: true }
       ],
     };
   },

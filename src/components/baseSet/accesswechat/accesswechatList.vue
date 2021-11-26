@@ -103,16 +103,16 @@ export default {
       total: 0,
       // 表格
       table_column: [
-        { prop: '', label: '接入码', width: 180, fixed: 'left' },
+        { prop: '', label: '接入码', width: 100 },
         { prop: '', label: '公众号名称', width: 100 },
-        { prop: '', label: 'appid', width: 100 },
-        { prop: '', label: 'AppSecret', width: 100 },
-        { prop: '', label: '商户号', width: 100 },
-        { prop: '', label: '支付密匙', width: 100 },
-        { prop: '', label: '类型', width: 100 },
-        { prop: '', label: '渠道', width: 100 },
-        { prop: '', label: '接入时间', width: 100 },
-        { prop: '', label: '备注说明', width: 100 },
+        { prop: '', label: 'appid', width: 80 },
+        { prop: '', label: 'AppSecret', width: 80 },
+        { prop: '', label: '商户号', width: 80 },
+        { prop: '', label: '支付密匙', width: 80 },
+        { prop: '', label: '类型', width: 50 },
+        { prop: '', label: '渠道', width: 80 },
+        { prop: '', label: '接入时间', width: 80 },
+        { prop: '', label: '备注说明', width: 80 },
         { prop: 'operation', label: '操作' }
       ],
       // 查询表字段

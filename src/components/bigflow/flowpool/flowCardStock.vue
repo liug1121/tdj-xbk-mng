@@ -211,12 +211,12 @@ export default {
       total: 0,
       // 列表，标题、字段
       table_column: [
-        { prop: 'iccid', label: 'ICCID', width: 200, fixed: 'left', sortable: true },
-        { prop: 'phoneNumber', label: 'IMSI', width: 190, fixed: 'left', sortable: true },
-        { prop: 'statusName', label: '库存状态', width: 200, sortable: true },
-        { prop: 'poolName', label: '池名称', width: 150, sortable: true },
-        { prop: 'gmtPool', label: '加入池时间', width: 300, sortable: true },
-        { prop: 'useLimitStatus', label: '限量关停', width: 200, sortable: true },
+        { prop: 'iccid', label: 'ICCID', width: 200, sortable: true },
+        { prop: 'phoneNumber', label: 'IMSI', width: 200, sortable: true },
+        { prop: 'statusName', label: '库存状态', width: 80, sortable: true },
+        { prop: 'poolName', label: '池名称', width: 180, sortable: true },
+        { prop: 'gmtPool', label: '加入池时间', width: 180, sortable: true },
+        { prop: 'useLimitStatus', label: '限量关停', width: 80, sortable: true },
         { prop: 'gmtStock', label: '入库时间', width: 180, sortable: true }
       ],
     };

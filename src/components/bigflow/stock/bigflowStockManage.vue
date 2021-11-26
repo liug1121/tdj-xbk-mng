@@ -285,17 +285,17 @@ export default {
       total: 0,
       // 列表，标题、字段
       table_column: [
-        { prop: 'phoneNumber', label: '卡号码', width: 200, fixed: 'left', sortable: true },
-        { prop: 'iccid', label: 'ICCID', width: 190, fixed: 'left', sortable: true },
-        { prop: 'productTypeName', label: '卡品类', width: 250, fixed: 'left', sortable: true },
-        { prop: 'status', label: '档位', width: 200, sortable: true },
-        { prop: 'statusName', label: '卡状态', width: 150, sortable: true },
-        { prop: 'serviceName', label: '蜂窝平台账户', width: 300, sortable: true },
-        { prop: 'channelName', label: '渠道名称', width: 200, sortable: true },
-        { prop: 'salePerson', label: '销售员', width: 180, sortable: true },
-        { prop: 'typeName', label: '类型', width: 180, sortable: true },
-        { prop: 'provinceName', label: '归属地', width: 180, sortable: true },
-        { prop: 'gmtCreate', label: '入库时间', width: 180, sortable: true }
+        { prop: 'phoneNumber', label: '卡号码', width: 120, sortable: true },
+        { prop: 'iccid', label: 'ICCID', width: 180, sortable: true },
+        { prop: 'productTypeName', label: '卡品类', width: 80, sortable: true },
+        { prop: 'status', label: '档位', width: 50, sortable: true },
+        { prop: 'statusName', label: '卡状态', width: 50, sortable: true },
+        { prop: 'serviceName', label: '蜂窝平台账户', width: 100, sortable: true },
+        { prop: 'channelName', label: '渠道名称', width: 80, sortable: true },
+        { prop: 'salePerson', label: '销售员', width: 50, sortable: true },
+        { prop: 'typeName', label: '类型', width: 80, sortable: true },
+        { prop: 'provinceName', label: '归属地', width: 80, sortable: true },
+        { prop: 'gmtCreate', label: '入库时间', width: 100, sortable: true }
       ],
     };
   },
