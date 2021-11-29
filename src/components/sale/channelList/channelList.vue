@@ -318,8 +318,10 @@ export default {
     getChannelId (channelsID, channelName) {
       this.parentChannnelName = channelName
       // this.addChannelForm.parentChannelId = channelsID
+      console.log('getChannelId:' + localStorage.getItem('channelId'))
       localStorage.setItem('channelId', channelsID)
       this.addChannelForm.parentChannelId = Number(localStorage.getItem('channelId'))
+      console.log('getChannelId1:' + this.addChannelForm.parentChannelId)
       this.getChannelList(localStorage.getItem('channelId'))
     },
     // 获取列表
@@ -573,6 +575,8 @@ export default {
     addUser () {
       this.$refs.addChannelRef.validate(valid => {
         if (!valid) return
+        if(this.addChannelForm.parentChannelId == null || this.addChannelForm.parentChannelId == undefined || this.addChannelForm.parentChannelId == '')
+          this.addChannelForm.parentChannelId = Number(localStorage.getItem('channelId'))
         if (!this.addChannelForm.channelId) {
           const data = {
             channelName: this.addChannelForm.channelName,
