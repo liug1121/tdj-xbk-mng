@@ -219,7 +219,8 @@ export default {
         startTime: this.praseStrEmpty(this.queryLBSlistFormModel.startTime),
         endTime: this.praseStrEmpty(this.queryLBSlistFormModel.endTime),
         provinceId: this.praseStrEmpty(this.queryLBSlistFormModel.provinceId),
-        cityId: this.praseStrEmpty(this.queryLBSlistFormModel.cityId)
+        cityId: this.praseStrEmpty(this.queryLBSlistFormModel.cityId),
+        lbsStatus: this.praseStrEmpty(this.queryLBSlistFormModel.lbsStatus)
       }
       if (data.iccid !== '' & data.channelId !== '' & data.startTime !== '' & data.endTime !== '' & data.provinceId !== '' & data.cityId !== '') {
         this.apiLBSDownload(data)

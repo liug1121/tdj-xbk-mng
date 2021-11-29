@@ -107,6 +107,7 @@ export default {
     const endTime = params.endTime
     const provinceId = params.provinceId
     const cityId = params.cityId
-    return API.GET(`boss/v1.0/lbs/card/download?iccid=${iccid}&channelId=${channelId}&startTime=${startTime}&endTime=${endTime}&provinceId=${provinceId}&cityId=${cityId}`)
+    const lbsStatus = params.lbsStatus
+    return API.GET(`boss/v1.0/lbs/card/download?iccid=${iccid}&channelId=${channelId}&startTime=${startTime}&endTime=${endTime}&provinceId=${provinceId}&cityId=${cityId}&lbsStatus=${lbsStatus}`)
   }
 }
