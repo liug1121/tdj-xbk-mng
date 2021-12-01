@@ -28,6 +28,8 @@
         
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowFlowPool-useChange'}" @click="openUpdateuseDlg">调整用量</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowFlowPool-useChange'}" @click="openUpdateExpireDlg">调整有效期</el-button>
       </div>
       <!-- 列表区域 -->
       <div class="cardNos">
@@ -153,6 +155,22 @@
         <el-button type="primary" @click="okUpdateuse" :disabled="btnEnable">确 定</el-button>
       </span>  
     </el-dialog> 
+    <el-dialog title="调整用量" :visible.sync="showUpdateExpireDlg" width="450px" @close="closeUpdateExpireDlg">
+      <!-- 内容主体区域 -->  
+      <el-form :model="updateExpireForm"  label-width="110px">
+        <el-form-item label="月数">
+          <el-input style="width:300px;" onkeyup="value=value.replace(/[^\-?\d.]/g,'')" v-model="updateExpireForm.expire" placeholder="请输入要调整的月数" ></el-input>
+        </el-form-item>
+      </el-form>
+      <span>
+          <p>单位为月，可为负</p>
+      </span>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeUpdateExpireDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okUpdateExpire" :disabled="btnEnable">确 定</el-button>
+      </span>  
+    </el-dialog> 
   </div>
 </template>
 
@@ -165,8 +183,10 @@ export default {
   data () {
     return {
     treeSelectedType:0,
+    showUpdateExpireDlg:false,
     showUpdateuseDlg:false,
     updateuseForm:{},
+    updateExpireForm:[],
     showOrderDlg:false,
     addOrderForm:{},
     poolId:'',
@@ -297,7 +317,17 @@ export default {
         }).catch(() => {
         });
     },
-    
+    openUpdateExpireDlg:function(){
+      if(this.poolId == ""){
+            alert('请先选择要操作的流量池')
+            return
+        }
+        if(this.poolId.indexOf(',') != -1){
+            alert('一次只能操作一个流量池')
+            return
+        }
+        this.showUpdateExpireDlg = true
+    },
       openUpdateuseDlg:function(){
           if(this.poolId == ""){
             alert('请先选择要操作的流量池')
@@ -309,8 +339,35 @@ export default {
         }
         this.showUpdateuseDlg = true
       }, 
+      closeUpdateExpireDlg:function(){
+          this.showUpdateExpireDlg = false
+      },
       closeUpdateuseDlg:function(){
           this.showUpdateuseDlg = false
+      },
+      okUpdateExpire:function(){
+        let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = {}
+            params.poolId = this.poolId
+            params.expireMonth2Modify = this.updateExpireForm.expire
+            apiBigflow.updateFlowPoolExpire(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryFlowPools()
+                    that.showUpdateExpireDlg = false
+                    alert('操作成功')
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        });
       },
       okUpdateuse:function(){
           let that = this

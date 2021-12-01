@@ -102,6 +102,9 @@ export default {
     updateFlowPoolUse: params =>{
         return API.POST('/bigflow/manage/v1.0/flowpools/updateuse', params)
     },
+    updateFlowPoolExpire:params =>{
+        return API.POST('/bigflow/manage/v1.0/flowpools/expire/modify', params)
+    },
     modifyFlowPoolStatus: params =>{
         return API.POST('/bigflow/manage/v1.0/pools/status/modify', params)
     },
@@ -158,6 +161,13 @@ export default {
     },
     file2CardUsageCheck: (params) => {
         return API.POST('/bigflow/manage/v1.0/card/useage/check/file', params, {
+            headers: {
+            'content-type': 'multipart/form-data'
+            }
+        })
+    },
+    file2CardUsageRefresh: (params) => {
+        return API.POST('/bigflow/manage/v1.0/card/useage/refresh/file', params, {
             headers: {
             'content-type': 'multipart/form-data'
             }

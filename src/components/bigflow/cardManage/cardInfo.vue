@@ -78,6 +78,8 @@
         v-permission="{indentity:'bigflowCardInfo-validityExtend'}" @click="openExpireDateExtendDlg">有效期延长</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-validityExtend'}" @click="openFile2CheckDlg">与CMP进行用量核查</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowCardInfo-validityExtend'}" @click="openFile2RefreshDlg">用CMP用量刷新</el-button>
       </div>
       <!-- 列表区域 -->
       <div class="cardNos">
@@ -246,6 +248,16 @@
         <el-button type="primary" @click="okFile2Check" :disabled="btnEnable">确 定</el-button>
       </span>  
     </el-dialog> 
+
+    <el-dialog title="与CMP进行用量核查" :visible.sync="showFile2RefreshDlg" width="450px" @close="closeFile2RefreshDlg">
+        <el-upload class="unload-demo" accept=".xls, .xlsx" action="#" :file-list="file2RefreshFiles" :http-request="uploadFile2RefreshFile" :on-remove="removeUploadedFile2Refresh">
+          <el-button size="small" type="primary">点击上传</el-button>
+        </el-upload>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeFile2RefreshDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okFile2Refresh" :disabled="btnEnable">确 定</el-button>
+      </span>  
+    </el-dialog> 
   </div> 
 </template>
 
@@ -258,8 +270,10 @@ export default {
   },
   data () {
     return {
+        showFile2RefreshDlg : false,
         showFile2CheckDlg:false,
         file2CheckFiles:[],
+        file2RefreshFiles:[],
         showExpireDateExtendDlg:false,
         expireDateExtendForm:{},
 
@@ -374,9 +388,17 @@ export default {
         this.uploadedFile2CheckFile = null
         this.showFile2CheckDlg = true
     }, 
+    openFile2RefreshDlg:function(){
+      this.file2RefreshFiles = []
+      this.uploadedFile2RefreshFile = null
+      this.showFile2RefreshDlg = true
+    },
     closeFile2CheckDlg:function(){
         this.showFile2CheckDlg = false
-    },  
+    }, 
+    closeFile2RefreshDlg:function(){
+        this.showFile2RefreshDlg = false
+    },   
     okFile2Check:function(){
         if(this.uploadedFile2CheckFile == null){
             alert('请先上传文件')
@@ -404,11 +426,44 @@ export default {
         }).catch(() => {
         }); 
     }, 
+    okFile2Refresh:function(){
+        if(this.uploadedFile2RefreshFile == null){
+            alert('请先上传文件')
+            return
+        }
+        let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = new FormData()
+        params.append('file', this.uploadedFile2RefreshFile)
+        apiBigflow.file2CardUsageRefresh(params).then(res=>{
+            if(res.resultCode == 0){
+                that.queryCardInfos()
+                that.showFile2RefreshDlg = false
+                alert('操作成功,请在任务：' + res.data + "中查询处理结果")
+            }else{
+                alert('操作失败:' + res.resultInfo)
+            }
+            that.btnEnable = false
+        })
+        }).catch(() => {
+        }); 
+    }, 
     removeUploadedFile2Check:function(file,fileList){
         this.uploadedFile2CheckFile = null
     }, 
+    removeUploadedFile2Refresh:function(file,fileList){
+        this.uploadedFile2RefreshFile = null
+    }, 
     uploadFile2CheckFile:function(item){
         this.uploadedFile2CheckFile = item.file
+    },
+    uploadFile2RefreshFile:function(item){
+        this.uploadedFile2RefreshFile = item.file
     },
     removeUploadedFile(file,fileList){
         this.uploadedFile = null
