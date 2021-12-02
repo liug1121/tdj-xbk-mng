@@ -1,6 +1,47 @@
 <template>
   <div class="box_subject">
-    <el-card class="all_list">
+    <div class="button_content">
+          <div class="tree-tab-unselected" :class="{' tree-selected':listType == 0}" @click="listTypeSel(0)">流量池</div>
+          <div class="tree-tab-unselected" :class="{' tree-selected':listType == 1}" @click="listTypeSel(1)">池用量明细</div>
+        </div>
+    <el-card class="all_list" v-if="listType == 1">
+      <el-form  :inline="true">
+        <el-form-item label="渠道" class="queryFormItem">
+          <el-select class="queryFormInput"  
+          filterable
+          clearable
+          reserve-keyword
+           placeholder="请选择渠道" v-model="saleChannel">
+            <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+          </el-form-item>
+          <el-form-item label="类型" class="queryFormItem">
+          <el-select class="queryFormInput"  
+          filterable
+          clearable
+          reserve-keyword
+           placeholder="请选择类型" v-model="detailType">
+            <el-option v-for="item in detailTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+          </el-form-item>
+          <el-button size="medium" type="primary" icon="el-icon-search" @click="okQueryFlowPoolsDetail">搜索</el-button>
+      </el-form>
+      <!-- 列表区域 -->
+      <el-table v-loading="loading" :data="poolDetails" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55">
+        </el-table-column>
+        <el-table-column v-for="(p, key) in table_column_detail" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+          <template slot-scope="scope">
+            <div v-html="scope.row[p.prop]" />
+          </template>
+        </el-table-column>
+      </el-table>
+      <!-- 分页区域 -->
+      <el-pagination v-if="detailType == 1" @size-change="handleDetailSizeChange" @current-change="handleDetailCurrentChange" :current-page="detailPage" :page-sizes="[10,20,30]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
+        :total="total">
+      </el-pagination>
+    </el-card>
+    <el-card class="all_list" v-if="listType == 0">
       <!-- 查询区域 -->
       <el-form  :inline="true">
         <el-form-item label="卡状态" class="queryFormItem">
@@ -46,7 +87,7 @@
             <div v-if="p.prop == 'operation'">
               <el-button v-permission="{indentity:'bigflowFlowPool-sotp'}" type="text" size="small" @click="stopPool(scope.row.poolId)" v-if="scope.row.status=='open'">停用</el-button>
               <el-button v-permission="{indentity:'bigflowFlowPool-start'}" type="text" size="small" @click="openPool(scope.row.poolId)" v-else>启用</el-button>
-              <el-button v-permission="{indentity:'bigflowFlowPool-detail'}" type="text" size="small" >卡用量明细</el-button>
+              <el-button v-permission="{indentity:'bigflowFlowPool-detail'}" type="text" size="small" >用量明细</el-button>
               <el-button v-permission="{indentity:'bigflowFlowPool-delete'}" type="text" size="small" @click="removePool(scope.row.poolId)">删除</el-button>
             </div>
             <div v-else>
@@ -182,6 +223,9 @@ export default {
   },
   data () {
     return {
+    detailType:null,
+    poolDetails:[],
+    listType:0,
     treeSelectedType:0,
     showUpdateExpireDlg:false,
     showUpdateuseDlg:false,
@@ -202,7 +246,12 @@ export default {
         {label:'可用', value:'open'},
         {label:'不可用', value:'close'}
     ],
+    detailTypes:[
+      {label:'月累计', value:'0'},
+      {label:'天累计', value:'1'}
+    ],
     flowPools:[],
+    detailPage:0,
       page: 1,
       pageSize: 10,
       // 列表总条数
@@ -224,6 +273,14 @@ export default {
         { prop: 'operation', label: '操作', width: 100}
         
       ],
+      
+      table_column_detail: [
+        { prop: 'date', label: '时间', width: 200},
+        { prop: 'channelName', label: '渠道', width: 200},
+        { prop: 'pool_name', label: '池名称', width: 200},
+        { prop: 'pool_id', label: '池ID', width: 200},
+        { prop: 'flow_usage', label: '用量', width: 200},
+      ],
     };
   },
   mounted () {
@@ -236,6 +293,10 @@ export default {
   },
   watch: {},
   methods: {
+    
+    listTypeSel:function(type){
+      this.listType = type
+    },
     treeSelect:function(type){
       this.treeSelectedType = type
       // this.queryBillForm.subFwAccounts = null
@@ -489,6 +550,7 @@ export default {
     queryFlowPools:function(){
         this.loading = true
         let params = {}
+        console.log('queryFlowPools:' + this.page)
         params.page = this.page
         if(this.status != '')
             params.status = this.status
@@ -502,6 +564,29 @@ export default {
           }
         })
     },
+    okQueryFlowPoolsDetail:function(){
+      this.detailPage = 0
+      this.queryFlowPoolsDetail()
+    },
+    queryFlowPoolsDetail:function(){
+        this.loading = true
+        
+        let params = {}
+        console.log(this.detailPage)
+        params.page = this.detailPage
+        params.type = this.detailType
+        params.channelId = this.saleChannel
+        apiBigflow.getFlowPoolsDetails(params).then(res=>{
+        if(res.resultCode == 0){
+            this.poolDetails = res.data
+            this.total = res.rowNum
+            this.loading = false
+          }else{
+            this.loading = false
+            this.$message.success(res.resultInfo)
+          }
+        })
+    },
     handleSelectionChange (val) {
         this.poolId = ''
       if(val.length > 0){
@@ -511,11 +596,22 @@ export default {
           this.poolId =this.poolId.substr(0,this.poolId.length -1);
       }
     },
+    handleDetailSizeChange (newPage) {
+      console.log('newPage:' + this.detailPage)
+      this.detailPage = newPage;
+      this.queryFlowPoolsDetail()
+    },
+    handleDetailCurrentChange (newPage) {
+      console.log('newPage1:' + this.detailPage)
+      this.detailPage = newPage;
+      this.queryFlowPoolsDetail()
+    },
     handleSizeChange (newPage) {
       this.page = newPage;
       this.queryFlowPools()
     },
     handleCurrentChange (newPage) {
+      console.log('newPage2:' + this.detailPage)
       this.page = newPage;
       this.queryFlowPools()
     },
@@ -531,7 +627,7 @@ export default {
   margin-top: 10px;
   padding: 5px;
   border-radius:5px;
-  width: 100px;
+  width: 150px;
   font-size: 5px;
   text-align: center;
 }
@@ -539,4 +635,5 @@ export default {
   background:#6ab3fc;
   color: white;
 }
+
 </style>
