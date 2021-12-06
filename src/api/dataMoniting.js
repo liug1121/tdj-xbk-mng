@@ -9,6 +9,10 @@ export default {
   apiPoisCitiesList: params => {
     return API.POST('boss/v1.0/pois/cities', params)
   },
+  // 获取区县
+  apiPoisDistrictsList: params => {
+    return API.POST('boss/v1.0/pois/districts', params)
+  },
   // boss新增lbs黑名单
   apiLbsAdd: params => {
     return API.POST('boss/v1.0/lbs/add', params)

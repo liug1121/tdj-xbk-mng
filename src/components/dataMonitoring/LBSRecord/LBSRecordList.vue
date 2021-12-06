@@ -79,6 +79,7 @@ export default {
         { prop: 'lbsMessage', label: 'lbs定位信息', width: 180 },
         { prop: 'provinceName', label: '省份', width: 100 },
         { prop: 'cityName', label: '城市', width: 100 },
+        { prop: 'districtName', label: '区县', width: 100 },
         { prop: 'address', label: '详细地址' },
         { prop: 'lbsTime', label: '定位时间', width: 180 }
       ],

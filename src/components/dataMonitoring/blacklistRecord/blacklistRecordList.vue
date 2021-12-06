@@ -14,6 +14,11 @@
             <el-option v-for="item in PoisCitiesList" :key="item.id" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
+        <!-- <el-form-item label="区县" class="queryFormItem">
+          <el-select class="queryFormInput" filterable clearable v-model="queryBlacklistFormModel.districtId" placeholder="请输入城市名">
+            <el-option v-for="item in PoisDistrictsList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item> -->
         <el-form-item label="频率(小时)" class="queryFormItem">
           <el-input class="queryFormInput" v-model.number="queryBlacklistFormModel.lbsRate" clearable placeholder="请输入定位频率"></el-input>
         </el-form-item>
@@ -72,8 +77,13 @@
             </el-select>
           </el-form-item>
           <el-form-item label="城市">
-            <el-select style="width:300px;" v-model="addForm.cityId" placeholder="请选择城市名">
+            <el-select style="width:300px;" v-model="addForm.cityId" placeholder="请选择城市名" @change="cityChange">
               <el-option v-for="item in PoisCitiesList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="区县">
+            <el-select style="width:300px;" v-model="addForm.districtId" placeholder="请选择城市名">
+              <el-option v-for="item in PoisDistrictsList" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="频率(小时)">
@@ -112,6 +122,7 @@ export default {
       table_column: [
         { prop: 'province', label: '省份', width: 150 },
         { prop: 'city', label: '城市', width: 180 },
+        { prop: 'districtName', label: '区县', width: 180 },
         { prop: 'doTypeCL', label: '动作', width: 80 },
         { prop: 'lbsRate', label: '定位频率', width: 80 },
         { prop: 'createTime', label: '创建时间' },
@@ -127,6 +138,7 @@ export default {
       // 省份
       provinceOptions: [],
       PoisCitiesList: [],
+      PoisDistrictsList:[],
       // 查询表字段
       queryBlacklistFormModel: {
         cityId: null,
@@ -207,6 +219,9 @@ export default {
         }
       })
     },
+    cityChange(cityId){
+      this.getPoisDistrictsList(cityId)
+    },
     // 监听省份id
     provinceChange (vId) {
       let obj = {};
@@ -231,6 +246,20 @@ export default {
         }
       })
     },
+    getPoisDistrictsList (cityId) {
+      const data = {
+        cityId: cityId
+      }
+      API.apiPoisDistrictsList(data).then(res => {
+        if (res.resultCode === 0) {
+          this.PoisDistrictsList = res.data
+          // console.log(this.PoisCitiesList);
+        } else {
+          this.$message.error(res.resultInfo)
+        }
+      })
+    },
+    
     addBlackShow () {
       this.addDialogVisible = true
       this.dialogTitle = '新增'
