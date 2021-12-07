@@ -200,7 +200,7 @@ export default {
         },
         {
           icon: "el-icon-s-goods",
-          title: "公众号接入",
+          title: "系统配置",
           path: "/accesswechat",
           type: 0,
         },

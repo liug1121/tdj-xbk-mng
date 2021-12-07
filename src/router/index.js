@@ -185,10 +185,10 @@ const router = new Router({
         },
         {
           path: '/accessWechat',
-          name: '公众号接入',
+          name: '系统配置',
           component: (resolve) => require(['components/bigflow/platform/accessWechat.vue'], resolve),
           meta: {
-            title: '公众号接入'
+            title: '系统配置'
           }
         } 
       ]},
@@ -461,9 +461,9 @@ const router = new Router({
         // },
         {
           path: '/accesswechat',
-          name: '公众号接入',
+          name: '系统配置',
           component: (resolve) => require(['components/baseSet/accesswechat/accesswechatList.vue'], resolve),
-          meta: { title: '公众号接入' },
+          meta: { title: '系统配置' },
         },
         {
           path: '/packageType',

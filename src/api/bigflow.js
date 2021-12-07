@@ -200,8 +200,25 @@ export default {
     },
     addSaleChannelManager: params =>{
         return API.POST('/bigflow/manage/v1.0/salechannel/manager/add', params)
+    },
+    getFengwoConfigs: params =>{
+        return API.POST('/bigflow/manage/v1.0/fengwo/accounts', params)
+    },
+    getFengwoConfigs: params =>{
+        return API.POST('/bigflow/manage/v1.0/fengwo/accounts', params)
+    },
+    addFengwoConfigs: params =>{
+        return API.POST('/bigflow/manage/v1.0/fengwo/add', params)
+    },
+    modifyFengwoConfigs: params =>{
+        return API.POST('/bigflow/manage/v1.0/fengwo/modify', params)
+    },
+    removeFengwoConfigs: params =>{
+        return API.POST('/bigflow/manage/v1.0/fengwo/remove', params)
+    },
+    getFengwoProvinces: params =>{
+        return API.GET('/bigflow/manage/v1.0/fengwo/provinces', params)
     }
-
 
     
 }

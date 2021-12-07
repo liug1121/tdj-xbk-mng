@@ -12,12 +12,12 @@
     <el-dialog title="文件导入" :visible.sync="dialogVisible" width="400px" :close-on-click-modal="false" :destroy-on-close="true">
       <el-form ref="ImportForm" :model="ImportForm" :rules="ImportRules" label-width="120px">
 
-        <el-form-item label="蜂窝平台账户" prop="fwAccount">
+        <!-- <el-form-item label="蜂窝平台账户" prop="fwAccount">
           <el-select style="width:217px" size="small" v-model="ImportForm.fwAccount" clearable filterable placeholder="请输入蜂窝平台账户关键词" @change="fwAccountChange">
             <el-option v-for="item in honeycombOptions" :key="item.id" :label="item.fwAccount" :value="item.id">
             </el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item label="账期" prop="cycle">
           <el-date-picker size="small" style="width:217px" v-model="ImportForm.cycle" type="month" placeholder="请选择账期" value-format="yyyyMM">
@@ -119,7 +119,7 @@ export default {
         } else {
           const param = new FormData()
           param.append('file', that.file)
-          const fwAccount = this.ImportForm.fwAccount
+          const fwAccount = "none"
           const cycle = this.ImportForm.cycle
           API.apiBillUploadAdd(fwAccount, cycle, param).then(res => {
             if (res.resultCode === 0) {
