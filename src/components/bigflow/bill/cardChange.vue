@@ -117,7 +117,7 @@ export default {
       table_column: [
         { prop: 'id', label: '流水ID', width: 80, sortable: true },
         { prop: 'typeName', label: '消费类型', width: 50, sortable: true },
-        { prop: 'amount', label: '消费金额', width: 80, sortable: true },
+        { prop: 'amountYuan', label: '消费金额', width: 80, sortable: true },
         { prop: 'productCodeName', label: '产品', width: 50, sortable: true },
         { prop: 'phoneNumber', label: '卡号码', width: 120, sortable: true },
         { prop: 'iccid', label: 'ICCID', width: 180, sortable: true },
