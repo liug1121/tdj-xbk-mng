@@ -3,7 +3,53 @@
     <div class="button_content">
           <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 0}" @click="tabSelect(0)">蜂窝账户配置</div>
           <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 1}" @click="tabSelect(1)">公众号接入</div>
+          <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 2}" @click="tabSelect(2)">大流量产品</div>
     </div>
+    <el-card class="all_list" v-if="selectedTab == 2">
+      <el-form  :inline="true">
+        <el-form-item label="产品编码" class="queryFormItem"  :model="queryBigflowProductForm">
+          <el-input class="queryFormInput" clearable placeholder="请输入产品编码" style="width:120px" v-model="queryBigflowProductForm.productCode"></el-input>
+        </el-form-item>  
+        <el-form-item label="产品名称" class="queryFormItem" >
+          <el-input class="queryFormInput" clearable placeholder="请输入产品名称" style="width:120px" v-model="queryBigflowProductForm.productName"></el-input>
+        </el-form-item>  
+        <el-form-item label="产品类型">
+          <el-select style="width:120px;" v-model="queryBigflowProductForm.productType" clearable placeholder="请选择产品类型">
+            <el-option v-for="item in bigflowProductTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="使用类型">
+          <el-select style="width:120px;" v-model="queryBigflowProductForm.useType" clearable placeholder="请选择使用类型">
+            <el-option v-for="item in bigflowProductUseTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-select style="width:120px;" v-model="queryBigflowProductForm.status" clearable placeholder="请选择状态">
+            <el-option v-for="item in bigflowProductsStatus" :key="item.id" :label="item.name" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-button size="medium" type="primary" icon="el-icon-search" @click="okQueryBigflowProducts">查询</el-button>
+      </el-form>
+      <div class="button_content">
+          <el-button size="medium" type="primary" @click="okShowBigflowProductAdd">添加</el-button>
+      </div>
+      <el-table v-loading="loading" :data="bigflowProducts" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}">
+        <el-table-column type="selection" width="55">
+        </el-table-column>
+        <el-table-column v-for="(p, key) in table_column_bigflow_product" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+          <template slot-scope="scope">
+            <div v-if="p.prop == 'opts'">
+              <el-button type="text" size="small" @click="okShowBigflowProductEdit(scope.row)">编辑</el-button>
+              <!-- <el-button type="text" size="small" @click="okDeleteFengwo(scope.row)">删除</el-button> -->
+            </div>
+            <div v-else v-html="scope.row[p.prop]" />
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination @size-change="handleBigflowProductSizeChange" @current-change="handleBigflowProductCurrentChange" :current-page="bigflowProductPage" :page-sizes="[10,20,30]" :page-size="bigflowProductPageSize" layout="total, sizes, prev, pager, next, jumper"
+        :total="bigflowProductTotal">
+      </el-pagination>
+    </el-card>
     <el-card class="all_list" v-if="selectedTab == 0">
       <el-form  :inline="true">
         <el-form-item label="账户名" class="queryFormItem"  :model="queryFengwoForm">
@@ -170,6 +216,75 @@
           <el-button type="primary" @click="okEditFengwo">确 定</el-button>
         </span>
       </el-dialog>
+
+      <el-dialog title="维护产品" :visible.sync="bigflowProductDlgShow" width="430px" @close="bigflowProductDlgShow = false">
+        <!-- 内容主体区域 -->
+        <el-form :model="addBigflowProductForm" label-width="90px">
+          <el-form-item label="产品名">
+            <el-input style="width:250px;" v-model="addBigflowProductForm.productName" placeholder="请输入产品名"></el-input>
+          </el-form-item>
+          <el-form-item label="显示名">
+            <el-input style="width:250px;" v-model="addBigflowProductForm.viewName" placeholder="请输入显示名"></el-input>
+          </el-form-item>
+          <el-form-item label="产品编码">
+            <el-input style="width:250px;" v-model="addBigflowProductForm.productCode" placeholder="请输入产品编码"></el-input>
+          </el-form-item>
+          <el-form-item label="产品类型">
+            <el-select style="width:120px;" v-model="addBigflowProductForm.productType" clearable placeholder="请选择产品类型" @change="productTypeChange"> 
+              <el-option v-for="item in bigflowProductTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="产品有效期(月)" v-if="productTypeSelected == 'setmeal'">
+            <el-input style="width:250px;" v-model="addBigflowProductForm.expireTime" placeholder="请输入原始价" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
+          </el-form-item>
+          <el-form-item label="清零周期(月)" v-if="productTypeSelected == 'setmeal_q'">
+            <el-input style="width:250px;" v-model="addBigflowProductForm.useExpire" placeholder="请输入原始价" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
+          </el-form-item>
+          <!-- <el-form-item label="原始价">
+            <el-input style="width:250px;" v-model="addBigflowProductForm.originalPrice" placeholder="请输入原始价" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
+          </el-form-item> -->
+          <el-form-item label="使用类型">
+            <el-select style="width:120px;" v-model="addBigflowProductForm.useType" clearable placeholder="请选择使用类型">
+              <el-option v-for="item in bigflowProductUseTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="清算方式">
+            <el-select style="width:120px;" v-model="addBigflowProductForm.clearType" clearable placeholder="请选择用量清算方式">
+              <el-option v-for="item in clearTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="用量区域">
+            <el-select style="width:120px;" v-model="addBigflowProductForm.zone" clearable placeholder="请选择用量区域">
+              <el-option v-for="item in zoonTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="原始价">
+            <el-input style="width:250px;" v-model="addBigflowProductForm.originalPrice" placeholder="请输入原始价" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
+          </el-form-item>
+          <el-form-item label="销售价">
+            <el-input style="width:250px;" v-model="addBigflowProductForm.price" placeholder="请输入销售价" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
+          </el-form-item>
+          <el-form-item label="高速用量(M)">
+            <el-input style="width:250px;" v-model="addBigflowProductForm.highUse" placeholder="请输入高速用量（M）" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
+          </el-form-item>
+          <el-form-item label="中速用量(M)">
+            <el-input style="width:250px;" v-model="addBigflowProductForm.mediumUse" placeholder="请输入中速用量（M）" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
+          </el-form-item>
+          <el-form-item label="状态">
+            <el-select style="width:120px;" v-model="addBigflowProductForm.status" clearable placeholder="请选择状态">
+              <el-option v-for="item in bigflowProductsStatus" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="产品说明">
+            <el-input style="width:250px;" v-model="addBigflowProductForm.memo" placeholder="请输入产品说明"></el-input>
+          </el-form-item>
+        </el-form>
+        <!-- 底部区域 -->
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="bigflowProductDlgShow = false">取 消</el-button>
+          <el-button type="primary" @click="okBigflowProduct">确 定</el-button>
+        </span>
+      </el-dialog>
   </div>
 </template>
 
@@ -181,6 +296,12 @@ export default {
   },
   data () {
     return {
+    bigflowProductDlgType:'add',
+    productTypeSelected:'',
+    addBigflowProductForm:{},
+    bigflowProductDlgShow:false,
+    bigflowProducts:[],
+    queryBigflowProductForm:{},
     editFengwoDlgShow:false,
     editFengwoForm:{
       accountId:null,
@@ -206,11 +327,14 @@ export default {
     name:'',
     appId:'',
     fengwoPage:1,
+    bigflowProductPage:1,
+    bigflowProductPageSize:10,
     fengwoPageSize:10,
       page: 1,
       pageSize: 10,
       // 列表总条数
       fengwoTotal:0,
+      bigflowProductTotal:0,
       total: 0,
       // 列表，标题、字段
       table_column: [
@@ -236,13 +360,56 @@ export default {
         { prop: 'gmtCreate', label: '时间', width: 100, sortable: true },
         { prop: 'opts', label: '操作', width: 100, sortable: true }
       ],
+      table_column_bigflow_product:[
+        { prop: 'productCode', label: '产品编码', width: 100, sortable: true },
+        { prop: 'productName', label: '产品名', width: 100, sortable: true },
+        { prop: 'viewName', label: '显示名', width: 100, sortable: true },
+        { prop: 'originalPrice', label: '原始价', width: 80, sortable: true },
+        { prop: 'price', label: '销售价', width: 80, sortable: true },
+        { prop: 'highUse', label: '高速用量', width: 100, sortable: true },
+        { prop: 'mediumUse', label: '中速用量', width: 100, sortable: true },
+        { prop: 'productTypeName', label: '产品类型', width: 100, sortable: true },
+        { prop: 'useTypeName', label: '使用类型', width: 50, sortable: true },
+        { prop: 'useExpire', label: '用量清零周期', width: 50, sortable: true },
+        { prop: 'expireTime', label: '产品有效期', width: 50, sortable: true },
+        { prop: 'status', label: '状态', width: 50, sortable: true },
+        { prop: 'clearType', label: '用量清算周期', width: 50, sortable: true },
+        { prop: 'zone', label: '用量区域', width: 50, sortable: true },
+        // { prop: 'gmtCreate', label: '创建时间', width: 100, sortable: true },
+        { prop: 'memo', label: '产品说明', width: 100, sortable: true },
+        { prop: 'opts', label: '操作', width: 100, sortable: true }
+      ],
       lbsAddrFuns:[
         { name: "是", id: 'true' },
         { name: "否", id: 'false' }],
       provinces:[{ name: "11", id: '11' }],
       flowTypes:[
         { name: "是", id: 'true' },
-        { name: "否", id: 'false' }]
+        { name: "否", id: 'false' }],
+      bigflowProductTypes:[
+        { name: "月套餐", id: 'setmeal' },
+        { name: "包量套餐", id: 'setmeal_q' },
+        { name: "首月赠送套餐", id: 'givesetmeal' },
+        { name: "加油包", id: 'incrementpackage' },
+      ],
+      bigflowProductUseTypes:[
+        { name: "卡", id: 'card' },
+        { name: "卡池", id: 'pool' }
+      ],
+      bigflowProductsStatus:[
+        { name: "上架状态", id: '1' },
+        { name: "上架不显示", id: '3' },
+        { name: "下架状态", id: '2' }
+      ],
+      clearTypes:[
+        { name: "自然月", id: 'month' },
+        { name: "27号", id: '27号' },
+      ],
+      zoonTypes:[
+        { name: "省内", id: 'all' },
+        { name: "全国", id: 'month' }
+      ]
+      
     };
   },
   mounted () {
@@ -252,9 +419,144 @@ export default {
       this.queryAccessWechats()
       this.queryFengwo()
       this.getFengwoProvince()
+      this.getProducts()
   },
   watch: {},
   methods: {
+    productTypeChange:function(productType) {
+      this.productTypeSelected = productType
+    },
+    okBigflowProduct:function(){
+      let that = this
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+      }).then(() => {
+        let params = {}
+        if(this.addBigflowProductForm.productName == undefined || this.addBigflowProductForm.productName == null || this.addBigflowProductForm.productName == ''){
+          this.$message.error('产品名不能为空')
+          return
+        }
+        if(this.addBigflowProductForm.viewName == undefined || this.addBigflowProductForm.viewName == null || this.addBigflowProductForm.viewName == ''){
+          this.$message.error('显示名不能为空')
+          return
+        }
+        if(this.addBigflowProductForm.productType == undefined || this.addBigflowProductForm.productType == null || this.addBigflowProductForm.productType == ''){
+          this.$message.error('产品类型不能为空')
+          return
+        }
+        if(this.addBigflowProductForm.useExpire == undefined || this.addBigflowProductForm.useExpire == null || this.addBigflowProductForm.useExpire == ''){
+          if(this.productTypeSelected == 'setmeal_q'){
+            this.$message.error('清零周期不能为空')
+            return
+          }
+        }
+        if(this.addBigflowProductForm.expireTime == undefined || this.addBigflowProductForm.expireTime == null || this.addBigflowProductForm.expireTime == ''){
+          if(this.productTypeSelected == 'setmeal'){
+            this.$message.error('产品有效期不能为空')
+            return
+          }
+          
+        }
+        if(this.addBigflowProductForm.useType == undefined || this.addBigflowProductForm.useType == null || this.addBigflowProductForm.useType == ''){
+          this.$message.error('使用类型不能为空')
+          return
+        }
+        if(this.addBigflowProductForm.clearType == undefined || this.addBigflowProductForm.clearType == null || this.addBigflowProductForm.clearType == ''){
+          this.$message.error('用量清算方式不能为空')
+          return
+        }
+        if(this.addBigflowProductForm.originalPrice == undefined || this.addBigflowProductForm.originalPrice == null || this.addBigflowProductForm.originalPrice == ''){
+          this.$message.error('原始价格不能为空')
+          return
+        }
+        if(this.addBigflowProductForm.price == undefined || this.addBigflowProductForm.price == null || this.addBigflowProductForm.price == ''){
+          this.$message.error('销售价格不能为空')
+          return
+        }
+        if(this.addBigflowProductForm.highUse == undefined || this.addBigflowProductForm.highUse == null || this.addBigflowProductForm.highUse == ''){
+          this.$message.error('高速用量不能为空')
+          return
+        }
+        if(this.addBigflowProductForm.mediumUse == undefined || this.addBigflowProductForm.mediumUse == null || this.addBigflowProductForm.mediumUse == ''){
+          this.$message.error('中速用量不能为空')
+          return
+        }
+        if(this.addBigflowProductForm.status == undefined || this.addBigflowProductForm.status == null || this.addBigflowProductForm.status == ''){
+          this.$message.error('中速用量不能为空')
+          return
+        }
+        params.productName =this.addBigflowProductForm.productName
+        params.viewName =this.addBigflowProductForm.viewName
+        params.productCode =this.addBigflowProductForm.productCode
+        params.productType =this.addBigflowProductForm.productType
+        params.useType =this.addBigflowProductForm.useType
+        params.clearType =this.addBigflowProductForm.clearType
+        params.zone =this.addBigflowProductForm.zone
+        params.originalPrice =this.addBigflowProductForm.originalPrice
+        params.price =this.addBigflowProductForm.price
+        params.highUseM = this.addBigflowProductForm.highUse
+        params.status =this.addBigflowProductForm.status
+        params.memo =this.addBigflowProductForm.memo
+        params.mediumUseM = this.addBigflowProductForm.mediumUse
+        params.expireTime =this.addBigflowProductForm.expireTime
+        params.useExpire =this.addBigflowProductForm.useExpire
+        if(this.bigflowProductDlgType == 'add'){
+          apiBigflow.addProducts(params).then(res=>{
+              if(res.resultCode == 0){
+                  that.queryFengwo()
+                  this.$message.success('添加成功')
+                  this.bigflowProductDlgShow = false
+                  this.getProducts()
+              }else{
+                  this.$message.error('添加失败')
+              }
+          })
+        }else if(this.bigflowProductDlgType == 'edit'){
+          console.log(JSON.stringify(this.addBigflowProductForm))
+          params.id = this.addBigflowProductForm.id
+          apiBigflow.modifyProducts(params).then(res=>{
+              if(res.resultCode == 0){
+                  that.queryFengwo()
+                  this.$message.success('添加成功')
+                  this.bigflowProductDlgShow = false
+                  this.getProducts()
+              }else{
+                  this.$message.error('添加失败')
+              }
+          })
+        }
+        
+      }).catch(() => {
+      })
+    },
+    okShowBigflowProductAdd:function(){
+      this.bigflowProductDlgType = 'add'
+      this.bigflowProductDlgShow = true
+    },
+    getProducts:function(){
+      let params = {}
+      params.page = this.bigflowProductPage
+      params.productCode = this.queryBigflowProductForm.productCode
+      params.productNameLike = this.queryBigflowProductForm.productName
+      params.productType = this.queryBigflowProductForm.productType
+      params.useType = this.queryBigflowProductForm.useType
+      params.status = this.queryBigflowProductForm.status
+      apiBigflow.getProducts(params).then(res=>{
+          if(res.resultCode == 0){
+              this.bigflowProducts = res.data
+              this.bigflowProductTotal = res.rowNum
+          }else{
+              this.$message.success('查询平台产品失败')
+          }
+      })
+    },
+
+    // 
+    okQueryBigflowProducts:function(){
+      this.getProducts()
+    },
     getFengwoProvince:function(){
       let params = {}
       apiBigflow.getFengwoProvinces(params).then(res=>{
@@ -285,8 +587,12 @@ export default {
       }).catch(() => {
       });
     },
+    okShowBigflowProductEdit:function(row){
+      this.bigflowProductDlgType = 'edit'
+      this.bigflowProductDlgShow = true
+      this.addBigflowProductForm = row
+    },
     okShowFengwoEdit:function(row){
-      console.log(JSON.stringify(row))
       this.editFengwoForm.id = row.id
       this.editFengwoForm.accountId = row.accountId
       this.editFengwoForm.openId = row.openId
@@ -498,9 +804,17 @@ export default {
       this.page = newPage;
       this.queryAccessWechats()
     },
+    handleBigflowProductSizeChange:function(newPage){
+      this.bigflowProductPage = newPage
+      this.getProducts()
+    },
     handleFengwoSizeChange:function(newPage){
       this.fengwoPage = newPage
       this.queryFengwo()
+    },
+    handleBigflowProductCurrentChange:function(newPage){
+      this.bigflowProductPage = newPage
+      this.getProducts()
     },
     handleFengwoCurrentChange :function(newPage){
       this.fengwoPage = newPage
