@@ -127,6 +127,9 @@ export default {
     movePoolIccidsBetween: params =>{
         return API.POST('/bigflow/manage/v1.0/flowpools/move/iccidbetween', params)
     },
+    getChannelProducts: params =>{
+        return API.POST('/bigflow/manage/v1.0/channels/products', params)
+    },
     stock2Channel: params =>{
         return API.POST('/bigflow/manage/v1.0/bigflowcardstocks/tochannel', params)
     },
@@ -223,8 +226,21 @@ export default {
     removeFengwoConfigs: params =>{
         return API.POST('/bigflow/manage/v1.0/fengwo/remove', params)
     },
+    addChannelProduct: params =>{
+        return API.POST('/bigflow/manage/v1.0/channels/products/add', params)
+    },
+    changeChannelProductStatus: params =>{
+        return API.POST('/bigflow/manage/v1.0/channels/products/status', params)
+    },
+    removeChannelProductStatus: params =>{
+        return API.POST('/bigflow/manage/v1.0/channels/products/remove', params)
+    },
+    
     getFengwoProvinces: params =>{
         return API.GET('/bigflow/manage/v1.0/fengwo/provinces', params)
+    },
+    getProductCodes: params =>{
+        return API.GET('/bigflow/manage/v1.0/product/codes', params)
     }
 
     

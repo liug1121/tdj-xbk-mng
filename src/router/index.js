@@ -102,10 +102,10 @@ const router = new Router({
         },
         {
           path: '/bigflowStockDistrubute',
-          name: '库存分配',
+          name: '渠道业务管理',
           component: (resolve) => require(['components/bigflow/sale/bigflowStockDistrubute.vue'], resolve),
           meta: {
-            title: '库存分配'
+            title: '渠道业务管理'
           }
         },
 
