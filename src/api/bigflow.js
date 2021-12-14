@@ -157,8 +157,22 @@ export default {
         return API.POST('/bigflow/manage/v1.0/order/channel/import', params)
     },
     importPoolCards: params =>{
-        return API.POST('/bigflow/manage/v1.0/flowpools/card/import', params)
+        return API.POST('/bigflow/manage/v1.0/flowpools/card/import', params, {
+            headers: {
+              'content-type': 'multipart/form-data'
+            }
+          })
     },
+
+    // file2OrdersDelete: (params) => {
+    //     return API.POST('/bigflow/manage/v1.0/order/file/delete', params, {
+    //         headers: {
+    //           'content-type': 'multipart/form-data'
+    //         }
+    //       })
+    // } ,
+
+
     importStockCards: params =>{
         return API.POST('/bigflow/manage/v1.0/stock/card/import', params,{
             headers: {

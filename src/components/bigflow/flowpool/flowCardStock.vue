@@ -181,7 +181,7 @@ export default {
     btnEnable:false,
     showMovePoolByIccidsDlg:false, 
     movePoolByIccidsForm:{},
-
+    file2Upload : null,
     iccids2Opt:'',
     showMovePoolDlg:false,  
     movePoolForm:{},
@@ -233,10 +233,12 @@ export default {
   methods: {
     removeUploadedFile(file,fileList){
         this.poolCardImortForm.fileToken = ''
+        this.file2Upload = null
     },
     uploadFile (item) {
         let params = new FormData()
         params.append('file', item.file)
+        this.file2Upload = item.file
         apiBigflow.uploadFile(params).then(res=>{
             if(res.resultCode == 0){
                this.poolCardImortForm.fileToken = res.data
@@ -263,11 +265,12 @@ export default {
             type: 'warning'
         }).then(() => {
             that.btnEnable = true
-            let params = {}
-            params.poolId = this.poolCardImortForm.poolId
-            params.useLimitStatus = this.poolCardImortForm.useLimitStatus
-            params.reason = this.poolCardImortForm.reason
-            params.fileToken = this.poolCardImortForm.fileToken
+            let params = new FormData()
+            params.append('file', this.file2Upload)
+            params.append('poolId', this.poolCardImortForm.poolId)
+            params.append('useLimitStatus', this.poolCardImortForm.useLimitStatus)
+            params.append('reason', this.poolCardImortForm.reason)
+            params.append('fileToken', this.poolCardImortForm.fileToken)
             apiBigflow.importPoolCards(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryFlowCardStocks()
@@ -282,10 +285,10 @@ export default {
         }); 
     },
     openMovePoolByIccidsDlg:function(){
-        if(this.iccids2Opt == ''){
-            alert("请选择要操作的卡")
-            return
-        }
+        // if(this.iccids2Opt == ''){
+        //     alert("请选择要操作的卡")
+        //     return
+        // }
         this.showMovePoolByIccidsDlg = true
     },  
     closeMovePoolByIccidsDlg :function(){

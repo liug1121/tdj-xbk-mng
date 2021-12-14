@@ -78,8 +78,8 @@
         v-permission="{indentity:'bigflowCardInfo-validityExtend'}" @click="openExpireDateExtendDlg">有效期延长</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-validityExtend'}" @click="openFile2CheckDlg">与CMP进行用量核查</el-button>
-        <el-button size="medium" type="primary" icon="el-icon-edit" 
-        v-permission="{indentity:'bigflowCardInfo-validityExtend'}" @click="openFile2RefreshDlg">用CMP用量刷新</el-button>
+        <!-- <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowCardInfo-validityExtend'}" @click="openFile2RefreshDlg">用CMP用量刷新</el-button> -->
       </div>
       <!-- 列表区域 -->
       <div class="cardNos">
