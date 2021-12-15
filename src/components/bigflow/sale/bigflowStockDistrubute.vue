@@ -8,7 +8,24 @@
         <div class="button_content">
           <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 0}" @click="tabSelect(0)">库存分配</div>
           <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 1}" @click="tabSelect(1)">大流量卡渠道产品</div>
+          <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 2}" @click="tabSelect(2)">出账规则管理</div>
         </div>
+        <el-card v-if="selectedTab == 2">
+          <div class="button_content">
+            <el-button size="medium" type="primary" icon="el-icon-plus" @click="showChannelFeeConfigDlg = true">添加规则</el-button>
+          </div>
+          <el-table v-loading="loading" :data="channelBillingFeeConfigs" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
+            <el-table-column v-for="(p, key) in table_column_channelBillingFeeConfig" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" >
+              <template slot-scope="scope">
+                    <div v-if="p.prop == 'opts'">
+                      <el-button type="text" size="small" @click="okEditChannelFeeConfig(scope.row)">编辑</el-button>
+                      <el-button type="text" size="small" >删除</el-button>
+                    </div>
+                    <div v-else v-html="scope.row[p.prop]" />
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-card>
         <el-card v-if="selectedTab == 1">
           <el-form :inline="true" ref="queryChannelRef" :model="queryChannelProductForm">
               <el-form-item label="产品编码">
@@ -140,6 +157,44 @@
         <el-button type="primary" @click="okAddChannelProduct">确 定</el-button>
       </span>  
     </el-dialog>
+    <el-dialog title="渠道出账管理" :visible.sync="showChannelFeeConfigDlg" width="500px" @close="showChannelFeeConfigDlg = false">
+      <el-form :model="channelBillingConfigForm"  label-width="130px"> 
+        <el-form-item label="流量出账类型">
+          <el-select 
+            filterable
+          clearable
+          reserve-keyword
+            placeholder="请输入出账类型" v-model="channelBillingConfigForm.payType">
+            <el-option v-for="item in payTypes" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="省内单价(元/G)" >
+          <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.provinceUnitPrice" placeholder="请输入省内流量单价" ></el-input>
+        </el-form-item>
+        <el-form-item label="全国单价(元/G)">
+          <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.countryUnitPrice" placeholder="请输入全国流量单价" ></el-input>
+        </el-form-item>
+        <el-form-item label="卡费出账类型">
+          <el-select 
+            filterable
+          clearable
+          reserve-keyword
+            placeholder="请输入出账类型卡费出账类型" v-model="channelBillingConfigForm.cardFeePayType">
+            <el-option v-for="item in cardFeePayTypes" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="开始月数">
+          <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.cardFeeMonthFrom" placeholder="请输入开始月数" ></el-input>
+        </el-form-item>
+        <el-form-item label="总月数">
+          <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.cardFeeMonths" placeholder="请输入总月数" ></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="showChannelFeeConfigDlg = false">取 消</el-button>
+        <el-button type="primary" @click="okChannelFeeConfig">确 定</el-button>
+      </span>  
+    </el-dialog>
   </div>
 </template>
 
@@ -154,6 +209,18 @@ export default {
   },
   data () {
     return {
+      channelBillingConfigForm:{
+         id:null,
+	       channelId:null,
+	       provinceUnitPrice:null,
+	       countryUnitPrice:null,
+	       payType:null,
+	       cardFeePayType:null,
+	       cardFeeMonthFrom:null,
+	       cardFeeMonths:null,
+      },
+      showChannelFeeConfigDlg:false,
+      channelBillingFeeConfigs:[],
       productCodes:[],
       productForm:{},
       showProductDlg:false,
@@ -195,6 +262,16 @@ export default {
         { prop: 'memo', label: '产品说明', width: 80 },
         { prop: 'opts', label: '操作', width: 120 }
       ],
+
+      table_column_channelBillingFeeConfig:[
+        { prop: 'payTypeName', label: '流量出账类型', width: 80 },
+        { prop: 'provinceUnitPrice', label: '省内流量单价（元/G）', width: 120 },
+        { prop: 'countryUnitPrice', label: '全国流量单价（元/G）', width: 120 },
+        { prop: 'cardFeePayTypeName', label: '卡费出账类型', width: 120 },
+        { prop: 'cardFeeMonthFrom', label: '卡费收取开始月份', width: 120 },
+        { prop: 'cardFeeMonths', label: '卡费收取总月数', width: 120 },
+         { prop: 'opts', label: '操作', width: 120 }
+      ],
       statusTypes:[
         {label:'可销售', value:2},
         {label:'已激活', value:6}
@@ -202,6 +279,19 @@ export default {
     productStatus:[
       {label:'上架状态', value:1},
       {label:'下架状态', value:2},
+    ],
+
+
+    payTypes:[
+      {name:'月套餐计费', value:1},
+      {name:'实际用量计费', value:0},
+      {name:'包量套餐计费', value:2}
+    ],
+    cardFeePayTypes:[
+      {name:'根据实名状态，未实名的卡收取', value:0},
+      {name:'根据用量状态，当月用量为0的卡收取', value:1},
+      {name:'从N月开始收取1毛，连续收6个月或一直收取', value:2},
+      {name:'不收卡费', value:3}
     ]
     }
   },
@@ -210,8 +300,73 @@ export default {
     this.getChannels()
     this.getChannelStocks()
     this.getProductCodes()
+    this.getChannelBillingFeeConfigs()
   },
   methods: {
+    okEditChannelFeeConfig:function(row){
+      console.log(row)
+      this.channelBillingConfigForm = row
+      this.showChannelFeeConfigDlg = true
+    },
+    okChannelFeeConfig:function(){
+      let that = this
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+      }).then(() => {
+        if(this.channelBillingConfigForm.id == null || this.channelBillingConfigForm.id == undefined){
+            let params = this.channelBillingConfigForm
+            
+            apiBigflow.addChannelBillingFeeConfig(params).then(res=>{
+              if(res.resultCode == 0){
+                  that.getChannelBillingFeeConfigs()
+                  that.showChannelFeeConfigDlg = false
+                  this.$message.success('操作成功')
+              }else{
+                  this.$message.success('操作失败')
+              }
+          })
+        }else{
+            let params = this.channelBillingConfigForm
+            apiBigflow.modifyChannelBillingFeeConfig(params).then(res=>{
+              if(res.resultCode == 0){
+                  that.getChannelBillingFeeConfigs()
+                  that.showChannelFeeConfigDlg = false
+                  this.$message.success('操作成功')
+              }else{
+                  this.$message.success('操作失败')
+              }
+          })
+        }
+      //   let params = {}
+      //   params.id = row.id
+      //   apiBigflow.removeChannelProductStatus(params).then(res=>{
+      //     if(res.resultCode == 0){
+      //         that.getChannelProducts()
+      //         that.showProductDlg = false
+      //         this.$message.success('操作成功')
+      //     }else{
+      //         this.$message.success('操作失败')
+      //     }
+      // })
+      }).catch(() => {
+      });
+    },
+    getChannelBillingFeeConfigs:function(){
+      let params = {}
+      apiBigflow.getChannelBillingFeeConfigs(params).then(res=>{
+          if(res.resultCode == 0){
+            this.channelBillingFeeConfigs = res.data
+              // that.getChannelProducts()
+              // that.showProductDlg = false
+              // this.$message.success('操作成功')
+          }else{
+              this.$message.success('查询渠道出账类型失败')
+          }
+      })
+    },
+    // getChannelBillingFeeConfigs
     okRemoveProduct:function(row){
       let that = this
       this.$confirm('您确认要此操作, 是否继续?', '提示', {
