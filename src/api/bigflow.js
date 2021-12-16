@@ -257,17 +257,17 @@ export default {
         return API.GET('/bigflow/manage/v1.0/product/codes', params)
     },
     getChannelBillingFeeConfigs: params =>{
-        return API.POST('/boss/v1.0/card/billing/channel/configs', params)
+        return API.POST('boss/v1.0/card/billing/channel/configs', params)
     } ,
     addChannelBillingFeeConfig: params =>{
-        return API.POST('/boss/v1.0/card/billing/channel/config/add', params)
+        return API.POST('boss/v1.0/card/billing/channel/config/add', params)
     },
     modifyChannelBillingFeeConfig: params =>{
-        return API.POST('/boss/v1.0/card/billing/channel/config/modify', params)
+        return API.POST('boss/v1.0/card/billing/channel/config/modify', params)
     }
     ,
     removeChannelBillingFeeConfig: params =>{
-        return API.POST('/boss/v1.0/card/billing/channel/config/remove', params)
+        return API.POST('boss/v1.0/card/billing/channel/config/remove', params)
     }   
     
 }

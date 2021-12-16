@@ -246,8 +246,9 @@ export default {
         { prop: 'phoneNumber', label: '卡号码', width: 120 },
         { prop: 'status', label: '卡状态', width: 120 },
         { prop: 'channelName', label: '渠道', width: 120 },
-        { prop: 'salePoint', label: '网点', width: 120 },
-        { prop: 'salePersonName', label: '销售员', width: 120 }
+        { prop: 'gmtStockDate', label: '划拨时间', width: 150 },
+        { prop: 'salePoint', label: '网点', width: 50 },
+        { prop: 'salePersonName', label: '销售员', width: 50 } 
       ],
       table_column_product: [
         { prop: 'productCode', label: '产品编码', width: 80 },
@@ -306,6 +307,10 @@ export default {
     showAddFlowPool:function(){
       if(this.selecedChannelCode == null || this.selecedChannelCode == undefined || this.selecedChannelCode == ''){
         this.$message.success('请先选择要操作的渠道')
+        return
+      }
+      if(this.channelBillingFeeConfigs.length > 0){
+        this.$message.success('一个渠道只能有一个出账规则')
         return
       }
       this.showChannelFeeConfigDlg = true 
