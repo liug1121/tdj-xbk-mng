@@ -12,14 +12,14 @@
         </div>
         <el-card v-if="selectedTab == 2">
           <div class="button_content">
-            <el-button size="medium" type="primary" icon="el-icon-plus" @click="showChannelFeeConfigDlg = true">添加规则</el-button>
+            <el-button size="medium" type="primary" icon="el-icon-plus" @click="showAddFlowPool">添加规则</el-button>
           </div>
           <el-table v-loading="loading" :data="channelBillingFeeConfigs" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
             <el-table-column v-for="(p, key) in table_column_channelBillingFeeConfig" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" >
               <template slot-scope="scope">
                     <div v-if="p.prop == 'opts'">
                       <el-button type="text" size="small" @click="okEditChannelFeeConfig(scope.row)">编辑</el-button>
-                      <el-button type="text" size="small" >删除</el-button>
+                      <el-button type="text" size="small" @click="okRemoveChannelFeeConfig(scope.row)">删除</el-button>
                     </div>
                     <div v-else v-html="scope.row[p.prop]" />
               </template>
@@ -303,6 +303,13 @@ export default {
     this.getChannelBillingFeeConfigs()
   },
   methods: {
+    showAddFlowPool:function(){
+      if(this.selecedChannelCode == null || this.selecedChannelCode == undefined || this.selecedChannelCode == ''){
+        this.$message.success('请先选择要操作的渠道')
+        return
+      }
+      this.showChannelFeeConfigDlg = true 
+    },
     okEditChannelFeeConfig:function(row){
       console.log(row)
       this.channelBillingConfigForm = row
@@ -317,7 +324,7 @@ export default {
       }).then(() => {
         if(this.channelBillingConfigForm.id == null || this.channelBillingConfigForm.id == undefined){
             let params = this.channelBillingConfigForm
-            
+            params.channelId = this.selecedChannelCode
             apiBigflow.addChannelBillingFeeConfig(params).then(res=>{
               if(res.resultCode == 0){
                   that.getChannelBillingFeeConfigs()
@@ -355,6 +362,8 @@ export default {
     },
     getChannelBillingFeeConfigs:function(){
       let params = {}
+      params.channelId = this.selecedChannelCode
+      console.log(JSON.stringify(params))
       apiBigflow.getChannelBillingFeeConfigs(params).then(res=>{
           if(res.resultCode == 0){
             this.channelBillingFeeConfigs = res.data
@@ -365,6 +374,27 @@ export default {
               this.$message.success('查询渠道出账类型失败')
           }
       })
+    },
+    // removeChannelBillingFeeConfig
+    okRemoveChannelFeeConfig:function(row){
+      let that = this
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+      }).then(() => {
+        let params = {}
+        params.id = row.id
+        apiBigflow.removeChannelBillingFeeConfig(params).then(res=>{
+          if(res.resultCode == 0){
+              that.getChannelBillingFeeConfigs()
+              this.$message.success('操作成功')
+          }else{
+              this.$message.success('操作失败')
+          }
+      })
+      }).catch(() => {
+      });
     },
     // getChannelBillingFeeConfigs
     okRemoveProduct:function(row){
@@ -575,6 +605,7 @@ export default {
         this.selecedChannelCode = channelsID
         this.selectedChannelName = channelName
         this.getChannelStocks()
+        this.getChannelBillingFeeConfigs()
         // this.getSalePerson()
     }
   }
