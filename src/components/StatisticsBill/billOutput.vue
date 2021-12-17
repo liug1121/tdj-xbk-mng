@@ -3,8 +3,11 @@
   <div class="box_subject">
      <el-row :gutter="20">
     <el-col :span="5">
+      <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 4}" @click="treeSelect(4)">账单</div>
       <div class="heraderTop">
+        
         <div class="button_content">
+          <!-- <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 3}" @click="treeSelect(4)">渠道账单</div> -->
           <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 0}" @click="treeSelect(0)">学霸卡</div>
           <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 1}" @click="treeSelect(1)">大流量</div>
           <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 2}" @click="treeSelect(2)">子账户</div>
@@ -12,25 +15,43 @@
         </div>
       </div >
       <xbChannelTree v-if="treeSelectedType == 0" ref="xbChannerTreeRef" @channelChick="xbChannelChick" @getChannelId="getXbChannelId" style="max-height:680px;overflow: auto"></xbChannelTree>
-        <channelTree v-else-if="treeSelectedType == 1" ref="channerTreeRef" @channelChick="channelChick" @getChannelId="getChannelId" style="max-height:680px;overflow: auto"></channelTree>
+        <channelTree v-else-if="treeSelectedType == 1 || treeSelectedType == 4" ref="channerTreeRef" @channelChick="channelChick" @getChannelId="getChannelId" style="max-height:680px;overflow: auto"></channelTree>
         <fwAccountTree v-else-if="treeSelectedType == 2" ref="channerTreeRef" @channelChick="channelChick" @getChannelId="getFwAccount" style="max-height:680px;overflow: auto"></fwAccountTree>
     </el-col>
     <el-col :span="19">
+    
     <el-card class="all_list">
       <!-- 按钮 -->
-      <div class="button_content">
+      <div class="button_content" v-if="treeSelectedType != 4">
           <el-button class="upload-btn" size="medium" icon="el-icon-download" slot="trigger" type="primary" @click="exportButton" 
           v-permission="{indentity:'xbkBillOutput-export'}">导出</el-button>
           <el-button class="upload-btn" size="medium" icon="el-icon-download" slot="trigger" type="primary" @click="refreshCardsChannels" 
           v-permission="{indentity:'xbkBillOutput-export'}">重新刷新卡渠道</el-button>
         </div>
-      <div class="heraderTop">
+
+       <div v-if="treeSelectedType == 4">
+         <el-form :inline="true" ref="queryBillFormRef" :model="queryBillForm" class="queryForm">
+          <el-form-item label="账期" class="queryFormItem">
+            <el-date-picker style="width:120px" v-model="queryBillForm.cycleId" type="month" placeholder="选择账期" value-format="yyyyMM">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item class="queryFormItem">
+            <el-button type="primary" size="mini" icon="el-icon-search" @click="queryCardCompare">查询</el-button>
+          </el-form-item>
+        </el-form>
+        <el-table   v-loading="loading" :data="compareStatics" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
+            <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" >
+              <template slot-scope="scope">     
+                <div v-html="scope.row[p.prop]" />
+              </template>
+            </el-table-column>
+          </el-table>
+       </div>
         
+      <div v-else>
+        <div class="heraderTop">
         <!-- 查询区域 -->
         <el-form :inline="true" ref="queryBillFormRef" :model="queryBillForm" class="queryForm">
-          <!-- <el-form-item label="ICCID" class="queryFormItem">
-            <el-input style="width:150px" class="queryFormInput" v-model="queryBillForm.iccid" placeholder="请输入iccid"></el-input>
-          </el-form-item> -->
           <el-form-item label="子账户" class="queryFormItem">
             <el-select style="width:150px" size="small" v-model="queryBillForm.subAccount" clearable filterable placeholder="请输入子账户关键词">
               <el-option v-for="item in subAccountOptions" :key="item" :label="item" :value="item">
@@ -52,15 +73,7 @@
           </el-form-item>
         </el-form>
       </div>
-      <!-- <div class="heraderTop" v-if="treeSelectedType == 3">
-        <div class="button_content">
-          <el-button class="upload-btn" size="medium" slot="trigger" type="primary" 
-          v-permission="{indentity:'xbkBillOutput-export'}" @click="showDistributeChannel">分配渠道</el-button>
-        </div>
-      </div> -->
-      <!-- 表格 -->
-      <div class="total-usage"> 当前记录总用量：{{totalDataUsage}}（MB）</div>
-      <el-table v-loading="loading" :data="billList" style="width: 100%">
+        <el-table v-loading="loading" :data="billList" style="width: 100%">
         <el-table-column label="CMP账单数据">
           <el-table-column prop="iccid" label="SIM卡" width="180">
           </el-table-column>
@@ -96,6 +109,7 @@
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="[10,20,30]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
         :total="total">
       </el-pagination>
+      </div>
     </el-card>
     </el-col>
     </el-row>
@@ -146,6 +160,17 @@ export default {
   },
   data () {
     return {
+      table_column:[
+        { prop: 'cycleId', label: '帐期', width: 100 },
+        { prop: 'channelName', label: '渠道', width: 200 },
+        { prop: 'dataUsageCountry', label: '全国总用量', width: 100 },
+        { prop: 'dataUsageCountryFee', label: '全国总用量出账金额', width: 100 },
+        { prop: 'dataUsageProvince', label: '省内总用量', width: 100 },
+        { prop: 'dataUsageProvinceFee', label: '省内总用量出账金额', width: 100 },
+        { prop: 'cardFee', label: '卡费出账金额', width: 100 },
+        { prop: 'fee', label: '出账金额汇总', width: 100 },
+      ],
+      compareStatics:[],
       subAccountView:false,
       allXbChannels:[],
       allBigflowChannels:[],
@@ -158,6 +183,13 @@ export default {
       total: 0,
       billList: [],
       totalDataUsage:"0",
+      dataUsageCountry:"",
+      dataUsageProvince:"",
+      cardFee:"",
+      dataUsageFee:"",
+      fee:"",
+      dataUsageCountry:"",
+      dataUsageCountry:"",
       channels:[],
       UnionidsOptions: [],
       subAccountOptions: [],
@@ -190,9 +222,37 @@ export default {
     this.getBillList()
     this.getXbChannels()
     this.getBigflowChannels()
+    this.getCompareStatics()
     // this.getChannelNames()
   },
   methods: {
+    queryCardCompare:function(){
+      this.getCompareStatics()
+    },
+      // apiCompareStaticsList
+    getCompareStatics:function(){
+      let params = {}
+      console.log('sss' + JSON.stringify(this.queryBillForm.channelIds ))
+      params.channelIds = this.queryBillForm.channelIds 
+      params.cycle = this.queryBillForm.cycleId
+      console.log('sdsds' + JSON.stringify(params))
+      API.apiCompareStaticsList(params).then(res => {
+        if (res.resultCode === 0) {
+          this.compareStatics = res.data
+          // this.allXbChannels = Object.values(res.data).map(function (e) {
+          //   return {
+          //     channelId: e.channelId,
+          //     channelName: e.channelName,
+          //     manager: e.manager,
+          //     parentChannelId: e.parentChannelId
+          //   }
+          // })
+          
+        } else {
+          this.$message.error(res.resultInfo)
+        }
+      })
+    },
     getXbChannels:function(){
       apiXbChannel.apiChannelsAllList().then(res => {
         if (res.resultCode === 0) {
@@ -318,6 +378,7 @@ export default {
       }
       this.queryBillForm.channelIds = channelIds
       this.getBillList()
+      this.getCompareStatics()
     },
 
     // 获取蜂窝平台信息
@@ -349,7 +410,13 @@ export default {
           let data = res.data
           this.billList = data.records
           this.totalDataUsage = data.dataUsage
-          // this.billList = res.data
+          this.dataUsageCountry = data.dataUsageCountry
+          this.dataUsageProvince = data.dataUsageProvince
+          this.cardFee = data.cardFee
+          this.dataUsageFee = data.dataUsageFee
+          this.fee = data.fee
+          this.dataUsageCountry = data.dataUsageCountry
+          this.dataUsageCountry = data.dataUsageCountry
           for (let i = 0; i < this.billList.length; i++) {
             this.billList[i].channels.reverse()
           }
@@ -477,5 +544,13 @@ export default {
   font-size: 15px;
   color: #6ab3fc;
   font-weight: bolder;
+}
+.statics-item{
+  display:inline-block;
+  margin: 10px;
+  margin-right: 50px;
+  font-size: 15px;
+  color: #6ab3fc;
+  width: 400px;
 }
 </style>

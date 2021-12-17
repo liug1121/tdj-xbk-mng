@@ -179,16 +179,18 @@
             filterable
           clearable
           reserve-keyword
-            placeholder="请输入出账类型卡费出账类型" v-model="channelBillingConfigForm.cardFeePayType">
+            placeholder="请输入出账类型卡费出账类型" v-model="channelBillingConfigForm.cardFeePayType" @change="selectCardFeePayType">
             <el-option v-for="item in cardFeePayTypes" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
+        <div v-if="isShow == true">
         <el-form-item label="开始月数">
           <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.cardFeeMonthFrom" placeholder="请输入开始月数" ></el-input>
         </el-form-item>
         <el-form-item label="总月数">
           <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.cardFeeMonths" placeholder="请输入总月数" ></el-input>
         </el-form-item>
+        </div>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="showChannelFeeConfigDlg = false">取 消</el-button>
@@ -209,6 +211,7 @@ export default {
   },
   data () {
     return {
+      isShow:false,
       channelBillingConfigForm:{
          id:null,
 	       channelId:null,
@@ -304,6 +307,13 @@ export default {
     this.getChannelBillingFeeConfigs()
   },
   methods: {
+    selectCardFeePayType:function(value){
+      if(value == 2){
+        this.isShow = true
+      }else{
+        this.isShow = false
+      }
+    },
     showAddFlowPool:function(){
       if(this.selecedChannelCode == null || this.selecedChannelCode == undefined || this.selecedChannelCode == ''){
         this.$message.success('请先选择要操作的渠道')
@@ -573,6 +583,7 @@ export default {
     //   this.queryChannelForm.page = newPage - 1
     //   this.getChannelList(localStorage.getItem('channelId'))
     },
+  
     getChannelStocks:function(){
       let params = {}
       params.page=this.page

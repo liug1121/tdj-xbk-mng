@@ -22,6 +22,10 @@ export default {
   apiBillList: params => {
     return API.POST('boss/v1.0/cards/compare/list', params)
   },
+  apiCompareStaticsList: params => {
+    return API.POST('boss/v1.0/cards/compare/statics', params)
+  },
+  
   apiRefreshCardCompareChannels: params => {
     return API.POST('boss/v1.0/cards/compare/channel/refresh', params)
   },
