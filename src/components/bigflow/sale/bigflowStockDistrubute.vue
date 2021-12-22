@@ -164,16 +164,19 @@
             filterable
           clearable
           reserve-keyword
-            placeholder="请输入出账类型" v-model="channelBillingConfigForm.payType">
+            placeholder="请输入出账类型" v-model="channelBillingConfigForm.payType" @change="selectPayType">
             <el-option v-for="item in payTypes" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="省内单价(元/G)" >
-          <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.provinceUnitPrice" placeholder="请输入省内流量单价" ></el-input>
-        </el-form-item>
-        <el-form-item label="全国单价(元/G)">
-          <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.countryUnitPrice" placeholder="请输入全国流量单价" ></el-input>
-        </el-form-item>
+        <div v-if="unitFeeShow== true">
+          <el-form-item label="省内单价(元/G)" >
+            <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.provinceUnitPrice" placeholder="请输入省内流量单价" ></el-input>
+          </el-form-item>
+          <el-form-item label="全国单价(元/G)">
+            <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.countryUnitPrice" placeholder="请输入全国流量单价" ></el-input>
+          </el-form-item>
+        </div>
+        
         <el-form-item label="卡费出账类型">
           <el-select 
             filterable
@@ -211,6 +214,7 @@ export default {
   },
   data () {
     return {
+      unitFeeShow:false,
       isShow:false,
       channelBillingConfigForm:{
          id:null,
@@ -294,7 +298,7 @@ export default {
     cardFeePayTypes:[
       {name:'根据实名状态，未实名的卡收取', value:0},
       {name:'根据用量状态，当月用量为0的卡收取', value:1},
-      {name:'从N月开始收取1毛，连续收6个月或一直收取', value:2},
+      // {name:'从N月开始收取1毛，连续收6个月或一直收取', value:2},
       {name:'不收卡费', value:3}
     ]
     }
@@ -307,8 +311,14 @@ export default {
     this.getChannelBillingFeeConfigs()
   },
   methods: {
+    selectPayType:function(value){
+      if(value == 0){
+        this.unitFeeShow = true
+      }else
+        this.unitFeeShow = false
+    },
     selectCardFeePayType:function(value){
-      if(value == 2){
+      if(value != 3){
         this.isShow = true
       }else{
         this.isShow = false

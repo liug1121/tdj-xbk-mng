@@ -26,6 +26,19 @@
       </el-form>
     </div>
     <div class="company">Copyright ©2019 南京天地杰实业有限公司 All Rights Reserved</div>
+    <div class="slide" v-if="slideShow == true">
+      <slide-verify :l="42" 
+            :r="10"
+            :w="310"
+            :h="155"
+            slider-text="向右滑动"
+            @success="onSuccess"
+            @fail="onFail"
+            @refresh="onRefresh"
+            ></slide-verify>
+    </div>
+    
+<!-- <div>{{msg}}</div> -->
   </div>
 </template>
 
@@ -34,6 +47,8 @@ import API from 'api/login'
 export default {
   data () {
     return {
+      msg:'',
+      slideShow:false,
       loginForm: {
         userName: '',
         pwd: ''
@@ -54,37 +69,74 @@ export default {
     };
   },
   methods: {
+    onSuccess(){
+            this.msg = 'login success'
+            this.slideShow = false
+            this.$refs.loginFormRef.validate(valid => {
+            if (!valid) return
+            let data = {
+              userName: this.loginForm.userName,
+              pwd: this.loginForm.pwd
+            };
+            API.apiLogin(data).then(res => {
+              if (res.resultCode === 0) {
+                console.log(res.data);
+                this.$message.success('登录成功')
+                window.sessionStorage.setItem('userName', res.data.userName)
+                window.sessionStorage.setItem('token', res.data.token)
+                window.sessionStorage.setItem('userType', res.data.type)
+                window.sessionStorage.setItem('usingInDevice', res.data.usingInDevice)
+                window.sessionStorage.setItem('usingInXuebaka', res.data.usingInXuebaka)
+                window.sessionStorage.setItem('managerType', res.data.managerType)
+                window.sessionStorage.setItem('AuthMenus', JSON.stringify(res.data.managerAuthResp))
+                window.sessionStorage.setItem('AuthOpts', JSON.stringify(res.data.managerAuthOpts))
+
+                  
+                this.$router.push('/main');
+              } else {
+                this.$message.error(res.resultInfo)
+              }
+            })
+          })
+        },
+        onFail(){
+            this.msg = ''
+        },
+        onRefresh(){
+            this.msg = ''
+        },
     /* 点击重置按钮，重置登录表单 */
     resetLoginForm () {
       this.$refs.loginFormRef.resetFields()
     },
     adminLogin () {
-      this.$refs.loginFormRef.validate(valid => {
-        if (!valid) return
-        let data = {
-          userName: this.loginForm.userName,
-          pwd: this.loginForm.pwd
-        };
-        API.apiLogin(data).then(res => {
-          if (res.resultCode === 0) {
-            console.log(res.data);
-            this.$message.success('登录成功')
-            window.sessionStorage.setItem('userName', res.data.userName)
-            window.sessionStorage.setItem('token', res.data.token)
-            window.sessionStorage.setItem('userType', res.data.type)
-            window.sessionStorage.setItem('usingInDevice', res.data.usingInDevice)
-            window.sessionStorage.setItem('usingInXuebaka', res.data.usingInXuebaka)
-            window.sessionStorage.setItem('managerType', res.data.managerType)
-            window.sessionStorage.setItem('AuthMenus', JSON.stringify(res.data.managerAuthResp))
-            window.sessionStorage.setItem('AuthOpts', JSON.stringify(res.data.managerAuthOpts))
+      this.slideShow = true
+      // this.$refs.loginFormRef.validate(valid => {
+      //   if (!valid) return
+      //   let data = {
+      //     userName: this.loginForm.userName,
+      //     pwd: this.loginForm.pwd
+      //   };
+      //   API.apiLogin(data).then(res => {
+      //     if (res.resultCode === 0) {
+      //       console.log(res.data);
+      //       this.$message.success('登录成功')
+      //       window.sessionStorage.setItem('userName', res.data.userName)
+      //       window.sessionStorage.setItem('token', res.data.token)
+      //       window.sessionStorage.setItem('userType', res.data.type)
+      //       window.sessionStorage.setItem('usingInDevice', res.data.usingInDevice)
+      //       window.sessionStorage.setItem('usingInXuebaka', res.data.usingInXuebaka)
+      //       window.sessionStorage.setItem('managerType', res.data.managerType)
+      //       window.sessionStorage.setItem('AuthMenus', JSON.stringify(res.data.managerAuthResp))
+      //       window.sessionStorage.setItem('AuthOpts', JSON.stringify(res.data.managerAuthOpts))
 
               
-            this.$router.push('/main');
-          } else {
-            this.$message.error(res.resultInfo)
-          }
-        })
-      })
+      //       this.$router.push('/main');
+      //     } else {
+      //       this.$message.error(res.resultInfo)
+      //     }
+      //   })
+      // })
     }
   }
 };
@@ -167,5 +219,11 @@ export default {
   width: 100%;
   text-align: center;
   font-size: 15px;
+}
+.slide{
+  left: 50%;
+  top: 40%;
+  position: absolute;
+  background: #fff;
 }
 </style>

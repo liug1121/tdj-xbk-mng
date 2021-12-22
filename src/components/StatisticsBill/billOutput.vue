@@ -160,15 +160,18 @@ export default {
   },
   data () {
     return {
-      table_column:[
-        { prop: 'cycleId', label: '帐期', width: 100 },
-        { prop: 'channelName', label: '渠道', width: 200 },
+      table_column:[ 
+        { prop: 'cycleId', label: '帐期', width: 70 },
+        { prop: 'channelName', label: '渠道', width: 126 },
+        { prop: 'billType', label: '出账类型', width: 80 },
+        { prop: 'packageName', label: '套餐名', width: 100 },
+        { prop: 'packageFee', label: '套餐出账金额', width: 70 },
         { prop: 'dataUsageCountry', label: '全国总用量', width: 100 },
-        { prop: 'dataUsageCountryFee', label: '全国总用量出账金额', width: 100 },
+        { prop: 'dataUsageCountryFee', label: '全国总用量出账金额', width: 70 },
         { prop: 'dataUsageProvince', label: '省内总用量', width: 100 },
-        { prop: 'dataUsageProvinceFee', label: '省内总用量出账金额', width: 100 },
-        { prop: 'cardFee', label: '卡费出账金额', width: 100 },
-        { prop: 'fee', label: '出账金额汇总', width: 100 },
+        { prop: 'dataUsageProvinceFee', label: '省内总用量出账金额', width: 70 },
+        { prop: 'cardFee', label: '1毛钱出账金额', width: 70 },
+        { prop: 'fee', label: '出账金额汇总', width: 70 },
       ],
       compareStatics:[],
       subAccountView:false,
