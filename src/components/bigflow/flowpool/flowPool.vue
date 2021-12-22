@@ -276,8 +276,8 @@ export default {
       
       table_column_detail: [
         { prop: 'date', label: '时间', width: 200},
-        { prop: 'channelName', label: '渠道', width: 200},
-        { prop: 'pool_name', label: '池名称', width: 200},
+        { prop: 'channelName', label: '渠道', width: 300},
+        { prop: 'pool_name', label: '池名称', width: 250},
         { prop: 'pool_id', label: '池ID', width: 200},
         { prop: 'flow_usage', label: '用量', width: 200},
       ],

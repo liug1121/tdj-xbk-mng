@@ -213,10 +213,10 @@ export default {
       table_column: [
         { prop: 'iccid', label: 'ICCID', width: 200, sortable: true },
         { prop: 'phoneNumber', label: 'IMSI', width: 200, sortable: true },
-        { prop: 'statusName', label: '库存状态', width: 80, sortable: true },
-        { prop: 'poolName', label: '池名称', width: 180, sortable: true },
+        { prop: 'statusName', label: '库存状态', width: 120, sortable: true },
+        { prop: 'poolName', label: '池名称', width: 280, sortable: true },
         { prop: 'gmtPool', label: '加入池时间', width: 180, sortable: true },
-        { prop: 'useLimitStatus', label: '限量关停', width: 80, sortable: true },
+        // { prop: 'useLimitStatus', label: '限量关停', width: 80, sortable: true },
         { prop: 'gmtStock', label: '入库时间', width: 180, sortable: true }
       ],
     };

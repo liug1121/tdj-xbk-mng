@@ -7,9 +7,9 @@
       </el-col>
       <el-col :span="18">
         <el-card>
-          <div class="button_content">
-            <el-button size="medium" type="primary" icon="el-icon-plus" @click="showAddChannel">添加渠道</el-button>
-            <el-button size="medium" type="primary" icon="el-icon-plus" @click="showAddManager">添加管理员</el-button>
+          <div class="button_content"> 
+            <el-button size="medium" type="primary" icon="el-icon-plus" @click="showAddChannel" v-permission="{indentity:'bigflowChannelList-add'}">添加渠道</el-button>
+            <el-button size="medium" type="primary" icon="el-icon-plus" @click="showAddManager" v-permission="{indentity:'bigflowChannelList-add'}">添加管理员</el-button>
           </div>
           <el-table v-loading="loading" :data="salePersons" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
             <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :show-overflow-tooltip='true'>
@@ -124,6 +124,7 @@ export default {
       table_column: [
         { prop: 'channelName', label: '渠道名称', width: 300 },
         { prop: 'name', label: '姓名', width: 100 },
+        { prop: 'mobile', label: '登陆帐号', width: 100 },
         { prop: 'mobile', label: '手机号', width: 100 },
         { prop: 'type', label: '类型', width: 100 },
         { prop: 'qrCode', label: '登录密码', width: 180 },

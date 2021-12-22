@@ -8,7 +8,7 @@
         <div class="button_content">
           <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 0}" @click="tabSelect(0)">库存分配</div>
           <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 1}" @click="tabSelect(1)">大流量卡渠道产品</div>
-          <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 2}" @click="tabSelect(2)">出账规则管理</div>
+          <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 2}" @click="tabSelect(2)" v-permission="{indentity:'bigflowStockDistrubute-billingRule'}">出账规则管理</div>
         </div>
         <el-card v-if="selectedTab == 2">
           <div class="button_content">
@@ -43,7 +43,7 @@
                     <span>{{selectedChannelName}}</span>
                   </div>
                   <div v-else>
-                      <div v-if="p.prop == 'opts'">
+                      <div v-if="p.prop == 'opts'" v-permission="{indentity:'bigflowStockDistrubute-productEdnt'}">
                         <!-- @click="okShowBigflowProductEdit(scope.row)" -->
                         
                         <el-button type="text" size="small" v-if="scope.row.statusName == '下架状态'" @click="okChangeProductStatus(scope.row, 0)">上架</el-button>
@@ -81,16 +81,16 @@
               <el-button size="medium" type="primary" @click="queryChannelCards">查询</el-button>
           </el-form>
           <div class="button_content">
-            <el-button size="medium" type="primary" icon="el-icon-plus" >分配渠道</el-button>
-            <el-button size="medium" type="primary" icon="el-icon-plus" @click="showDistrubuteBetween">首尾分配渠道</el-button>
+            <el-button size="medium" type="primary" icon="el-icon-plus" v-permission="{indentity:'bigflowStockDistrubute-toChannel'}">分配渠道</el-button>
+            <el-button size="medium" type="primary" icon="el-icon-plus" @click="showDistrubuteBetween" v-permission="{indentity:'bigflowStockDistrubute-toBetweenChannel'}">首尾分配渠道</el-button>
           </div>
           <el-table v-loading="loading" :data="channelStocks" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
             <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :show-overflow-tooltip='true'>
               <template slot-scope="scope">
-                  <div v-if="p.prop == 'channelName'">
+                  <!-- <div v-if="p.prop == 'channelName'">
                     <span>{{selectedChannelName}}</span>
-                  </div>
-                  <div v-else>
+                  </div> -->
+                  <div>
                       <div v-html="scope.row[p.prop]" />
                   </div>
               </template>
@@ -250,12 +250,12 @@ export default {
       total: 0,
       table_column: [
         { prop: 'iccid', label: 'ICCID', width: 200 },
-        { prop: 'phoneNumber', label: '卡号码', width: 120 },
+        { prop: 'phoneNumber', label: '卡号码', width: 200 },
         { prop: 'status', label: '卡状态', width: 120 },
-        { prop: 'channelName', label: '渠道', width: 120 },
-        { prop: 'gmtStockDate', label: '划拨时间', width: 150 },
-        { prop: 'salePoint', label: '网点', width: 50 },
-        { prop: 'salePersonName', label: '销售员', width: 50 } 
+        { prop: 'channelName', label: '渠道', width: 220 },
+        { prop: 'gmtStockDate', label: '划拨时间', width: 140 },
+        // { prop: 'salePoint', label: '网点', width: 50 },
+        // { prop: 'salePersonName', label: '销售员', width: 50 } 
       ],
       table_column_product: [
         { prop: 'productCode', label: '产品编码', width: 80 },
@@ -267,8 +267,8 @@ export default {
         { prop: 'originalPrice', label: '原始价', width: 50 },
         { prop: 'price', label: '销售价', width: 50 },
         { prop: 'statusName', label: '状态', width: 50 },
-        { prop: 'memo', label: '产品说明', width: 80 },
-        { prop: 'opts', label: '操作', width: 120 }
+        { prop: 'memo', label: '产品说明', width: 230 },
+        // { prop: 'opts', label: '操作', width: 150 }
       ],
 
       table_column_channelBillingFeeConfig:[
@@ -307,6 +307,7 @@ export default {
   mounted () {
     this.getChannels()
     this.getChannelStocks()
+    this.getChannelProducts()
     this.getProductCodes()
     this.getChannelBillingFeeConfigs()
   },
@@ -625,6 +626,11 @@ export default {
     },
     
     channelChick (channel) {
+      // if(channel == undefined || channel=='')
+      //   return 
+      // this.selecedChannelCode = channel.channelId
+      // this.getChannelProducts()
+
     },
     // // 点击 tree 从子组件 获取 对应的 渠道id
     getChannelId (channelsID, channelName) {
@@ -632,6 +638,7 @@ export default {
         this.selectedChannelName = channelName
         this.getChannelStocks()
         this.getChannelBillingFeeConfigs()
+        this.getChannelProducts()
         // this.getSalePerson()
     }
   }

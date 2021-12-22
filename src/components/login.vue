@@ -25,8 +25,9 @@
         </el-form-item>
       </el-form>
     </div>
-    <div class="company">Copyright ©2019 南京天地杰实业有限公司 All Rights Reserved</div>
+    <!-- <div class="company">Copyright ©2019 南京天地杰实业有限公司 All Rights Reserved</div> -->
     <div class="slide" v-if="slideShow == true">
+      <div class="slide-close" @click="closeSlide">X</div>
       <slide-verify :l="42" 
             :r="10"
             :w="310"
@@ -69,6 +70,9 @@ export default {
     };
   },
   methods: {
+    closeSlide:function(){
+      this.slideShow = false
+    },
     onSuccess(){
             this.msg = 'login success'
             this.slideShow = false
@@ -225,5 +229,10 @@ export default {
   top: 40%;
   position: absolute;
   background: #fff;
+}
+.slide-close{
+  font-size: 13px;
+  margin-left: 95%;
+  cursor: pointer;
 }
 </style>
