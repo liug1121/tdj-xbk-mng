@@ -84,6 +84,7 @@
         </el-table-column>
         <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
           <template slot-scope="scope">
+            
             <div v-if="p.prop == 'operation'">
               <el-button v-permission="{indentity:'bigflowFlowPool-sotp'}" type="text" size="small" @click="stopPool(scope.row.poolId)" v-if="scope.row.status=='open'">停用</el-button>
               <el-button v-permission="{indentity:'bigflowFlowPool-start'}" type="text" size="small" @click="openPool(scope.row.poolId)" v-else>启用</el-button>
@@ -91,15 +92,24 @@
               <el-button v-permission="{indentity:'bigflowFlowPool-delete'}" type="text" size="small" @click="removePool(scope.row.poolId)">删除</el-button>
             </div>
             <div v-else>
-              <div v-html="scope.row[p.prop]" />
+              <div v-if="p.prop == 'lastPer'">
+                <div v-if="scope.row.lastPer <=10" class="usagePer">
+                  {{scope.row.lastPer}}%
+                </div>
+                <div v-else>
+                  {{scope.row.lastPer}}%
+                </div>
+                
+              </div>
+              <div v-else v-html="scope.row[p.prop]" />
             </div>
           </template>
         </el-table-column>
       </el-table>
       <!-- 分页区域 -->
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="[10,20,30]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
+      <!-- <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="[10,20,30]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
         :total="total">
-      </el-pagination>
+      </el-pagination> -->
     </el-card>
 
     <el-dialog title="添加流量池" :visible.sync="showAddFlowPoolDlg" width="450px" @close="closeAddFlowPoolDlg">
@@ -268,6 +278,7 @@ export default {
         { prop: 'flowHighUsedName', label: '当月已使用', width: 80, sortable: true },
         { prop: 'flowHightotalUsedName', label: '累计已使用', width: 80, sortable: true },
         { prop: 'surplusUsedName', label: '剩余总流量', width: 80, sortable: true },
+        { prop: 'lastPer', label: '剩余比率', width: 80, sortable: true },
         { prop: 'expireDate', label: '有效期', width: 100 },
         { prop: 'gmtCreate', label: '创建时间', width: 100 },
         { prop: 'operation', label: '操作', width: 100}
@@ -635,5 +646,7 @@ export default {
   background:#6ab3fc;
   color: white;
 }
-
+.usagePer{
+  color: red;
+}
 </style>
