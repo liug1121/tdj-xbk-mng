@@ -4,7 +4,7 @@
     <el-card class="all_list">
       <!-- 卡库存 List 区域 -->
       <el-table v-loading="loading" :data="taskslist" border max-height="600px" align="center" :cell-style="{height: '38px',padding:0}">
-        <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false">
+        <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false">
           <template slot-scope="scope">
             <div v-if="p.prop =='target_local_file_pathCL'">
               <a :href="scope.row.target_local_file_path">{{scope.row.target_local_file_path}}</a>

@@ -27,10 +27,10 @@
           <el-button size="medium" type="primary" icon="el-icon-search" @click="okQueryFlowPoolsDetail">搜索</el-button>
       </el-form>
       <!-- 列表区域 -->
-      <el-table v-loading="loading" :data="poolDetails" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" @selection-change="handleSelectionChange">
+      <el-table  v-loading="loading" :data="poolDetails" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55">
         </el-table-column>
-        <el-table-column v-for="(p, key) in table_column_detail" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+        <el-table-column v-for="(p, key) in table_column_detail" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
           <template slot-scope="scope">
             <div v-html="scope.row[p.prop]" />
           </template>
@@ -79,10 +79,10 @@
         </div>
         <div class="cardNosNumber">选中<span class="red">0</span>条数据</div>
       </div>
-      <el-table v-loading="loading" :data="flowPools" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" @selection-change="handleSelectionChange">
+      <el-table  v-loading="loading" :data="flowPools" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55">
         </el-table-column>
-        <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+        <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
           <template slot-scope="scope">
             
             <div v-if="p.prop == 'operation'">

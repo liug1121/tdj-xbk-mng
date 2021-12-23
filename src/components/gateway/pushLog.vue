@@ -10,7 +10,7 @@
       <el-table v-loading="loading" :data="pushStaticSuccess" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" >
         <el-table-column  width="55">
         </el-table-column>
-        <el-table-column v-for="(p, key) in table_statics_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+        <el-table-column v-for="(p, key) in table_statics_column" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
           <template slot-scope="scope">
               <div v-html="scope.row[p.prop]" />
           </template>
@@ -20,7 +20,7 @@
       <el-table v-loading="loading" :data="pushStaticFaild" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" >
         <el-table-column  width="55">
         </el-table-column>
-        <el-table-column v-for="(p, key) in table_statics_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+        <el-table-column v-for="(p, key) in table_statics_column" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
           <template slot-scope="scope">
               <div v-html="scope.row[p.prop]" />
           </template>
@@ -73,7 +73,7 @@
       <el-table v-loading="loading" :data="pushLogs" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" >
         <!-- <el-table-column type="selection" width="55">
         </el-table-column> -->
-        <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+        <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
           <template slot-scope="scope">
               <div v-html="scope.row[p.prop]" />
           </template>
