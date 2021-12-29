@@ -34,7 +34,7 @@
         <p>1、下载模板后，填写数据。</p>
         <p>2、如果数据存在则会报错，请注意。</p>
         <p>
-          <a>下载模板文件</a> 仅支持xlsx,xls格式的文件.
+          <a href='http://xbk.xuebaka.cn/download/卡账单导入模版.xlsx'>下载模板文件</a> 仅支持xlsx,xls格式的文件.
         </p>
       </div>
       <span slot="footer" class="dialog-footer">
