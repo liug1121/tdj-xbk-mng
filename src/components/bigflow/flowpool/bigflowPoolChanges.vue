@@ -24,11 +24,11 @@
         <el-button size="medium" type="primary" icon="el-icon-search" @click="queryFlowPoolBills">搜索</el-button>
       </el-form>
       <!-- 列表区域 -->
-      <div class="cardNos">
+      <!-- <div class="cardNos">
         <div class="cardNosList">
         </div>
         <div class="cardNosNumber">选中<span class="red">0</span>条数据</div>
-      </div>
+      </div> -->
       <el-table  :data="flowPoolBills" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55">
         </el-table-column>

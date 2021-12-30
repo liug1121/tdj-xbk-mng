@@ -74,6 +74,7 @@
   top: 5px;
   position: absolute;
   right: 5px; */
+  
 }
 .el-tabs--top.el-tabs--card>.el-tabs__header .el-tabs__item:last-child {
   padding-right: 30px;

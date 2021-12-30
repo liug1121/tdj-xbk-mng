@@ -51,12 +51,12 @@
         v-permission="{indentity:'bigflowCardOrder-exportFor'}" @click="openBatchDeleteOrderDlg">批量删除订单</el-button>
       </div>
       <!-- 列表区域 -->
-      <div class="cardNos">
+      <!-- <div class="cardNos">
         <div class="cardNosList">
          
         </div>
         <div class="cardNosNumber">选中<span class="red">0</span>条数据</div>
-      </div>
+      </div> -->
       <el-main class="el-loading" v-loading="loading" element-loading-background="transparent"
               element-loading-text="加载中" > 
       </el-main>
