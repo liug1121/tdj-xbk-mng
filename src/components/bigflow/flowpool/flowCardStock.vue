@@ -430,4 +430,9 @@ export default {
 };
 </script>
 <style scoped>
+.el-button {
+  color:#145297;
+    background-color: transparent;
+    border-color: transparent;
+}
 </style>

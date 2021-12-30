@@ -670,9 +670,17 @@ export default {
   width: 100px;
   font-size: 5px;
   text-align: center;
+  color:#145297;
+  background-color: transparent;
+  border-color: transparent;
 }
 .tree-selected {
   background:#6ab3fc;
   color: white;
+}
+.el-button {
+  color:#145297;
+    background-color: transparent;
+    border-color: transparent;
 }
 </style>

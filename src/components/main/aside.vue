@@ -228,8 +228,8 @@ export default {
 
 <style scoped>
 .el-menu-item.is-active {
-  color: #fff !important;
-  background-color: #1890ff !important;
+  color: #1890ff !important;
+  /* background-color: #1890ff !important; */
 }
 .logo {
   height: 60px;

@@ -652,4 +652,9 @@ export default {
 .usagePer{
   color: red;
 }
+.el-button {
+  color:#145297;
+    background-color: transparent;
+    border-color: transparent;
+}
 </style>

@@ -62,8 +62,8 @@
       </el-form>
       <!-- 按钮区域 -->
       <div class="button_content">
-        <el-button size="medium" type="primary" icon="el-icon-download" 
-        v-permission="{indentity:'bigflowCardInfo-changeStatus'}" @click="openChangeStatusDlg">卡状态变更</el-button>
+        <el-button size="medium" class="el-button" icon="el-icon-download" 
+        v-permission="{indentity:'bigflowCardInfo-changeStatus'}" @click="openChangeStatusDlg" >卡状态变更</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-unbind'}" @click="openUnbindDlg">解绑</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
@@ -884,4 +884,16 @@ export default {
 };
 </script>
 <style scoped>
+.el-button {
+  color:#145297;
+    background-color: transparent;
+    border-color: transparent;
+}
+ 
+
+/* .el-button--primary {
+    color:#145297;
+    background-color: transparent;
+    border-color: transparent;
+  } */
 </style>

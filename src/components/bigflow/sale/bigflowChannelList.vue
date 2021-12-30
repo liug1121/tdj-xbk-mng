@@ -694,4 +694,9 @@ export default {
 .hoverQrcodeBoxNo {
   text-align: center;
 }
+.el-button {
+  color:#145297;
+    background-color: transparent;
+    border-color: transparent;
+}
 </style>
