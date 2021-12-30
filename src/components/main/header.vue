@@ -19,7 +19,7 @@
         <span  style="margin-left:20px;"><img class="usr-img" style="position: relative;top: 8px;" src="@/assets/images/user_pic.png" /></span>
         <!-- <span style="padding-left:10px;">{{username}}</span> -->
         <div class="dropdown">
-        <button @click="myFunction" class="dropbtn">下拉菜单</button>
+        <button @click="myFunction" class="dropbtn">{{username}}</button>
           <div id="myDropdown" class="dropdown-content">
             <a href="#home" @click="logout()">退出登陆</a>
           </div>
