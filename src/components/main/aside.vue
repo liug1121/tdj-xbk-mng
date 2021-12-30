@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="logo" :class="{'isCollapse':isCollapse}">
-      <img src="@/assets/images/logo.png" />
-      <b class="title">卡管理后台</b>
+      <img  src="@/assets/images/union.jpg" />
+      <!-- <b class="title">卡管理后台</b> -->
     </div>
     <!-- <div class="company">南京天地杰实业有限公司</div> -->
     <el-menu :default-active="path" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" @select="handlselect" background-color="#001529" active-background-color="#1890ff" router active-text-color="#fff"
@@ -232,21 +232,21 @@ export default {
   background-color: #1890ff !important;
 }
 .logo {
-  height: 54px;
+  height: 60px;
   position: relative;
-  line-height: 54px;
+  /* line-height: 54px; */
   transition: all 1s;
-  background: rgb(0, 21, 41);
+  /* background: white; */
   width: 100%;
   overflow: hidden;
   /* padding-left:23px; */
   text-align: center;
 }
 .logo > img {
-  width: 32px;
-  height: 32px;
+  width: 100%;
+  height: 60px;
   position: relative;
-  top: 8px;
+  /* top: 8px; */
 }
 .logo .title {
   color: #fff;

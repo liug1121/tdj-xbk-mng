@@ -55,7 +55,7 @@ body,
   background-color: rgb(0, 21, 41);
   height: auto;
   /* width:180px; */
-  width: auto;
+  width: 17%;
   overflow: hidden;
 }
 

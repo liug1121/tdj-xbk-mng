@@ -214,3 +214,10 @@
 .itemlabel .el-form-item__label{
   line-height: 18px;
 }
+.el-loading{
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  top:1%;
+  left:95%
+}

@@ -104,7 +104,7 @@
         </div>
         <div class="cardNosNumber">选中<span class="red">0</span>条数据</div>
       </div>
-      <el-table v-loading="loading" :data="accessWechats" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" @selection-change="handleSelectionChange">
+      <el-table  :data="accessWechats" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55">
         </el-table-column>
         <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
@@ -285,6 +285,9 @@
           <el-button type="primary" @click="okBigflowProduct">确 定</el-button>
         </span>
       </el-dialog>
+      <el-main class="el-loading" v-loading="loading" element-loading-background="transparent"
+        element-loading-text="加载中" > 
+    </el-main>
   </div>
 </template>
 

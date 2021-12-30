@@ -11,7 +11,7 @@
             <el-button size="medium" type="primary" icon="el-icon-plus" @click="showAddChannel" v-permission="{indentity:'bigflowChannelList-add'}">添加渠道</el-button>
             <el-button size="medium" type="primary" icon="el-icon-plus" @click="showAddManager" v-permission="{indentity:'bigflowChannelList-add'}">添加管理员</el-button>
           </div>
-          <el-table v-loading="loading" :data="salePersons" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
+          <el-table  :data="salePersons" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
             <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :show-overflow-tooltip='true'>
               <template slot-scope="scope">
                   <div v-if="p.prop == 'channelName'">
@@ -80,6 +80,9 @@
           <el-button type="primary" @click="addManager">确 定</el-button>
         </span>
       </el-dialog>
+      <el-main class="el-loading" v-loading="loading" element-loading-background="transparent"
+        element-loading-text="加载中" > 
+    </el-main>
   </div>
 </template>
 

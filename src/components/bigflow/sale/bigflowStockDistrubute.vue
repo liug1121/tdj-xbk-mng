@@ -14,7 +14,7 @@
           <div class="button_content">
             <el-button size="medium" type="primary" icon="el-icon-plus" @click="showAddFlowPool">添加规则</el-button>
           </div>
-          <el-table v-loading="loading" :data="channelBillingFeeConfigs" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
+          <el-table  :data="channelBillingFeeConfigs" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
             <el-table-column v-for="(p, key) in table_column_channelBillingFeeConfig" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" >
               <template slot-scope="scope">
                     <div v-if="p.prop == 'opts'">
@@ -36,7 +36,7 @@
           <div class="button_content">
             <el-button size="medium" type="primary" icon="el-icon-plus" @click="showProductDlg = true">添加</el-button>
           </div>
-          <el-table v-loading="loading" :data="channelProducts" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
+          <el-table  :data="channelProducts" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
             <el-table-column v-for="(p, key) in table_column_product" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" >
               <template slot-scope="scope">
                   <div v-if="p.prop == 'channelName'">
@@ -84,7 +84,7 @@
             <el-button size="medium" type="primary" icon="el-icon-plus" v-permission="{indentity:'bigflowStockDistrubute-toChannel'}">分配渠道</el-button>
             <el-button size="medium" type="primary" icon="el-icon-plus" @click="showDistrubuteBetween" v-permission="{indentity:'bigflowStockDistrubute-toBetweenChannel'}">首尾分配渠道</el-button>
           </div>
-          <el-table v-loading="loading" :data="channelStocks" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
+          <el-table  :data="channelStocks" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
             <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :show-overflow-tooltip='true'>
               <template slot-scope="scope">
                   <!-- <div v-if="p.prop == 'channelName'">
@@ -200,6 +200,9 @@
         <el-button type="primary" @click="okChannelFeeConfig">确 定</el-button>
       </span>  
     </el-dialog>
+    <el-main class="el-loading" v-loading="loading" element-loading-background="transparent"
+        element-loading-text="加载中" > 
+    </el-main>
   </div>
 </template>
 

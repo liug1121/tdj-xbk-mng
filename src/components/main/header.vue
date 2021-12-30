@@ -1,9 +1,9 @@
 <template>
   <el-container>
     <el-header style="font-size: 12px;position:relative;">
-      <div @click="pushisCollapse" class="sets">
-        <i class="el-icon-flowmenuopen" v-if="!ismyCollapse"></i>
-        <i class="el-icon-flowmenuunfold" v-if="ismyCollapse"></i>
+      <div class="sets">
+        <!-- <i class="el-icon-flowmenuopen" v-if="!ismyCollapse"></i>
+        <i class="el-icon-flowmenuunfold" v-if="ismyCollapse"></i> -->
       </div>
       <div class="box_breadcrumb">
         <el-breadcrumb separator="/">
@@ -11,11 +11,19 @@
           <!-- <el-breadcrumb-item v-for="bread in breadList" v-bind:key="bread">{{bread}}</el-breadcrumb-item> -->
         </el-breadcrumb>
       </div>
+
+      
   
       <div class="top_right">
-        <span @click="logout()" style="cursor:pointer;">退出登录</span>
-        <span style="margin-left:20px;"><img style="position: relative;top: 8px;" src="@/assets/images/male.png" /></span>
-        <span style="padding-left:10px;">{{username}}</span>
+        <!-- <span @click="logout()" style="cursor:pointer;">退出登录</span> -->
+        <span  style="margin-left:20px;"><img class="usr-img" style="position: relative;top: 8px;" src="@/assets/images/user_pic.png" /></span>
+        <!-- <span style="padding-left:10px;">{{username}}</span> -->
+        <div class="dropdown">
+        <button @click="myFunction" class="dropbtn">下拉菜单</button>
+          <div id="myDropdown" class="dropdown-content">
+            <a href="#home" @click="logout()">退出登陆</a>
+          </div>
+        </div>
       </div>
     </el-header>
     
@@ -65,6 +73,21 @@ export default {
     }
   },
   methods: {
+    close:function(event) {
+      if (!event.target.matches('.dropbtn')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    },
+    myFunction:function(){
+      document.getElementById("myDropdown").classList.toggle("show");
+    },
     logout () {
       window.sessionStorage.clear();
       this.$router.push("/login")
@@ -105,8 +128,51 @@ export default {
   margin-right: 20px;
   z-index: 999;
 }
+.usr-img{
+  width: 35px;
+  height: 35px;
+}
 .company{
   background-color: red;
   /* height:100px; */
 }
+
+.dropbtn {
+    background-color: white;
+    color:black;
+    padding: 16px;
+    font-size: 13px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+    background-color: white;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown a:hover {background-color: #f1f1f1}
+
+.show {display:block;}
 </style>
