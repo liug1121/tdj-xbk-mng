@@ -1,27 +1,33 @@
 <template>
   <div class="login_container">
+    <div class="login_header">
+      <img class="login_hearder_left" src="../assets/images/logo-chinauni.png" width="100%" height="100%" alt="" />
+      <img class="login_hearder_right" src="../assets/images/logo-yanfei.png" width="100%" height="100%" alt="" />
+    </div>
+    <img src="../assets/images/content-big.jpg" width="100%" height="100%" alt="" />
+    <div class="login_footer">Copyright ©2019 南京天地杰实业有限公司 All Rights Reserved</div>
     <div class="login_box">
-      <!-- left区域 -->
-      <div class="login_left">
+      <div class="login_title">雁飞·卡管理平台</div>
+      <!-- <div class="login_left">
         <div class="avatar_box">
           <img src="../assets/images/logo.png" />
         </div>
-        <div class="title">卡管理平台</div>
-      </div>
-      <!-- 登录区域 -->
+        <div class="title"></div>
+      </div> -->
+      
       <el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules" label-width="0" class="login_form">
-        <!-- 用户名 -->
+
         <el-form-item prop="userName">
           <el-input v-model="loginForm.userName" prefix-icon="el-icon-user" placeholder="请您输入用户名"></el-input>
         </el-form-item>
-        <!-- 密码 -->
+  
         <el-form-item prop="pwd">
           <el-input v-model="loginForm.pwd" prefix-icon="el-icon-lock" type="password" placeholder="请您输入密码"></el-input>
         </el-form-item>
-        <!-- 按钮区域 -->
+       
         <el-form-item class="btns">
           <el-button type="primary" @click="adminLogin" class="NewButton">登录</el-button>
-          <el-button type="info" @click="resetLoginForm">重置</el-button>
+          <el-button type="primary" @click="resetLoginForm">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -48,6 +54,7 @@ import API from 'api/login'
 export default {
   data () {
     return {
+      // imgSrc:'../assets/images/content-big.jpg',
       msg:'',
       slideShow:false,
       loginForm: {
@@ -149,19 +156,25 @@ export default {
 <style scoped>
 .login_container {
   /* background-color: red; */
-  background-color: #fff;
-  height: 100%;
+  /* background-color: #fff; */
+  width:100%;  
+  height:100%;  /**宽高100%是为了图片铺满屏幕 */
+  /* z-index:-1;
+  position: absolute; */
+  /* height: 100%; */
+  background:url('../assets/images/content-big.jpg')
+
 }
 .login_box {
-  width: 700px;
+  width: 400px;
   height: 300px;
-  background-color: #fff;
+  background-color: transparent;
   border-radius: 3px;
   position: absolute;
-  left: 50%;
+  left: 80%;
   top: 50%;
   transform: translate(-50%, -50%);
-  display: flex;
+  /* display: flex; */
   box-shadow: 0 0 10px #ddd;
   justify-content: center;
   align-items: center;
@@ -171,9 +184,11 @@ export default {
   display: flex;
   align-items: center;
   flex-direction: column;
-  background: #ed7020;
+  background: rgb(37,74,145);
   box-sizing: border-box;
   padding: 61px 0;
+  opacity: 0.7;
+  
 }
 .avatar_box {
   width: 120px;
@@ -189,6 +204,7 @@ export default {
   height: 100%;
   border-radius: 50%;
   background-color: #eee;
+  opacity: 0.5;
 }
 .title {
   font-size: 20px;
@@ -198,20 +214,22 @@ export default {
   font-weight: 500;
 }
 .login_form {
-  padding: 70px 20px 0;
+  /* padding: 70px 20px 0; */
   box-sizing: border-box;
-  width: 400px;
+  width: 300px;
+  margin-left: 14%;
+  margin-top: 10%;
 }
 .btns {
   float: right;
 }
 .NewButton {
-  background-color: #ed7020;
-  border: 1px solid #ed7020;
+  background-color: #48adf8;
+  /* border: 1px solid #ed7020; */
 }
 .NewButton:hover {
-  background-color: #f37a2f;
-  border: 1px solid #f37a2f;
+  background-color: #489af8;
+  /* border: 1px solid #f37a2f; */
 }
 .btns {
   padding-top: 40px;
@@ -234,5 +252,35 @@ export default {
   font-size: 13px;
   margin-left: 95%;
   cursor: pointer;
+}
+.login_header{
+  opacity: 0.9;
+  /* background-color: rgba(8, 5, 39, 0.9); */
+  border-bottom: 2px solid rgb(37,74,145);
+  height: 10%;
+}
+.login_footer{
+  width: 100%;
+  opacity: 0.9;
+  /* border-bottom: 2px solid rgb(37,74,145); */
+  height: 10%;
+  position:fixed;
+  bottom: 0px;
+  text-align: center;
+  color: #d6eff1;
+  font-size: 23px;
+}
+.login_hearder_left{
+  width: 20%;
+}
+.login_hearder_right{
+  margin-left: 75%;
+  width: 60px;
+  height: 60px;
+}
+.login_title{
+  margin-left: 25%;
+  margin-top: 4%;
+  color: #d6eff1;
 }
 </style>
