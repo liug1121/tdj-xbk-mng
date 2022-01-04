@@ -7,7 +7,7 @@
     <img src="../assets/images/content-big.jpg" width="100%" height="100%" alt="" />
     <div class="login_footer">Copyright ©2019 南京天地杰实业有限公司 All Rights Reserved</div>
     <div class="login_box">
-      <div class="login_title">雁飞·卡管理平台</div>
+      <div class="login_title">雁飞·流量运营平台</div>
       <!-- <div class="login_left">
         <div class="avatar_box">
           <img src="../assets/images/logo.png" />
@@ -24,7 +24,19 @@
         <el-form-item prop="pwd">
           <el-input v-model="loginForm.pwd" prefix-icon="el-icon-lock" type="password" placeholder="请您输入密码"></el-input>
         </el-form-item>
-       
+        <el-form-item prop="pwd">
+          
+          <div class="vercode">
+            <div class="vercode-input">
+              <el-input  v-model="loginForm.verCode"  placeholder="请您输入验证码"></el-input>
+            </div>
+            <div class="vercode-img" @click="refreshImg">
+              <img :src="verCode"/>
+            </div>
+          </div>
+          
+          
+        </el-form-item>
         <el-form-item class="btns">
           <el-button type="primary" @click="adminLogin" class="NewButton">登录</el-button>
           <el-button type="primary" @click="resetLoginForm">重置</el-button>
@@ -54,6 +66,8 @@ import API from 'api/login'
 export default {
   data () {
     return {
+      verCode:'',
+      verCodeKey:'',
       // imgSrc:'../assets/images/content-big.jpg',
       msg:'',
       slideShow:false,
@@ -76,7 +90,37 @@ export default {
       }
     };
   },
+  mounted () {
+    this.getVerCode()
+  },
   methods: {
+    refreshImg:function(){
+      this.getVerCode()
+    },
+    getVerCode:function(){
+      let data = {};
+      API.apiGetVerCode(data).then(res => {
+              if (res.resultCode === 0) {
+                console.log(JSON.stringify(res.data));
+                this.verCode = res.data.data
+                this.verCodeKey = res.data.key
+                // this.$message.success('登录成功')
+                // window.sessionStorage.setItem('userName', res.data.userName)
+                // window.sessionStorage.setItem('token', res.data.token)
+                // window.sessionStorage.setItem('userType', res.data.type)
+                // window.sessionStorage.setItem('usingInDevice', res.data.usingInDevice)
+                // window.sessionStorage.setItem('usingInXuebaka', res.data.usingInXuebaka)
+                // window.sessionStorage.setItem('managerType', res.data.managerType)
+                // window.sessionStorage.setItem('AuthMenus', JSON.stringify(res.data.managerAuthResp))
+                // window.sessionStorage.setItem('AuthOpts', JSON.stringify(res.data.managerAuthOpts))
+
+                  
+                // this.$router.push('/main');
+              } else {
+                this.$message.error(res.resultInfo)
+              }
+            })
+    },
     closeSlide:function(){
       this.slideShow = false
     },
@@ -87,7 +131,9 @@ export default {
             if (!valid) return
             let data = {
               userName: this.loginForm.userName,
-              pwd: this.loginForm.pwd
+              pwd: this.loginForm.pwd,
+              verCode: this.loginForm.verCode,
+              verCodeUid: this.verCodeKey
             };
             API.apiLogin(data).then(res => {
               if (res.resultCode === 0) {
@@ -121,33 +167,35 @@ export default {
       this.$refs.loginFormRef.resetFields()
     },
     adminLogin () {
-      this.slideShow = true
-      // this.$refs.loginFormRef.validate(valid => {
-      //   if (!valid) return
-      //   let data = {
-      //     userName: this.loginForm.userName,
-      //     pwd: this.loginForm.pwd
-      //   };
-      //   API.apiLogin(data).then(res => {
-      //     if (res.resultCode === 0) {
-      //       console.log(res.data);
-      //       this.$message.success('登录成功')
-      //       window.sessionStorage.setItem('userName', res.data.userName)
-      //       window.sessionStorage.setItem('token', res.data.token)
-      //       window.sessionStorage.setItem('userType', res.data.type)
-      //       window.sessionStorage.setItem('usingInDevice', res.data.usingInDevice)
-      //       window.sessionStorage.setItem('usingInXuebaka', res.data.usingInXuebaka)
-      //       window.sessionStorage.setItem('managerType', res.data.managerType)
-      //       window.sessionStorage.setItem('AuthMenus', JSON.stringify(res.data.managerAuthResp))
-      //       window.sessionStorage.setItem('AuthOpts', JSON.stringify(res.data.managerAuthOpts))
+      // this.slideShow = true
+      this.$refs.loginFormRef.validate(valid => {
+        if (!valid) return
+        let data = {
+          userName: this.loginForm.userName,
+          pwd: this.loginForm.pwd,
+          verCode: this.loginForm.verCode,
+          verCodeUid: this.verCodeKey
+        };
+        API.apiLogin(data).then(res => {
+          if (res.resultCode === 0) {
+            console.log(res.data);
+            this.$message.success('登录成功')
+            window.sessionStorage.setItem('userName', res.data.userName)
+            window.sessionStorage.setItem('token', res.data.token)
+            window.sessionStorage.setItem('userType', res.data.type)
+            window.sessionStorage.setItem('usingInDevice', res.data.usingInDevice)
+            window.sessionStorage.setItem('usingInXuebaka', res.data.usingInXuebaka)
+            window.sessionStorage.setItem('managerType', res.data.managerType)
+            window.sessionStorage.setItem('AuthMenus', JSON.stringify(res.data.managerAuthResp))
+            window.sessionStorage.setItem('AuthOpts', JSON.stringify(res.data.managerAuthOpts))
 
               
-      //       this.$router.push('/main');
-      //     } else {
-      //       this.$message.error(res.resultInfo)
-      //     }
-      //   })
-      // })
+            this.$router.push('/main');
+          } else {
+            this.$message.error(res.resultInfo)
+          }
+        })
+      })
     }
   }
 };
@@ -167,7 +215,7 @@ export default {
 }
 .login_box {
   width: 400px;
-  height: 300px;
+  height: 350px;
   background-color: transparent;
   border-radius: 3px;
   position: absolute;
@@ -232,7 +280,7 @@ export default {
   /* border: 1px solid #f37a2f; */
 }
 .btns {
-  padding-top: 40px;
+  padding-top: 5px;
 }
 .company{
   height: 30px;
@@ -282,5 +330,23 @@ export default {
   margin-left: 25%;
   margin-top: 4%;
   color: #d6eff1;
+}
+.vercode{
+  display:flex;
+  width: 100%;
+}
+.vercode-img{
+  margin-left: 3px;
+  flex: 1;
+}
+.vercode-img img{
+  margin-left: 25px;
+  margin-top: 2px;
+  height: 35px;
+  flex: 1;
+  cursor: pointer;
+}
+.vercode-input{
+  flex: 1;
 }
 </style>
