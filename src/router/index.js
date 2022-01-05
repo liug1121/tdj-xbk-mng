@@ -108,6 +108,14 @@ const router = new Router({
             title: '渠道业务管理'
           }
         },
+        {
+          path: '/bigflowChannelStatic',
+          name: '渠道业务统计',
+          component: (resolve) => require(['components/bigflow/sale//bigflowChannelStatic.vue'], resolve),
+          meta: {
+            title: '渠道业务统计'
+          }
+        },
 
 
 

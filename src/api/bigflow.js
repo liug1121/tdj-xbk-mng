@@ -268,6 +268,8 @@ export default {
     ,
     removeChannelBillingFeeConfig: params =>{
         return API.POST('boss/v1.0/card/billing/channel/config/remove', params)
-    }   
-    
+    },
+    getChannelCardStatics: params =>{
+        return API.POST('/bigflow/manage/v1.0/channels/statics', params)
+    }
 }
