@@ -101,6 +101,7 @@ body,
   margin: 0px;
   /*统一设置高度为100%*/
   height: 100%;
+  width: 100%;
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif, PingFangSC-Medium;

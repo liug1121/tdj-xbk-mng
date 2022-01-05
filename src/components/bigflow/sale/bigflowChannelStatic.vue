@@ -1,13 +1,14 @@
 <template>
   <div class="box_subject">
     <el-row :gutter="20">
-      <el-col :span="6">
+      <!-- <el-col :span="6">
         <channelTree ref="channerTreeRef" @channelChick="channelChick" @getChannelId="getChannelId" style="max-height:680px;overflow: auto"></channelTree>
-      </el-col>
-      <el-col :span="18">
+      </el-col> -->
+      <!-- <el-col :span="20"> -->
+      <el-col>
         <el-card v-if="selectedTab == 0">
-          <el-table  :data="channelCardStatics" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
-            <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :show-overflow-tooltip='true'>
+          <el-table  :data="channelCardStatics" border max-height="800" align="center" :cell-style="{height: '38px',padding:0}">
+            <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :show-overflow-tooltip='true' :sortable="p.sortable">
               <template slot-scope="scope">
                   <div>
                       <div v-html="scope.row[p.prop]" />
@@ -39,10 +40,10 @@ export default {
       selectedTab:0,
       loading:false,
       table_column: [
-        { prop: 'channelName', label: '渠道名称', width: 200 },
-        { prop: 'cardNum', label: '总卡数', width: 200 },
-        { prop: 'cardUsingNum', label: '已启用卡数', width: 220 },
-        { prop: 'cardRealedNum', label: '已认证卡数', width: 120 }
+        { prop: 'channelName', label: '渠道名称', width: 200 ,sortable: true },
+        { prop: 'cardNum', label: '总卡数', width: 200 ,sortable: true },
+        { prop: 'cardUsingNum', label: '已启用卡数', width: 220 ,sortable: true },
+        { prop: 'cardRealedNum', label: '已认证卡数', width: 120 ,sortable: true }
         
       ],
     }
@@ -55,12 +56,15 @@ export default {
   methods: {
     getChannelCardStatics:function(){
         let params = {}
+        params.channelIds = this.selecedChannelCode
+        this.loading = true
         apiBigflow.getChannelCardStatics(params).then(res=>{
             if(res.resultCode == 0){
                 this.channelCardStatics = res.data
             }else{
                 this.$message.success('操作失败')
             }
+            this.loading = false
         })
     },
     getChannels () {
@@ -80,10 +84,12 @@ export default {
     // // 点击 tree 从子组件 获取 对应的 渠道id
     getChannelId (channelsID, channelName) {
         this.selecedChannelCode = channelsID
+        console.log('channelsID:' + channelsID)
         this.selectedChannelName = channelName
-        this.getChannelStocks()
-        this.getChannelBillingFeeConfigs()
-        this.getChannelProducts()
+        this.getChannelCardStatics()
+        // this.getChannelStocks()
+        // this.getChannelBillingFeeConfigs()
+        // this.getChannelProducts()
     }
   }
 }
