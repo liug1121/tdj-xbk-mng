@@ -3,6 +3,7 @@ Vue.directive('permission', {
     inserted: function(el, binding){ 
         let indentity = binding.value.indentity
         let authOpts = JSON.parse(window.sessionStorage.getItem('AuthOpts'))
+        // console.log('authOpts:' + JSON.stringify(authOpts))
         let filteredAuthOpts = authOpts.filter(opt=>{
             if(opt.indentity === indentity)
                 return true

@@ -101,7 +101,7 @@ export default {
       let data = {};
       API.apiGetVerCode(data).then(res => {
               if (res.resultCode === 0) {
-                console.log(JSON.stringify(res.data));
+                // console.log(JSON.stringify(res.data));
                 this.verCode = res.data.data
                 this.verCodeKey = res.data.key
                 // this.$message.success('登录成功')
@@ -137,7 +137,7 @@ export default {
             };
             API.apiLogin(data).then(res => {
               if (res.resultCode === 0) {
-                console.log(res.data);
+                // console.log(res.data);
                 this.$message.success('登录成功')
                 window.sessionStorage.setItem('userName', res.data.userName)
                 window.sessionStorage.setItem('token', res.data.token)
