@@ -280,5 +280,15 @@ export default {
     },
     getImeiNumForChannels: params =>{
         return API.GET('/bigflow/manage/v1.0/imei/statics/channels', params)
+    },
+    getCardStatusNumForChannels: params =>{
+        return API.GET('/bigflow/manage/v1.0/card/statics/channels', params)
+    },
+    getCardNumForChannels: params =>{
+        return API.GET('/bigflow/manage/v1.0/card/cardNum/statics/channels', params)
     }
+
+    
+
+    
 }

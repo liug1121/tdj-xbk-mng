@@ -94,6 +94,9 @@
       </div>
       
     </el-card>
+    <el-main class="el-loading" v-loading="loading" element-loading-background="transparent"
+        element-loading-text="加载中" > 
+    </el-main>
   </div>
 </template>
 
@@ -108,27 +111,25 @@ export default {
     },
   data () {
     return {
-      
+      loading:false,
       chartData: {
         columns: ["日期", "新增SIM卡数量"],
         rows: [
-          { 日期: "1月", 新增SIM卡数量: 123 },
-          { 日期: "2月", 新增SIM卡数量: 1223 },
-          { 日期: "3月", 新增SIM卡数量: 2123 },
-          { 日期: "4月", 新增SIM卡数量: 4123 },
-          { 日期: "5月", 新增SIM卡数量: 3123 },
-          { 日期: "6月", 新增SIM卡数量: 7123 }
+          { 日期: "1月", 新增SIM卡数量: 0 },
+          { 日期: "2月", 新增SIM卡数量: 0 },
+          { 日期: "3月", 新增SIM卡数量: 0 },
+          { 日期: "4月", 新增SIM卡数量: 0 },
+          { 日期: "5月", 新增SIM卡数量: 0 },
+          { 日期: "6月", 新增SIM卡数量: 0 }
         ]
       },
       statusChartData: {
         columns: ["状态", "卡数量"],
         rows: [
-          { 状态: "可测试", 卡数量: 123 },
-          { 状态: "可激活", 卡数量: 123 },
-          { 状态: "已激活", 卡数量: 123 },
-          { 状态: "已停用", 卡数量: 123 },
-          { 状态: "已失效", 卡数量: 123 },
-          { 状态: "已停用", 卡数量: 123 }
+          { 状态: "可激活", 卡数量: 0 },
+          { 状态: "已激活", 卡数量: 0 },
+          { 状态: "已停用", 卡数量: 0 },
+          { 状态: "已失效", 卡数量: 0 },
         ]
       },
       dataChart: {},
@@ -138,59 +139,99 @@ export default {
       datacollection: null,
       stopedCardNum:0,
       sharingPoolNum:0,
-      imeiNum:0
+      imeiNum:0,
+      loadingCount:0
     }
   },
   mounted () {
-    this.addData()
     this.getStopedCardNumForChannels()
     this.getSharingPoolNumForChannels()
     this.getImeiNumForChannels()
+    this.getCardStatusNumForChannels()
+    this.getCardNumForChannels()
   },
   methods:{
+    addLoadingCount:function(){
+      this.loadingCount++
+      if(this.loadingCount > 0)
+        this.loading = true
+    },
+    reduceLoadingCount:function(){
+      this.loadingCount--
+      if(this.loadingCount <= 0)
+        this.loading = false
+    },
+    getCardNumForChannels:function(){
+      let params = {}
+      this.addLoadingCount()
+        apiBigflow.getCardNumForChannels(params).then(res=>{
+            if(res.resultCode == 0){
+                let statics = res.data  
+                let rows = []
+                for(let i = 0; i < statics.length; i++){
+                  let one = statics[i]
+                  let row = {}
+                  row["日期"] = one.month
+                  row["新增SIM卡数量"] = one.cardNum
+                  rows.push(row)
+                }
+                if(rows.length > 0)
+                  this.chartData.rows = rows
+            }
+            this.reduceLoadingCount()
+        })
+    },
+    getCardStatusNumForChannels:function(){
+      let params = {}
+      this.addLoadingCount()
+        apiBigflow.getCardStatusNumForChannels(params).then(res=>{
+            if(res.resultCode == 0){
+                let statics = res.data  
+                let rows = []
+                for(let i = 0; i < statics.length; i++){
+                  let one = statics[i]
+                  let row = {}
+                  row["状态"] = one.status
+                  row["卡数量"] = one.cardNum
+                  rows.push(row)
+                }
+                if(rows.length > 0)
+                  this.statusChartData.rows = rows
+            }
+            this.reduceLoadingCount()
+        })
+    },
     getImeiNumForChannels:function(){
       let params = {}
+      this.addLoadingCount()
         apiBigflow.getImeiNumForChannels(params).then(res=>{
             if(res.resultCode == 0){
                 this.imeiNum = res.data  
             }
+            this.reduceLoadingCount()
         })
     },
     getSharingPoolNumForChannels:function(){
       let params = {}
+      this.addLoadingCount()
         apiBigflow.getSharingPoolNumForChannels(params).then(res=>{
             if(res.resultCode == 0){
                 this.sharingPoolNum = res.data  
             }
+            this.reduceLoadingCount()
         })
     },
     getStopedCardNumForChannels:function(){
       let params = {}
+      this.addLoadingCount()
         apiBigflow.getStopedCardNumForChannels(params).then(res=>{
             if(res.resultCode == 0){
                 this.stopedCardNum = res.data  
             }
+            this.reduceLoadingCount()
         })
     },
-    addData() {
-      this.firstValue="aaa"
-      this.secondValue="aaa"
-      this.thirdValue="aaa"
-      // var hrate = []
-      // this.heart_rate.forEach(el => {
-      //   hrate.push(el.rate)
-      // })
-      this.dataChart = {
-        labels: ['Km', 'Kj', 'HB'],
-        datasets: [
-          {
-            label: 'Data One',
-            backgroundColor: ['#41B883', '#E46651', '#00D8FF'],
-            data: [this.firstValue,this.secondValue,this.thirdValue]
-          }
-        ]
-      }
-    },
+    
     toChannelList:function(){
       this.$router.push('/bigflowChannelList');
     },
