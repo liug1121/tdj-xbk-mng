@@ -45,7 +45,7 @@
              <div class="left">
                <span class="title">风险区域</span>
                <div class="info">
-                风险区域关停：100
+                风险区域关停：{{stopedCardNum}}（张）
                </div>
              </div>
              <div class="right">
@@ -98,7 +98,7 @@
 </template>
 
 <script>
-
+import apiBigflow from './../api/bigflow'
 import Vepie from "v-charts/lib/pie.common";
 import VeLine from "v-charts/lib/line.common";
 export default {
@@ -135,13 +135,25 @@ export default {
       firstValue:'',
       secondValue:'',
       thirdValue:'',
-      datacollection: null
+      datacollection: null,
+      stopedCardNum:0
     }
   },
   mounted () {
     this.addData()
+    this.getStopedCardNumForChannels()
   },
   methods:{
+    getStopedCardNumForChannels:function(){
+      let params = {}
+        apiBigflow.getStopedCardNumForChannels(params).then(res=>{
+            if(res.resultCode == 0){
+                this.stopedCardNum = res.data
+                console.log('this.stopedCardNum :' + this.stopedCardNum )
+                
+            }
+        })
+    },
     addData() {
       this.firstValue="aaa"
       this.secondValue="aaa"
