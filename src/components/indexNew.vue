@@ -56,11 +56,11 @@
              <div class="left">
                <span class="title">风险用量</span>
                <div class="info">
-                可用量少于10%的流量池数量：2
+                可用量少于10%的流量池：{{sharingPoolNum}}（个）
                </div>
-               <div class="info">
-                可用量少于10%的卡数量：1200
-               </div>
+               <!-- <div class="info">
+                可用量少于10%的卡：1200（张）
+               </div> -->
              </div>
              <div class="right">
                <img src="../assets/images/smsIcon.png"  alt="" />
@@ -70,7 +70,7 @@
              <div class="left">
                <span class="title">风险类型</span>
                <div class="info">
-                不合理的设备IMEI：0（张）
+                不合理的设备IMEI：{{imeiNum}}（张）
                </div>
                <div class="info">
                 卡状态异常：0（张）
@@ -136,21 +136,39 @@ export default {
       secondValue:'',
       thirdValue:'',
       datacollection: null,
-      stopedCardNum:0
+      stopedCardNum:0,
+      sharingPoolNum:0,
+      imeiNum:0
     }
   },
   mounted () {
     this.addData()
     this.getStopedCardNumForChannels()
+    this.getSharingPoolNumForChannels()
+    this.getImeiNumForChannels()
   },
   methods:{
+    getImeiNumForChannels:function(){
+      let params = {}
+        apiBigflow.getImeiNumForChannels(params).then(res=>{
+            if(res.resultCode == 0){
+                this.imeiNum = res.data  
+            }
+        })
+    },
+    getSharingPoolNumForChannels:function(){
+      let params = {}
+        apiBigflow.getSharingPoolNumForChannels(params).then(res=>{
+            if(res.resultCode == 0){
+                this.sharingPoolNum = res.data  
+            }
+        })
+    },
     getStopedCardNumForChannels:function(){
       let params = {}
         apiBigflow.getStopedCardNumForChannels(params).then(res=>{
             if(res.resultCode == 0){
-                this.stopedCardNum = res.data
-                console.log('this.stopedCardNum :' + this.stopedCardNum )
-                
+                this.stopedCardNum = res.data  
             }
         })
     },

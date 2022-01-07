@@ -274,5 +274,11 @@ export default {
     },
     getStopedCardNumForChannels: params =>{
         return API.GET('/bigflow/manage/v1.0/lbs/statics/channels', params)
+    },
+    getSharingPoolNumForChannels: params =>{
+        return API.GET('/bigflow/manage/v1.0/sharingpool/statics/channels', params)
+    },
+    getImeiNumForChannels: params =>{
+        return API.GET('/bigflow/manage/v1.0/imei/statics/channels', params)
     }
 }
