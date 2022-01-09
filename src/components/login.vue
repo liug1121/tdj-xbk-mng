@@ -5,7 +5,8 @@
       <img class="login_hearder_right" src="../assets/images/logo-yanfei.png" width="100%" height="100%" alt="" />
     </div>
     <img src="../assets/images/content-big.jpg" width="100%" height="100%" alt="" />
-    <div class="login_footer">Copyright ©2019 南京天地杰实业有限公司 All Rights Reserved</div>
+    <div class="login_footer"></div>
+    <!-- Copyright ©2019 南京天地杰实业有限公司 All Rights Reserved -->
     <div class="login_box">
       <div class="login_title">雁飞·流量运营平台</div>
       <!-- <div class="login_left">

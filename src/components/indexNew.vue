@@ -73,7 +73,7 @@
                 不合理的设备IMEI：{{imeiNum}}（张）
                </div>
                <div class="info">
-                卡状态异常：0（张）
+                卡状态异常： （张）
                </div>
              </div>
              <div class="right">
