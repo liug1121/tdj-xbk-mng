@@ -40,7 +40,7 @@
             <el-option v-for="item in channels" :key="item.channelId" :label="item.name" :value="item.channelId"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="联系人姓名">
+        <!-- <el-form-item label="联系人姓名">
           <el-input style="width:300px;"  v-model="addChannelForm.salePerson" placeholder="请输入联系人姓名" ></el-input>
         </el-form-item>
         <el-form-item label="联系人手机号">
@@ -48,7 +48,7 @@
         </el-form-item>
          <el-form-item label="登录密码">
           <el-input style="width:300px;"  v-model="addChannelForm.pwd" placeholder="请输入登录密码" ></el-input>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
@@ -265,17 +265,19 @@ export default {
             return
         }
         if(this.addChannelForm.parentId == undefined || this.addChannelForm.parentId == '' || this.addChannelForm.parentId == null){
-            this.$message.error('父渠道必须填写')
-            return
+            this.addChannelForm.parentId = '-1'
         }
+        this.addChannelForm.salePerson = 'aa'
         if(this.addChannelForm.salePerson == undefined || this.addChannelForm.salePerson == '' || this.addChannelForm.salePerson == null){
             this.$message.error('联系人姓名必须填写')
             return
         }
+        this.addChannelForm.phone = '55'
         if(this.addChannelForm.phone == undefined || this.addChannelForm.phone == '' || this.addChannelForm.phone == null){
             this.$message.error('联系人电话必须填写')
             return
         }
+        this.addChannelForm.pwd = '55'
         if(this.addChannelForm.pwd == undefined || this.addChannelForm.pwd == '' || this.addChannelForm.pwd == null){
             this.$message.error('登录密码必须填写')
             return
