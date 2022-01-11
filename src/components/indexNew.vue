@@ -91,7 +91,7 @@
                 filterable
                 clearable
                 reserve-keyword
-                placeholder="请选择渠道" v-model="channelForStatus" style="width:400px">
+                placeholder="请选择渠道" v-model="channelForStatus" style="width:400px" @change="channelChangeForStatus">
                   <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
@@ -141,7 +141,7 @@
                 filterable
                 clearable
                 reserve-keyword
-                placeholder="请选择渠道" v-model="channelForCardNum" style="width:400px">
+                placeholder="请选择渠道" v-model="channelForCardNum" style="width:400px" @change="channelChangeForCardNum">
                   <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
@@ -174,6 +174,7 @@ export default {
       channelForCardNum:'',
       channelForDataUsage:'',
       channels:[],
+      dateType:'',
       dateTypes:[
         {value:0, name:'7天内'},
         {value:1, name:'15天内'},
@@ -203,6 +204,12 @@ export default {
           { 日期: "6月", 新增SIM卡数量: 0 }
         ]
       },
+      initStatusDatas:[
+        { 状态: "可激活", 卡数量: 0 },
+        { 状态: "已激活", 卡数量: 0 },
+        { 状态: "已停用", 卡数量: 0 },
+        { 状态: "已失效", 卡数量: 0 },
+      ],
       statusChartData: {
         columns: ["状态", "卡数量"],
         rows: [
@@ -232,6 +239,12 @@ export default {
     this.getCardNumForChannels()
   },
   methods:{
+      channelChangeForStatus:function(channelId){
+        this.getCardStatusNumForChannels()
+      },
+      channelChangeForCardNum:function(channelId){
+        this.getCardNumForChannels()
+      },
       getAllChannels:function(){
         let params = {}
         apiBigflow.getAllChannels(params).then(res=>{
@@ -252,6 +265,7 @@ export default {
     },
     getCardNumForChannels:function(){
       let params = {}
+      params.channelId = this.channelForCardNum
       this.addLoadingCount()
         apiBigflow.getCardNumForChannels(params).then(res=>{
             if(res.resultCode == 0){
@@ -266,12 +280,20 @@ export default {
                 }
                 if(rows.length > 0)
                   this.chartData.rows = rows
+                else{
+                  let row = {}
+                  row["日期"] = '无'
+                  row["新增SIM卡数量"] = '0'
+                  rows.push(row)
+                  this.chartData.rows = rows
+                }
             }
             this.reduceLoadingCount()
         })
     },
     getCardStatusNumForChannels:function(){
       let params = {}
+      params.channelId = this.channelForStatus
       this.addLoadingCount()
         apiBigflow.getCardStatusNumForChannels(params).then(res=>{
             if(res.resultCode == 0){
@@ -286,6 +308,9 @@ export default {
                 }
                 if(rows.length > 0)
                   this.statusChartData.rows = rows
+                else
+                  this.statusChartData.rows = this.initStatusDatas
+                
             }
             this.reduceLoadingCount()
         })
