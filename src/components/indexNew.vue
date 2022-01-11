@@ -84,12 +84,57 @@
         
         <div class="board-row">
           <span>卡状态统计</span>
-            <div class="chart">
-              <Vepie  :data="statusChartData"></Vepie>
+          <div class="chart">
+            <el-form  :inline="true" >
+              <el-form-item >
+                <el-select 
+                filterable
+                clearable
+                reserve-keyword
+                placeholder="请选择渠道" v-model="channelForStatus" style="width:400px">
+                  <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-form>
+            <Vepie  :data="statusChartData"></Vepie>
+          </div>
+            
+          
+            
+        </div>
+
+        <div class="board-row">
+          <span>增长趋势</span>
+          <div class="chart">
+            <el-form  :inline="true" >
+              <el-form-item >
+                <el-select 
+                filterable
+                clearable
+                reserve-keyword
+                placeholder="请选择渠道" v-model="channelForCardNum" style="width:400px">
+                  <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-form>
+              <VeLine  :data="dataUsage"></VeLine>
             </div>
-            <div class="chart">
+            
+          <div class="chart">
+            <el-form  :inline="true" >
+              <el-form-item >
+                <el-select 
+                filterable
+                clearable
+                reserve-keyword
+                placeholder="请选择渠道" v-model="channelForCardNum" style="width:400px">
+                  <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-form>
               <VeLine  :data="chartData"></VeLine>
             </div>
+            
         </div>
       </div>
       
@@ -111,7 +156,21 @@ export default {
     },
   data () {
     return {
+      channelForStatus:'',
+      channelForCardNum:'',
+      channels:[],
       loading:false,
+      dataUsage: {
+        columns: ["日期", "用量趋势变化"],
+        rows: [
+          { 日期: "1月", 用量趋势变化: 0 },
+          { 日期: "2月", 用量趋势变化: 0 },
+          { 日期: "3月", 用量趋势变化: 0 },
+          { 日期: "4月", 用量趋势变化: 0 },
+          { 日期: "5月", 用量趋势变化: 0 },
+          { 日期: "6月", 用量趋势变化: 0 }
+        ]
+      },
       chartData: {
         columns: ["日期", "新增SIM卡数量"],
         rows: [
@@ -144,6 +203,7 @@ export default {
     }
   },
   mounted () {
+    this.getAllChannels()
     this.getStopedCardNumForChannels()
     this.getSharingPoolNumForChannels()
     this.getImeiNumForChannels()
@@ -151,6 +211,14 @@ export default {
     this.getCardNumForChannels()
   },
   methods:{
+      getAllChannels:function(){
+        let params = {}
+        apiBigflow.getAllChannels(params).then(res=>{
+            if(res.resultCode == 0){
+                this.channels = res.data
+            }
+        })
+    },
     addLoadingCount:function(){
       this.loadingCount++
       if(this.loadingCount > 0)
@@ -241,6 +309,9 @@ export default {
     toChannelStatic:function(){
       this.$router.push('/bigflowChannelStatic');
     },
+    toLbs:function(){
+      this.$router.push('/LBSRecordList');
+    },
     fillData () {
         this.datacollection = {
           labels: [this.getRandomInt(), this.getRandomInt()],
@@ -268,7 +339,7 @@ export default {
 <style scoped>
 .all_list {
   height: 100%;
-  height: 900px;
+  height: 1500px;
   background: #f6f6f6;
 }
 .board{
@@ -369,7 +440,7 @@ export default {
   .chart{
     margin: 30px;
     margin-left: 50px;
-    height: 320px;
+    height: 400px;
     width: 450px;
   }
   
