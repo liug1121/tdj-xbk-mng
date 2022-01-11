@@ -106,17 +106,31 @@
         <div class="board-row">
           <span>增长趋势</span>
           <div class="chart">
+            <div class="chart-form">
+              <el-form  :inline="true" >
+              <el-form-item >
+                <el-select 
+                filterable
+                clearable
+                reserve-keyword
+                placeholder="请选择渠道" v-model="channelForDataUsage" style="width:200px">
+                  <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-form>
             <el-form  :inline="true" >
               <el-form-item >
                 <el-select 
                 filterable
                 clearable
                 reserve-keyword
-                placeholder="请选择渠道" v-model="channelForCardNum" style="width:400px">
-                  <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
+                placeholder="请选择类型" v-model="dateType" style="width:200px">
+                  <el-option v-for="item in dateTypes" :key="item.value" :label="item.name" :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
             </el-form>
+            </div>
+            
               <VeLine  :data="dataUsage"></VeLine>
             </div>
             
@@ -158,7 +172,14 @@ export default {
     return {
       channelForStatus:'',
       channelForCardNum:'',
+      channelForDataUsage:'',
       channels:[],
+      dateTypes:[
+        {value:0, name:'7天内'},
+        {value:1, name:'15天内'},
+        {value:2, name:'本计费周期内'},
+        {value:3, name:'6个月内'},
+      ],
       loading:false,
       dataUsage: {
         columns: ["日期", "用量趋势变化"],
@@ -443,5 +464,7 @@ export default {
     height: 400px;
     width: 450px;
   }
-  
+  .chart-form{
+    display: flex;
+  }
 </style>
