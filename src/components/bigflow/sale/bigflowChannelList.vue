@@ -14,6 +14,9 @@
           <el-table  :data="salePersons" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
             <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :show-overflow-tooltip='true'>
               <template slot-scope="scope">
+                <div v-if="p.prop == 'opts'" v-permission="{indentity:'bigflowChannelList-add'}">
+                  <el-button type="text" size="small" @click="showEditChannel(scope.row, selectedChannelName)">编辑</el-button>
+                </div>
                   <div v-if="p.prop == 'channelName'">
                     <span>{{selectedChannelName}}</span>
                   </div>
@@ -26,7 +29,7 @@
         </el-card>
       </el-col>
     </el-row>
-       <el-dialog title="新增渠道" :visible.sync="showAddChannelDlg" width="450px" @close="hideAddChannelDlg">
+      <el-dialog :title= dialogTitle :visible.sync="showAddChannelDlg" width="450px" @close="hideAddChannelDlg">
       <el-form :model="addChannelForm"  label-width="110px">
           <el-form-item label="渠道名称">
           <el-input style="width:300px;" v-model="addChannelForm.name" placeholder="请输入渠道名称" ></el-input>
@@ -38,6 +41,21 @@
           reserve-keyword
             placeholder="请输入父渠道" v-model="addChannelForm.parentId">
             <el-option v-for="item in channels" :key="item.channelId" :label="item.name" :value="item.channelId"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="是否监控IMEI" class="queryFormItem">
+          <el-select class="queryFormInput" v-model="addChannelForm.imeiSel" clearable placeholder="请选择是否监控IMEI">
+            <el-option v-for="item in emeiSel" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="IMEI监控类型" class="queryFormItem" v-if="addChannelForm.imeiSel == 1">
+          <el-select class="queryFormInput" v-model="addChannelForm.emeiType" clearable placeholder="请选择IMEI监控类型">
+            <el-option v-for="item in emeiTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="IMEI白名单组" class="queryFormItem" v-if="addChannelForm.emeiType == 0 && addChannelForm.imeiSel == 1" >
+          <el-select class="queryFormInput" v-model="addChannelForm.imeiWhiteGroup" clearable placeholder="请选择IMEI白名单组">
+            <el-option v-for="item in imeiWhiteGroups" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
         <!-- <el-form-item label="联系人姓名">
@@ -53,9 +71,49 @@
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="hideAddChannelDlg">取 消</el-button>
+        <el-button type="primary">确 定</el-button>
+      </span>   
+    </el-dialog>
+
+    <el-dialog :title= dialogTitle :visible.sync="showEditChannelDlg" width="450px" @close="hideEditChannelDlg">
+      <el-form :model="editChannelForm"  label-width="110px">
+          <el-form-item label="渠道名称">
+          <el-input style="width:300px;" v-model="editChannelForm.name" placeholder="请输入渠道名称" ></el-input>
+        </el-form-item>
+        <!-- <el-form-item label="父渠道">
+            <el-select 
+            filterable
+          clearable
+          reserve-keyword
+            placeholder="请输入父渠道" v-model="editChannelForm.parentId">
+            <el-option v-for="item in channels" :key="item.channelId" :label="item.name" :value="item.channelId"></el-option>
+          </el-select>
+        </el-form-item> -->
+        <el-form-item label="是否监控IMEI" class="queryFormItem">
+          <el-select class="queryFormInput" v-model="editChannelForm.imeiSel" clearable placeholder="请选择是否监控IMEI">
+            <el-option v-for="item in emeiSel" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="IMEI监控类型" class="queryFormItem" v-if="editChannelForm.imeiSel == 1">
+          <el-select class="queryFormInput" v-model="editChannelForm.emeiType" clearable placeholder="请选择IMEI监控类型">
+            <el-option v-for="item in emeiTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="IMEI白名单组" class="queryFormItem" v-if="editChannelForm.emeiType == 0 && editChannelForm.imeiSel == 1" >
+          <el-select class="queryFormInput" v-model="editChannelForm.imeiWhiteGroup" clearable placeholder="请选择IMEI白名单组">
+            <el-option v-for="item in imeiWhiteGroups" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="hideEditChannelDlg">取 消</el-button>
         <el-button type="primary" @click="okAddChannel">确 定</el-button>
       </span>   
     </el-dialog>
+
+
+
     <el-dialog :title="dialogTitle" :visible.sync="addManagerDialogVisible" width="430px" @close="closeChannelManagerButton">
       <!-- 内容主体区域 -->
       <el-form ref="addChannelRef"  label-width="120px">
@@ -100,6 +158,8 @@ export default {
   },
   data () {
     return {
+      showEditChannelDlg:false,
+      imeiWhiteGroups:[],
       addManagerDialogVisible:false,
       managerPhone:'',
       manager:'',
@@ -125,14 +185,15 @@ export default {
       total: 0,
       // 表格 label 字段名称
       table_column: [
-        { prop: 'channelName', label: '渠道名称', width: 300 },
+        { prop: 'channelName', label: '渠道名称', width: 100 },
         { prop: 'name', label: '姓名', width: 100 },
         { prop: 'mobile', label: '登陆帐号', width: 100 },
         { prop: 'mobile', label: '手机号', width: 100 },
-        { prop: 'type', label: '类型', width: 100 },
-        { prop: 'qrCode', label: '登录密码', width: 180 },
-        { prop: 'openId', label: '微信openId', width: 240 },
-        { prop: 'status', label: '状态', width: 220 }
+        { prop: 'type', label: '类型', width: 50 },
+        { prop: 'qrCode', label: '登录密码', width: 100 },
+        { prop: 'openId', label: '微信openId', width: 100 },
+        { prop: 'status', label: '状态', width: 80 },
+        { prop: 'opts', label: '操作', width: 100 }
       ],
       queryChannelForm: {
           name:null,
@@ -152,7 +213,28 @@ export default {
         { label: '是', value: 1 },
         { label: '否', value: 0 }
       ],
+      emeiSel: [
+        { label: '是', value: 1 },
+        { label: '否', value: 0 }
+      ],
+      emeiTypes: [
+        { label: '黑名单', value: 1 },
+        { label: '白名单', value: 0 }
+      ],
+      // hideEditChannelDlg  
       // form 表单字段
+      editChannelForm:{
+        id:'',
+        channelName: null,
+        manager: null,
+        managerPhone: null,
+        parentChannelId: 2,
+        twoCodeEnable: true,
+        usingInXuebaka: 1,
+        usingInDevice: 0,
+        imeiSel:0,
+        emeiType:1
+      },
       addChannelForm: {
         channelName: null,
         manager: null,
@@ -160,7 +242,9 @@ export default {
         parentChannelId: 2,
         twoCodeEnable: true,
         usingInXuebaka: 1,
-        usingInDevice: 0
+        usingInDevice: 0,
+        imeiSel:0,
+        emeiType:1
       },
       // 字段验证
       addChannelRules: {
@@ -193,6 +277,14 @@ export default {
     this.getChannelTree()
   },
   methods: {
+    showEditChannel:function(row, selectedChannelName){
+      console.log(JSON.stringify(selectedChannelName))
+      this.editChannelForm.name = selectedChannelName
+      this.showEditChannelDlg = true
+    },
+    hideEditChannelDlg:function(){
+      this.showEditChannelDlg = false
+    },
     addManager:function(){
         if(this.selecedChannelCode == null || this.selecedChannelCode == undefined || this.selecedChannelCode  == ''){
             this.$message.success('渠道不能为空')
