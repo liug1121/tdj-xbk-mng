@@ -113,7 +113,7 @@
                 filterable
                 clearable
                 reserve-keyword
-                placeholder="请选择渠道" v-model="channelForDataUsage" style="width:200px">
+                placeholder="请选择渠道" v-model="channelForDataUsage" style="width:200px" @change="channelChangeCardDataUsageForChannels">
                   <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
@@ -124,7 +124,7 @@
                 filterable
                 clearable
                 reserve-keyword
-                placeholder="请选择类型" v-model="dateType" style="width:200px">
+                placeholder="请选择类型" v-model="dateType" style="width:200px" @change="dataTypeForCardDataUsage">
                   <el-option v-for="item in dateTypes" :key="item.value" :label="item.name" :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
@@ -183,14 +183,14 @@ export default {
       ],
       loading:false,
       dataUsage: {
-        columns: ["日期", "用量趋势变化"],
+        columns: ["日期", "用量趋势变化GB"],
         rows: [
-          { 日期: "1月", 用量趋势变化: 0 },
-          { 日期: "2月", 用量趋势变化: 0 },
-          { 日期: "3月", 用量趋势变化: 0 },
-          { 日期: "4月", 用量趋势变化: 0 },
-          { 日期: "5月", 用量趋势变化: 0 },
-          { 日期: "6月", 用量趋势变化: 0 }
+          { 日期: "1月", 用量趋势变化GB: 0 },
+          { 日期: "2月", 用量趋势变化GB: 0 },
+          { 日期: "3月", 用量趋势变化GB: 0 },
+          { 日期: "4月", 用量趋势变化GB: 0 },
+          { 日期: "5月", 用量趋势变化GB: 0 },
+          { 日期: "6月", 用量趋势变化GB: 0 }
         ]
       },
       chartData: {
@@ -237,8 +237,44 @@ export default {
     this.getImeiNumForChannels()
     this.getCardStatusNumForChannels()
     this.getCardNumForChannels()
+    this.getCardDataUsageForChannels()
   },
   methods:{
+    dataTypeForCardDataUsage:function(type){
+      this.getCardDataUsageForChannels()
+    },
+    channelChangeCardDataUsageForChannels:function(channelId){
+      this.getCardDataUsageForChannels()
+    },
+    getCardDataUsageForChannels:function(){
+      let params = {}
+      params.channelId = this.channelForDataUsage
+      params.queryType = this.dateType
+      this.addLoadingCount()
+        apiBigflow.getCardDataUsageForChannels(params).then(res=>{
+            if(res.resultCode == 0){
+                let statics = res.data  
+                let rows = []
+                for(let i = 0; i < statics.length; i++){
+                  let one = statics[i]
+                  let row = {}
+                  row["日期"] = one.date
+                  row["用量趋势变化GB"] = one.dateUsage
+                  rows.push(row)
+                }
+                if(rows.length > 0)
+                  this.dataUsage.rows = rows
+                else{
+                  let row = {}
+                  row["日期"] = '无'
+                  row["用量趋势变化GB"] = '0'
+                  rows.push(row)
+                  this.dataUsage.rows = rows
+                }
+            }
+            this.reduceLoadingCount()
+        })
+    },
       channelChangeForStatus:function(channelId){
         this.getCardStatusNumForChannels()
       },

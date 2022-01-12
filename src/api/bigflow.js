@@ -286,7 +286,11 @@ export default {
     },
     getCardNumForChannels: params =>{
         return API.POST('/bigflow/manage/v1.0/card/cardNum/statics/channels', params)
-    }
+    },
+    getCardDataUsageForChannels: params =>{
+        return API.POST('/bigflow/manage/v1.0/card/datausage/statics/channels', params)
+    },
+    
 
     
 
