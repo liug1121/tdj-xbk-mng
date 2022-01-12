@@ -42,8 +42,10 @@ export default {
       table_column: [
         { prop: 'channelName', label: '渠道名称', width: 200 ,sortable: true },
         { prop: 'cardNum', label: '总卡数', width: 200 ,sortable: true },
-        { prop: 'cardUsingNum', label: '已启用卡数', width: 220 ,sortable: true },
-        { prop: 'cardRealedNum', label: '已认证卡数', width: 120 ,sortable: true }
+        { prop: 'cardRealedNum', label: '已实名卡数', width: 120 ,sortable: true },
+        { prop: 'cardHasUsageNum', label: '有用量卡数', width: 120 ,sortable: true },
+        // { prop: 'cardUsingNum', label: '已启用卡数', width: 220 ,sortable: true },
+        { prop: 'cardStopping', label: '已停用卡数', width: 220 ,sortable: true }
         
       ],
     }
