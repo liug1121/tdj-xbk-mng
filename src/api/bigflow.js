@@ -290,6 +290,11 @@ export default {
     getCardDataUsageForChannels: params =>{
         return API.POST('/bigflow/manage/v1.0/card/datausage/statics/channels', params)
     },
+    modifyChannel: params =>{
+        return API.POST('/bigflow/manage/v1.0/salechannel/modify', params)
+    },
+
+    
     
 
     

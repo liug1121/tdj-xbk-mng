@@ -43,7 +43,7 @@
             <el-option v-for="item in channels" :key="item.channelId" :label="item.name" :value="item.channelId"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="是否监控IMEI" class="queryFormItem">
+        <!-- <el-form-item label="是否监控IMEI" class="queryFormItem">
           <el-select class="queryFormInput" v-model="addChannelForm.imeiSel" clearable placeholder="请选择是否监控IMEI">
             <el-option v-for="item in emeiSel" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
@@ -57,7 +57,9 @@
           <el-select class="queryFormInput" v-model="addChannelForm.imeiWhiteGroup" clearable placeholder="请选择IMEI白名单组">
             <el-option v-for="item in imeiWhiteGroups" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
+
+
         <!-- <el-form-item label="联系人姓名">
           <el-input style="width:300px;"  v-model="addChannelForm.salePerson" placeholder="请输入联系人姓名" ></el-input>
         </el-form-item>
@@ -71,7 +73,7 @@
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="hideAddChannelDlg">取 消</el-button>
-        <el-button type="primary">确 定</el-button>
+        <el-button type="primary" @click="okAddChannel">确 定</el-button>
       </span>   
     </el-dialog>
 
@@ -108,7 +110,7 @@
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="hideEditChannelDlg">取 消</el-button>
-        <el-button type="primary" @click="okAddChannel">确 定</el-button>
+        <el-button type="primary" @click="okEditChannel">确 定</el-button>
       </span>   
     </el-dialog>
 
@@ -233,7 +235,8 @@ export default {
         usingInXuebaka: 1,
         usingInDevice: 0,
         imeiSel:0,
-        emeiType:1
+        emeiType:1,
+        imeiWhiteGroup:''
       },
       addChannelForm: {
         channelName: null,
@@ -350,6 +353,33 @@ export default {
     },
     hideAddChannelDlg:function(){
         this.showAddChannelDlg = false
+    },
+    okEditChannel:function(){
+      if(this.editChannelForm.name == undefined || this.editChannelForm.name == '' || this.editChannelForm.name == null){
+          this.$message.error('渠道名必须填写')
+          return
+      }
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let params = {}
+        params.name = this.editChannelForm.name
+        params.emeiType = this.editChannelForm.emeiType
+        params.imeiWhiteGroupId = this.editChannelForm.imeiWhiteGroup
+        params.channelId = localStorage.getItem('channelId');
+        apiBigflow.modifyChannel(params).then(res => {
+            if (res.resultCode === 0) {
+              this.$message.success('添加成功！')
+              this.hideEditChannelDlg()
+            } else {
+              this.$message.error(res.resultInfo)
+            }
+          })
+      }).catch(() => {
+      }); 
+      // modifyChannel
     },
     okAddChannel:function(){
         if(this.addChannelForm.name == undefined || this.addChannelForm.name == '' || this.addChannelForm.name == null){
