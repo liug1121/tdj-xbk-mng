@@ -293,11 +293,13 @@ export default {
     modifyChannel: params =>{
         return API.POST('/bigflow/manage/v1.0/salechannel/modify', params)
     },
+    getChannelImeiConfig: params =>{
+        return API.POST('/bigflow/manage/v1.0/salechannel/imeiconfig', params)
+    },
+    removeChannelImeiConfig: params =>{
+        return API.POST('/bigflow/manage/v1.0/salechannel/imei/remove', params)
+    },
 
     
-    
-
-    
-
-    
+ 
 }

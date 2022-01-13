@@ -8,6 +8,27 @@
       <el-col :span="18">
         <el-card>
           <div class="button_content"> 
+            <el-button size="medium" type="primary" icon="el-icon-plus"  v-permission="{indentity:'bigflowChannelList-add'}" @click="showAddImeiDlg()">添加imei规则</el-button>
+          </div>
+          <el-table  :data="imeiRules" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
+            <el-table-column v-for="(p, key) in table_imei_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :show-overflow-tooltip='true'>
+              <template slot-scope="scope">
+                <div v-if="p.prop == 'opts'" v-permission="{indentity:'bigflowChannelList-add'}">
+                  <el-button type="text" size="small" @click="showEditImeiDlg(scope.row)">编辑</el-button>
+                  <el-button type="text" size="small" @click="deleteImei(scope.row)">删除</el-button>
+                </div>
+                  <div v-if="p.prop == 'channelName'">
+                    <span>{{selectedChannelName}}</span>
+                  </div>
+                  <div v-else>
+                      <div v-html="scope.row[p.prop]" />
+                  </div>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-card>
+        <el-card>
+          <div class="button_content"> 
             <el-button size="medium" type="primary" icon="el-icon-plus" @click="showAddChannel" v-permission="{indentity:'bigflowChannelList-add'}">添加渠道</el-button>
             <el-button size="medium" type="primary" icon="el-icon-plus" @click="showAddManager" v-permission="{indentity:'bigflowChannelList-add'}">添加管理员</el-button>
           </div>
@@ -43,32 +64,6 @@
             <el-option v-for="item in channels" :key="item.channelId" :label="item.name" :value="item.channelId"></el-option>
           </el-select>
         </el-form-item>
-        <!-- <el-form-item label="是否监控IMEI" class="queryFormItem">
-          <el-select class="queryFormInput" v-model="addChannelForm.imeiSel" clearable placeholder="请选择是否监控IMEI">
-            <el-option v-for="item in emeiSel" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="IMEI监控类型" class="queryFormItem" v-if="addChannelForm.imeiSel == 1">
-          <el-select class="queryFormInput" v-model="addChannelForm.emeiType" clearable placeholder="请选择IMEI监控类型">
-            <el-option v-for="item in emeiTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="IMEI白名单组" class="queryFormItem" v-if="addChannelForm.emeiType == 0 && addChannelForm.imeiSel == 1" >
-          <el-select class="queryFormInput" v-model="addChannelForm.imeiWhiteGroup" clearable placeholder="请选择IMEI白名单组">
-            <el-option v-for="item in imeiWhiteGroups" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item> -->
-
-
-        <!-- <el-form-item label="联系人姓名">
-          <el-input style="width:300px;"  v-model="addChannelForm.salePerson" placeholder="请输入联系人姓名" ></el-input>
-        </el-form-item>
-        <el-form-item label="联系人手机号">
-          <el-input style="width:300px;"  v-model="addChannelForm.phone" placeholder="请输入联系人手机号" ></el-input>
-        </el-form-item>
-         <el-form-item label="登录密码">
-          <el-input style="width:300px;"  v-model="addChannelForm.pwd" placeholder="请输入登录密码" ></el-input>
-        </el-form-item> -->
       </el-form>
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
@@ -79,17 +74,8 @@
 
     <el-dialog :title= dialogTitle :visible.sync="showEditChannelDlg" width="450px" @close="hideEditChannelDlg">
       <el-form :model="editChannelForm"  label-width="110px">
-          <el-form-item label="渠道名称">
+          <!-- <el-form-item label="渠道名称">
           <el-input style="width:300px;" v-model="editChannelForm.name" placeholder="请输入渠道名称" ></el-input>
-        </el-form-item>
-        <!-- <el-form-item label="父渠道">
-            <el-select 
-            filterable
-          clearable
-          reserve-keyword
-            placeholder="请输入父渠道" v-model="editChannelForm.parentId">
-            <el-option v-for="item in channels" :key="item.channelId" :label="item.name" :value="item.channelId"></el-option>
-          </el-select>
         </el-form-item> -->
         <el-form-item label="是否监控IMEI" class="queryFormItem">
           <el-select class="queryFormInput" v-model="editChannelForm.imeiSel" clearable placeholder="请选择是否监控IMEI">
@@ -113,8 +99,6 @@
         <el-button type="primary" @click="okEditChannel">确 定</el-button>
       </span>   
     </el-dialog>
-
-
 
     <el-dialog :title="dialogTitle" :visible.sync="addManagerDialogVisible" width="430px" @close="closeChannelManagerButton">
       <!-- 内容主体区域 -->
@@ -160,6 +144,7 @@ export default {
   },
   data () {
     return {
+      imeiRules:[],
       showEditChannelDlg:false,
       imeiWhiteGroups:[],
       addManagerDialogVisible:false,
@@ -187,15 +172,21 @@ export default {
       total: 0,
       // 表格 label 字段名称
       table_column: [
-        { prop: 'channelName', label: '渠道名称', width: 100 },
-        { prop: 'name', label: '姓名', width: 100 },
+        { prop: 'channelName', label: '渠道名称', width: 150 },
+        { prop: 'name', label: '姓名', width: 150 },
         { prop: 'mobile', label: '登陆帐号', width: 100 },
         { prop: 'mobile', label: '手机号', width: 100 },
         { prop: 'type', label: '类型', width: 50 },
         { prop: 'qrCode', label: '登录密码', width: 100 },
         { prop: 'openId', label: '微信openId', width: 100 },
         { prop: 'status', label: '状态', width: 80 },
-        { prop: 'opts', label: '操作', width: 100 }
+        // { prop: 'opts', label: '操作', width: 100 }
+      ],
+      table_imei_column: [
+        { prop: 'channelName', label: '渠道名称', width: 350 },
+        { prop: 'imeiTypeName', label: '类型', width: 200 },
+        { prop: 'groupName', label: '监控组', width: 100 },
+        { prop: 'opts', label: '操作', width: 180 }
       ],
       queryChannelForm: {
           name:null,
@@ -269,7 +260,8 @@ export default {
       channelTreeList: [],
       optionData: [],
       loading: false,
-      isUsingIn: true
+      isUsingIn: true,
+      selectedImeiConfigRow:[]
     }
   },
 
@@ -280,6 +272,65 @@ export default {
     this.getChannelTree()
   },
   methods: {
+    showAddImeiDlg:function(){
+      if(this.selecedChannelCode == null || this.selecedChannelCode == undefined || this.selecedChannelCode  == ''){
+        this.$message.error('请先选择渠道')
+        return
+      }
+      if(this.imeiRules != null && this.imeiRules.length > 0){
+        this.$message.error('一个渠道只能设置一个规则')
+        return
+      }
+      let row = {}
+      this.showEditChannelDlg = true
+      row.channelId = this.selecedChannelCode 
+      this.selectedImeiConfigRow = row
+    },
+    showEditImeiDlg:function(row){
+      this.showEditChannelDlg = true
+      this.selectedImeiConfigRow = row
+    },
+    deleteImei:function(row){
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let params = {}
+        params.channelId = row.channelId
+        apiBigflow.removeChannelImeiConfig(params).then(res => {
+          if (res.resultCode === 0) {
+            this.$message.success('删除成功！')
+            this.getChannelImeiConfig()
+          } else {
+            this.$message.error(res.resultInfo)
+          }
+        })
+      }).catch(() => {
+      });
+      
+    },
+    editImeiConfig:function(row){
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let params = {}
+        params.emeiType = this.editChannelForm.emeiType
+        params.imeiWhiteGroupId = this.editChannelForm.imeiWhiteGroup
+        params.channelId = this.selectedImeiConfigRow.channelId
+        apiBigflow.modifyChannel(params).then(res => {
+            if (res.resultCode === 0) {
+              this.$message.success('修改成功！')
+              this.hideEditChannelDlg()
+            } else {
+              this.$message.error(res.resultInfo)
+            }
+          })
+      }).catch(() => {
+      }); 
+    },
     showEditChannel:function(row, selectedChannelName){
       console.log(JSON.stringify(selectedChannelName))
       this.editChannelForm.name = selectedChannelName
@@ -355,10 +406,10 @@ export default {
         this.showAddChannelDlg = false
     },
     okEditChannel:function(){
-      if(this.editChannelForm.name == undefined || this.editChannelForm.name == '' || this.editChannelForm.name == null){
-          this.$message.error('渠道名必须填写')
-          return
-      }
+      // if(this.editChannelForm.name == undefined || this.editChannelForm.name == '' || this.editChannelForm.name == null){
+      //     this.$message.error('渠道名必须填写')
+      //     return
+      // }
       this.$confirm('您确认要此操作, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -368,11 +419,12 @@ export default {
         params.name = this.editChannelForm.name
         params.emeiType = this.editChannelForm.emeiType
         params.imeiWhiteGroupId = this.editChannelForm.imeiWhiteGroup
-        params.channelId = localStorage.getItem('channelId');
+        params.channelId = this.selectedImeiConfigRow.channelId
         apiBigflow.modifyChannel(params).then(res => {
             if (res.resultCode === 0) {
               this.$message.success('添加成功！')
               this.hideEditChannelDlg()
+              this.getChannelImeiConfig()
             } else {
               this.$message.error(res.resultInfo)
             }
@@ -432,6 +484,19 @@ export default {
     showAddChannel:function(){
         this.showAddChannelDlg = true;
     },
+    getChannelImeiConfig:function(){
+      let params = {}
+        params.channelId = this.selecedChannelCode
+      apiBigflow.getChannelImeiConfig(params).then(res => {
+        if (res.resultCode === 0) {
+          this.imeiRules = res.data;
+        
+        } else {
+          this.$message.error('查询失败')
+        }
+      })
+    },
+    // getChannelImeiConfig
     getSalePerson:function(){
         
         let params = {}
@@ -470,6 +535,7 @@ export default {
         this.selecedChannelCode = channelsID
         this.selectedChannelName = channelName
         this.getSalePerson()
+        this.getChannelImeiConfig()
     },
     // 获取列表
     getChannelList (parentChannelId) {
