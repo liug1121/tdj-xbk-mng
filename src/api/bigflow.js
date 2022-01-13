@@ -299,7 +299,7 @@ export default {
     removeChannelImeiConfig: params =>{
         return API.POST('/bigflow/manage/v1.0/salechannel/imei/remove', params)
     },
-
-    
- 
+    getImeiGroups: params =>{
+        return API.GET('/bigflow/manage/v1.0/lbs/imei/groups', params)
+    },
 }

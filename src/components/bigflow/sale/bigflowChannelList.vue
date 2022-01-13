@@ -89,7 +89,7 @@
         </el-form-item>
         <el-form-item label="IMEI白名单组" class="queryFormItem" v-if="editChannelForm.emeiType == 0 && editChannelForm.imeiSel == 1" >
           <el-select class="queryFormInput" v-model="editChannelForm.imeiWhiteGroup" clearable placeholder="请选择IMEI白名单组">
-            <el-option v-for="item in imeiWhiteGroups" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            <el-option v-for="item in imeiWhiteGroups" :key="item.id" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -266,6 +266,7 @@ export default {
   },
 
   mounted () {
+    this.getImeiGroups()
     this.getChannelList();
     this.getParentChannelOptions()
     this.getChannelRoles()
@@ -490,6 +491,17 @@ export default {
       apiBigflow.getChannelImeiConfig(params).then(res => {
         if (res.resultCode === 0) {
           this.imeiRules = res.data;
+        
+        } else {
+          this.$message.error('查询失败')
+        }
+      })
+    },
+    getImeiGroups:function(){
+      let params = {}
+      apiBigflow.getImeiGroups(params).then(res => {
+        if (res.resultCode === 0) {
+          this.imeiWhiteGroups = res.data;
         
         } else {
           this.$message.error('查询失败')
