@@ -302,4 +302,8 @@ export default {
     getImeiGroups: params =>{
         return API.GET('/bigflow/manage/v1.0/lbs/imei/groups', params)
     },
+    getCardLbsStaticsForChannels: params =>{
+        return API.POST('/bigflow/manage/v1.0/card/cardNum/lbs/statics/channels', params)
+    },
+    
 }

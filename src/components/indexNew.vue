@@ -1,5 +1,6 @@
 <template>
   <div>
+    
     <el-card class="all_list">
       <div class="board">
         
@@ -91,16 +92,34 @@
                 filterable
                 clearable
                 reserve-keyword
-                placeholder="请选择渠道" v-model="channelForStatus" style="width:400px" @change="channelChangeForStatus">
+                placeholder="请选择渠道" v-model="channelForStatus" style="width:500px" @change="channelChangeForStatus">
                   <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
             </el-form>
-            <Vepie  :data="statusChartData"></Vepie>
+            <div class="cardstatus-vepie">
+              <Vepie  :data="statusChartData"></Vepie>
+            </div>
+            
           </div>
-            
-          
-            
+
+          <div class="chart">
+            <el-form  :inline="true" >
+              <el-form-item >
+                <el-select 
+                filterable
+                clearable
+                reserve-keyword
+                placeholder="请选择渠道" v-model="channelForStatus" style="width:500px" @change="channelChangeForStatus">
+                  <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-form>
+            <div class="mapTitle">卡区域分布</div>
+            <div id="china_map_box">
+                <div id="china_map"></div>
+            </div>
+          </div>  
         </div>
 
         <div class="board-row">
@@ -130,7 +149,6 @@
               </el-form-item>
             </el-form>
             </div>
-            
               <VeLine  :data="dataUsage"></VeLine>
             </div>
             
@@ -160,6 +178,9 @@
 </template>
 
 <script>
+
+import * as echarts from 'echarts'
+import 'echarts/map/js/china.js' 
 import apiBigflow from './../api/bigflow'
 import Vepie from "v-charts/lib/pie.common";
 import VeLine from "v-charts/lib/line.common";
@@ -170,6 +191,123 @@ export default {
     },
   data () {
     return {
+
+      options: {
+        tooltip: {
+          triggerOn: "mousemove",   //mousemove、click
+          padding:8,
+          borderWidth:1,
+          borderColor:'#409eff',
+          backgroundColor:'rgba(255,255,255,0.7)',
+          textStyle:{
+            color:'#000000',
+            fontSize:13
+          },
+          formatter: function(e, t, n) {
+            let data = e.data;
+            //模拟数据
+            data.specialImportant = Math.random()*1000 | 0;
+            data.import = Math.random()*1000 | 0;
+            data.compare = Math.random()*1000 | 0;
+            data.common = Math.random()*1000 | 0;
+            data.specail = Math.random()*1000 | 0;
+ 
+            let context = `
+               <div>
+                   <p><b style="font-size:15px;">${data.name}</b>(2020年第一季度)</p>
+                   <p class="tooltip_style"><span class="tooltip_left">事件总数</span><span class="tooltip_right">${data.value}</span></p>
+                   <p class="tooltip_style"><span class="tooltip_left">特别重大事件</span><span class="tooltip_right">${data.specialImportant}</span></p>
+                   <p class="tooltip_style"><span class="tooltip_left">重大事件</span><span class="tooltip_right">${data.import}</span></p>
+                   <p class="tooltip_style"><span class="tooltip_left">较大事件</span><span class="tooltip_right">${data.compare}</span></p>
+                   <p class="tooltip_style"><span class="tooltip_left">一般事件</span><span class="tooltip_right">${data.common}</span></p>
+                   <p class="tooltip_style"><span class="tooltip_left">特写事件</span><span class="tooltip_right">${data.specail}</span></p>
+               </div>
+            `
+            return context;
+          }
+        },
+        visualMap: {
+          show:true,
+          left: 26,
+          bottom: 1,
+          showLabel:true,
+          pieces: [
+            {
+              // 1000—4999;5000—19999;20000
+              gte: 20000,
+              label: ">= 20000",
+              color: "#1f307b"
+            },
+            {
+              gte: 5000,
+              lt: 19999,
+              label: "5000 - 19999",
+              color: "#3c57ce"
+            },
+            {
+              gte: 1000,
+              lt:4999,
+              label: "1000 - 4999",
+              color: "#6f83db"
+            },
+            {
+              gte: 1,
+              lt: 999,
+              label: "1 - 999",
+              color: "#9face7"
+            },
+            {
+              lt:0,
+              label:'<1',
+              color: "#bcc5ee"
+            }
+          ]
+        },
+        geo: {
+          map: "china",
+          scaleLimit: {
+            min: 1,
+            max: 2
+          },
+          zoom: 1.3,
+          top: 120,
+          label: {
+            normal: {
+              show:true,
+              fontSize: "12",
+              color: "white"
+            }
+          },
+          itemStyle: {
+            normal: {
+              borderColor: "rgba(0, 0, 0, 0.2)"
+            },
+            emphasis: {
+              areaColor: "#f2d5ad",
+              shadowOffsetX: 0,
+              shadowOffsetY: 0,
+              borderWidth: 0
+            }
+          }
+        },
+        series: [
+          {
+            name: "突发事件",
+            type: "map",
+            geoIndex: 0,
+            data:[]
+          }
+        ]
+      },
+      dataList: [
+
+      ],
+
+
+
+
+
+
       channelForStatus:'',
       channelForCardNum:'',
       channelForDataUsage:'',
@@ -230,7 +368,33 @@ export default {
       loadingCount:0
     }
   },
+  watch: {
+      //观察option的变化
+      options: {
+        handler(newVal, oldVal) {
+          let mapDiv = document.getElementById('china_map');
+          let myChart = echarts.init(mapDiv);
+          if (this.myChart) {
+            if (newVal) {
+              this.myChart.setOption(newVal);
+            } else {
+              this.myChart.setOption(oldVal);
+            }
+          } else {
+            this.initEchartMap();
+          }
+        },
+        deep: true //对象内部属性的监听，关键。
+      }
+    },
+  created() {
+      this.setEchartOption();
+    },
   mounted () {
+    this.$nextTick(()=>{
+          this.initEchartMap();
+      })
+    this.getChinaMapDatas()
     this.getAllChannels()
     this.getStopedCardNumForChannels()
     this.getSharingPoolNumForChannels()
@@ -240,6 +404,27 @@ export default {
     this.getCardDataUsageForChannels()
   },
   methods:{
+    getChinaMapDatas:function(){
+      let params = {}
+      // params.channelId = this.channelForDataUsage
+      params.type = 0
+      let that = this
+      this.addLoadingCount()
+        apiBigflow.getCardLbsStaticsForChannels(params).then(res=>{
+            if(res.resultCode == 0){
+                let statics = res.data  
+                this.dataList = []
+                for(let i =0; i < statics.length; i++){
+                  let oneData = {}
+                  oneData.name = statics[i].name
+                  oneData.value = statics[i].value
+                  this.dataList.push(oneData)
+                }
+                that.setEchartOption()
+            }
+            this.reduceLoadingCount()
+        })
+    },
     dataTypeForCardDataUsage:function(type){
       this.getCardDataUsageForChannels()
     },
@@ -412,6 +597,21 @@ export default {
       },
       getRandomInt () {
         return Math.floor(Math.random() * (50 - 5 + 1)) + 5
+      },
+
+      initEchartMap() {
+        let mapDiv = document.getElementById('china_map');
+        let myChart = echarts.init(mapDiv);
+        myChart.setOption(this.options);
+      },
+      //修改echart配制
+      setEchartOption(){
+        // let mapDiv = document.getElementById('china_map');
+        // let myChart = echarts.init(mapDiv);
+        // myChart.clear()
+        console.log('setEchartOption')
+        this.options.series[0]['data'] = this.dataList;
+        console.log('this.options.series[0][data]:' + JSON.stringify(this.options.series[0]['data']))
       }
     
   }
@@ -421,7 +621,7 @@ export default {
 <style scoped>
 .all_list {
   height: 100%;
-  height: 1500px;
+  height: 1600px;
   background: #f6f6f6;
 }
 .board{
@@ -522,10 +722,22 @@ export default {
   .chart{
     margin: 30px;
     margin-left: 50px;
-    height: 400px;
-    width: 450px;
+    height: 570px;
+    width: 500px;
   }
   .chart-form{
     display: flex;
+  }
+  #china_map {
+  	width: 100%;
+  	height: 500px;
+  }
+  .cardstatus-vepie{
+    margin-top: 100px;
+  }
+  .mapTitle{
+    font-size: 15px;
+    margin-left: 40%;
+    margin-top: 1%;
   }
 </style>
