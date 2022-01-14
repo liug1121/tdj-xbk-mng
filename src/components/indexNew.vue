@@ -193,6 +193,7 @@ export default {
     return {
 
       options: {
+        
         tooltip: {
           triggerOn: "mousemove",   //mousemove、click
           padding:8,
@@ -280,7 +281,8 @@ export default {
           },
           itemStyle: {
             normal: {
-              borderColor: "rgba(0, 0, 0, 0.2)"
+              borderColor: "rgba(0, 0, 0, 0.2)",
+              areaColor: 'silver',
             },
             emphasis: {
               areaColor: "#f2d5ad",
