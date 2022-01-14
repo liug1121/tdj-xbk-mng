@@ -205,26 +205,10 @@ export default {
             fontSize:13
           },
           formatter: function(e, t, n) {
-            let data = e.data;
-            //模拟数据
-            data.specialImportant = Math.random()*1000 | 0;
-            data.import = Math.random()*1000 | 0;
-            data.compare = Math.random()*1000 | 0;
-            data.common = Math.random()*1000 | 0;
-            data.specail = Math.random()*1000 | 0;
- 
-            let context = `
-               <div>
-                   <p><b style="font-size:15px;">${data.name}</b>(2020年第一季度)</p>
-                   <p class="tooltip_style"><span class="tooltip_left">事件总数</span><span class="tooltip_right">${data.value}</span></p>
-                   <p class="tooltip_style"><span class="tooltip_left">特别重大事件</span><span class="tooltip_right">${data.specialImportant}</span></p>
-                   <p class="tooltip_style"><span class="tooltip_left">重大事件</span><span class="tooltip_right">${data.import}</span></p>
-                   <p class="tooltip_style"><span class="tooltip_left">较大事件</span><span class="tooltip_right">${data.compare}</span></p>
-                   <p class="tooltip_style"><span class="tooltip_left">一般事件</span><span class="tooltip_right">${data.common}</span></p>
-                   <p class="tooltip_style"><span class="tooltip_left">特写事件</span><span class="tooltip_right">${data.specail}</span></p>
-               </div>
-            `
-            return context;
+            if(e.data == undefined || e.data == null)
+              return ''
+            let tipContent = e.data.tipContent
+            return tipContent;
           }
         },
         visualMap: {
@@ -234,7 +218,6 @@ export default {
           showLabel:true,
           pieces: [
             {
-              // 1000—4999;5000—19999;20000
               gte: 20000,
               label: ">= 20000",
               color: "#1f307b"
@@ -420,6 +403,14 @@ export default {
                   let oneData = {}
                   oneData.name = statics[i].name
                   oneData.value = statics[i].value
+                  let cities = statics[i].cities
+                  let tipContent = `<div>
+                                        <p><b style="font-size:15px;">${oneData.name}</b>（卡总数：${oneData.value} 张）</p>`
+                  for(let i = 0; i < cities.length; i++){
+                    tipContent = tipContent + `<p class="tooltip_style"><span class="tooltip_left">${cities[i].cityName}：</span><span class="tooltip_right"> ${cities[i].card_num} 张</span></p>`
+                  }
+                  tipContent = tipContent + `</div>`
+                  oneData.tipContent = tipContent
                   this.dataList.push(oneData)
                 }
                 that.setEchartOption()
@@ -608,12 +599,7 @@ export default {
       },
       //修改echart配制
       setEchartOption(){
-        // let mapDiv = document.getElementById('china_map');
-        // let myChart = echarts.init(mapDiv);
-        // myChart.clear()
-        console.log('setEchartOption')
         this.options.series[0]['data'] = this.dataList;
-        console.log('this.options.series[0][data]:' + JSON.stringify(this.options.series[0]['data']))
       }
     
   }
