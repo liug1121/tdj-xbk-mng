@@ -109,8 +109,8 @@
                 <el-select 
                 filterable
                 clearable
-                reserve-keyword
-                placeholder="请选择渠道" v-model="channelForStatus" style="width:500px" @change="channelChangeForStatus">
+                reserve-keyword  
+                placeholder="请选择渠道" v-model="channelForLbs" style="width:500px" @change="channelChangeForLbs">
                   <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
@@ -292,7 +292,7 @@ export default {
 
 
 
-
+      channelForLbs:'',
       channelForStatus:'',
       channelForCardNum:'',
       channelForDataUsage:'',
@@ -391,8 +391,8 @@ export default {
   methods:{
     getChinaMapDatas:function(){
       let params = {}
-      // params.channelId = this.channelForDataUsage
       params.type = 0
+      params.channelId = this.channelForLbs
       let that = this
       this.addLoadingCount()
         apiBigflow.getCardLbsStaticsForChannels(params).then(res=>{
@@ -453,6 +453,10 @@ export default {
             this.reduceLoadingCount()
         })
     },
+    channelChangeForLbs:function(){
+      this.getChinaMapDatas()
+    },
+
       channelChangeForStatus:function(channelId){
         this.getCardStatusNumForChannels()
       },
@@ -549,6 +553,7 @@ export default {
             this.reduceLoadingCount()
         })
     },
+    
     getStopedCardNumForChannels:function(){
       let params = {}
       this.addLoadingCount()
