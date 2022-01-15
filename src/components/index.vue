@@ -1,7 +1,8 @@
 <template>
   <div class="box">
     <el-container style="height: auto;">
-      <Aside class="el-aside"></Aside>
+      <Aside class="el-aside" v-if="isShow"></Aside>
+      <div class="hide-btn" @click="doControl">{{btnText}}</div>
       <Header></Header>
     </el-container>
   </div>
@@ -16,10 +17,22 @@ export default {
     Header
   },
   data () {
-    return {};
+    return {
+      isShow:true,
+      btnText:'隐藏菜单'
+    };
   },
 
-  methods: {}
+  methods: {
+    doControl:function(){
+      this.isShow=!this.isShow
+      if(this.isShow){
+        this.btnText = '隐藏菜单'
+      }else{
+        this.btnText = '显示菜单'
+      }
+    }
+  }
 };
 </script>
 <style >
@@ -95,5 +108,17 @@ export default {
 }
 .el-submenu.is-active .el-submenu__title i {
   color: #fff;
+}
+.hide-btn{
+  margin-top: 30%;
+  text-align: center;
+  font-size: 13px;
+  cursor:pointer;
+  background: gray;
+  height: 80px;
+  width: 20px;
+  margin-left: 2px;
+  margin-right: 2px;
+  color: white;
 }
 </style>
