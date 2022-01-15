@@ -42,7 +42,7 @@
         </div>
         <div class="board-row">
           <span>风险告警</span>
-           <div class="alert-panel">
+           <div class="alert-panel" @click="toLbs">
              <div class="left">
                <span class="title">风险区域</span>
                <div class="info">
@@ -297,7 +297,7 @@ export default {
       channelForCardNum:'',
       channelForDataUsage:'',
       channels:[],
-      dateType:'',
+      dateType:1,
       dateTypes:[
         {value:0, name:'7天内'},
         {value:1, name:'15天内'},
