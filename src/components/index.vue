@@ -44,8 +44,9 @@ export default {
   background-color: rgb(0, 21, 41);
   height: auto;
   /* width:180px; */
-  width: 17%;
+  width: 12%;
   overflow: hidden;
+  /* display: none; */
 }
 
 .el-container.is-vertical {

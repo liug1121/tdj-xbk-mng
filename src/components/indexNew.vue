@@ -84,7 +84,7 @@
         </div>
         
         <div class="board-row">
-          <span>卡状态统计</span>
+          <span>卡统计</span>
           <div class="chart">
             <el-form  :inline="true" >
               <el-form-item >
