@@ -53,7 +53,7 @@
                <img src="../assets/images/smsIcon.png"  alt="" />
              </div>
            </div>
-           <div class="alert-panel"> 
+           <div class="alert-panel" @click="toPool"> 
              <div class="left">
                <span class="title">风险用量</span>
                <div class="info">
@@ -67,7 +67,7 @@
                <img src="../assets/images/smsIcon.png"  alt="" />
              </div>
            </div>
-           <div class="alert-panel"> 
+           <!-- <div class="alert-panel"> 
              <div class="left">
                <span class="title">风险类型</span>
                <div class="info">
@@ -80,7 +80,7 @@
              <div class="right">
                <img src="../assets/images/smsIcon.png"  alt="" />
              </div>
-           </div>
+           </div> -->
         </div>
         
         <div class="board-row">
@@ -575,8 +575,17 @@ export default {
       this.$router.push('/bigflowChannelStatic');
     },
     toLbs:function(){
-      this.$router.push('/LBSRecordList');
+      this.$router.push({
+        path: '/LBSRecordList',
+        query: { lbsStatus: 1 }
+      })
     },
+
+    toPool:function(){
+      this.$router.push('/bigflowPoolInfo');
+    },
+
+    
     fillData () {
         this.datacollection = {
           labels: [this.getRandomInt(), this.getRandomInt()],

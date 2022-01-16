@@ -16,7 +16,7 @@
   
       <div class="top_right">
         <!-- <span @click="logout()" style="cursor:pointer;">退出登录</span> -->
-        <span  style="margin-left:20px;"><img class="usr-img" style="position: relative;top: 8px;" src="@/assets/images/user_pic.png" /></span>
+        <!-- <span  style="margin-left:20px;"><img class="usr-img" style="position: relative;top: 8px;" src="@/assets/images/user_pic.png" /></span> -->
         <!-- <span style="padding-left:10px;">{{username}}</span> -->
         <div class="dropdown">
         <button @click="myFunction" class="dropbtn">{{username}}</button>

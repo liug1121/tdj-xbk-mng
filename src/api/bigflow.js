@@ -305,5 +305,10 @@ export default {
     getCardLbsStaticsForChannels: params =>{
         return API.POST('/bigflow/manage/v1.0/card/cardNum/lbs/statics/channels', params)
     },
+    exportChannelStatics: params =>{
+        return API.POST('/bigflow/manage/v1.0/channels/statics/export', params)
+    },
+
+    
     
 }

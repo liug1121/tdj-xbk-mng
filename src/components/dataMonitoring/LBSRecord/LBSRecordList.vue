@@ -100,10 +100,18 @@ export default {
         provinceId: null,
         startTime: null,
         page: 0,
-        pageSize: 10
+        pageSize: 10,
+        lbsStatus:0
       },
       excelName: 'LBS记录'
     };
+  },
+  created () {
+    let lbsStatus = this.$route.query.lbsStatus
+    if(lbsStatus != undefined && lbsStatus != '' && lbsStatus != null){
+      console.log('this.lbsStatus[lbsStatus].value:' + this.lbsStatus[lbsStatus].value)
+      this.queryLBSlistFormModel.lbsStatus = this.lbsStatus[lbsStatus].value
+    }
   },
   mounted () {
     this.getLBSlist()
@@ -113,10 +121,10 @@ export default {
     // 渠道
     channelSelectId (channelSelectId) {
       this.queryLBSlistFormModel.channelId = channelSelectId
-      // console.log(channelSelectId);
     },
     //获取分页列表
     getLBSlist () {
+      
       let params = this.queryLBSlistFormModel
       this.loading = true
       // 获取后台数据

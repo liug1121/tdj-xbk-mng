@@ -55,6 +55,7 @@ export default {
 
 .el-aside {
   background-color: rgb(0, 21, 41);
+  /* margin-top:4%; */
   height: auto;
   /* width:180px; */
   width: 12%;

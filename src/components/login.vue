@@ -1,14 +1,14 @@
 <template>
   <div class="login_container">
     <div class="login_header">
-      <img class="login_hearder_left" src="../assets/images/logo-chinauni.png" width="100%" height="100%" alt="" />
-      <img class="login_hearder_right" src="../assets/images/logo-yanfei.png" width="100%" height="100%" alt="" />
+      <!-- <img class="login_hearder_left" src="../assets/images/logo-chinauni.png" width="100%" height="100%" alt="" />
+      <img class="login_hearder_right" src="../assets/images/logo-yanfei.png" width="100%" height="100%" alt="" /> -->
     </div>
-    <img src="../assets/images/content-big.jpg" width="100%" height="100%" alt="" />
+    <!-- <img src="../assets/images/content-big.jpg" width="100%" height="100%" alt="" /> -->
     <div class="login_footer"></div>
     <!-- Copyright ©2019 南京天地杰实业有限公司 All Rights Reserved -->
     <div class="login_box">
-      <div class="login_title">雁飞·流量运营平台</div>
+      <div class="login_title">流量运营平台</div>
       <!-- <div class="login_left">
         <div class="avatar_box">
           <img src="../assets/images/logo.png" />
@@ -305,7 +305,7 @@ export default {
 .login_header{
   opacity: 0.9;
   /* background-color: rgba(8, 5, 39, 0.9); */
-  border-bottom: 2px solid rgb(37,74,145);
+  /* border-bottom: 2px solid rgb(37,74,145); */
   height: 10%;
 }
 .login_footer{

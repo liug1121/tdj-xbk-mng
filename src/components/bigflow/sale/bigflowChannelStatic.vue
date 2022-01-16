@@ -7,6 +7,9 @@
       <!-- <el-col :span="20"> -->
       <el-col>
         <el-card v-if="selectedTab == 0">
+         <div class="button_content"> 
+            <el-button size="medium" type="primary" @click="exportChannelStatics">导出</el-button>
+          </div>
           <el-table  :data="channelCardStatics" border max-height="800" align="center" :cell-style="{height: '38px',padding:0}">
             <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :show-overflow-tooltip='true' :sortable="p.sortable">
               <template slot-scope="scope">
@@ -56,6 +59,27 @@ export default {
     this.getChannels()
   },
   methods: {
+    exportChannelStatics:function(){
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let params = {}
+        params.channelIds = this.selecedChannelCode
+        this.loading = true
+        apiBigflow.exportChannelStatics(params).then(res=>{
+            if(res.resultCode == 0){
+                this.$message.success('请在任务:' + res.data + "下载")
+            }else{
+                this.$message.error('操作失败')
+            }
+            this.loading = false
+        })
+      }).catch(() => {
+      });
+        
+    },
     getChannelCardStatics:function(){
         let params = {}
         params.channelIds = this.selecedChannelCode
