@@ -86,7 +86,8 @@ export default {
       ],
       lbsStatus: [
         { label: "正常", value: 0 },
-        { label: "关停", value: 1 }
+        { label: "关停", value: 1 },
+        { label: "关停失败", value: 3 }
       ],
       // 省份
       provinceOptions: [],
@@ -101,7 +102,7 @@ export default {
         startTime: null,
         page: 0,
         pageSize: 10,
-        lbsStatus:0
+        lbsStatus:3
       },
       excelName: 'LBS记录'
     };
