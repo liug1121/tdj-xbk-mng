@@ -90,6 +90,7 @@
               <el-button v-permission="{indentity:'bigflowFlowPool-start'}" type="text" size="small" @click="openPool(scope.row.poolId)" v-else>启用</el-button>
               <el-button v-permission="{indentity:'bigflowFlowPool-detail'}" type="text" size="small" >用量明细</el-button>
               <el-button v-permission="{indentity:'bigflowFlowPool-delete'}" type="text" size="small" @click="removePool(scope.row.poolId)">删除</el-button>
+              <el-button v-permission="{indentity:'bigflowFlowPool-delete'}" type="text" size="small" @click="showAlertMailList(scope.row.poolId)">编辑</el-button>
             </div>
             <div v-else>
               <div v-if="p.prop == 'lastPer'">
@@ -222,6 +223,80 @@
         <el-button type="primary" @click="okUpdateExpire" :disabled="btnEnable">确 定</el-button>
       </span>  
     </el-dialog> 
+
+    <el-dialog title="告警邮箱列表" :visible.sync="alertMailListDlgVisible" width="650px" @close="hideAlertMailListDlg">
+      <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowFlowPool-add'}" @click="showAlertEditDlg">添加</el-button>
+      <el-table   :data="alertInfos" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55">
+        </el-table-column>
+        <el-table-column v-for="(p, key) in table_column_alertInfos" :prop="p.prop" :label="p.label" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+          <template slot-scope="scope">
+            
+            <div v-if="p.prop == 'operation'">
+              <el-button v-permission="{indentity:'bigflowFlowPool-sotp'}" type="text" size="small" @click="removePoolAlertInfo(scope.row.id)">删除</el-button>
+              <el-button v-permission="{indentity:'bigflowFlowPool-start'}" type="text" size="small" @click="toModifyPoolAlertInfo(scope.row)">修改</el-button>
+            </div>
+            <div v-else>
+              <div v-if="p.prop == 'lastPer'">
+                <div v-if="scope.row.lastPer <=10" class="usagePer">
+                  {{scope.row.lastPer}}%
+                </div>
+                <div v-else>
+                  {{scope.row.lastPer}}%
+                </div>
+                
+              </div>
+              <div v-else v-html="scope.row[p.prop]" />
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+      
+      
+    </el-dialog> 
+
+
+
+
+   <el-dialog title="告警邮箱" :visible.sync="alertMailEditDlgVisible" width="450px" @close="hideAlertMailEditDlg">
+      
+      <el-form :model="alertMailForm"  label-width="110px">
+        <el-form-item label="邮箱地址">
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword
+          class="queryFormInput"  placeholder="请输入邮箱地址" v-model="alertMailForm.address">
+            <el-option v-for="item in channelMailConfigs" :key="item.id" :label="item.user_name" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="阀值类型(G)">
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword 
+          class="queryFormInput"  placeholder="请输入阀值类型" v-model="alertMailForm.alertThreshold">
+            <el-option v-for="item in alertThresholds" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="发送次数">
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword 
+          class="queryFormInput"  placeholder="请输入发送次数" v-model="alertMailForm.alertTime">
+            <el-option v-for="item in alertTimes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="hideAlertMailEditDlg">取 消</el-button>
+        <el-button type="primary" @click="okModifyAlertMail">确 定</el-button>
+      </span>  
+    </el-dialog> -->
     <el-main class="el-loading" v-loading="loading" element-loading-background="transparent"
         element-loading-text="加载中" > 
     </el-main>
@@ -236,6 +311,17 @@ export default {
   },
   data () {
     return {
+    alertInfos:[],
+    channelMailConfigs:[],
+    alertMailForm:{
+      poolId:'',
+      address:'',
+      id:'',
+      alertThreshold:'',
+      alertTime:''
+    }, 
+    alertMailListDlgVisible:false,
+    alertMailEditDlgVisible:false,
     detailType:null,
     poolDetails:[],
     listType:0,
@@ -255,6 +341,16 @@ export default {
     status:'',
     saleChannel:'',
     channels:[],
+    alertTimes:[
+      {label:'1次', value:'1'},
+      {label:'5次', value:'5'},
+      {label:'10次', value:'10'}
+    ],
+    alertThresholds:[
+      {label:'10G', value:'10'},
+      {label:'20G', value:'20'},
+      {label:'30G', value:'30'}
+    ],
     statusTypes:[
         {label:'可用', value:'open'},
         {label:'不可用', value:'close'}
@@ -270,6 +366,14 @@ export default {
       // 列表总条数
       total: 0,
       // 列表，标题、字段
+  
+      table_column_alertInfos:[
+        { prop: 'mailAddress', label: '邮箱地址', width: 100, sortable: true },
+        { prop: 'threshold', label: '阀值(G)', width: 100, sortable: true },
+        { prop: 'times', label: '告警次数', width: 100, sortable: true },
+        { prop: 'operation', label: '操作', width: 100, sortable: true }
+        
+      ],
       table_column: [
         { prop: 'poolId', label: '池ID', width: 100, sortable: true },
         { prop: 'poolName', label: '池名称', width: 100, sortable: true },
@@ -307,21 +411,154 @@ export default {
   },
   watch: {},
   methods: {
+
+    getPoolAlertInfos:function(poolId){
+      let params = {}
+      params.poolId = this.alertMailForm.poolId
+      apiBigflow.getPoolAlertInfos(params).then(res=>{
+            if(res.resultCode == 0){
+                this.alertInfos = res.data
+            }
+        })
+    },
     
     listTypeSel:function(type){
       this.listType = type
     },
     treeSelect:function(type){
       this.treeSelectedType = type
-      // this.queryBillForm.subFwAccounts = null
-      // this.subAccountView = false
-      // this.treeSelectedType = type
-      // if(type == 2){
-      //   this.subAccountView = true
-      // }
-      // if(type == 3){
-      //   this.getUnChannelsList()
-      // }
+    },
+    toModifyPoolAlertInfo:function(row){
+      this.alertMailForm.id = row.id
+      this.alertMailForm.address = row.mailId
+      this.alertMailForm.alertThreshold = row.threshold
+      this.alertMailForm.alertTime = row.times
+      this.alertMailEditDlgVisible = true
+    },
+    removePoolAlertInfo:function(id){
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+          let params = {}
+          params.id = id
+          apiBigflow.removePoolAlertInfo(params).then(res=>{
+                if(res.resultCode == 0){
+                    this.$message.success('删除成功')
+                    this.getPoolAlertInfos(this.alertMailForm.poolId)
+                }else{
+                    this.$message.success('删除失败')
+                }
+
+            })
+        }).catch(() => {
+        });
+    },
+    okModifyAlertMail:function(){
+    if(this.alertMailForm.poolId == null || this.alertMailForm.poolId == undefined || this.alertMailForm.poolId == ''){
+      this.$message.error('请先选择流量池')
+      return
+    }
+    if(this.alertMailForm.address == null || this.alertMailForm.address == undefined || this.alertMailForm.address == ''){
+      this.$message.error('邮箱不能为空')
+      return
+    }
+    if(this.alertMailForm.alertThreshold == null || this.alertMailForm.alertThreshold == undefined || this.alertMailForm.alertThreshold == ''){
+      this.$message.error('告警阀值不能为空')
+      return
+    }
+    if(this.alertMailForm.alertTime == null || this.alertMailForm.alertTime == undefined || this.alertMailForm.alertTime == ''){
+      this.$message.error('告警次数不能为空')
+      return
+    }
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+
+          if(this.alertMailForm.id == '' || this.alertMailForm.id == undefined){
+            let params = {}
+            params.poolId = this.alertMailForm.poolId
+            params.mailId = this.alertMailForm.address
+            params.alertThreshold = this.alertMailForm.alertThreshold
+            params.alertTimes = this.alertMailForm.alertTime
+            apiBigflow.addPoolMail(params).then(res=>{
+                  if(res.resultCode == 0){
+                      // that.queryFlowPools()
+                      this.$message.success('添加成功')
+                      this.getPoolAlertInfos(this.alertMailForm.poolId)
+                      // this.alertMailForm.poolId = ''
+                      this.alertMailForm.address = ''
+                      this.alertMailForm.id = ''
+                      this.alertMailForm.alertThreshold = ''
+                      this.alertMailForm.alertTime = ''
+                      this.alertMailEditDlgVisible = false
+                      
+                  }else{
+                      this.$message.success('添加失败')
+                  }
+              })
+          }else{
+            let params = {}
+            params.id = this.alertMailForm.id
+            params.poolId = this.alertMailForm.poolId
+            params.mailId = this.alertMailForm.address
+            params.alertThreshold = this.alertMailForm.alertThreshold
+            params.alertTimes = this.alertMailForm.alertTime
+            apiBigflow.modifyPoolAlertInfo(params).then(res=>{
+                  if(res.resultCode == 0){
+                      // that.queryFlowPools()
+                      this.$message.success('添加成功')
+                      this.getPoolAlertInfos(this.alertMailForm.poolId)
+                      // this.alertMailForm.poolId = ''
+                      this.alertMailForm.address = ''
+                      this.alertMailForm.id = ''
+                      this.alertMailForm.alertThreshold = ''
+                      this.alertMailForm.alertTime = ''
+                      this.alertMailEditDlgVisible = false
+                      this.alertMailForm.id =''
+                      
+                  }else{
+                      this.$message.success('添加失败')
+                  }
+              })
+          }
+          
+        }).catch(() => {
+        });
+    },
+    // addPoolMail
+    hideAlertMailEditDlg:function(){
+      this.alertMailEditDlgVisible = false
+    },
+    showAlertEditDlg:function(){
+      this.alertMailEditDlgVisible = true
+    },
+    hideAlertMailListDlg:function(){
+      this.alertMailListDlgVisible = false
+    },
+    showAlertMailList:function(poolId){
+      this.alertMailListDlgVisible = true
+      this.getPoolMailConfigs(poolId)
+      this.alertMailForm.poolId = poolId
+      this.getPoolAlertInfos(poolId)
+    },
+    getPoolMailConfigs:function(poolId){
+      let params = {}
+      params.poolId = poolId
+      apiBigflow.getPoolMailConfigs(params).then(res=>{
+            if(res.resultCode == 0){
+               this.channelMailConfigs = res.data
+               for(let i=0; i < this.channelMailConfigs.length; i++){
+                 this.channelMailConfigs[i].id = '' + id + ''
+               }
+            }else{
+                alert('操作失败:' + res.resultInfo)
+            }
+            // that.btnEnable = false
+        })
     },
     removePool:function(poolId){
       // removeFlowPool

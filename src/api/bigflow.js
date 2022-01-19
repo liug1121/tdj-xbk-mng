@@ -319,5 +319,26 @@ export default {
     },
     getSaleChannelMailConfig: params =>{
         return API.POST('/bigflow/manage/v1.0/salechannel/mail/configs', params)
+    },
+    getPoolMailConfigs: params =>{
+        return API.POST('/bigflow/manage/v1.0/pools/mails', params)
     }, 
+    addPoolMail: params =>{
+        return API.POST('/bigflow/manage/v1.0/pools/alert/config/add', params)
+    }, 
+    getPoolAlertInfos: params =>{
+        return API.POST('/bigflow/manage/v1.0/pools/alert/configs', params)
+    }, 
+    removePoolAlertInfo: params =>{
+        return API.POST('/bigflow/manage/v1.0/pools/alert/config/remove', params)
+    },
+    modifyPoolAlertInfo: params =>{
+        return API.POST('/bigflow/manage/v1.0/pools/alert/config/modify', params)
+    },
+    
+    
+
+    
+
+    
 }
