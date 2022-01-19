@@ -6,12 +6,41 @@
         <channelTree ref="channerTreeRef" @channelChick="channelChick" @getChannelId="getChannelId" style="max-height:680px;overflow: auto"></channelTree>
       </el-col>
       <el-col :span="18">
+
+       
+
+       <el-card>
+          <div class="button_content"> 
+            <el-button size="medium" type="primary" icon="el-icon-plus"  v-permission="{indentity:'bigflowChannelList-add'}" @click="showMailConfigDlg">添加渠道邮箱</el-button>
+          </div> 
+          <el-table  :data="mailCofings" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
+            <el-table-column v-for="(p, key) in table_mail_column" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :show-overflow-tooltip='true'>
+              <template slot-scope="scope">
+                <div v-if="p.prop == 'opts'" v-permission="{indentity:'bigflowChannelList-add'}">
+                  <el-button type="text" size="small" @click="showMailConfigDlg(scope.row)">编辑</el-button>
+                  <el-button type="text" size="small" @click="okRemoveMailConfig(scope.row)">删除</el-button>
+                </div>
+                  <div v-if="p.prop == 'channelName'">
+                    <span>{{selectedChannelName}}</span>
+                  </div>
+                  <div v-else>
+                      <div v-html="scope.row[p.prop]" />
+                  </div>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-card>
+
+
+
+
+
         <el-card>
           <div class="button_content"> 
             <el-button size="medium" type="primary" icon="el-icon-plus"  v-permission="{indentity:'bigflowChannelList-add'}" @click="showAddImeiDlg()">添加imei规则</el-button>
           </div>
           <el-table  :data="imeiRules" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
-            <el-table-column v-for="(p, key) in table_imei_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :show-overflow-tooltip='true'>
+            <el-table-column v-for="(p, key) in table_imei_column" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :show-overflow-tooltip='true'>
               <template slot-scope="scope">
                 <div v-if="p.prop == 'opts'" v-permission="{indentity:'bigflowChannelList-add'}">
                   <el-button type="text" size="small" @click="showEditImeiDlg(scope.row)">编辑</el-button>
@@ -33,7 +62,7 @@
             <el-button size="medium" type="primary" icon="el-icon-plus" @click="showAddManager" v-permission="{indentity:'bigflowChannelList-add'}">添加管理员</el-button>
           </div>
           <el-table  :data="salePersons" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
-            <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :show-overflow-tooltip='true'>
+            <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :show-overflow-tooltip='true'>
               <template slot-scope="scope">
                 <div v-if="p.prop == 'opts'" v-permission="{indentity:'bigflowChannelList-add'}">
                   <el-button type="text" size="small" @click="showEditChannel(scope.row, selectedChannelName)">编辑</el-button>
@@ -124,6 +153,21 @@
           <el-button type="primary" @click="addManager">确 定</el-button>
         </span>
       </el-dialog>
+
+
+      <el-dialog title="渠道邮箱" :visible.sync="mailConfigDialogVisible" width="430px" @close="closeMailConfigButton">
+      <!-- 内容主体区域 -->
+      <el-form :model="mailConfigForm"  label-width="120px">
+        <el-form-item label="邮箱地址" >
+          <el-input size="small" v-model="mailConfigForm.address" placeholder="请输入邮箱地址" @blur="sendEmail"></el-input>
+        </el-form-item>
+      </el-form>
+        <!-- 底部区域 -->
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="hideMailConfigDlg">取 消</el-button>
+          <el-button type="primary" @click="okModifyMailConfig">确 定</el-button>
+        </span>
+      </el-dialog>
       <el-main class="el-loading" v-loading="loading" element-loading-background="transparent"
         element-loading-text="加载中" > 
     </el-main>
@@ -144,6 +188,12 @@ export default {
   },
   data () {
     return {
+      mailConfigDialogVisible:false,
+      mailConfigForm:{
+        address:'',
+        id:''
+      },
+      mailCofings:[],
       imeiRules:[],
       showEditChannelDlg:false,
       imeiWhiteGroups:[],
@@ -170,6 +220,11 @@ export default {
       page: 1,
       pageSize: 10,
       total: 0,
+
+       table_mail_column:[
+         { prop: 'user_name', label: '邮箱地址', width: 150 },
+         { prop: 'opts', label: '操作', width: 180 }
+       ],
       // 表格 label 字段名称
       table_column: [
         { prop: 'channelName', label: '渠道名称', width: 150 },
@@ -273,6 +328,113 @@ export default {
     this.getChannelTree()
   },
   methods: {
+    sendEmail: function() {
+        var regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+        if (this.mailConfigForm.address != '' && !regEmail.test(this.mailConfigForm.address)) {
+            this.$message({
+                message: '邮箱格式不正确',
+                type: 'error'
+            })
+            this.mailConfigForm.address = ''
+        }
+    },
+    getSaleChannelMailConfig:function(){
+      let params = {}
+      params.channelId = this.selecedChannelCode 
+      apiBigflow.getSaleChannelMailConfig(params).then(res => {
+          if (res.resultCode === 0) {
+            this.mailCofings = res.data
+          } else {
+            this.$message.error(res.resultInfo)
+          }
+        })
+    },
+    
+    okRemoveMailConfig:function(row){
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let params = {}
+        params.id = row.id
+        apiBigflow.removeSaleChannelMailConfig(params).then(res => {
+          if (res.resultCode === 0) {
+            this.$message.success('删除成功！')
+            this.getSaleChannelMailConfig()
+          } else {
+            this.$message.error(res.resultInfo)
+          }
+        })
+      }).catch(() => {
+      });
+    },
+    okModifyMailConfig:function(){
+      if(this.mailConfigForm.address == undefined || 
+      this.mailConfigForm.address == '' || 
+      this.mailConfigForm.address == null){
+        this.$message.error('邮箱地址必须填写')
+        return
+      }
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        console.log(JSON.stringify(this.mailConfigForm))
+        if(this.mailConfigForm.id == '' || this.mailConfigForm.id == undefined || this.mailConfigForm.id == null){
+          let params = {}
+          params.channel_id = this.selecedChannelCode 
+          params.user_name = this.mailConfigForm.address
+          apiBigflow.addSaleChannelMailConfig(params).then(res => {
+            if (res.resultCode === 0) {
+              this.$message.success('添加成功！')
+              this.getSaleChannelMailConfig()
+              this.mailConfigDialogVisible = false
+            } else {
+              this.$message.error(res.resultInfo)
+            }
+          })
+        }else{
+          let params = {}
+          params.channel_id = this.selecedChannelCode 
+          params.user_name = this.mailConfigForm.address
+          params.id = this.mailConfigForm.id
+          apiBigflow.modifySaleChannelMailConfig(params).then(res => {
+            if (res.resultCode === 0) {
+              this.$message.success('添加成功！')
+              this.getSaleChannelMailConfig()
+              this.mailConfigDialogVisible = false
+            } else {
+              this.$message.error(res.resultInfo)
+            }
+          })
+        }
+        this.mailConfigForm.address = ''
+        this.mailConfigForm.id = ''
+      }).catch(() => {
+      });
+    },
+    showMailConfigDlg:function(row){
+      if(this.selecedChannelCode == null || this.selecedChannelCode == undefined || this.selecedChannelCode  == ''){
+        this.$message.error('请先选择渠道')
+        return
+      }
+      if(row != undefined){
+        this.mailConfigForm.address = row.user_name
+        this.mailConfigForm.id = row.id
+      }else{
+        this.mailConfigForm.address = ''
+        this.mailConfigForm.id = ''
+      }
+      this.mailConfigDialogVisible = true
+    },
+    hideMailConfigDlg:function(){
+      this.mailConfigDialogVisible = false
+    },
+    closeMailConfigButton:function(){
+
+    },
     showAddImeiDlg:function(){
       if(this.selecedChannelCode == null || this.selecedChannelCode == undefined || this.selecedChannelCode  == ''){
         this.$message.error('请先选择渠道')
@@ -548,6 +710,7 @@ export default {
         this.selectedChannelName = channelName
         this.getSalePerson()
         this.getChannelImeiConfig()
+        this.getSaleChannelMailConfig()
     },
     // 获取列表
     getChannelList (parentChannelId) {

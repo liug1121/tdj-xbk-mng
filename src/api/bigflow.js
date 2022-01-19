@@ -308,7 +308,16 @@ export default {
     exportChannelStatics: params =>{
         return API.POST('/bigflow/manage/v1.0/channels/statics/export', params)
     },
-
-    
-    
+    addSaleChannelMailConfig: params =>{
+        return API.POST('/bigflow/manage/v1.0/salechannel/mail/configs/add', params)
+    },
+    modifySaleChannelMailConfig: params =>{
+        return API.POST('/bigflow/manage/v1.0/salechannel/mail/configs/modify', params)
+    },
+    removeSaleChannelMailConfig: params =>{
+        return API.POST('/bigflow/manage/v1.0/salechannel/mail/configs/remove', params)
+    },
+    getSaleChannelMailConfig: params =>{
+        return API.POST('/bigflow/manage/v1.0/salechannel/mail/configs', params)
+    }, 
 }
