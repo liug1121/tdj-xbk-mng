@@ -238,14 +238,8 @@
               <el-button v-permission="{indentity:'bigflowFlowPool-start'}" type="text" size="small" @click="toModifyPoolAlertInfo(scope.row)">修改</el-button>
             </div>
             <div v-else>
-              <div v-if="p.prop == 'lastPer'">
-                <div v-if="scope.row.lastPer <=10" class="usagePer">
-                  {{scope.row.lastPer}}%
-                </div>
-                <div v-else>
-                  {{scope.row.lastPer}}%
-                </div>
-                
+              <div v-if="p.prop == 'threshold'">
+                少于{{scope.row.threshold}}%
               </div>
               <div v-else v-html="scope.row[p.prop]" />
             </div>
@@ -271,7 +265,7 @@
             <el-option v-for="item in channelMailConfigs" :key="item.id" :label="item.user_name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="阀值类型(G)">
+        <el-form-item label="阀值类型">
           <el-select 
           filterable
           clearable
@@ -347,9 +341,9 @@ export default {
       {label:'10次', value:'10'}
     ],
     alertThresholds:[
-      {label:'10G', value:'10'},
-      {label:'20G', value:'20'},
-      {label:'30G', value:'30'}
+      {label:'少于10%', value:'10'},
+      {label:'少于20%', value:'20'},
+      {label:'少于30%', value:'30'}
     ],
     statusTypes:[
         {label:'可用', value:'open'},
@@ -369,7 +363,7 @@ export default {
   
       table_column_alertInfos:[
         { prop: 'mailAddress', label: '邮箱地址', width: 100, sortable: true },
-        { prop: 'threshold', label: '阀值(G)', width: 100, sortable: true },
+        { prop: 'threshold', label: '阀值', width: 100, sortable: true },
         { prop: 'times', label: '告警次数', width: 100, sortable: true },
         { prop: 'operation', label: '操作', width: 100, sortable: true }
         
@@ -551,9 +545,6 @@ export default {
       apiBigflow.getPoolMailConfigs(params).then(res=>{
             if(res.resultCode == 0){
                this.channelMailConfigs = res.data
-               for(let i=0; i < this.channelMailConfigs.length; i++){
-                 this.channelMailConfigs[i].id = '' + id + ''
-               }
             }else{
                 alert('操作失败:' + res.resultInfo)
             }
