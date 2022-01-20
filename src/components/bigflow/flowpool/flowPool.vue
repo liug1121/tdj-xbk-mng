@@ -239,7 +239,7 @@
             </div>
             <div v-else>
               <div v-if="p.prop == 'threshold'">
-                少于{{scope.row.threshold}}%
+                可用量少于{{scope.row.threshold}}%
               </div>
               <div v-else v-html="scope.row[p.prop]" />
             </div>
@@ -341,9 +341,9 @@ export default {
       {label:'10次', value:'10'}
     ],
     alertThresholds:[
-      {label:'少于10%', value:'10'},
-      {label:'少于20%', value:'20'},
-      {label:'少于30%', value:'30'}
+      {label:'可用量少于10%', value:'10'},
+      {label:'可用量少于20%', value:'20'},
+      {label:'可用量少于30%', value:'30'}
     ],
     statusTypes:[
         {label:'可用', value:'open'},
