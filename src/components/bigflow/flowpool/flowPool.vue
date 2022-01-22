@@ -239,7 +239,8 @@
             </div>
             <div v-else>
               <div v-if="p.prop == 'threshold'">
-                可用量少于{{scope.row.threshold}}%
+                <div v-if="scope.row.threshold > 0">可用量少于{{scope.row.threshold}}%</div>
+                <div v-else>流量池停用</div>
               </div>
               <div v-else v-html="scope.row[p.prop]" />
             </div>
@@ -341,9 +342,13 @@ export default {
       {label:'10次', value:'10'}
     ],
     alertThresholds:[
+      {label:'流量池停用', value:'0'},
+      {label:'可用量少于5%', value:'5'},
       {label:'可用量少于10%', value:'10'},
       {label:'可用量少于20%', value:'20'},
-      {label:'可用量少于30%', value:'30'}
+      {label:'可用量少于30%', value:'30'},
+      {label:'可用量少于40%', value:'40'},
+      {label:'可用量少于50%', value:'50'}
     ],
     statusTypes:[
         {label:'可用', value:'open'},

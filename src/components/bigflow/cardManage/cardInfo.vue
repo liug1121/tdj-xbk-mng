@@ -76,6 +76,8 @@
         v-permission="{indentity:'bigflowCardInfo-planChange'}" @click="openChangeCommonTypeDlg">变更卡通讯计划</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-validityExtend'}" @click="openExpireDateExtendDlg">有效期延长</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowCardInfo-validityExtend'}" @click="openFile2CheckDlg">与CMP进行用量核查</el-button>
         <!-- <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-validityExtend'}" @click="openFile2CheckDlg">与CMP进行用量核查</el-button> -->
         <!-- <el-button size="medium" type="primary" icon="el-icon-edit" 
