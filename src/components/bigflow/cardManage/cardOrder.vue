@@ -49,6 +49,8 @@
         v-permission="{indentity:'bigflowCardOrder-exportFor'}" disabled>按首尾条件导出</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardOrder-exportFor'}" @click="openBatchDeleteOrderDlg">批量删除订单</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowCardOrder-exportFor'}" @click="doPledgeReturn">退押金操作</el-button>
       </div>
       <!-- 列表区域 -->
       <!-- <div class="cardNos">
@@ -216,6 +218,25 @@
         <el-button type="primary" @click="okBatchDeleteOrder" :disabled="btnEnable">确 定</el-button>
       </span>  
     </el-dialog>
+
+    <el-dialog title="押金操作" :visible.sync="showPledgeOptDlg" width="450px" @close="closePledgeOptDlg">
+      <!-- 内容主体区域 --> 
+      <el-form :model="pledgeOptForm"  label-width="110px">
+        <el-form-item label="操作类型">
+          <el-select class="queryFormInput"  clearable placeholder="请选择操作类型" v-model="pledgeOptForm.pledgeOptType">
+            <el-option v-for="item in pledgeOpts" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input style="width:300px;" v-model="pledgeOptForm.comment" placeholder="请输入备注" ></el-input>
+        </el-form-item>
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closePledgeOptDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okPledgeOpt" :disabled="btnEnable">确 定</el-button>
+      </span>  
+    </el-dialog> 
   </div>
 </template>
 
@@ -230,6 +251,21 @@ export default {
   },
   data () {
     return {
+        showPledgeOptDlg:false,
+        pledgeOptForm:{
+          pledgeOptType:'',
+          comment:''
+        },
+        pledgeOpts:[
+          {
+              value:2,
+              name:'已退还'
+          },
+          {
+              value:3,
+              name:'已驳回'
+          }
+        ],      
         showBatchDeleteOrder:false,
         showOrderImportDlg:false,  
         orderImportForm:{},
@@ -240,6 +276,7 @@ export default {
         orderStartDate:'',
         orderEndDate:'',
         orderId:'',
+        orderIdOpt:'',
         iccid:'',
         msisdn:'',
         channel:'',
@@ -285,7 +322,16 @@ export default {
         { prop: 'giveUsage', label: '赠送用量', width: 80 },
         { prop: 'giveUsageType', label: '赠送用量类型', width: 50 },
         { prop: 'gmtCreate', label: '下单时间', width: 160, sortable: true },
-        { prop: 'gmtActive', label: '激活时间', width: 160 }
+        { prop: 'gmtActive', label: '激活时间', width: 160 },
+        { prop: 'cashPledge', label: '押金金额', width: 160 },
+        { prop: 'cashPledgePayed', label: '押金是否已交', width: 160 },
+        { prop: 'pledgeWechatPayNo', label: '押金支付单号', width: 160 },
+        { prop: 'cashPledgeReturn', label: '押金退还状态', width: 160 },
+        { prop: 'cashPledgeReturnComment', label: '押金退还说明', width: 160 },
+        { prop: 'saled', label: '是否已售卖', width: 160 },
+        { prop: 'saledDate', label: '售卖日期', width: 160 },
+        { prop: 'saledPrice', label: '销售金额', width: 160 },
+        { prop: 'wechatPayNo', label: '支付单号', width: 160 }
       ],
     };
   },
@@ -299,6 +345,42 @@ export default {
   },
   watch: {},
   methods: {
+    closePledgeOptDlg:function(){
+      this.showPledgeOptDlg = false
+    },
+    okPledgeOpt:function(){
+      // modifyPledgeReturnStatus
+      let that = this
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+      }).then(() => {
+          that.btnEnable = true
+          let params = {}
+          params.orderId = this.orderIdOpt
+          params.status = this.pledgeOptForm.pledgeOptType
+          params.comment = this.pledgeOptForm.comment
+          apiBigflow.modifyPledgeReturnStatus(params).then(res=>{
+              if(res.resultCode == 0){
+                  that.queryCardOrders()
+                  this.$message.success(`操作成功`)
+                  that.showPledgeOptDlg = false
+              }else{
+                  this.$message.error('操作失败:' + res.resultInfo)
+              }
+              that.btnEnable = false
+          })
+      }).catch(() => {
+      });
+    },
+    doPledgeReturn:function(){
+      if(this.orderIdOpt == ''){
+        this.$message.error(`请选择要操作的订单`)
+        return
+      }
+      this.showPledgeOptDlg = true
+    },
     openBatchDeleteOrderDlg:function(){
         this.showBatchDeleteOrder = true
     },
@@ -502,7 +584,18 @@ export default {
       this.orderEndDate = `${this.orderEndDate}`
     },
     handleSelectionChange (val) {
-      
+      this.orderIdOpt = ''
+      if(val.length > 0){
+          for(let i = 0; i < val.length; i++){
+              this.orderIdOpt =  val[i].orderId
+              if(val[i].cashPledgePayed == '未付'){
+                this.$message.error('押金未付，不能操作押金状态')
+                this.orderIdOpt = ''
+              }  
+          }
+          // this.orderIdsOpt =this.orderIdsOpt.substr(0,this.orderIdsOpt.length -1 );
+      }
+      console.log("orderIdOpt:" + this.orderIdOpt)
     },
     handleSizeChange (newPage) {
       this.page = newPage;

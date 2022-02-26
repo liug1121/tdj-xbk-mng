@@ -335,6 +335,11 @@ export default {
     modifyPoolAlertInfo: params =>{
         return API.POST('/bigflow/manage/v1.0/pools/alert/config/modify', params)
     },
+    modifyPledgeReturnStatus: params =>{
+        return API.POST('/saler/v1.0/orders/pledge/return/modify', params)
+    },
+
+    
     
     
 
