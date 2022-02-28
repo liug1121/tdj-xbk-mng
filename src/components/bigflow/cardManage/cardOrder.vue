@@ -324,6 +324,7 @@ export default {
         { prop: 'gmtCreate', label: '下单时间', width: 160, sortable: true },
         { prop: 'gmtActive', label: '激活时间', width: 160 },
         { prop: 'cashPledge', label: '押金金额', width: 160 },
+        { prop: 'pledgeByManagerName', label: '押金交款人', width: 160 },
         { prop: 'cashPledgePayed', label: '押金是否已交', width: 160 },
         { prop: 'pledgeWechatPayNo', label: '押金支付单号', width: 160 },
         { prop: 'cashPledgeReturn', label: '押金退还状态', width: 160 },
