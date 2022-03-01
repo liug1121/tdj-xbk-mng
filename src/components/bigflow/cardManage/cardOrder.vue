@@ -35,6 +35,17 @@
             <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="押金状态" class="queryFormItem">
+          <el-select class="queryFormInput"  clearable placeholder="请选择卡状态" v-model="cashPledgePayed">
+            <el-option v-for="item in cashPledgePayedTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="客户经理" class="queryFormItem" >
+          <el-input class="queryFormInput" clearable placeholder="请输入客户经理" style="width:150px" v-model="salerName"></el-input>
+        </el-form-item>
+        <el-form-item label="客户经理电话" class="queryFormItem" >
+          <el-input class="queryFormInput" clearable placeholder="请输入客户经理电话" style="width:150px" v-model="salerPhone"></el-input>
+        </el-form-item>
         <el-button size="medium" type="primary" icon="el-icon-search" @click="queryCardOrders">查询</el-button>
       </el-form>
       <!-- 按钮区域 -->
@@ -251,6 +262,9 @@ export default {
   },
   data () {
     return {
+        cashPledgePayed: null,
+        salerName: null,
+        salerPhone: null,
         showPledgeOptDlg:false,
         pledgeOptForm:{
           pledgeOptType:'',
@@ -292,6 +306,10 @@ export default {
         { label: "已销毁", value: 6 },
         { label: "支付成功", value: 30 }
       ],
+    cashPledgePayedTypes: [
+      { label: "未交押金", value: 0 },
+      { label: "已交押金", value: 1 }
+    ],
     giveTypes:[{
         value:1,
         name:'包含套餐'
@@ -303,7 +321,7 @@ export default {
     channels:[],
       products2Change:[],
       cardOrders: [],
-      page: 1,
+      page: 0,
       pageSize: 10,
       // 列表总条数
       total: 0,
@@ -555,6 +573,9 @@ export default {
     queryCardOrders:function(){
       this.loading = true
       let params = {}
+      params.cashPledgePayed = this.cashPledgePayed
+      params.salerName = this.salerName
+      params.salerPhone = this.salerPhone
       params.page = this.page
       if(this.orderId != '')
         params.orderIdlike = this.orderId

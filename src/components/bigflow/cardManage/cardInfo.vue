@@ -58,7 +58,7 @@
           v-model="openCardEndDate">
           </el-date-picker>
         </el-form-item>
-        <el-button size="medium" type="primary" icon="el-icon-search" @click="queryCardInfos">查询</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-search" @click="okQueryCards">查询</el-button>
       </el-form>
       <!-- 按钮区域 -->
       <div class="button_content">
@@ -820,6 +820,10 @@ export default {
         if(this.openCardEndDate != '')
             params.gmtActivateEnd = this.openCardEndDate
         return params
+    },
+    okQueryCards:function(){
+      this.page = 0
+      this.queryCardInfos()
     },
     queryCardInfos:function(){
         this.loading = true
