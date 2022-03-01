@@ -360,7 +360,7 @@ export default {
     ],
     flowPools:[],
     detailPage:0,
-      page: 1,
+      page: 0,
       pageSize: 10,
       // 列表总条数
       total: 0,
@@ -381,7 +381,7 @@ export default {
         { prop: 'saleChannelName', label: '渠道', width: 150, sortable: true },
         { prop: 'productCodeName', label: '当前套餐', width: 80, sortable: true },
         { prop: 'flowHighDoseName', label: '可用量', width: 80, sortable: true },
-        { prop: 'flowHighUsedName', label: '当月已使用', width: 80, sortable: true },
+        { prop: 'flowUsedName', label: '当月已使用', width: 80, sortable: true },
         { prop: 'flowHightotalUsedName', label: '累计已使用', width: 80, sortable: true },
         { prop: 'surplusUsedName', label: '剩余总流量', width: 80, sortable: true },
         { prop: 'lastPer', label: '剩余比率', width: 80, sortable: true },
