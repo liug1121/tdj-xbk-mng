@@ -93,6 +93,11 @@
             <el-option v-for="item in channels" :key="item.channelId" :label="item.name" :value="item.channelId"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="卡产品品类" class="queryFormItem" >
+          <el-select class="queryFormInput" v-model="productType" clearable placeholder="请选择卡产品品类">
+            <el-option v-for="item in productTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
@@ -188,6 +193,7 @@ export default {
   },
   data () {
     return {
+      productType:'',
       mailConfigDialogVisible:false,
       mailConfigForm:{
         address:'',
@@ -252,6 +258,10 @@ export default {
       addManagerDialogVisible:false,
       dialogTitle: '新增渠道',
       // 设备渠道
+      productTypes: [
+        { label: '大流量', value: 0 },
+        { label: '钻石卡', value: 1 }
+      ],
       usingInDeviceOptions: [
         { label: '是', value: 1 },
         { label: '否', value: 0 }
@@ -630,6 +640,7 @@ export default {
         params.contactMobile = this.addChannelForm.phone
         params.contactName = this.addChannelForm.salePerson
         params.password = this.addChannelForm.pwd
+        params.productType = this.productType
 
         params.channelId = localStorage.getItem('channelId');
         apiBigflow.addSaleChannel(params).then(res => {
