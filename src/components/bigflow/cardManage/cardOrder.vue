@@ -61,7 +61,7 @@
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardOrder-exportFor'}" @click="openBatchDeleteOrderDlg">批量删除订单</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
-        v-permission="{indentity:'bigflowCardOrder-exportFor'}" @click="doPledgeReturn">退押金操作</el-button>
+        @click="doPledgeReturn">退押金操作</el-button>
       </div>
       <!-- 列表区域 -->
       <!-- <div class="cardNos">
