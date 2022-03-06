@@ -369,15 +369,15 @@ export default {
         { prop: 'viewName', label: '显示名', width: 100, sortable: true },
         { prop: 'originalPrice', label: '原始价', width: 80, sortable: true },
         { prop: 'price', label: '销售价', width: 80, sortable: true },
-        { prop: 'highUse', label: '高速用量', width: 100, sortable: true },
-        { prop: 'mediumUse', label: '中速用量', width: 100, sortable: true },
+        { prop: 'highUseName', label: '高速用量', width: 100, sortable: true },
+        { prop: 'mediumUseName', label: '中速用量', width: 100, sortable: true },
         { prop: 'productTypeName', label: '产品类型', width: 100, sortable: true },
         { prop: 'useTypeName', label: '使用类型', width: 50, sortable: true },
         { prop: 'useExpire', label: '用量清零周期', width: 50, sortable: true },
         { prop: 'expireTime', label: '产品有效期', width: 50, sortable: true },
-        { prop: 'status', label: '状态', width: 50, sortable: true },
-        { prop: 'clearType', label: '用量清算周期', width: 50, sortable: true },
-        { prop: 'zone', label: '用量区域', width: 50, sortable: true },
+        { prop: 'statusName', label: '状态', width: 50, sortable: true },
+        { prop: 'clearTypeName', label: '用量清算周期', width: 50, sortable: true },
+        { prop: 'zoneName', label: '用量区域', width: 50, sortable: true },
         // { prop: 'gmtCreate', label: '创建时间', width: 100, sortable: true },
         { prop: 'memo', label: '产品说明', width: 100, sortable: true },
         { prop: 'opts', label: '操作', width: 100, sortable: true }
@@ -406,11 +406,11 @@ export default {
       ],
       clearTypes:[
         { name: "自然月", id: 'month' },
-        { name: "27号", id: '27号' },
+        { name: "27号", id: '27' },
       ],
       zoonTypes:[
-        { name: "省内", id: 'all' },
-        { name: "全国", id: 'month' }
+        { name: "省内", id: 'province' },
+        { name: "全国", id: 'all' }
       ]
       
     };
@@ -490,6 +490,7 @@ export default {
           this.$message.error('中速用量不能为空')
           return
         }
+        console.log(JSON.stringify(this.addBigflowProductForm))
         params.productName =this.addBigflowProductForm.productName
         params.viewName =this.addBigflowProductForm.viewName
         params.productCode =this.addBigflowProductForm.productCode

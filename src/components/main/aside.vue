@@ -4,7 +4,7 @@
       <!-- <img  src="@/assets/images/logo_union.png" /> -->
       <b class="title">流量运营平台</b>
     </div>
-    <div class="company">南京天地杰实业有限公司</div>
+    <!-- <div class="company">南京天地杰实业有限公司</div> -->
     <el-menu :default-active="path" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" @select="handlselect" background-color="#001529" active-background-color="#1890ff" router active-text-color="#fff"
       :collapse="isCollapse" :unique-opened="true" :default-openeds="openedMenus">
       <el-submenu index="root-xbk" v-show="xuebakaMenus.length > 0">
