@@ -193,6 +193,9 @@ export default {
             }
         })
     },
+    cardUsageCheck: params =>{
+        return API.POST('/bigflow/manage/v1.0/card/useage/check', params)
+    },
     file2CardUsageRefresh: (params) => {
         return API.POST('/bigflow/manage/v1.0/card/useage/refresh/file', params, {
             headers: {

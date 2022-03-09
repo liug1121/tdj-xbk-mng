@@ -78,6 +78,8 @@
         v-permission="{indentity:'bigflowCardInfo-validityExtend'}" @click="openExpireDateExtendDlg">有效期延长</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-validityExtend'}" @click="openFile2CheckDlg">与CMP进行用量核查</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowCardInfo-validityExtend'}" @click="cardUsageCheck">单卡与CMP进行用量核查</el-button>
         <!-- <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-validityExtend'}" @click="openFile2CheckDlg">与CMP进行用量核查</el-button> -->
         <!-- <el-button size="medium" type="primary" icon="el-icon-edit" 
@@ -405,6 +407,34 @@ export default {
     closeFile2RefreshDlg:function(){
         this.showFile2RefreshDlg = false
     },   
+    cardUsageCheck:function(){
+      if(this.iccids2Opt == null || this.iccids2Opt == '' || this.iccids2Opt == undefined){
+        this.$message.error('请选择要操作的卡')
+        return
+      }
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+          console.log('sds')
+            // that.btnEnable = true
+            let params = {}
+            params.iccid = this.iccids2Opt
+            console.log('sds')
+        apiBigflow.cardUsageCheck(params).then(res=>{
+            if(res.resultCode == 0){
+                that.queryCardInfos()
+                that.showFile2CheckDlg = false
+                this.$message.success('操作成功')
+            }else{
+                this.$message.error('操作失败:' + res.resultInfo)
+            }
+            that.btnEnable = false
+        })
+        }).catch(() => {
+        }); 
+    },
     okFile2Check:function(){
         if(this.uploadedFile2CheckFile == null){
             alert('请先上传文件')
