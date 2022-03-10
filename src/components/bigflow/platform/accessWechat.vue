@@ -209,6 +209,10 @@
           <el-form-item label="版本">
             <el-input style="width:250px;" v-model="editFengwoForm.version" placeholder="请输入版本号"></el-input>
           </el-form-item>
+          <el-form-item label="连通性测试">
+            <el-input style="width:250px;" v-model="editFengwoForm.testIccid" placeholder="请输入要测试的iccid"></el-input>
+            <div @click="testFengwoAccount">点击测试</div>
+          </el-form-item>
         </el-form>
         <!-- 底部区域 -->
         <span slot="footer" class="dialog-footer">
@@ -610,6 +614,21 @@ export default {
       this.editFengwoForm.accountName = row.accountName
       this.editFengwoForm.version = row.version
       this.editFengwoDlgShow = true
+    },
+    testFengwoAccount:function(){
+      let params = {}
+      params.openId = this.editFengwoForm.openId
+      params.appId = this.editFengwoForm.appId
+      params.secret = this.editFengwoForm.appSecret
+      params.iccid = this.editFengwoForm.testIccid
+      params.version = this.editFengwoForm.version
+      apiBigflow.testFengwoAccount(params).then(res=>{
+          if(res.resultCode == 0){
+              this.$message.success(res.data)
+          }else{
+              this.$message.success('测试失败')
+          }
+      })
     },
     okEditFengwo:function(){
       let that = this

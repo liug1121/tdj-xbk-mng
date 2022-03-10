@@ -341,6 +341,11 @@ export default {
     modifyPledgeReturnStatus: params =>{
         return API.POST('/saler/v1.0/orders/pledge/return/modify', params)
     },
+    testFengwoAccount: params =>{
+        return API.POST('/bigflow/manage/v1.0/fengwoaccount/test', params)
+    },
+
+    
 
     
     
