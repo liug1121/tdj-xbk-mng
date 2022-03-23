@@ -339,7 +339,8 @@ export default {
   },
   methods: {
     sendEmail: function() {
-        var regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+        // var regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+        var regEmail =/^(\w+([-.][A-Za-z0-9]+)*){3,18}@\w+([-.][A-Za-z0-9]+)*\.\w+([-.][A-Za-z0-9]+)*$/
         if (this.mailConfigForm.address != '' && !regEmail.test(this.mailConfigForm.address)) {
             this.$message({
                 message: '邮箱格式不正确',
