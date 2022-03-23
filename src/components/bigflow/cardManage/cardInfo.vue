@@ -239,7 +239,10 @@
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeExpireDateExtendDlg" :disabled="btnEnable">取 消</el-button>
-        <el-button type="primary" @click="okExpireDateExtend" :disabled="btnEnable">确 定</el-button>
+        <el-button v-if="optType == 2" type="primary" @click="okFileExpireDateExtend" :disabled="btnEnable">确 定</el-button>
+        <el-button v-else type="primary" @click="okExpireDateExtend" :disabled="btnEnable">确 定</el-button>
+
+        
       </span>  
     </el-dialog> 
 
@@ -515,6 +518,41 @@ export default {
     closeExpireDateExtendDlg:function(){
         this.showExpireDateExtendDlg = false
     }, 
+    okFileExpireDateExtend:function(){
+      if(this.uploadedFile == undefined || this.uploadedFile == null || this.uploadedFile == ''){
+        this.$message.error('文件不能为空')
+        return
+      }
+      if(this.expireDateExtendForm.extendTime == undefined || this.expireDateExtendForm.extendTime == null || this.expireDateExtendForm.extendTime == ''){
+        this.$message.error('延长时长不能为空')
+        return
+      }
+      let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+                let params = new FormData()
+                params.append('file', this.uploadedFile)
+                console.log(JSON.stringify(params))
+                let reason = this.expireDateExtendForm.reason
+                let extendTime = this.expireDateExtendForm.extendTime
+                apiBigflow.fileExpiredateextend(params,reason,extendTime).then(res=>{
+                    if(res.resultCode == 0){
+                        that.queryCardInfos()
+                        that.showExpireDateExtendDlg = false
+                        alert('操作成功')
+                    }else{
+                        alert('操作失败:' + res.resultInfo)
+                    }
+                    that.btnEnable = false
+                })
+        }).catch(() => {
+        }); 
+
+    },
     okExpireDateExtend:function(){
         // let params = this.createQueryParams()
         let that = this

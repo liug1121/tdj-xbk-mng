@@ -97,6 +97,13 @@ export default {
     expiredateextend: params =>{
         return API.POST('/bigflow/manage/v1.0/card/expiredateextend', params)
     },
+    fileExpiredateextend: (params, reason, extendTime) => {
+        return API.POST(`/bigflow/manage/v1.0/card/file/expiredateextend?extendTime=${extendTime}&reason=${reason}`, params, {
+            headers: {
+              'content-type': 'multipart/form-data'
+            }
+          })
+    },
     batchExpiredateExtend: params =>{
         return API.POST('/bigflow/manage/v1.0/card/expiredate/batchextend', params)
     },
