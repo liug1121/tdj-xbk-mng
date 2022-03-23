@@ -230,7 +230,7 @@
           <el-button size="small" type="primary">点击上传</el-button>
         </el-upload>
         <el-form-item label="时长（月）">
-          <el-input style="width:300px;" onkeyup="value=value.replace(/[^\d]/g,'')" v-model="expireDateExtendForm.extendTime" placeholder="请输入时长" ></el-input>
+          <el-input style="width:300px;" onkeyup="value=value.replace(/[^\d-]/g,'')" v-model="expireDateExtendForm.extendTime" placeholder="请输入时长" ></el-input>
         </el-form-item>
         <el-form-item label="原因">
           <el-input style="width:300px;" v-model="expireDateExtendForm.reason" placeholder="请输入调整原因" ></el-input>
