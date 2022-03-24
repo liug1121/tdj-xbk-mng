@@ -272,9 +272,8 @@ export default {
       // 充值记录
       RechargeRecord: [
         { prop: 'date', label: '充值时间' },
-        { prop: 'remaind', label: '充值金额' },
-        { prop: '', label: '微信支付订单号' },
-        { prop: 'operation', label: '操作' },
+        { prop: 'price', label: '充值金额' },
+        { prop: 'description', label: '微信支付订单号' }
       ],
       RechargeRecordList: [],
       // 套餐变更记录
