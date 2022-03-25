@@ -351,6 +351,12 @@ export default {
     testFengwoAccount: params =>{
         return API.POST('/bigflow/manage/v1.0/fengwoaccount/test', params)
     },
+    removeManger: params =>{
+        return API.POST('boss/v1.0/system/managers/remove', params)
+    },
+    modifyManger: params =>{
+        return API.POST('boss/v1.0/system/managers/modify', params)
+    }
 
     
 

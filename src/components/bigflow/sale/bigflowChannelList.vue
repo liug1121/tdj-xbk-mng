@@ -65,13 +65,14 @@
             <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :show-overflow-tooltip='true'>
               <template slot-scope="scope">
                 <div v-if="p.prop == 'opts'" v-permission="{indentity:'bigflowChannelList-add'}">
-                  <el-button type="text" size="small" @click="showEditChannel(scope.row, selectedChannelName)">编辑</el-button>
+                  <el-button type="text" size="small" @click="toEditManger(scope.row, selectedChannelName)">编辑</el-button>
+                  <el-button type="text" size="small" @click="removeManager(scope.row)">删除</el-button>
                 </div>
                   <div v-if="p.prop == 'channelName'">
                     <span>{{selectedChannelName}}</span>
                   </div>
                   <div v-else>
-                      <div v-html="scope.row[p.prop]" />
+                    <div v-html="scope.row[p.prop]" />
                   </div>
               </template>
             </el-table-column>
@@ -173,6 +174,23 @@
           <el-button type="primary" @click="okModifyMailConfig">确 定</el-button>
         </span>
       </el-dialog>
+
+      <el-dialog title="修改管理员" :visible.sync="editManagerDialogVisible" width="430px" @close="closeEditManagerButton">
+      <!-- 内容主体区域 -->
+      <el-form :model="editManager"  label-width="120px">
+        <el-form-item label="姓名" >
+          <el-input size="small" v-model="editManager.name" placeholder="请输入姓名" ></el-input>
+        </el-form-item>
+        <el-form-item label="密码" >
+          <el-input size="small" v-model="editManager.pwd" placeholder="请输入密码" ></el-input>
+        </el-form-item>
+      </el-form>
+        <!-- 底部区域 -->
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="closeEditManagerButton">取 消</el-button>
+          <el-button type="primary" @click="okEditManager">确 定</el-button>
+        </span>
+      </el-dialog>
       <el-main class="el-loading" v-loading="loading" element-loading-background="transparent"
         element-loading-text="加载中" > 
     </el-main>
@@ -193,6 +211,7 @@ export default {
   },
   data () {
     return {
+      editManagerDialogVisible:false,
       productType:'',
       mailConfigDialogVisible:false,
       mailConfigForm:{
@@ -241,7 +260,7 @@ export default {
         { prop: 'qrCode', label: '登录密码', width: 100 },
         { prop: 'openId', label: '微信openId', width: 100 },
         { prop: 'status', label: '状态', width: 80 },
-        // { prop: 'opts', label: '操作', width: 100 }
+        { prop: 'opts', label: '操作', width: 100 }
       ],
       table_imei_column: [
         { prop: 'channelName', label: '渠道名称', width: 350 },
@@ -326,7 +345,12 @@ export default {
       optionData: [],
       loading: false,
       isUsingIn: true,
-      selectedImeiConfigRow:[]
+      selectedImeiConfigRow:[],
+      editManager:{
+        managerId:'',
+        name:'',
+        pwd:''
+      }
     }
   },
 
@@ -338,6 +362,83 @@ export default {
     this.getChannelTree()
   },
   methods: {
+    closeEditManagerButton:function(){
+      this.editManagerDialogVisible = false
+    },
+    okEditManager:function(){
+      if(this.editManager.name == null || this.editManager.name == '' ){
+        this.$message.error('姓名不能为空')
+        return
+      }
+      if(this.editManager.pwd == null || this.editManager.pwd == '' ){
+        this.$message.error('密码不能为空')
+        return
+      }
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let params = this.editManager
+        apiBigflow.modifyManger(params).then(res => {
+            if (res.resultCode === 0) {
+              this.getSalePerson()
+              this.$message.success('修改成功')
+              this.editManagerDialogVisible = false
+            } else {
+              this.$message.error(res.resultInfo)
+            }
+          })
+      }).catch(() => {
+      });
+    },
+    toEditManger:function(row){
+      this.editManager.managerId = row.id
+      this.editManager.name = row.name
+      this.editManager.pwd = row.qrCode
+      this.editManagerDialogVisible = true
+      // this.$confirm('您确认要此操作, 是否继续?', '提示', {
+      //   confirmButtonText: '确定',
+      //   cancelButtonText: '取消',
+      //   type: 'warning'
+      // }).then(() => {
+      //   let managerId = row.id
+      //   let params = {}
+      //   params.managerId = managerId
+      //   params.channelId = this.selecedChannelCode 
+      //   apiBigflow.removeManger(params).then(res => {
+      //       if (res.resultCode === 0) {
+      //         this.getSalePerson()
+      //         this.$message.success('删除成功')
+      //       } else {
+      //         this.$message.error(res.resultInfo)
+      //       }
+      //     })
+      // }).catch(() => {
+      // });
+      
+    },
+    removeManager: function(row){
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let managerId = row.id
+        let params = {}
+        params.managerId = managerId
+        params.channelId = this.selecedChannelCode 
+        apiBigflow.removeManger(params).then(res => {
+            if (res.resultCode === 0) {
+              this.getSalePerson()
+              this.$message.success('删除成功')
+            } else {
+              this.$message.error(res.resultInfo)
+            }
+          })
+      }).catch(() => {
+      });
+    },
     sendEmail: function() {
         // var regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
         var regEmail =/^(\w+([-.][A-Za-z0-9]+)*){3,18}@\w+([-.][A-Za-z0-9]+)*\.\w+([-.][A-Za-z0-9]+)*$/
