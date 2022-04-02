@@ -34,7 +34,7 @@ export default {
       cTimeDialogVisible: false,
       lastTime: null, // 最后一次点击的时间
       currentTime: null, // 当前点击的时间
-      timeOut: 120 * 60 * 1000, // 设置超时时间:120分钟
+      timeOut: 10 * 60 * 60 * 1000, // 设置超时时间:120分钟
       isRouterAlive: true // 控制视图是否显示的变量
     }
   },

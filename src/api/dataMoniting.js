@@ -95,8 +95,15 @@ export default {
     const iccid1 = iccid
     return API.GET(`boss/v1.0/lbs/group/card/download/${groupId1}/${iccid1}`)
   },
+  apiLbsCardsUpload: (params, groupId) => {
+    return API.POST(`boss/v1.0/lbs/card/import`, params, {
+      headers: {
+        'content-type': 'multipart/form-data'
+      }
+    })
+  },
   // 导入黑名单卡
-  apiLbsGroupCardUpload: (params, groupId) => {
+  apiLbsGroupCardUpload: (params) => {
     return API.POST(`boss/v1.0/lbs/group/card/upload`, params, {
       headers: {
         'content-type': 'multipart/form-data'

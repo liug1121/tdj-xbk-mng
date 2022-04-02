@@ -38,6 +38,8 @@
           >查询</el-button>
           <el-button type="primary" size="mini" icon="el-icon-download" @click="exportButton()" 
           v-permission="{indentity:'xbkLBSRecordList-export'}">导出</el-button>
+          <el-button type="primary" size="mini" icon="el-icon-search" @click="importDialogVisible = true" 
+          >卡位置查询导入</el-button>
         </el-form-item>
       </el-form>
       <!-- 按钮区域 -->
@@ -54,6 +56,23 @@
         :total="total">
       </el-pagination>
     </el-card>
+
+    <el-dialog title="文件导入" :visible.sync="importDialogVisible" width="412px" :close-on-click-modal="false" :destroy-on-close="true">
+        <el-form label-width="120px">
+          <el-upload class="unload-demo" accept=".xls, .xlsx" action="#" :file-list="fileList" :http-request="cardUploadFile">
+            <el-button size="small" type="primary">点击上传要导入的文件</el-button>
+          </el-upload>
+        </el-form>
+        <!-- <div class="notice">
+          <p>
+            <a>下载模板文件</a> 仅支持xlsx,xls格式的文件.
+          </p>
+        </div> -->
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="importDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="toCardImport">确 定</el-button>
+        </span>
+      </el-dialog>
   </div>
 </template>
 
@@ -66,6 +85,9 @@ export default {
   },
   data () {
     return {
+      file2Upload:'',
+      fileList: [],
+      importDialogVisible:false,
       // 列表显示
       LBSlist: [],
       page: 1,
@@ -119,6 +141,28 @@ export default {
     this.getprovinceOptions()
   },
   methods: {
+    cardUploadFile (item) {
+      this.file2Upload = item.file
+    },
+    toCardImport (){
+      this.$confirm('您确认要导入吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          const param = new FormData()
+          param.append('file', this.file2Upload)
+          API.apiLbsCardsUpload(param).then(res => {
+            if (res.resultCode === 0) {
+              this.$message.success('导入成功！')
+              this.importDialogVisible = false
+            } else {
+              this.$message.error(res.resultInfo)
+            }
+          })
+        }).catch(() => {
+        });
+    },
     // 渠道
     channelSelectId (channelSelectId) {
       this.queryLBSlistFormModel.channelId = channelSelectId
