@@ -94,9 +94,18 @@
       <el-table  :data="cardInfos" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55">
         </el-table-column>
-        <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+        <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label"  :key="key" :width="p.width"  align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
           <template slot-scope="scope">
+              <!-- <div v-html="scope.row[p.prop]" /> -->
+              <div v-if="p.prop == 'flowHighUsed'" @mouseenter="showUsageDetails(scope.row.iccid)" @mouseleave="hideUsageDetails(scope.row.iccid)">
+                <div v-html="scope.row[p.prop]"/>
+                <div v-if="isShowUsageDetails == true && detailIccid == scope.row.iccid">
+                  <div v-for="(detailUsage, k) in usageDetails" :key="k">{{detailUsage.cycle}}:{{detailUsage.usage}}</div>
+                </div>
+              </div>
+            <div v-else>
               <div v-html="scope.row[p.prop]" />
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -358,15 +367,15 @@ export default {
       total: 0,
       // 列表，标题、字段
       table_column: [
-        { prop: 'iccid', label: 'ICCID', width: 180, sortable: true },
+        { prop: 'iccid', label: 'ICCID', width: 150, sortable: true },
         { prop: 'phoneNumber', label: 'MSISDN', width: 150, sortable: true },
         { prop: 'statusName', label: '卡状态', width: 80, sortable: true },
-        { prop: 'productCodeName', label: '卡品类', width: 80, sortable: true },
+        // { prop: 'productCodeName', label: '卡品类', width: 80, sortable: true },
        { prop: 'flowHighDose', label: '高速可用量', width: 80, sortable: true },
        { prop: 'flowMonthHighUsed', label: '当月已用量', width: 80, sortable: true },
-        { prop: 'flowHighUsed', label: '高速已用量', width: 80, sortable: true },
+        { prop: 'flowHighUsed', label: '累积高速已用量', width: 300, sortable: true },
         { prop: 'flowMediumDose', label: '中速可用量', width: 80, sortable: true },
-        { prop: 'flowMediumUsed', label: '中速已用量', width: 80, sortable: true },
+        { prop: 'flowMediumUsed', label: '累积中速已用量', width: 80, sortable: true },
         { prop: 'communPlanName', label: '通讯计划名称', width: 80, sortable: true },
         { prop: 'productCodeName', label: '当前套餐', width: 80, sortable: true },
         { prop: 'authStatusName', label: '认证状态', width: 70 },
@@ -381,6 +390,9 @@ export default {
         { prop: 'gmtCreate', label: '首次绑定时间 ', width: 160 },
         { prop: 'deviceNameNew', label: '设备名称 ', width: 160 }
       ],
+      isShowUsageDetails: false,
+      detailIccid:'',
+      usageDetails:[]
     };
   },
   mounted () {
@@ -394,6 +406,27 @@ export default {
   },
   watch: {},
   methods: {
+    getUsageDetails(iccid){
+      let params = {}
+      params.iccid = iccid
+      apiBigflow.getCardMonthUsageDetails(params).then(res=>{
+            if(res.resultCode == 0){
+                this.usageDetails = res.data 
+            }else{
+                this.$message.error('查询月用量明细失败:' + res.resultInfo)
+            }
+        })
+      
+    },
+    showUsageDetails:function(iccid){
+      this.detailIccid = iccid
+      this.isShowUsageDetails = true
+      this.getUsageDetails(iccid)
+      console.log('showUsageDetails')
+    },
+    hideUsageDetails:function(iccid){
+      this.isShowUsageDetails = false
+    },
     openFile2CheckDlg:function(){
         this.file2CheckFiles = []
         this.uploadedFile2CheckFile = null

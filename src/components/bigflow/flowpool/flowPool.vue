@@ -90,7 +90,8 @@
               <el-button v-permission="{indentity:'bigflowFlowPool-start'}" type="text" size="small" @click="openPool(scope.row.poolId)" v-else>启用</el-button>
               <el-button v-permission="{indentity:'bigflowFlowPool-detail'}" type="text" size="small" >用量明细</el-button>
               <el-button v-permission="{indentity:'bigflowFlowPool-delete'}" type="text" size="small" @click="removePool(scope.row.poolId)">删除</el-button>
-              <el-button v-permission="{indentity:'bigflowFlowPool-delete'}" type="text" size="small" @click="showAlertMailList(scope.row.poolId)">编辑</el-button>
+              <el-button v-permission="{indentity:'bigflowFlowPool-delete'}" type="text" size="small" @click="showAlertMailList(scope.row.poolId)">告警设置</el-button>
+              <el-button v-permission="{indentity:'bigflowFlowPool-delete'}" type="text" size="small" @click="toEditPool(scope.row)">编辑</el-button>
             </div>
             <div v-else>
               <div v-if="p.prop == 'lastPer'">
@@ -145,6 +146,20 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeAddFlowPoolDlg" :disabled="btnEnable">取 消</el-button>
         <el-button type="primary" @click="okAddFlowPool" :disabled="btnEnable">确 定</el-button>
+      </span>  
+    </el-dialog> 
+
+    <el-dialog title="编辑流量池" :visible.sync="showEditFlowPoolDlg" width="450px" @close="showEditFlowPoolDlg = false">
+      <!-- 内容主体区域 --> 
+      <el-form :model="editFlowPoolForm"  label-width="110px">
+        <el-form-item label="流量池名称">
+          <el-input style="width:300px;"  v-model="editFlowPoolForm.poolName" placeholder="请输入流量池名称" ></el-input>
+        </el-form-item>
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="showEditFlowPoolDlg = false" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okEditFlowPool" :disabled="btnEnable">确 定</el-button>
       </span>  
     </el-dialog> 
 
@@ -306,6 +321,12 @@ export default {
   },
   data () {
     return {
+    showEditFlowPoolDlg: false,
+    editFlowPoolForm:{
+      poolId:'',
+      poolName:''
+    },
+    
     alertInfos:[],
     channelMailConfigs:[],
     alertMailForm:{
@@ -410,7 +431,33 @@ export default {
   },
   watch: {},
   methods: {
+    toEditPool:function(pool){
+      this.editFlowPoolForm.poolId = pool.poolId
+      this.editFlowPoolForm.poolName = pool.poolName
+      this.showEditFlowPoolDlg = true
+    },
+    okEditFlowPool :function(){
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+          let params = {}
+          params.poolId = this.editFlowPoolForm.poolId
+          params.poolName = this.editFlowPoolForm.poolName
+          apiBigflow.modifyPool(params).then(res=>{
+                if(res.resultCode == 0){
+                    this.$message.success('修改成功')
+                    this.showEditFlowPoolDlg = false
+                    this.queryFlowPools()
+                }else{
+                    this.$message.error('修改失败')
+                }
 
+            })
+        }).catch(() => {
+        });
+    },
     getPoolAlertInfos:function(poolId){
       let params = {}
       params.poolId = this.alertMailForm.poolId

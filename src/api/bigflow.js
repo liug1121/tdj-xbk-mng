@@ -356,15 +356,12 @@ export default {
     },
     modifyManger: params =>{
         return API.POST('boss/v1.0/system/managers/modify', params)
+    },
+    modifyPool: params =>{
+        return API.POST('/bigflow/manage/v1.0/pools/modify', params)
+    },
+    getCardMonthUsageDetails: params =>{
+        return API.POST('/bigflow/manage/v1.0/card/usage/month/detail', params)
     }
 
-    
-
-    
-    
-    
-
-    
-
-    
 }
