@@ -23,6 +23,7 @@
               <div v-if="p.prop == 'operations'">
                 <el-button  size="mini" type="warning" plain @click="functionSel(scope.row)" >设置角色功能</el-button>
                 <el-button  size="mini" type="warning" plain @click="removeRole(scope.row)" >删除角色</el-button>
+                <el-button  size="mini" type="warning" plain @click="toRoleModify(scope.row)" >修改角色名称</el-button>
               </div>
           </template>
         </el-table-column>
@@ -96,7 +97,11 @@ export default {
     functionDlgShow:false,
     roleDlgShow:false,
     optSelDlgShow:false,
-    roleInfo:{},
+    roleInfo:{
+        roleName:'',
+        roleId:'',
+        id:''
+    },
     operating:false,
     optOperating:false,
       page: 1,
@@ -131,6 +136,13 @@ export default {
      this.refreshOptsSelected()
   },
   methods: {
+    toRoleModify:function(role){
+        this.selectedRow = role
+        this.roleInfo.id = role.id
+        this.roleInfo.roleId = role.id
+        this.roleInfo.roleName = role.name
+        this.roleDlgShow = true
+    },
     removeRole:function(role){
         let that = this
         let roleId = role.id
@@ -167,6 +179,7 @@ export default {
        this.roleDlgShow = false 
     },
     editRoleClick:function(){
+        console.log(JSON.stringify(this.roleInfo))
         if(this.roleInfo.id == '' || this.roleInfo.id == undefined){
             if(this.roleInfo.roleName == '' || this.roleInfo.roleName == undefined){
                 alert('角色名称不能为空')
@@ -188,7 +201,41 @@ export default {
             }).catch(() => {
             });
         }else{
-            //TODO edit
+            if(this.roleInfo.roleName == '' || this.roleInfo.roleName == undefined){
+                alert('角色名称不能为空')
+                return
+            }
+            this.$confirm('您确认要此操作, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                let params = {}
+                params.roleId = this.roleInfo.roleId
+                params.roleName = this.roleInfo.roleName
+                apiSystem.editRole(params).then(res=>{
+                    if(res.resultCode == 0){
+                        this.$message.success('修改成功！')
+                        this.queryAllRoles()
+                        this.roleDlgShow = false
+                        // if(mSuccess != null && mSuccess != undefined)
+                        //     mSuccess(res)
+                    }else{
+                        this.$message.error('修改失败！')
+                        this.queryAllRoles()
+                        // if(mError != null && mError != undefined)
+                        //     mError(res)
+                    }
+                })
+                        // that.editRole(that.roleInfo.roleName, res=>{
+                //     that.roleDlgShow = false
+                //     that.queryAllRoles()
+                //     alert('新增成功')
+                // }, res=>{
+                //     alert('新增失败:' + res.resultInfo)
+                // })
+            }).catch(() => {
+            });
         }
 
     },

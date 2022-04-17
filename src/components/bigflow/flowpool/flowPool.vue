@@ -273,13 +273,17 @@
       
       <el-form :model="alertMailForm"  label-width="110px">
         <el-form-item label="邮箱地址">
-          <el-select 
+          <el-input style="width:300px;"  v-model="alertMailForm.address" placeholder="请输入邮箱" @blur="sendEmail"></el-input>
+          <!-- <el-select 
           filterable
           clearable
           reserve-keyword
           class="queryFormInput"  placeholder="请输入邮箱地址" v-model="alertMailForm.address">
             <el-option v-for="item in channelMailConfigs" :key="item.id" :label="item.user_name" :value="item.id"></el-option>
-          </el-select>
+          </el-select>  -->
+        </el-form-item>
+        <el-form-item label="手机号码">
+          <el-input style="width:300px;"  v-model="alertMailForm.phone" placeholder="请输入手机号码" @blur="sendPhone"></el-input>
         </el-form-item>
         <el-form-item label="阀值类型">
           <el-select 
@@ -332,6 +336,7 @@ export default {
     alertMailForm:{
       poolId:'',
       address:'',
+      phone:'',
       id:'',
       alertThreshold:'',
       alertTime:''
@@ -389,6 +394,7 @@ export default {
   
       table_column_alertInfos:[
         { prop: 'mailAddress', label: '邮箱地址', width: 100, sortable: true },
+        { prop: 'phone', label: '手机号码', width: 100, sortable: true },
         { prop: 'threshold', label: '阀值', width: 100, sortable: true },
         { prop: 'times', label: '告警次数', width: 100, sortable: true },
         { prop: 'operation', label: '操作', width: 100, sortable: true }
@@ -431,6 +437,27 @@ export default {
   },
   watch: {},
   methods: {
+    sendEmail: function() {
+        // var regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+        var regEmail =/^(\w+([-.][A-Za-z0-9]+)*){3,18}@\w+([-.][A-Za-z0-9]+)*\.\w+([-.][A-Za-z0-9]+)*$/
+        if (this.alertMailForm.address != '' && !regEmail.test(this.alertMailForm.address)) {
+            this.$message({
+                message: '邮箱格式不正确',
+                type: 'error'
+            })
+            this.alertMailForm.address = ''
+        }
+    },
+    sendPhone:function(){
+      var regPhone =/^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/
+        if (this.alertMailForm.phone != '' && !regPhone.test(this.alertMailForm.phone)) {
+            this.$message({
+                message: '手机格式不正确',
+                type: 'error'
+            })
+            this.alertMailForm.phone = ''
+        }
+    },
     toEditPool:function(pool){
       this.editFlowPoolForm.poolId = pool.poolId
       this.editFlowPoolForm.poolName = pool.poolName
@@ -476,7 +503,8 @@ export default {
     },
     toModifyPoolAlertInfo:function(row){
       this.alertMailForm.id = row.id
-      this.alertMailForm.address = row.mailId
+      this.alertMailForm.address = row.mailAddress
+      this.alertMailForm.phone = row.phone
       this.alertMailForm.alertThreshold = row.threshold
       this.alertMailForm.alertTime = row.times
       this.alertMailEditDlgVisible = true
@@ -506,8 +534,12 @@ export default {
       this.$message.error('请先选择流量池')
       return
     }
-    if(this.alertMailForm.address == null || this.alertMailForm.address == undefined || this.alertMailForm.address == ''){
-      this.$message.error('邮箱不能为空')
+    // if(this.alertMailForm.address == null || this.alertMailForm.address == undefined || this.alertMailForm.address == ''){
+    //   this.$message.error('邮箱不能为空')
+    //   return
+    // }
+    if(this.alertMailForm.address == '' && this.alertMailForm.phone == ''){
+      this.$message.error('邮箱和手机号码不能全为空')
       return
     }
     if(this.alertMailForm.alertThreshold == null || this.alertMailForm.alertThreshold == undefined || this.alertMailForm.alertThreshold == ''){
@@ -527,7 +559,8 @@ export default {
           if(this.alertMailForm.id == '' || this.alertMailForm.id == undefined){
             let params = {}
             params.poolId = this.alertMailForm.poolId
-            params.mailId = this.alertMailForm.address
+            params.mailAddress = this.alertMailForm.address
+            params.phone = this.alertMailForm.phone
             params.alertThreshold = this.alertMailForm.alertThreshold
             params.alertTimes = this.alertMailForm.alertTime
             apiBigflow.addPoolMail(params).then(res=>{
@@ -550,7 +583,9 @@ export default {
             let params = {}
             params.id = this.alertMailForm.id
             params.poolId = this.alertMailForm.poolId
-            params.mailId = this.alertMailForm.address
+            // params.mailId = this.alertMailForm.address
+            params.mailAddress = this.alertMailForm.address
+            params.phone = this.alertMailForm.phone
             params.alertThreshold = this.alertMailForm.alertThreshold
             params.alertTimes = this.alertMailForm.alertTime
             apiBigflow.modifyPoolAlertInfo(params).then(res=>{

@@ -30,6 +30,9 @@ export default {
     addRole: params =>{
         return API.POST('boss/v1.0/system/roles/add', params)
     },
+    editRole: params =>{
+        return API.POST('boss/v1.0/system/roles/modify', params)
+    },
     removeRole: params =>{
         return API.POST('boss/v1.0/system/roles/remove', params)
     },
