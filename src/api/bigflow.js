@@ -360,6 +360,12 @@ export default {
     modifyPool: params =>{
         return API.POST('/bigflow/manage/v1.0/pools/modify', params)
     },
+    testSms: params =>{
+        return API.POST('/bigflow/manage/v1.0/pools/alert/configs/test/sms', params)
+    },
+    testMail: params =>{
+        return API.POST('/bigflow/manage/v1.0/pools/alert/configs/test/mail', params)
+    },
     getCardMonthUsageDetails: params =>{
         return API.POST('/bigflow/manage/v1.0/card/usage/month/detail', params)
     }

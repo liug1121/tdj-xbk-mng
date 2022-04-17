@@ -274,6 +274,7 @@
       <el-form :model="alertMailForm"  label-width="110px">
         <el-form-item label="邮箱地址">
           <el-input style="width:300px;"  v-model="alertMailForm.address" placeholder="请输入邮箱" @blur="sendEmail"></el-input>
+          <el-button type="primary" @click="sendTestMail(alertMailForm.address)" >发送测试邮件</el-button>
           <!-- <el-select 
           filterable
           clearable
@@ -284,6 +285,7 @@
         </el-form-item>
         <el-form-item label="手机号码">
           <el-input style="width:300px;"  v-model="alertMailForm.phone" placeholder="请输入手机号码" @blur="sendPhone"></el-input>
+          <el-button type="primary" @click="sendTestSms(alertMailForm.phone)">发送测试短信</el-button>
         </el-form-item>
         <el-form-item label="阀值类型">
           <el-select 
@@ -437,6 +439,30 @@ export default {
   },
   watch: {},
   methods: {
+    sendTestMail:function(mailAddress){
+      let params = {}
+      params.mailAddress = mailAddress
+      apiBigflow.testMail(params).then(res=>{
+            if(res.resultCode == 0){
+                this.$message.success('发送成功')
+            }else{
+                this.$message.error('发送失败')
+            }
+
+        })
+    },
+    sendTestSms:function(phone){
+      let params = {}
+      params.phone = phone
+      apiBigflow.testSms(params).then(res=>{
+            if(res.resultCode == 0){
+                this.$message.success('发送成功')
+            }else{
+                this.$message.error('发送失败')
+            }
+
+        })
+    },
     sendEmail: function() {
         // var regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
         var regEmail =/^(\w+([-.][A-Za-z0-9]+)*){3,18}@\w+([-.][A-Za-z0-9]+)*\.\w+([-.][A-Za-z0-9]+)*$/
