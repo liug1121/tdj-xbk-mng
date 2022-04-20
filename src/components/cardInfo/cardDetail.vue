@@ -85,6 +85,9 @@
           <p>开始时间：{{cardDetail.packageStartTime}}</p>
           <p>结束时间：{{cardDetail.packageEndTime}}</p>
         </div>
+        <div class="detailMainContent">
+          <p>续费类型：{{cardDetail.payTypeName}}</p>
+        </div>
       </div>
     </el-card>
     <el-card class="meal_content">
