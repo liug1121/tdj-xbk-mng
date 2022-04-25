@@ -3,7 +3,7 @@
     <div class="button_content">
           <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 0}" @click="tabSelect(0)">蜂窝账户配置</div>
           <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 1}" @click="tabSelect(1)">公众号接入</div>
-          <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 2}" @click="tabSelect(2)">大流量产品</div>
+          <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 2}" @click="tabSelect(2)">大流量卡产品</div>
     </div>
     <el-card class="all_list" v-if="selectedTab == 2">
       <el-form  :inline="true">
@@ -257,6 +257,9 @@
               <el-option v-for="item in clearTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="有效天数" v-if="addBigflowProductForm.clearType=='day'">
+            <el-input style="width:250px;" v-model="addBigflowProductForm.days" placeholder="请输入有效天数" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
+          </el-form-item>
           <el-form-item label="用量区域">
             <el-select style="width:120px;" v-model="addBigflowProductForm.zone" clearable placeholder="请选择用量区域">
               <el-option v-for="item in zoonTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
@@ -394,6 +397,7 @@ export default {
         { name: "是", id: 'true' },
         { name: "否", id: 'false' }],
       bigflowProductTypes:[
+        { name: "自然日套餐", id: 'daymeal' },
         { name: "月套餐", id: 'setmeal' },
         { name: "包量套餐", id: 'setmeal_q' },
         { name: "首月赠送套餐", id: 'givesetmeal' },
@@ -411,6 +415,7 @@ export default {
       clearTypes:[
         { name: "自然月", id: 'month' },
         { name: "27号", id: '27' },
+        { name: "自然日", id: 'day' },
       ],
       zoonTypes:[
         { name: "省内", id: 'province' },
@@ -494,6 +499,11 @@ export default {
           this.$message.error('中速用量不能为空')
           return
         }
+        if(this.addBigflowProductForm.clearType == 'day' && 
+        (this.addBigflowProductForm.days == undefined || this.addBigflowProductForm.days == null || this.addBigflowProductForm.days == '')){
+          this.$message.error('自然日套餐，有效期天数不能为空')
+          return
+        }
         console.log(JSON.stringify(this.addBigflowProductForm))
         params.productName =this.addBigflowProductForm.productName
         params.viewName =this.addBigflowProductForm.viewName
@@ -510,6 +520,7 @@ export default {
         params.mediumUseM = this.addBigflowProductForm.mediumUse
         params.expireTime =this.addBigflowProductForm.expireTime
         params.useExpire =this.addBigflowProductForm.useExpire
+        params.days = this.addBigflowProductForm.days
         if(this.bigflowProductDlgType == 'add'){
           apiBigflow.addProducts(params).then(res=>{
               if(res.resultCode == 0){
