@@ -238,6 +238,9 @@
               <el-option v-for="item in bigflowProductTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="有效天数" v-if="addBigflowProductForm.productType=='daymeal'">
+            <el-input style="width:250px;" v-model="addBigflowProductForm.days" placeholder="请输入有效天数" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
+          </el-form-item>
           <el-form-item label="产品有效期(月)" v-if="productTypeSelected == 'setmeal'">
             <el-input style="width:250px;" v-model="addBigflowProductForm.expireTime" placeholder="请输入原始价" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
           </el-form-item>
@@ -252,13 +255,10 @@
               <el-option v-for="item in bigflowProductUseTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="清算方式">
+          <el-form-item label="清算方式" v-if="addBigflowProductForm.productType!='daymeal'">
             <el-select style="width:120px;" v-model="addBigflowProductForm.clearType" clearable placeholder="请选择用量清算方式">
               <el-option v-for="item in clearTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
-          </el-form-item>
-          <el-form-item label="有效天数" v-if="addBigflowProductForm.clearType=='day'">
-            <el-input style="width:250px;" v-model="addBigflowProductForm.days" placeholder="请输入有效天数" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
           </el-form-item>
           <el-form-item label="用量区域">
             <el-select style="width:120px;" v-model="addBigflowProductForm.zone" clearable placeholder="请选择用量区域">
@@ -458,6 +458,7 @@ export default {
           this.$message.error('产品类型不能为空')
           return
         }
+        
         if(this.addBigflowProductForm.useExpire == undefined || this.addBigflowProductForm.useExpire == null || this.addBigflowProductForm.useExpire == ''){
           if(this.productTypeSelected == 'setmeal_q'){
             this.$message.error('清零周期不能为空')
@@ -474,6 +475,9 @@ export default {
         if(this.addBigflowProductForm.useType == undefined || this.addBigflowProductForm.useType == null || this.addBigflowProductForm.useType == ''){
           this.$message.error('使用类型不能为空')
           return
+        }
+        if(this.addBigflowProductForm.productType=='daymeal'){
+          this.addBigflowProductForm.clearType ='day'
         }
         if(this.addBigflowProductForm.clearType == undefined || this.addBigflowProductForm.clearType == null || this.addBigflowProductForm.clearType == ''){
           this.$message.error('用量清算方式不能为空')
@@ -499,11 +503,12 @@ export default {
           this.$message.error('中速用量不能为空')
           return
         }
-        if(this.addBigflowProductForm.clearType == 'day' && 
+        if(this.addBigflowProductForm.productType=='daymeal' && 
         (this.addBigflowProductForm.days == undefined || this.addBigflowProductForm.days == null || this.addBigflowProductForm.days == '')){
           this.$message.error('自然日套餐，有效期天数不能为空')
           return
         }
+
         console.log(JSON.stringify(this.addBigflowProductForm))
         params.productName =this.addBigflowProductForm.productName
         params.viewName =this.addBigflowProductForm.viewName
