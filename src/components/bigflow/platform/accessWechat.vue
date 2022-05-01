@@ -255,7 +255,8 @@
               <el-option v-for="item in bigflowProductUseTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="清算方式" v-if="addBigflowProductForm.productType!='daymeal'">
+
+          <el-form-item label="清算方式" v-if="addBigflowProductForm.productType!='daymeal' && addBigflowProductForm.productType!='setmeal_q'">
             <el-select style="width:120px;" v-model="addBigflowProductForm.clearType" clearable placeholder="请选择用量清算方式">
               <el-option v-for="item in clearTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
@@ -414,8 +415,8 @@ export default {
       ],
       clearTypes:[
         { name: "自然月", id: 'month' },
-        { name: "27号", id: '27' },
-        { name: "自然日", id: 'day' },
+        { name: "激活日", id: 'activeMonth' },
+        { name: "27号", id: '27' }
       ],
       zoonTypes:[
         { name: "省内", id: 'province' },
@@ -476,12 +477,12 @@ export default {
           this.$message.error('使用类型不能为空')
           return
         }
-        if(this.addBigflowProductForm.productType=='daymeal'){
-          this.addBigflowProductForm.clearType ='day'
-        }
+        
         if(this.addBigflowProductForm.clearType == undefined || this.addBigflowProductForm.clearType == null || this.addBigflowProductForm.clearType == ''){
-          this.$message.error('用量清算方式不能为空')
-          return
+          if(this.productTypeSelected !='daymeal' && this.productTypeSelected !='setmeal_q'){
+            this.$message.error('用量清算方式不能为空')
+            return
+          }
         }
         if(this.addBigflowProductForm.originalPrice == undefined || this.addBigflowProductForm.originalPrice == null || this.addBigflowProductForm.originalPrice == ''){
           this.$message.error('原始价格不能为空')
@@ -557,6 +558,7 @@ export default {
     },
     okShowBigflowProductAdd:function(){
       this.bigflowProductDlgType = 'add'
+      this.addBigflowProductForm = {}
       this.bigflowProductDlgShow = true
     },
     getProducts:function(){
@@ -615,6 +617,7 @@ export default {
       this.bigflowProductDlgType = 'edit'
       this.bigflowProductDlgShow = true
       this.addBigflowProductForm = row
+      this.productTypeSelected = row.productType
     },
     okShowFengwoEdit:function(row){
       this.editFengwoForm.id = row.id
