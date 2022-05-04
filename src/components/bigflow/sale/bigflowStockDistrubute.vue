@@ -262,7 +262,7 @@ export default {
       ],
       table_column_product: [
         { prop: 'productCode', label: '产品编码', width: 80 },
-        { prop: 'productTypeName', label: '产品编码', width: 80 },
+        { prop: 'productTypeName', label: '产品类型', width: 80 },
         { prop: 'viewName', label: '产品名', width: 100 },
         { prop: 'highUseName', label: '高速用量', width: 80 },
         { prop: 'mediumUseName', label: '中速用量', width: 80 },
