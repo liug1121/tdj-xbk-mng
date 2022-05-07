@@ -312,7 +312,7 @@
         <el-button @click="hideAlertMailEditDlg">取 消</el-button>
         <el-button type="primary" @click="okModifyAlertMail">确 定</el-button>
       </span>  
-    </el-dialog> -->
+    </el-dialog> 
     <el-main class="el-loading" v-loading="loading" element-loading-background="transparent"
         element-loading-text="加载中" > 
     </el-main>

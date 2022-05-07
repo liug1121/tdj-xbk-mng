@@ -152,6 +152,14 @@ const router = new Router({
           }
         },
         {
+          path: '/bigflowAccountInfo',
+          name: '账户池',
+          component: (resolve) => require(['components/bigflow/accountPool/accountPool.vue'], resolve),
+          meta: {
+            title: '账户池'
+          }
+        },
+        {
           path: '/bigflowCardStock',
           name: '卡片库存',
           component: (resolve) => require(['components/bigflow/flowpool/flowCardStock.vue'], resolve),
