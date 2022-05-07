@@ -233,11 +233,42 @@
           <el-form-item label="产品编码">
             <el-input style="width:250px;" v-model="addBigflowProductForm.productCode" placeholder="请输入产品编码"></el-input>
           </el-form-item>
-          <el-form-item label="产品类型">
-            <el-select style="width:120px;" v-model="addBigflowProductForm.productType" clearable placeholder="请选择产品类型" @change="productTypeChange"> 
-              <el-option v-for="item in bigflowProductTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
+          <el-form-item label="使用类型">
+            <el-select style="width:120px;" v-model="addBigflowProductForm.useType" clearable placeholder="请选择使用类型">
+              <el-option v-for="item in bigflowProductUseTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
+          <div v-if="addBigflowProductForm.useType ==='amount'">
+            <el-form-item label="连续出账月数">
+              <el-input style="width:250px;" v-model="addBigflowProductForm.billMonths" placeholder="请输入月数" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
+            </el-form-item>
+            <el-table   :data="productPrices" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}">
+              <el-table-column type="selection" width="55">
+              </el-table-column>
+              <el-table-column v-for="(p, key) in table_column_price" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+                <template slot-scope="scope">
+                  <div v-if="p.prop == 'opts'">
+                    <el-button type="text" size="small" >删除</el-button>
+                    <el-button type="text" size="small" >修改</el-button>
+                  </div> 
+                  <div v-else v-html="scope.row[p.prop]" />
+                </template>
+              </el-table-column>
+            </el-table>
+            <!-- <el-form-item label=""> -->
+              <el-button type="primary">添加价格规则</el-button>
+            <!-- </el-form-item> -->
+            <el-form-item label="">
+            </el-form-item>
+          </div>
+          
+          <div v-if="addBigflowProductForm.useType !='amount'">
+            <el-form-item label="产品类型">
+              <el-select style="width:120px;" v-model="addBigflowProductForm.productType" clearable placeholder="请选择产品类型" @change="productTypeChange"> 
+                <el-option v-for="item in bigflowProductTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
+              </el-select>
+            </el-form-item>
+          </div>
           <el-form-item label="有效天数" v-if="addBigflowProductForm.productType=='daymeal'">
             <el-input style="width:250px;" v-model="addBigflowProductForm.days" placeholder="请输入有效天数" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
           </el-form-item>
@@ -250,34 +281,34 @@
           <!-- <el-form-item label="原始价">
             <el-input style="width:250px;" v-model="addBigflowProductForm.originalPrice" placeholder="请输入原始价" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
           </el-form-item> -->
-          <el-form-item label="使用类型">
-            <el-select style="width:120px;" v-model="addBigflowProductForm.useType" clearable placeholder="请选择使用类型">
-              <el-option v-for="item in bigflowProductUseTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
-            </el-select>
-          </el-form-item>
-
-          <el-form-item label="清算方式" v-if="addBigflowProductForm.productType!='daymeal' && addBigflowProductForm.productType!='setmeal_q'">
-            <el-select style="width:120px;" v-model="addBigflowProductForm.clearType" clearable placeholder="请选择用量清算方式">
-              <el-option v-for="item in clearTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
-            </el-select>
-          </el-form-item>
+          
+          <div v-if="addBigflowProductForm.useType !='amount'">
+            <el-form-item  label="清算方式" v-if="addBigflowProductForm.productType!='daymeal' && addBigflowProductForm.productType!='setmeal_q'">
+              <el-select style="width:120px;" v-model="addBigflowProductForm.clearType" clearable placeholder="请选择用量清算方式">
+                <el-option v-for="item in clearTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
+              </el-select>
+            </el-form-item>
+          </div>
+          
           <el-form-item label="用量区域">
             <el-select style="width:120px;" v-model="addBigflowProductForm.zone" clearable placeholder="请选择用量区域">
               <el-option v-for="item in zoonTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="原始价">
-            <el-input style="width:250px;" v-model="addBigflowProductForm.originalPrice" placeholder="请输入原始价" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
-          </el-form-item>
-          <el-form-item label="销售价">
-            <el-input style="width:250px;" v-model="addBigflowProductForm.price" placeholder="请输入销售价" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
-          </el-form-item>
-          <el-form-item label="高速用量(M)">
-            <el-input style="width:250px;" v-model="addBigflowProductForm.highUse" placeholder="请输入高速用量（M）" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
-          </el-form-item>
-          <el-form-item label="中速用量(M)">
-            <el-input style="width:250px;" v-model="addBigflowProductForm.mediumUse" placeholder="请输入中速用量（M）" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
-          </el-form-item>
+          <div v-if="addBigflowProductForm.useType !='amount'">
+            <el-form-item label="原始价">
+              <el-input style="width:250px;" v-model="addBigflowProductForm.originalPrice" placeholder="请输入原始价" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
+            </el-form-item>
+            <el-form-item label="销售价">
+              <el-input style="width:250px;" v-model="addBigflowProductForm.price" placeholder="请输入销售价" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
+            </el-form-item>
+            <el-form-item label="高速用量(M)">
+              <el-input style="width:250px;" v-model="addBigflowProductForm.highUse" placeholder="请输入高速用量（M）" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
+            </el-form-item>
+            <el-form-item label="中速用量(M)">
+              <el-input style="width:250px;" v-model="addBigflowProductForm.mediumUse" placeholder="请输入中速用量（M）" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
+            </el-form-item>
+          </div>
           <el-form-item label="状态">
             <el-select style="width:120px;" v-model="addBigflowProductForm.status" clearable placeholder="请选择状态">
               <el-option v-for="item in bigflowProductsStatus" :key="item.id" :label="item.name" :value="item.id"></el-option>
@@ -348,6 +379,14 @@ export default {
       bigflowProductTotal:0,
       total: 0,
       // 列表，标题、字段
+      productPrices:[
+         { usage:'10G', price:'6元'}
+      ],
+      table_column_price:[
+        { prop: 'usage', label: '流量档位', width: 100, sortable: true },
+        { prop: 'price', label: '价格', width: 100, sortable: true },
+        { prop: 'opts', label: '操作', width: 100, sortable: true }
+      ],
       table_column: [
         { prop: 'id', label: '接入码', width: 100, sortable: true },
         { prop: 'name', label: '名称', width: 100, sortable: true },
@@ -406,7 +445,8 @@ export default {
       ],
       bigflowProductUseTypes:[
         { name: "卡", id: 'card' },
-        { name: "卡池", id: 'pool' }
+        { name: "卡池", id: 'pool' },
+        { name: "账户池", id: 'amount' }
       ],
       bigflowProductsStatus:[
         { name: "上架状态", id: '1' },

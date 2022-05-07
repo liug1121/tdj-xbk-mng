@@ -52,6 +52,9 @@
         <el-form-item label="池名称">
           <el-input style="width:300px;"  v-model="poolForm.name" placeholder="请输入流量池名称" ></el-input>
         </el-form-item>
+        <el-form-item label="信用额度(元)">
+          <el-input style="width:300px;" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"   v-model="poolForm.creditAmount" placeholder="请输入充值金额" ></el-input>
+        </el-form-item>
         <el-form-item label="渠道">
           <el-select 
           filterable

@@ -64,13 +64,28 @@
     <el-dialog title="迁移卡池" :visible.sync="showMovePoolDlg" width="450px" @close="closeMovePoolDlg">
       <!-- 内容主体区域 --> 
       <el-form :model="movePoolForm"  label-width="110px">
-        <el-form-item label="流量池">
+        <el-form-item label="池类型">
+          <el-radio-group v-model="movePoolForm.optType" @change="optTypeMoveChangeItem">
+            <el-radio :label='0'>账户池</el-radio>
+            <el-radio :label='1'>流量池</el-radio>
+          </el-radio-group>
+        </el-form-item> 
+        <el-form-item v-if="movePoolForm.optType == 1" label="流量池">
           <el-select 
           filterable
           clearable
           reserve-keyword
           class="queryFormInput"  placeholder="请输入流量池" v-model="movePoolForm.poolId">
             <el-option v-for="item in pools" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="movePoolForm.optType == 0" label="账户池">
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword
+          class="queryFormInput"  placeholder="请输入流量池" v-model="movePoolForm.poolId">
+            <el-option v-for="item in amountPools" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="超量是否关停">
@@ -97,13 +112,28 @@
     <el-dialog title="首尾ICCID划拨" :visible.sync="showMovePoolByIccidsDlg" width="450px" @close="closeMovePoolByIccidsDlg">
       <!-- 内容主体区域 -->  
       <el-form :model="movePoolByIccidsForm"  label-width="110px">
-        <el-form-item label="流量池">
+        <el-form-item label="池类型">
+          <el-radio-group v-model="movePoolByIccidsForm.optType" @change="optTypeIccidChangeItem">
+            <el-radio :label='0'>账户池</el-radio>
+            <el-radio :label='1'>流量池</el-radio>
+          </el-radio-group>
+        </el-form-item> 
+        <el-form-item v-if="movePoolByIccidsForm.optType == 1" label="流量池">
           <el-select 
           filterable
           clearable
           reserve-keyword
           class="queryFormInput"  placeholder="请输入流量池" v-model="movePoolByIccidsForm.poolId">
             <el-option v-for="item in pools" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+         <el-form-item  v-if="movePoolByIccidsForm.optType == 0" label="账户池">
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword
+          class="queryFormInput"  placeholder="请输入流量池" v-model="movePoolByIccidsForm.poolId">
+            <el-option v-for="item in amountPools" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="首iccid(19位)">
@@ -136,13 +166,28 @@
 
     <el-dialog title="卡片划拨" :visible.sync="showPoolCardImortDlg" width="450px" @close="closePoolCardImortDlg">
       <el-form :model="poolCardImortForm"  label-width="110px">
-        <el-form-item label="流量池">
+        <el-form-item label="池类型">
+          <el-radio-group v-model="poolCardImortForm.optType" @change="optTypeCardChangeItem">
+            <el-radio :label='0'>账户池</el-radio>
+            <el-radio :label='1'>流量池</el-radio>
+          </el-radio-group>
+        </el-form-item> 
+        <el-form-item v-if="poolCardImortForm.optType === 1" label="流量池">
           <el-select 
           filterable
           clearable
           reserve-keyword
           class="queryFormInput"  placeholder="请输入流量池" v-model="poolCardImortForm.poolId">
             <el-option v-for="item in pools" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="poolCardImortForm.optType === 0" label="账户池">
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword
+          class="queryFormInput"  placeholder="请选择账户池" v-model="poolCardImortForm.poolId">
+            <el-option v-for="item in amountPools" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="超量是否关停">
@@ -180,7 +225,9 @@ export default {
   data () {
     return {
     showPoolCardImortDlg:false, 
-    poolCardImortForm:{},
+    poolCardImortForm:{
+      
+    },
     btnEnable:false,
     showMovePoolByIccidsDlg:false, 
     movePoolByIccidsForm:{},
@@ -199,6 +246,7 @@ export default {
     channels:[],
     poolId:'',
     pools:[],
+    amountPools:[],
     statusOptions:[
         {label:'录入', value:1},
         {label:'可销售', value:2},
@@ -234,6 +282,15 @@ export default {
   },
   watch: {},
   methods: {
+    optTypeMoveChangeItem(e){
+      this.movePoolForm.optType=e
+    },
+    optTypeCardChangeItem(e){
+      this.poolCardImortForm.optType=e
+    },
+    optTypeIccidChangeItem(e){
+      this.movePoolByIccidsForm.optType=e
+    },
     removeUploadedFile(file,fileList){
         this.poolCardImortForm.fileToken = ''
         this.file2Upload = null
