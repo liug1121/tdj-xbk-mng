@@ -239,6 +239,9 @@
             </el-select>
           </el-form-item>
           <div v-if="addBigflowProductForm.useType ==='amount'">
+            <el-form-item label="产品有效期(月)">
+              <el-input style="width:250px;" v-model="addBigflowProductForm.expireTime" placeholder="请输入原始价" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
+            </el-form-item>
             <el-form-item label="连续出账月数">
               <el-input style="width:250px;" v-model="addBigflowProductForm.billMonths" placeholder="请输入月数" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
             </el-form-item>
@@ -321,7 +324,9 @@
         <!-- 底部区域 -->
         <span slot="footer" class="dialog-footer">
           <el-button @click="bigflowProductDlgShow = false">取 消</el-button>
-          <el-button type="primary" @click="okBigflowProduct">确 定</el-button>
+          
+          <el-button v-if="addBigflowProductForm.useType == 'amount'" type="primary" @click="okAmountPoolProduct">确 定</el-button>
+          <el-button v-else type="primary" @click="okBigflowProduct">确 定</el-button>
         </span>
       </el-dialog>
       <el-main class="el-loading" v-loading="loading" element-loading-background="transparent"
@@ -380,11 +385,12 @@ export default {
       total: 0,
       // 列表，标题、字段
       productPrices:[
-         { usage:'10G', price:'6元'}
+         { level:'1024', price:'6'},
+         { level:'2048', price:'10'}
       ],
       table_column_price:[
-        { prop: 'usage', label: '流量档位', width: 100, sortable: true },
-        { prop: 'price', label: '价格', width: 100, sortable: true },
+        { prop: 'level', label: '流量档位', width: 100, sortable: true },
+        { prop: 'price', label: '价格(元)', width: 100, sortable: true },
         { prop: 'opts', label: '操作', width: 100, sortable: true }
       ],
       table_column: [
@@ -478,6 +484,83 @@ export default {
   methods: {
     productTypeChange:function(productType) {
       this.productTypeSelected = productType
+    },
+    okAmountPoolProduct:function(){
+
+      let that = this
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+      }).then(() => {
+        if(this.addBigflowProductForm.productName == undefined || this.addBigflowProductForm.productName == null || this.addBigflowProductForm.productName == ''){
+          this.$message.error('产品名不能为空')
+          return
+        }
+        if(this.addBigflowProductForm.viewName == undefined || this.addBigflowProductForm.viewName == null || this.addBigflowProductForm.viewName == ''){
+          this.$message.error('显示名不能为空')
+          return
+        }
+        if(this.addBigflowProductForm.expireTime == undefined || this.addBigflowProductForm.expireTime == null || this.addBigflowProductForm.expireTime == ''){
+          if(this.productTypeSelected == 'setmeal'){
+            this.$message.error('产品有效期不能为空')
+            return
+          }
+        }
+        if(this.addBigflowProductForm.useType == undefined || this.addBigflowProductForm.useType == null || this.addBigflowProductForm.useType == ''){
+          this.$message.error('使用类型不能为空')
+          return
+        }
+        let params = {}
+  //       private String productName;
+	// private String viewName;
+	// private String productCode;
+	// private String useType;
+	// private String zone;
+	// private String status;
+	// private String memo;
+	// private String expireMonth;
+	// private Integer billMonth;
+        params.productName =this.addBigflowProductForm.productName
+        params.viewName =this.addBigflowProductForm.viewName
+        params.productCode =this.addBigflowProductForm.productCode
+        params.useType =this.addBigflowProductForm.useType
+        params.zone =this.addBigflowProductForm.zone
+        params.status =this.addBigflowProductForm.status
+        params.memo =this.addBigflowProductForm.memo
+        params.expireMonth = this.addBigflowProductForm.expireTime
+        params.billMonth = this.addBigflowProductForm.billMonths
+        params.prices = this.productPrices
+        if(this.bigflowProductDlgType == 'add'){
+
+          apiBigflow.addAmountProduct(params).then(res=>{
+              if(res.resultCode == 0){
+                  that.queryFengwo()
+                  this.$message.success('添加成功')
+                  this.bigflowProductDlgShow = false
+                  this.getProducts()
+              }else{
+                  this.$message.error('添加失败')
+              }
+          })
+        }else if(this.bigflowProductDlgType == 'edit'){
+          // console.log(JSON.stringify(this.addBigflowProductForm))
+          // params.id = this.addBigflowProductForm.id
+          // apiBigflow.modifyProducts(params).then(res=>{
+          //     if(res.resultCode == 0){
+          //         that.queryFengwo()
+          //         this.$message.success('添加成功')
+          //         this.bigflowProductDlgShow = false
+          //         this.getProducts()
+          //     }else{
+          //         this.$message.error('添加失败')
+          //     }
+          // })
+        }
+        
+      }).catch(() => {
+      })
+
     },
     okBigflowProduct:function(){
       let that = this
