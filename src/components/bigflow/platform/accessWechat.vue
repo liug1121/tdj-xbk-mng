@@ -36,10 +36,11 @@
       <el-table v-loading="loading" :data="bigflowProducts" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}">
         <el-table-column type="selection" width="55">
         </el-table-column>
-        <el-table-column v-for="(p, key) in table_column_bigflow_product" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+        <el-table-column v-for="(p, key) in table_column_bigflow_product" :prop="p.prop" :width="p.width" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
           <template slot-scope="scope">
             <div v-if="p.prop == 'opts'">
-              <el-button type="text" size="small" @click="okShowBigflowProductEdit(scope.row)">编辑</el-button>
+              <el-button v-if="scope.row.useType==='amount'" type="text" size="small" @click="okShowAmountPoolProductEdit(scope.row)">编辑1</el-button>
+              <el-button v-else type="text" size="small" @click="okShowBigflowProductEdit(scope.row)">编辑</el-button>
               <!-- <el-button type="text" size="small" @click="okDeleteFengwo(scope.row)">删除</el-button> -->
             </div>
             <div v-else v-html="scope.row[p.prop]" />
@@ -251,15 +252,15 @@
               <el-table-column v-for="(p, key) in table_column_price" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
                 <template slot-scope="scope">
                   <div v-if="p.prop == 'opts'">
-                    <el-button type="text" size="small" >删除</el-button>
-                    <el-button type="text" size="small" >修改</el-button>
+                    <el-button type="text" size="small" @click="removePrice(scope.row.id)">删除</el-button>
+                    <el-button type="text" size="small" @click="modifyPrice(scope.row)">修改</el-button>
                   </div> 
                   <div v-else v-html="scope.row[p.prop]" />
                 </template>
               </el-table-column>
             </el-table>
             <!-- <el-form-item label=""> -->
-              <el-button type="primary">添加价格规则</el-button>
+              <el-button type="primary" @click="addPrice">添加价格规则</el-button>
             <!-- </el-form-item> -->
             <el-form-item label="">
             </el-form-item>
@@ -332,6 +333,24 @@
       <el-main class="el-loading" v-loading="loading" element-loading-background="transparent"
         element-loading-text="加载中" > 
     </el-main>
+
+
+    <el-dialog title="价格规则" :visible.sync="amountPriceShowed" width="430px" @close="amountPriceShowed = false">
+        <!-- 内容主体区域 -->
+        <el-form :model="amountPriceForm" ref="addFormRef" label-width="90px">
+          <el-form-item label="档位（M）">
+            <el-input style="width:250px;" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"  v-model="amountPriceForm.level" placeholder="请输入档位"></el-input>
+          </el-form-item>
+          <el-form-item label="价格（元）">
+            <el-input style="width:250px;" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"  v-model="amountPriceForm.price" placeholder="请输入价格"></el-input>
+          </el-form-item>
+        </el-form>
+        <!-- 底部区域 -->
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="amountPriceShowed = false">取 消</el-button>
+          <el-button type="primary" @click="okAmount">确 定</el-button>
+        </span>
+      </el-dialog>
   </div>
 </template>
 
@@ -343,6 +362,11 @@ export default {
   },
   data () {
     return {
+    amountPriceForm:{
+      level:0,
+      price:0
+    },
+    amountPriceShowed:false,
     bigflowProductDlgType:'add',
     productTypeSelected:'',
     addBigflowProductForm:{},
@@ -385,8 +409,6 @@ export default {
       total: 0,
       // 列表，标题、字段
       productPrices:[
-         { level:'1024', price:'6'},
-         { level:'2048', price:'10'}
       ],
       table_column_price:[
         { prop: 'level', label: '流量档位', width: 100, sortable: true },
@@ -418,22 +440,22 @@ export default {
       ],
       table_column_bigflow_product:[
         { prop: 'productCode', label: '产品编码', width: 100, sortable: true },
-        { prop: 'productName', label: '产品名', width: 100, sortable: true },
-        { prop: 'viewName', label: '显示名', width: 100, sortable: true },
-        { prop: 'originalPrice', label: '原始价', width: 80, sortable: true },
-        { prop: 'price', label: '销售价', width: 80, sortable: true },
-        { prop: 'highUseName', label: '高速用量', width: 100, sortable: true },
-        { prop: 'mediumUseName', label: '中速用量', width: 100, sortable: true },
+        { prop: 'productName', label: '产品名', width: 300, sortable: true },
+        { prop: 'viewName', label: '显示名', width: 300, sortable: true },
+        { prop: 'originalPrice', label: '原始价', width: 100, sortable: true },
+        { prop: 'price', label: '销售价', width: 250, sortable: true },
+        { prop: 'highUseName', label: '高速用量', width: 80, sortable: true },
+        { prop: 'mediumUseName', label: '中速用量', width: 80, sortable: true },
         { prop: 'productTypeName', label: '产品类型', width: 100, sortable: true },
-        { prop: 'useTypeName', label: '使用类型', width: 50, sortable: true },
-        { prop: 'useExpire', label: '用量清零周期', width: 50, sortable: true },
+        { prop: 'useTypeName', label: '使用类型', width: 80, sortable: true },
+        { prop: 'useExpire', label: '用量清零周期', width: 80, sortable: true },
         { prop: 'expireTime', label: '产品有效期', width: 50, sortable: true },
-        { prop: 'statusName', label: '状态', width: 50, sortable: true },
-        { prop: 'clearTypeName', label: '用量清算周期', width: 50, sortable: true },
-        { prop: 'zoneName', label: '用量区域', width: 50, sortable: true },
+        { prop: 'statusName', label: '状态', width: 80, sortable: true },
+        { prop: 'clearTypeName', label: '用量清算周期', width: 100, sortable: true },
+        { prop: 'zoneName', label: '用量区域', width: 80, sortable: true },
         // { prop: 'gmtCreate', label: '创建时间', width: 100, sortable: true },
-        { prop: 'memo', label: '产品说明', width: 100, sortable: true },
-        { prop: 'opts', label: '操作', width: 100, sortable: true }
+        { prop: 'memo', label: '产品说明', width: 300, sortable: true },
+        { prop: 'opts', label: '操作', width: 100, sortable: true, fixed: 'right'}
       ],
       lbsAddrFuns:[
         { name: "是", id: 'true' },
@@ -482,6 +504,78 @@ export default {
   },
   watch: {},
   methods: {
+    addPrice:function(){
+      this.amountPriceForm = {}
+      this.amountPriceShowed = true
+    },
+    modifyPrice:function(price){
+      this.amountPriceForm.id = price.id
+      this.amountPriceForm.level = price.level
+      this.amountPriceForm.price = price.price
+      this.amountPriceShowed = true
+    },
+    removePrice:function(id){
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+      }).then(() => {
+        this.productPrices = this.productPrices.filter(function(item) {
+            return item.id !== id
+        });
+      }).catch(() => {
+      })
+      
+    },
+    okAmount:function(){
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+      }).then(() => {
+        if(this.amountPriceForm.id == undefined || this.amountPriceForm.id == null){
+        let row2Add = {
+          id:this.getNextAmountPriceRowId(),
+          level:this.amountPriceForm.level,
+          price:this.amountPriceForm.price
+        }
+        this.productPrices.push(row2Add)
+        this.amountPriceShowed = false
+      }else{
+        this.productPrices.forEach(price => {
+          if(price.id === this.amountPriceForm.id){
+            price.level = this.amountPriceForm.level
+            price.price = this.amountPriceForm.price
+          }
+        });
+        this.amountPriceShowed = false
+      }
+      }).catch(() => {
+      })
+    },
+    addAmountPrice:function(){
+      let rowId = this.getNextAmountPriceRowId()
+      let row = {
+        rowId:rowId,
+        level:0,
+        price:0
+      }
+      
+    },
+    getNextAmountPriceRowId(){
+      var s = [];
+      var hexDigits = "0123456789abcdef";
+      for (var i = 0; i < 36; i++) {
+          s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+      }
+      s[14] = "4";  // bits 12-15 of the time_hi_and_version field to 0010
+      s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);  // bits 6-7 of the clock_seq_hi_and_reserved to 01
+      s[8] = s[13] = s[18] = s[23] = "-";
+  
+      var uuid = s.join("");
+      console.log(uuid)
+      return uuid;
+    },
     productTypeChange:function(productType) {
       this.productTypeSelected = productType
     },
@@ -512,15 +606,6 @@ export default {
           return
         }
         let params = {}
-  //       private String productName;
-	// private String viewName;
-	// private String productCode;
-	// private String useType;
-	// private String zone;
-	// private String status;
-	// private String memo;
-	// private String expireMonth;
-	// private Integer billMonth;
         params.productName =this.addBigflowProductForm.productName
         params.viewName =this.addBigflowProductForm.viewName
         params.productCode =this.addBigflowProductForm.productCode
@@ -531,6 +616,13 @@ export default {
         params.expireMonth = this.addBigflowProductForm.expireTime
         params.billMonth = this.addBigflowProductForm.billMonths
         params.prices = this.productPrices
+        params.prices = params.prices.map(price=>{
+          let one = {
+            level:price.level,
+            price:price.price
+          }
+          return one
+        });
         if(this.bigflowProductDlgType == 'add'){
 
           apiBigflow.addAmountProduct(params).then(res=>{
@@ -735,6 +827,12 @@ export default {
       })
       }).catch(() => {
       });
+    },
+    okShowAmountPoolProductEdit:function(row){
+      this.bigflowProductDlgType = 'edit'
+      this.bigflowProductDlgShow = true
+      this.addBigflowProductForm = row
+      this.productTypeSelected = row.productType
     },
     okShowBigflowProductEdit:function(row){
       this.bigflowProductDlgType = 'edit'
