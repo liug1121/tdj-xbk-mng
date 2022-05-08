@@ -368,6 +368,14 @@ export default {
     },
     getCardMonthUsageDetails: params =>{
         return API.POST('/bigflow/manage/v1.0/card/usage/month/detail', params)
+    },
+    addAmountPool: params =>{
+        return API.POST('/bigflow/manage/v1.0/amountPool/add', params)
+    },
+    getAmountPools: params =>{
+        return API.POST('/bigflow/manage/v1.0/amountPool/pools', params)
+    },
+    removeAmountPool: params =>{
+        return API.POST('/bigflow/manage/v1.0/amountPool/remove', params)
     }
-
 }

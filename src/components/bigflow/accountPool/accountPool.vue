@@ -1,21 +1,21 @@
 <template>
   <div class="box_subject">
       <el-card class="all_list">
-      <el-form  :inline="true">
+      <el-form  :inline="true" :model="queryPoolForm" >
         <el-form-item label="账户名称" class="queryFormItem">
-            <el-input class="queryFormInput" clearable placeholder="请输入账户名称" style="width:150px"></el-input>
+            <el-input class="queryFormInput" v-model="queryPoolForm.nameLike" clearable placeholder="请输入账户名称" style="width:150px"></el-input>
         </el-form-item>
         <el-form-item label="渠道" class="queryFormItem">
           <el-select class="queryFormInput"  
           filterable
           clearable
           reserve-keyword
-           placeholder="请选择渠道">
+           placeholder="请选择渠道"  v-model="queryPoolForm.channelId">
             <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
           
         </el-form-item>
-        <el-button size="medium" type="primary" icon="el-icon-search" >搜索</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-search" @click="queryPools">搜索</el-button>
       </el-form>
       <div class="button_content">
         <el-button size="medium" type="primary" icon="el-icon-edit" @click="showEditPoolDlg">添加</el-button>
@@ -32,7 +32,7 @@
               <el-button type="text" size="small"  v-if="scope.row.status=='open'">停用</el-button>
               <el-button type="text" size="small"  v-else>启用</el-button>
               <el-button type="text" size="small" @click="openAmountDetailsDlg">账单明细</el-button>
-              <el-button type="text" size="small" >删除</el-button>
+              <el-button type="text" size="small" @click="okRemovePool(scope.row.id)">删除</el-button>
               <el-button type="text" size="small" @click="openlertListDlg">告警设置</el-button>
               <el-button type="text" size="small" @click="showEditPoolDlg">编辑</el-button>
             </div>
@@ -40,9 +40,9 @@
           </template>
         </el-table-column>
       </el-table>
-      <!-- 分页区域 -->
+      <!-- 分页区域 --> 
       <el-pagination :current-page="currentPage" :page-sizes="[10,20,30]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
-        :total="total">
+        :total="total" @size-change="handleRecordsSizeChange" @current-change="handleRecordsCurrentChange">
       </el-pagination>
       </el-card>
 
@@ -68,7 +68,7 @@
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeEditPoolDlg" :disabled="btnEnable">取 消</el-button>
-        <el-button type="primary"  :disabled="btnEnable">确 定</el-button>
+        <el-button type="primary" @click="okEditPoolDlg"  :disabled="btnEnable">确 定</el-button>
       </span>  
     </el-dialog> 
 
@@ -195,17 +195,21 @@
         </el-table-column>
       </el-table>
     </el-dialog> 
-    
+    <el-main class="el-loading" v-loading="loading" element-loading-background="transparent"
+        element-loading-text="加载中" > 
+    </el-main>
   </div>
 </template>
 
 <script>
+import apiBigflow from './../../../api/bigflow'
 export default {
   components: {
 
   },
   data () {
     return {
+        queryPoolForm:{},
         amountDetails:[
             {cycleId:'202205'}
         ],
@@ -229,6 +233,7 @@ export default {
         pageSize:10,
         currentPage:0,
         total:0,
+        loading:false,
         channels:[
         ],
         pools:[
@@ -285,7 +290,8 @@ export default {
 
   },
   created(){
-     
+     this.getAllChannels()
+     this.getAllPools()
   },
   watch: {},
   methods: {
@@ -293,6 +299,7 @@ export default {
         this.editPoolDlgShowed = false
     },
     showEditPoolDlg: function(){
+        this.poolForm = {}
         this.editPoolDlgShowed = true
     },
     closeAddAmountDlg:function(){
@@ -330,7 +337,108 @@ export default {
     },
     openAmountDetailsDlg:function(){
         this.amountDetailsDlgShowed = true
-    }
+    },
+    getAllChannels:function(){
+        let params = {}
+        apiBigflow.getAllChannels(params).then(res=>{
+            if(res.resultCode == 0){
+                this.channels = res.data
+            }
+        })
+    },
+    addPool:function(){
+        this.loading = true
+        let params = {}
+        params.name = this.poolForm.name
+        params.channelId = this.poolForm.channelId
+        params.creditAmount = this.poolForm.creditAmount
+        apiBigflow.addAmountPool(params).then(res=>{
+            if(res.resultCode == 0){
+                // this.channels = res.data
+                this.getAllPools()
+            }
+            this.loading = false
+        })
+    },
+
+    okRemovePool:function(poolId){
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+          this.removeAmountPool(poolId)
+        }).catch(() => {
+        });
+    },
+
+    removeAmountPool:function(poolId){
+        this.loading = true
+        let params = {}
+        params.poolId = poolId
+        apiBigflow.removeAmountPool(params).then(res=>{
+            if(res.resultCode == 0){
+                this.getAllPools()
+                this.loading = false
+            }else{
+                this.loading = false
+            }
+        })
+    },
+    getAllPools:function(){
+        this.loading = true
+        let params = {}
+        params.nameLike = this.queryPoolForm.nameLike
+        params.channelId = this.queryPoolForm.channelId
+        params.page = this.currentPage 
+        params.pageSize = this.pageSize
+        apiBigflow.getAmountPools(params).then(res=>{
+            if(res.resultCode == 0){
+                this.pools = res.data
+                this.total = res.rowNum
+                this.loading = false
+            }else{
+                this.loading = false
+            }
+        })
+    },
+    queryPools:function(){
+        this.currentPage = 0
+        this.getAllPools()
+    },
+    okEditPoolDlg:function(){
+        // this.poolForm.channelId
+        if(this.poolForm.name == null || this.poolForm.name == undefined || this.poolForm.name == ''){
+            this.$message.error('池名称不能为空')
+            return
+        }
+        if(this.poolForm.creditAmount == null || this.poolForm.creditAmount == undefined){
+            this.$message.error('池信用额度不能为空')
+            return
+        }
+        if(this.poolForm.channelId == null || this.poolForm.channelId == undefined || this.poolForm.channelId == ''){
+            this.$message.error('池渠道不能为空')
+            return
+        }
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+          this.addPool()
+          this.closeEditPoolDlg()
+        }).catch(() => {
+        });
+    },
+     handleRecordsSizeChange (newPage) {
+      this.pageSize = newPage;
+      this.getAllPools()
+    },
+    handleRecordsCurrentChange (newPage) {
+        console.log('newPage:' + newPage)
+      this.currentPage = newPage -1;
+      this.getAllPools()
+    },
   }
 };
 </script>
