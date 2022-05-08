@@ -18,8 +18,8 @@
         <el-button size="medium" type="primary" icon="el-icon-search" @click="queryPools">搜索</el-button>
       </el-form>
       <div class="button_content">
-        <el-button size="medium" type="primary" icon="el-icon-edit" @click="showEditPoolDlg">添加</el-button>
-        <el-button size="medium" type="primary" icon="el-icon-edit" @click="showAddAmountDlg">充值</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" @click="showAddPoolDlg">添加</el-button>
+        <!-- <el-button size="medium" type="primary" icon="el-icon-edit" @click="showAddAmountDlg">充值</el-button> -->
         <el-button size="medium" type="primary" icon="el-icon-edit" @click="openOrderPackageDlg">套餐订购</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" @click="openEditExpireDlg">调整有效期</el-button>
       </div>
@@ -29,12 +29,14 @@
         <el-table-column v-for="(p, key) in pool_column" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
           <template slot-scope="scope">
             <div v-if="p.prop == 'opts'">
+                
+              <el-button type="text" size="small" @click="showAddAmountDlg(scope.row.id)">充值</el-button>
               <el-button type="text" size="small"  v-if="scope.row.status=='open'">停用</el-button>
               <el-button type="text" size="small"  v-else>启用</el-button>
               <el-button type="text" size="small" @click="openAmountDetailsDlg">账单明细</el-button>
               <el-button type="text" size="small" @click="okRemovePool(scope.row.id)">删除</el-button>
               <el-button type="text" size="small" @click="openlertListDlg">告警设置</el-button>
-              <el-button type="text" size="small" @click="showEditPoolDlg">编辑</el-button>
+              <el-button type="text" size="small" @click="showEditPoolDlg(scope.row)">编辑</el-button>
             </div>
             <div v-else v-html="scope.row[p.prop]" />
           </template>
@@ -79,13 +81,13 @@
           <el-input style="width:300px;" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"   v-model="poolAddAmountForm.addedAmount" placeholder="请输入充值金额" ></el-input>
         </el-form-item>
         <el-form-item label="备注">
-          <el-input style="width:300px;" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"   v-model="poolAddAmountForm.comment" placeholder="请输入备注" ></el-input>
+          <el-input style="width:300px;"   v-model="poolAddAmountForm.comment" placeholder="请输入备注" ></el-input>
         </el-form-item>
       </el-form>
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeAddAmountDlg" :disabled="btnEnable">取 消</el-button>
-        <el-button type="primary"  :disabled="btnEnable">确 定</el-button>
+        <el-button type="primary"  :disabled="btnEnable" @click="okAddAmountDlg">确 定</el-button>
       </span>  
     </el-dialog> 
 
@@ -227,7 +229,12 @@ export default {
         orderPackageForm:{},
         addAmountDlgShowed:false,
         poolAddAmountForm:{},
-        poolForm:{},
+        poolForm:{
+           poolId:'',
+           name:'',
+           creditAmount:'',
+           channelId:''
+        },
         editPoolDlgShowed:false,
         btnEnable:false,
         pageSize:10,
@@ -298,15 +305,57 @@ export default {
     closeEditPoolDlg: function(){
         this.editPoolDlgShowed = false
     },
-    showEditPoolDlg: function(){
+    showAddPoolDlg: function(){
         this.poolForm = {}
+        this.editPoolDlgShowed = true
+    },
+    showEditPoolDlg: function(pool){
+        this.poolForm.poolId = pool.id
+        this.poolForm.name = pool.poolName
+        this.poolForm.creditAmount = pool.creditAmount
+        this.poolForm.channelId = pool.saleChannelId
         this.editPoolDlgShowed = true
     },
     closeAddAmountDlg:function(){
         this.addAmountDlgShowed = false
     },
-    showAddAmountDlg:function(){
+    showAddAmountDlg:function(poolId){
+        this.poolAddAmountForm = {}
         this.addAmountDlgShowed = true
+        this.poolAddAmountForm.poolId = poolId
+    },
+
+    addAmount:function(){
+        this.loading = true
+        let params = {}
+        params.poolId = this.poolAddAmountForm.poolId
+        params.addedAmount = this.poolAddAmountForm.addedAmount
+        params.comment = this.poolAddAmountForm.comment
+        apiBigflow.addAmount(params).then(res=>{
+            if(res.resultCode == 0){
+                this.getAllPools()
+            }
+            this.loading = false
+        })
+    },
+    okAddAmountDlg:function(){
+        if(this.poolAddAmountForm.poolId == undefined || this.poolAddAmountForm.poolId == null){
+            this.$message.error('池信息不能为空')
+            return
+        }
+        if(this.poolAddAmountForm.addedAmount == undefined || this.poolAddAmountForm.addedAmount == null){
+            this.$message.error('充值金额不能为空')
+            return
+        }
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+          this.addAmount()
+          this.addAmountDlgShowed = false
+        }).catch(() => {
+        });
     },
     closeOrderPackageDlg:function(){
         this.orderPackageDlgShowed = false
@@ -371,6 +420,22 @@ export default {
         }).catch(() => {
         });
     },
+    modifyAmountPool:function(){
+        this.loading = true
+        let params = {}
+        params.poolId = this.poolForm.poolId
+        params.name= this.poolForm.name
+        params.creditAmount = this.poolForm.creditAmount
+        params.channelId = this.poolForm.channelId
+        apiBigflow.modifyAmountPool(params).then(res=>{
+            if(res.resultCode == 0){
+                this.getAllPools()
+                this.loading = false
+            }else{
+                this.loading = false
+            }
+        })
+    },
 
     removeAmountPool:function(poolId){
         this.loading = true
@@ -425,7 +490,11 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
         }).then(() => {
-          this.addPool()
+          if(this.poolForm.poolId != undefined && this.poolForm.poolId != null){
+              this.modifyAmountPool()
+          }else{
+              this.addPool()
+          }
           this.closeEditPoolDlg()
         }).catch(() => {
         });

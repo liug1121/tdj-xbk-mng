@@ -377,5 +377,11 @@ export default {
     },
     removeAmountPool: params =>{
         return API.POST('/bigflow/manage/v1.0/amountPool/remove', params)
+    },
+    modifyAmountPool: params =>{
+        return API.POST('/bigflow/manage/v1.0/amountPool/modify', params)
+    },
+    addAmount: params =>{
+        return API.POST('/bigflow/manage/v1.0/amountPool/amount/add', params)
     }
 }
