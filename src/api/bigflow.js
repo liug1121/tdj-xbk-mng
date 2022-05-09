@@ -386,5 +386,13 @@ export default {
     },
     addAmountProduct: params =>{
         return API.POST('/bigflow/manage/v1.0/bigflowproducts/amountpool/add', params)
+    },
+    modifyAmountProduct: params =>{
+        return API.POST('/bigflow/manage/v1.0/bigflowproducts/amountpool/modify', params)
+    },
+    removeProduct: params =>{
+        return API.POST('/bigflow/manage/v1.0/bigflowproducts/remove', params)
     }
+
+    
 }
