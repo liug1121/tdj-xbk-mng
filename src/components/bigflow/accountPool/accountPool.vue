@@ -20,7 +20,7 @@
       <div class="button_content">
         <el-button size="medium" type="primary" icon="el-icon-edit" @click="showAddPoolDlg">添加</el-button>
         <!-- <el-button size="medium" type="primary" icon="el-icon-edit" @click="showAddAmountDlg">充值</el-button> -->
-        <el-button size="medium" type="primary" icon="el-icon-edit" @click="openOrderPackageDlg">套餐订购</el-button>
+        <!-- <el-button size="medium" type="primary" icon="el-icon-edit" @click="openOrderPackageDlg">套餐订购</el-button> -->
         <el-button size="medium" type="primary" icon="el-icon-edit" @click="openEditExpireDlg">调整有效期</el-button>
       </div>
       <el-table   :data="pools" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" >
@@ -31,6 +31,7 @@
             <div v-if="p.prop == 'opts'">
                 
               <el-button type="text" size="small" @click="showAddAmountDlg(scope.row.id)">充值</el-button>
+              <el-button type="text" size="small"  @click="openOrderPackageDlg(scope.row.id)">套餐订购</el-button>
               <el-button type="text" size="small"  v-if="scope.row.status=='open'">停用</el-button>
               <el-button type="text" size="small"  v-else>启用</el-button>
               <el-button type="text" size="small" @click="openAmountDetailsDlg">账单明细</el-button>
@@ -100,14 +101,14 @@
           clearable
           reserve-keyword
           class="queryFormInput"  placeholder="请选择套餐" v-model="orderPackageForm.packageId">
-            <el-option v-for="item in poolPackages" :key="item.value" :label="item.name" :value="item.value"></el-option>
+            <el-option v-for="item in poolPackages" :key="item.product_code" :label="item.product_name" :value="item.product_code"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeOrderPackageDlg" :disabled="btnEnable">取 消</el-button>
-        <el-button type="primary"  :disabled="btnEnable">确 定</el-button>
+        <el-button type="primary" @click="okOrderPackage"  :disabled="btnEnable">确 定</el-button>
       </span>  
     </el-dialog> 
 
@@ -299,9 +300,53 @@ export default {
   created(){
      this.getAllChannels()
      this.getAllPools()
+     this.getAmountPoolProducts()
   },
   watch: {},
   methods: {
+      okOrderPackage:function(poolId){
+         if(this.orderPackageForm.poolId == undefined || this.orderPackageForm.poolId==null){
+              this.$message.error('池信息不能为空')
+              return
+          }
+          if(this.orderPackageForm.packageId == undefined || this.orderPackageForm.packageId==null){
+              this.$message.error('套餐信息不能为空')
+              return
+          }
+          this.$confirm('您确认要此操作, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.loading = true
+                let params={}
+                this.loading = true
+                params.poolId = this.orderPackageForm.poolId
+                params.packageId  = this.orderPackageForm.packageId
+                    apiBigflow.modifyAmountPoolPackage(params).then(res=>{
+                        if(res.resultCode == 0){
+                            this.getAllPools()
+                            this.loading = false
+                        }else{
+                            this.loading = false
+                        }
+                        this.orderPackageDlgShowed = false
+                    })
+                }).catch(() => {
+                });
+      },
+
+      getAmountPoolProducts:function(){
+          let params={}
+          apiBigflow.getAmountPoolProducts(params).then(res=>{
+            if(res.resultCode == 0){
+                this.poolPackages = res.data
+                // this.loading = false
+            }else{
+                // this.loading = false
+            }
+        })
+      },
     closeEditPoolDlg: function(){
         this.editPoolDlgShowed = false
     },
@@ -360,7 +405,8 @@ export default {
     closeOrderPackageDlg:function(){
         this.orderPackageDlgShowed = false
     },
-    openOrderPackageDlg:function(){
+    openOrderPackageDlg:function(poolId){
+        this.orderPackageForm.poolId = poolId
         this.orderPackageDlgShowed = true
     },
     closeEditExpireDlg:function(){
