@@ -28,7 +28,7 @@
             <el-option v-for="item in pools" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="账户池" class="queryFormItem">
+        <!-- <el-form-item label="账户池" class="queryFormItem">
           <el-select class="queryFormInput"  
           filterable
           clearable
@@ -36,7 +36,7 @@
            placeholder="请选择账户池" v-model="amountId">
             <el-option v-for="item in amountPools" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <!-- <el-form-item label="当前套餐" class="queryFormItem">
           <el-select class="queryFormInput"  
           filterable

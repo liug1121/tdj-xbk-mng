@@ -401,5 +401,17 @@ export default {
     },
     moveAmountPoolbetweenIccids: params =>{
         return API.POST('/bigflow/manage/v1.0/amountPool/move/iccidbetween', params)
-    }
+    },
+    moveAmountPoolByIccid: params =>{
+        return API.POST('/bigflow/manage/v1.0/amountPool/move/iccid', params)
+    },
+    fileAmountPoolMove: (params) => {
+        return API.POST('/bigflow/manage/v1.0/amountPool/card/file/import', params, {
+            headers: {
+              'content-type': 'multipart/form-data'
+            }
+          })
+    } 
+
+    // /amountPool/card/file/import
 }

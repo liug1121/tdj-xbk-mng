@@ -28,6 +28,16 @@
            placeholder="请选择流量池" v-model="poolId">
             <el-option v-for="item in pools" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
+          <!-- <el-button size="medium" type="primary" icon="el-icon-search" @click="queryFlowCardStocks">搜索</el-button> -->
+        </el-form-item>
+        <el-form-item label="账户池" class="queryFormItem">
+          <el-select class="queryFormInput"  
+          filterable
+          clearable
+          reserve-keyword
+           placeholder="请选择账户池" v-model="amountPoolId">
+            <el-option v-for="item in amountPools" :key="item.id" :label="item.poolName" :value="item.id"></el-option>
+          </el-select>
           <el-button size="medium" type="primary" icon="el-icon-search" @click="queryFlowCardStocks">搜索</el-button>
         </el-form-item>
       </el-form>
@@ -105,7 +115,9 @@
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeMovePoolDlg" :disabled="btnEnable">取 消</el-button>
-        <el-button type="primary" @click="okMovePoolPool" :disabled="btnEnable">确 定</el-button>
+        
+        <el-button type="primary" v-if="movePoolForm.optType == 1" @click="okMovePoolPool" :disabled="btnEnable">确 定</el-button>
+        <el-button type="primary" v-if="movePoolForm.optType == 0" @click="okMoveAmountPool" :disabled="btnEnable">确 定</el-button>
       </span>   
     </el-dialog>
 
@@ -188,7 +200,7 @@
           clearable
           reserve-keyword
           class="queryFormInput"  placeholder="请选择账户池" v-model="poolCardImortForm.poolId">
-            <el-option v-for="item in amountPools" :key="item.value" :label="item.name" :value="item.value"></el-option>
+            <el-option v-for="item in amountPools" :key="item.id" :label="item.poolName" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="超量是否关停">
@@ -208,7 +220,8 @@
       
       <span slot="footer" class="dialog-footer">
         <el-button @click="closePoolCardImortDlg" :disabled="btnEnable">取 消</el-button>
-        <el-button type="primary" @click="okPoolCardImort" :disabled="btnEnable">确 定</el-button>
+        <el-button type="primary" v-if="poolCardImortForm.optType === 1" @click="okPoolCardImort" :disabled="btnEnable">确 定</el-button>
+        <el-button type="primary" v-if="poolCardImortForm.optType === 0" @click="okAmountPoolCardImort" :disabled="btnEnable">确 定</el-button>
       </span>  
     </el-dialog>
     <el-main class="el-loading" v-loading="loading" element-loading-background="transparent"
@@ -227,15 +240,19 @@ export default {
     return {
     showPoolCardImortDlg:false, 
     poolCardImortForm:{
-      
+      optType:1
     },
     btnEnable:false,
     showMovePoolByIccidsDlg:false, 
-    movePoolByIccidsForm:{},
+    movePoolByIccidsForm:{
+      optType:1
+    },
     file2Upload : null,
     iccids2Opt:'',
     showMovePoolDlg:false,  
-    movePoolForm:{},
+    movePoolForm:{
+      optType:1
+    },
     useLimitStatus:[
         {value: 1, name:"不关停"},
         {value: 2, name:"关停"}
@@ -246,6 +263,7 @@ export default {
     saleChannel:'',
     channels:[],
     poolId:'',
+    amountPoolId:'',
     pools:[],
     amountPools:[],
     statusOptions:[
@@ -257,7 +275,7 @@ export default {
         {label:'已销毁', value:9}
     ],
     flowCardStocks:[],
-      page: 1,
+      page: 0,
       pageSize: 10,
       // 列表总条数
       total: 0,
@@ -294,7 +312,15 @@ export default {
         params.pageSize = 100000
         apiBigflow.getAmountPools(params).then(res=>{
             if(res.resultCode == 0){
-                this.amountPools = res.data
+              let noAmountPool = {
+                id:-1,
+                poolName:'移出账户池'
+              }
+              this.amountPools.push(noAmountPool)
+              for(let i = 0; i < res.data.length; i++){
+                this.amountPools.push(res.data[i])
+              }
+                
             }else{
             }
         })
@@ -328,6 +354,39 @@ export default {
     closePoolCardImortDlg:function(){
         this.showPoolCardImortDlg = false
     },  
+    okAmountPoolCardImort:function(){
+      let that = this
+        // importPoolCards
+        if(this.poolCardImortForm.fileToken == undefined || this.poolCardImortForm.fileToken == ''){
+            alert('请先上传要操作的excel文件')
+            return
+        }
+        
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = new FormData()
+            params.append('file', this.file2Upload)
+            params.append('poolId', this.poolCardImortForm.poolId)
+            // params.append('useLimitStatus', this.poolCardImortForm.useLimitStatus)
+            params.append('reason', this.poolCardImortForm.reason)
+            // params.append('fileToken', this.poolCardImortForm.fileToken)
+            apiBigflow.fileAmountPoolMove(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryFlowCardStocks()
+                    that.showPoolCardImortDlg = false
+                    alert('操作成功')
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        }); 
+    },
     okPoolCardImort:function(){
         let that = this
         // importPoolCards
@@ -442,6 +501,31 @@ export default {
     closeMovePoolDlg:function(){
         this.showMovePoolDlg = false
     } ,
+    okMoveAmountPool:function(){
+      let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = {}
+            params.iccid = this.iccids2Opt
+            params.reason = this.movePoolForm.reason
+            params.amountPoolId2Moving = this.movePoolForm.poolId
+            apiBigflow.moveAmountPoolByIccid(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryFlowCardStocks()
+                    that.showMovePoolDlg = false
+                    this.$message.success('操作成功')
+                }else{
+                    this.$message.error('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        }); 
+    },
     okMovePoolPool:function(){
         let that = this
         this.$confirm('您确认要此操作, 是否继续?', '提示', {
@@ -515,6 +599,8 @@ export default {
             params.channelId = this.saleChannel
         if(this.poolId != '')
             params.poolId = this.poolId
+        if(this.amountPoolId != '')
+            params.amountPoolId = this.amountPoolId
         apiBigflow.getFlowCardStock(params).then(res=>{
         if(res.resultCode == 0){
             this.flowCardStocks = res.data
