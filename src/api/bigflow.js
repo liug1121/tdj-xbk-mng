@@ -398,7 +398,8 @@ export default {
     },
     modifyAmountPoolPackage: params =>{
         return API.POST('/bigflow/manage/v1.0/amountPool/pacakge/modify', params)
+    },
+    moveAmountPoolbetweenIccids: params =>{
+        return API.POST('/bigflow/manage/v1.0/amountPool/move/iccidbetween', params)
     }
-
-    
 }

@@ -85,7 +85,7 @@
           clearable
           reserve-keyword
           class="queryFormInput"  placeholder="请输入流量池" v-model="movePoolForm.poolId">
-            <el-option v-for="item in amountPools" :key="item.value" :label="item.name" :value="item.value"></el-option>
+            <el-option v-for="item in amountPools" :key="item.id" :label="item.poolName" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="超量是否关停">
@@ -133,7 +133,7 @@
           clearable
           reserve-keyword
           class="queryFormInput"  placeholder="请输入流量池" v-model="movePoolByIccidsForm.poolId">
-            <el-option v-for="item in amountPools" :key="item.value" :label="item.name" :value="item.value"></el-option>
+            <el-option v-for="item in amountPools" :key="item.id" :label="item.poolName" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="首iccid(19位)">
@@ -159,7 +159,8 @@
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeMovePoolByIccidsDlg" :disabled="btnEnable">取 消</el-button>
-        <el-button type="primary" @click="okMovePoolByIccids" :disabled="btnEnable">确 定</el-button>
+        <el-button v-if="movePoolByIccidsForm.optType == 1"  type="primary" @click="okMovePoolByIccids" :disabled="btnEnable">确 定</el-button>
+        <el-button v-if="movePoolByIccidsForm.optType == 0"  type="primary" @click="okMoveAmountPoolByIccids" :disabled="btnEnable">确 定</el-button>
       </span>   
     </el-dialog>
 
@@ -266,6 +267,7 @@ export default {
         { prop: 'phoneNumber', label: 'IMSI', width: 200, sortable: true },
         { prop: 'statusName', label: '库存状态', width: 120, sortable: true },
         { prop: 'poolName', label: '池名称', width: 280, sortable: true },
+        { prop: 'amountPoolName', label: '账户池名称', width: 280, sortable: true },
         { prop: 'gmtPool', label: '加入池时间', width: 180, sortable: true },
         // { prop: 'useLimitStatus', label: '限量关停', width: 80, sortable: true },
         { prop: 'gmtStock', label: '入库时间', width: 180, sortable: true }
@@ -276,12 +278,27 @@ export default {
 
   },
   created(){
+      this.getAllAmountPools()
       this.getAllPools()
       this.getAllChannels()
       this.queryFlowCardStocks()
   },
   watch: {},
   methods: {
+    getAllAmountPools:function(){
+        this.loading = true
+        let params = {}
+        params.nameLike = null
+        params.channelId = null
+        params.page = 0
+        params.pageSize = 100000
+        apiBigflow.getAmountPools(params).then(res=>{
+            if(res.resultCode == 0){
+                this.amountPools = res.data
+            }else{
+            }
+        })
+    },
     optTypeMoveChangeItem(e){
       this.movePoolForm.optType=e
     },
@@ -354,6 +371,46 @@ export default {
     closeMovePoolByIccidsDlg :function(){
         this.showMovePoolByIccidsDlg = false
     }, 
+    okMoveAmountPoolByIccids:function(){
+      // moveAmountPoolbetweenIccids
+      if(this.movePoolByIccidsForm.iccidStart == undefined || this.movePoolByIccidsForm.iccidStart == null || this.movePoolByIccidsForm.iccidStart == ''){
+        this.$message.error('iccid开始不能为空')
+        return
+      }
+      if(this.movePoolByIccidsForm.iccidEnd == undefined || this.movePoolByIccidsForm.iccidEnd == null || this.movePoolByIccidsForm.iccidEnd == ''){
+        this.$message.error('iccid结束不能为空')
+        return
+      }
+      if(this.movePoolByIccidsForm.poolId == undefined || this.movePoolByIccidsForm.poolId == null || this.movePoolByIccidsForm.poolId == ''){
+        this.$message.error('账户池不能为空')
+        return 
+      }
+      let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = {}
+            params.iccidStart = this.movePoolByIccidsForm.iccidStart
+            params.iccidEnd = this.movePoolByIccidsForm.iccidEnd
+            params.reason = this.movePoolByIccidsForm.reason
+            params.poolId = this.movePoolByIccidsForm.poolId
+            params.useLimitStatus = this.movePoolByIccidsForm.useLimitStatus
+            apiBigflow.moveAmountPoolbetweenIccids(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryFlowCardStocks()
+                    that.showMovePoolByIccidsDlg = false
+                    this.$message.success('操作成功')
+                }else{
+                    this.$message.success('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        });
+    },
     okMovePoolByIccids:function(){
         let that = this
         this.$confirm('您确认要此操作, 是否继续?', '提示', {
