@@ -240,9 +240,9 @@
               <el-option v-for="item in bigflowProductUseTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="产品有效期(月)">
+          <!-- <el-form-item label="产品有效期(月)">
               <el-input style="width:250px;" v-model="addBigflowProductForm.expireTime" placeholder="请输入原始价" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
-            </el-form-item>
+            </el-form-item> -->
           <div v-if="addBigflowProductForm.useType ==='amount'">
             
             <el-form-item label="连续出账月数">
@@ -275,6 +275,9 @@
               </el-select>
             </el-form-item>
           </div>
+          <el-form-item label="产品有效期(月)" v-if="addBigflowProductForm.productType!='daymeal'">
+            <el-input style="width:250px;" v-model="addBigflowProductForm.expireTime" placeholder="请输入原始价" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
+          </el-form-item>
           <el-form-item label="有效天数" v-if="addBigflowProductForm.productType=='daymeal'">
             <el-input style="width:250px;" v-model="addBigflowProductForm.days" placeholder="请输入有效天数" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
           </el-form-item>
@@ -289,7 +292,8 @@
           </el-form-item> -->
           
           <div v-if="addBigflowProductForm.useType !='amount'">
-            <el-form-item  label="清算方式" v-if="addBigflowProductForm.productType!='daymeal' && addBigflowProductForm.productType!='setmeal_q'">
+            <!-- <el-form-item  label="清算方式" v-if="addBigflowProductForm.productType!='daymeal' && addBigflowProductForm.productType!='setmeal_q'"> -->
+            <el-form-item  label="清算方式" v-if="addBigflowProductForm.productType!='setmeal_q'">
               <el-select style="width:120px;" v-model="addBigflowProductForm.clearType" clearable placeholder="请选择用量清算方式">
                 <el-option v-for="item in clearTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
               </el-select>
@@ -867,6 +871,7 @@ export default {
       });
     },
     okShowAmountPoolProductEdit:function(row){
+      console.log(JSON.stringify(row.productTypeNew))
       this.bigflowProductDlgType = 'edit'
       this.bigflowProductDlgShow = true
       this.addBigflowProductForm = row
@@ -879,10 +884,13 @@ export default {
       console.log(JSON.stringify(this.addBigflowProductForm))
     },
     okShowBigflowProductEdit:function(row){
+      console.log(JSON.stringify(row.productTypeNew))
       this.bigflowProductDlgType = 'edit'
       this.bigflowProductDlgShow = true
       this.addBigflowProductForm = row
-      this.productTypeSelected = row.productType
+      this.addBigflowProductForm.productType = row.productTypeNew
+      this.productTypeSelected = row.productTypeNew
+      // this.productTypeSelected = row.productType
     },
     okShowFengwoEdit:function(row){
       this.editFengwoForm.id = row.id
