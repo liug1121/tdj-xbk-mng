@@ -248,6 +248,9 @@
             <el-form-item label="连续出账月数">
               <el-input style="width:250px;" v-model="addBigflowProductForm.billMonth" placeholder="请输入月数" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
             </el-form-item>
+            <el-form-item label="超量单价(元)">
+              <el-input style="width:250px;" v-model="addBigflowProductForm.offPerPrice" placeholder="请输入月数" oninput="value=value.replace(/[^\d.]/g, '').replace(/\.{2,}/g, '.').replace('.', '$#$').replace(/\./g, '').replace('$#$', '.').replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3').replace(/^\./g, '')"></el-input>
+            </el-form-item>
             <el-table   :data="productPrices" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}">
               <el-table-column type="selection" width="55">
               </el-table-column>
@@ -348,7 +351,9 @@
             <el-input style="width:250px;" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"  v-model="amountPriceForm.level" placeholder="请输入档位"></el-input>
           </el-form-item>
           <el-form-item label="价格（元）">
-            <el-input style="width:250px;" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"  v-model="amountPriceForm.price" placeholder="请输入价格"></el-input>
+            
+            <el-input style="width:250px;" oninput="value=value.replace(/[^\d.]/g, '').replace(/\.{2,}/g, '.').replace('.', '$#$').replace(/\./g, '').replace('$#$', '.').replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3').replace(/^\./g, '')"  v-model="amountPriceForm.price" placeholder="请输入价格"></el-input>
+            <!-- <el-input-number style="width:250px;" auto-complete="off" :precision="2" :controls="false"  v-model="amountPriceForm.price" placeholder="请输入价格"></el-input-number> -->
           </el-form-item>
         </el-form>
         <!-- 底部区域 -->
@@ -456,6 +461,7 @@ export default {
         { prop: 'useTypeName', label: '使用类型', width: 80, sortable: true },
         { prop: 'useExpire', label: '用量清零周期', width: 80, sortable: true },
         { prop: 'billMonth', label: '连续出账月数', width: 80, sortable: true },
+        { prop: 'offPerPrice', label: '超量单价(元)', width: 80, sortable: true },
         { prop: 'expireTime', label: '产品有效期', width: 50, sortable: true },
         { prop: 'statusName', label: '状态', width: 80, sortable: true },
         { prop: 'clearTypeName', label: '用量清算周期', width: 100, sortable: true },
@@ -616,6 +622,10 @@ export default {
           this.$message.error('连续出账月数不能为空')
           return
         }
+        if(this.addBigflowProductForm.offPerPrice == undefined || this.addBigflowProductForm.offPerPrice == null || this.addBigflowProductForm.offPerPrice == ''){
+          this.$message.error('超量单价不能为空')
+          return
+        }
         let params = {}
         params.productName =this.addBigflowProductForm.productName
         params.viewName =this.addBigflowProductForm.viewName
@@ -627,10 +637,11 @@ export default {
         params.expireMonth = this.addBigflowProductForm.expireTime
         params.billMonth = this.addBigflowProductForm.billMonth
         params.prices = this.productPrices
+        params.offPerPrice = this.addBigflowProductForm.offPerPrice * 1000
         params.prices = params.prices.map(price=>{
           let one = {
             level:price.level,
-            price:price.price
+            price:price.price * 1000
           }
           return one
         });
