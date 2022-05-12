@@ -391,6 +391,7 @@ export default {
         { prop: 'productCodeName', label: '当前套餐', width: 80, sortable: true },
         { prop: 'authStatusName', label: '认证状态', width: 70 },
         { prop: 'poolName', label: '共享池 ', width: 160 },
+        { prop: 'amountPoolName', label: '账户池 ', width: 160 },
         { prop: 'channelName', label: '渠道 ', width: 160 },
         { prop: 'gmtActivate', label: '开卡时间', width: 180 },
         { prop: 'usedStartDate', label: '用量开始日期', width: 110 },

@@ -411,7 +411,8 @@ export default {
               'content-type': 'multipart/form-data'
             }
           })
+    },
+    modifyAmountPoolStatus: params =>{
+        return API.POST('/bigflow/manage/v1.0/amountPool/status/modify', params)
     } 
-
-    // /amountPool/card/file/import
 }

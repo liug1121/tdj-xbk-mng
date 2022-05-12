@@ -32,8 +32,8 @@
                 
               <el-button type="text" size="small" @click="showAddAmountDlg(scope.row.id)">充值</el-button>
               <el-button type="text" size="small"  @click="openOrderPackageDlg(scope.row.id)">套餐订购</el-button>
-              <el-button type="text" size="small"  v-if="scope.row.status=='open'">停用</el-button>
-              <el-button type="text" size="small"  v-else>启用</el-button>
+              <el-button type="text" size="small"  v-if="scope.row.status==='已启用'" @click="changeStatus(scope.row.id, 0)">停用</el-button>
+              <el-button type="text" size="small"  v-else @click="changeStatus(scope.row.id, 1)">启用</el-button>
               <el-button type="text" size="small" @click="openAmountDetailsDlg">账单明细</el-button>
               <el-button type="text" size="small" @click="okRemovePool(scope.row.id)">删除</el-button>
               <el-button type="text" size="small" @click="openlertListDlg">告警设置</el-button>
@@ -245,9 +245,6 @@ export default {
         channels:[
         ],
         pools:[
-            {
-               poolName: '账户池'
-           }
         ],
         pool_column: [
         { prop: 'poolName', label: '名称', width: 100, sortable: true },
@@ -304,6 +301,27 @@ export default {
   },
   watch: {},
   methods: {
+      changeStatus:function(poolId, status){
+          this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            this.loading = true
+            let params = {}
+            params.poolId = poolId
+            params.status = status
+          apiBigflow.modifyAmountPoolStatus(params).then(res=>{
+            if(res.resultCode == 0){
+                this.getAllPools()
+            }
+            this.loading = false
+        })
+        }).catch(() => {
+        });
+
+// modifyAmountPoolStatus
+      },
       okOrderPackage:function(poolId){
          if(this.orderPackageForm.poolId == undefined || this.orderPackageForm.poolId==null){
               this.$message.error('池信息不能为空')
