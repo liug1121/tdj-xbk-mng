@@ -26,7 +26,7 @@
       <el-table   :data="pools" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" >
         <el-table-column type="selection" width="55">
         </el-table-column>
-        <el-table-column v-for="(p, key) in pool_column" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+        <el-table-column v-for="(p, key) in pool_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
           <template slot-scope="scope">
             <div v-if="p.prop == 'opts'">
                 
@@ -34,7 +34,7 @@
               <el-button type="text" size="small"  @click="openOrderPackageDlg(scope.row.id)">套餐订购</el-button>
               <el-button type="text" size="small"  v-if="scope.row.status==='已启用'" @click="changeStatus(scope.row.id, 0)">停用</el-button>
               <el-button type="text" size="small"  v-else @click="changeStatus(scope.row.id, 1)">启用</el-button>
-              <el-button type="text" size="small" @click="openAmountDetailsDlg">账单明细</el-button>
+              <el-button type="text" size="small" @click="openAmountDetailsDlg(scope.row.id)">账单明细</el-button>
               <el-button type="text" size="small" @click="okRemovePool(scope.row.id)">删除</el-button>
               <el-button type="text" size="small" @click="openlertListDlg">告警设置</el-button>
               <el-button type="text" size="small" @click="showEditPoolDlg(scope.row)">编辑</el-button>
@@ -187,7 +187,7 @@
       </span>  
     </el-dialog>
 
-    <el-dialog title="账单明细" :visible.sync="amountDetailsDlgShowed" width="650px" @close="closeAmountDetailsDlg">
+    <el-dialog title="账单明细" :visible.sync="amountDetailsDlgShowed" width="800px" @close="closeAmountDetailsDlg">
       <el-table   :data="amountDetails" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" >
         <el-table-column type="selection" width="55">
         </el-table-column>
@@ -214,7 +214,6 @@ export default {
     return {
         queryPoolForm:{},
         amountDetails:[
-            {cycleId:'202205'}
         ],
         alertForm:{},
         editAlertShowed:false,
@@ -249,15 +248,16 @@ export default {
         pool_column: [
         { prop: 'poolName', label: '名称', width: 100, sortable: true },
         { prop: 'status', label: '状态', width: 100, sortable: true },
-        { prop: 'num', label: '总卡片数', width: 80, sortable: true },
+        { prop: 'num', label: '总卡片数', width: 50, sortable: true },
         { prop: 'saleChannelName', label: '渠道', width: 150, sortable: true },
-        { prop: 'productCodeName', label: '当前套餐', width: 80, sortable: true },
-        { prop: 'amount', label: '账户金额', width: 80, sortable: true },
-        { prop: 'creditAmount', label: '信用额度', width: 80, sortable: true },
-        { prop: 'usedAmount', label: '已用金额', width: 80, sortable: true },
-        { prop: 'lastAmount', label: '余额', width: 80, sortable: true },
-        { prop: 'lastPer', label: '余额比例', width: 80, sortable: true },
+        { prop: 'productCodeName', label: '当前套餐', width: 100, sortable: true },
+        { prop: 'amount', label: '账户金额(元)', width: 80, sortable: true },
+        { prop: 'creditAmount', label: '信用额度(元)', width: 80, sortable: true },
+        { prop: 'usedAmount', label: '已用金额(元)', width: 80, sortable: true },
+        { prop: 'lastAmount', label: '余额(元)', width: 80, sortable: true },
+        { prop: 'lastPer', label: '余额比例(%)', width: 80, sortable: true },
         { prop: 'expireDate', label: '有效期', width: 100 },
+        { prop: 'amountChanges', label: '充值记录', width: 300 },
         { prop: 'opts', label: '操作', width: 100 }
       ],
       table_column_alertInfos:[
@@ -270,10 +270,11 @@ export default {
     //   账期、可用额度、信用额度、账单金额，生成日期
       table_column_amounts:[
           { prop: 'cycleId', label: '账期', width: 100, sortable: true },
-          { prop: 'amount', label: '可用额度', width: 100, sortable: true },
-          { prop: 'creditAmount', label: '信用额度', width: 100, sortable: true },
-          { prop: 'usedAmount', label: '账单额度', width: 100, sortable: true },
-          { prop: 'date', label: '生成日期', width: 100, sortable: true }
+        //   { prop: 'amount', label: '可用额度', width: 100, sortable: true },
+        //   { prop: 'creditAmount', label: '信用额度', width: 100, sortable: true },
+          { prop: 'usedAmount', label: '账单金额(元)', width: 100, sortable: true },
+          { prop: 'date', label: '生成日期', width: 100, sortable: true },
+          { prop: 'billStatus', label: '出账状态', width: 100, sortable: true }
       ],
       alertThresholds:[
         {label:'流量池停用', value:'0'},
@@ -448,7 +449,14 @@ export default {
     closeAmountDetailsDlg:function(){
         this.amountDetailsDlgShowed = false
     },
-    openAmountDetailsDlg:function(){
+    openAmountDetailsDlg:function(poolId){
+        let params = {}
+        params.poolId = poolId
+        apiBigflow.getAmountPoolBillDetails(params).then(res=>{
+            if(res.resultCode == 0){
+                this.amountDetails = res.data
+            }
+        })
         this.amountDetailsDlgShowed = true
     },
     getAllChannels:function(){
@@ -510,6 +518,7 @@ export default {
                 this.getAllPools()
                 this.loading = false
             }else{
+                this.$message.error(res.resultInfo)
                 this.loading = false
             }
         })

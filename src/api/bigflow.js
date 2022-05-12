@@ -414,5 +414,10 @@ export default {
     },
     modifyAmountPoolStatus: params =>{
         return API.POST('/bigflow/manage/v1.0/amountPool/status/modify', params)
+    } ,
+    getAmountPoolBillDetails: params =>{
+        return API.POST('/bigflow/manage/v1.0/amountPool/billdetails', params)
     } 
+
+    
 }
