@@ -287,16 +287,17 @@
           <!-- <el-form-item label="产品有效期(月)" v-if="productTypeSelected == 'setmeal'">
             <el-input style="width:250px;" v-model="addBigflowProductForm.expireTime" placeholder="请输入原始价" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
           </el-form-item> -->
-          <el-form-item label="清零周期(月)" v-if="productTypeSelected == 'setmeal_q'">
+          <!-- <el-form-item label="清零周期(月)" v-if="productTypeSelected == 'setmeal_q'">
             <el-input style="width:250px;" v-model="addBigflowProductForm.useExpire" placeholder="请输入原始价" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
-          </el-form-item>
+          </el-form-item> -->
           <!-- <el-form-item label="原始价">
             <el-input style="width:250px;" v-model="addBigflowProductForm.originalPrice" placeholder="请输入原始价" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
           </el-form-item> -->
           
           <div v-if="addBigflowProductForm.useType !='amount'">
             <!-- <el-form-item  label="清算方式" v-if="addBigflowProductForm.productType!='daymeal' && addBigflowProductForm.productType!='setmeal_q'"> -->
-            <el-form-item  label="清算方式" v-if="addBigflowProductForm.productType!='setmeal_q'">
+            <!-- <el-form-item  label="清算方式" v-if="addBigflowProductForm.productType!='setmeal_q'"> -->
+            <el-form-item  label="清算方式">
               <el-select style="width:120px;" v-model="addBigflowProductForm.clearType" clearable placeholder="请选择用量清算方式">
                 <el-option v-for="item in clearTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
               </el-select>
@@ -709,8 +710,7 @@ export default {
         
         if(this.addBigflowProductForm.useExpire == undefined || this.addBigflowProductForm.useExpire == null || this.addBigflowProductForm.useExpire == ''){
           if(this.productTypeSelected == 'setmeal_q'){
-            this.$message.error('清零周期不能为空')
-            return
+            this.addBigflowProductForm.useExpire = this.addBigflowProductForm.expireTime
           }
         }
         if(this.addBigflowProductForm.expireTime == undefined || this.addBigflowProductForm.expireTime == null || this.addBigflowProductForm.expireTime == ''){
