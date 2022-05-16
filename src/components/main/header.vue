@@ -21,11 +21,32 @@
         <div class="dropdown">
         <button @click="myFunction" class="dropbtn">{{username}}</button>
           <div id="myDropdown" class="dropdown-content">
+            <a href="#home" @click="openEditPwdDlg">修改密码</a>
             <a href="#home" @click="logout()">退出登陆</a>
           </div>
         </div>
       </div>
     </el-header>
+
+    <el-dialog title="修改密码" :visible.sync="editPwdDlgShowed" width="430px" >
+      <!-- 内容主体区域 -->
+      <el-form ref="addChannelRef"  label-width="120px">
+        <el-form-item label="原密码" >
+          <el-input type="password"  size="small" v-model="oldPwd" placeholder="请输入原密码"></el-input>
+        </el-form-item>
+        <el-form-item label="新密码" >
+          <el-input type="password"  size="small" v-model="newPwd" placeholder="请输入新密码"></el-input>
+        </el-form-item>
+        <el-form-item label="新密码确认" >
+          <el-input type="password"  size="small" v-model="newPwdComfirm" placeholder="请再次输入"></el-input>
+        </el-form-item>
+        </el-form>
+        <!-- 底部区域 -->
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="editPwdDlgShowed = false">取 消</el-button>
+          <el-button type="primary" @click="okEditPwd">确 定</el-button>
+        </span>
+      </el-dialog>
     
     <zgzTabs></zgzTabs>
     <!-- <router-view></router-view> -->
@@ -33,11 +54,16 @@
 </template>
 
 <script>
+import apiBigflow from './../../api/bigflow'
 import { mapState } from "vuex";
 import zgzTabs from './tabs'
 export default {
   data () {
     return {
+      oldPwd:'',
+      newPwd:'',
+      newPwdComfirm:'',
+      editPwdDlgShowed: false,
       username: "",
       ismyCollapse: true,
       breadList: ["卡信息"]
@@ -52,6 +78,7 @@ export default {
   mounted () {
     // console.log(this.isCollapse);
     this.ismyCollapse = this.isCollapse;
+    // console.log(JSON.stringify(window.sessionStorage))
     this.username = window.sessionStorage.getItem('userName')
   },
   watch: {
@@ -73,6 +100,50 @@ export default {
     }
   },
   methods: {
+    okEditPwd:function(){
+      if(this.oldPwd == undefined || this.oldPwd == null || this.oldPwd == ''){
+        this.$message.error('原密码不能为空')
+        return
+      }
+      if(this.newPwd == undefined || this.newPwd == null || this.newPwd == ''){
+        this.$message.error('新密码不能为空')
+        return
+      }
+      if(this.newPwdComfirm == undefined || this.newPwdComfirm == null || this.newPwdComfirm == ''){
+        this.$message.error('新密码确认不能为空')
+        return
+      }
+      if(this.newPwdComfirm != this.newPwd){
+        this.$message.error('两次密码输入不一致，请确认')
+        return
+      }
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            let params = {}
+            // params.userName = this.username
+            params.oldPwd = this.oldPwd
+            params.newPwd = this.newPwd
+            apiBigflow.modifyMangerPwd(params).then(res=>{
+                if(res.resultCode == 0){
+                    this.editPwdDlgShowed = false
+                    this.$message.success('修改成功')
+                }else{
+                    this.$message.error('修改失败:' + res.resultInfo)
+                }
+            })
+        }).catch(() => {
+        }); 
+      
+    },
+    openEditPwdDlg:function(){
+      this.editPwdDlgShowed = true
+      this.oldPwd = ''
+      this.newPwd = ''
+      this.newPwdComfirm = ''
+    },
     close:function(event) {
       if (!event.target.matches('.dropbtn')) {
         var dropdowns = document.getElementsByClassName("dropdown-content");
@@ -167,7 +238,8 @@ export default {
 
 .dropdown-content a {
     color: black;
-    padding: 12px 16px;
+    padding: 1px 12px;
+    height: 40px;
     text-decoration: none;
     display: block;
 }

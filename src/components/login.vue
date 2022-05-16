@@ -29,7 +29,7 @@
           
           <div class="vercode">
             <div class="vercode-input">
-              <el-input  v-model="loginForm.verCode"  placeholder="请您输入验证码"></el-input>
+              <el-input  v-model="loginForm.verCode"  placeholder="请您输入验证码" @keyup.enter.native="adminLogin"></el-input>
             </div>
             <div class="vercode-img" @click="refreshImg">
               <img :src="verCode"/>
