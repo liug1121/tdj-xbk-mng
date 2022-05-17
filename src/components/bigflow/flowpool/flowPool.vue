@@ -245,7 +245,7 @@
       <el-table   :data="alertInfos" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55">
         </el-table-column>
-        <el-table-column v-for="(p, key) in table_column_alertInfos" :prop="p.prop" :label="p.label" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+        <el-table-column v-for="(p, key) in table_column_alertInfos" :prop="p.prop" :width="p.width"  :label="p.label" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
           <template slot-scope="scope">
             
             <div v-if="p.prop == 'operation'">
@@ -254,8 +254,15 @@
             </div>
             <div v-else>
               <div v-if="p.prop == 'threshold'">
-                <div v-if="scope.row.threshold > 0">可用量少于{{scope.row.threshold}}%</div>
-                <div v-else>流量池停用</div>
+                <div v-if="scope.row.thresholdType == 0">
+                  <div v-if="scope.row.threshold > 0">可用量少于{{scope.row.threshold}}%</div>
+                  <div v-else>流量池停用</div>
+                </div>
+                <div v-if="scope.row.thresholdType == 1">
+                  <div v-if="scope.row.threshold > 0">可用量少于{{scope.row.threshold}}G</div>
+                  <div v-else>流量池停用</div>
+                </div>
+                
               </div>
               <div v-else v-html="scope.row[p.prop]" />
             </div>
@@ -288,12 +295,28 @@
           <el-button type="primary" @click="sendTestSms(alertMailForm.phone)">发送测试短信</el-button>
         </el-form-item>
         <el-form-item label="阀值类型">
+          <el-radio-group  v-model="alertMailForm.thresholdType" @change="optTypeMoveChangeItem">
+          <el-radio :label='0'>百分比</el-radio>
+          <el-radio :label='1'>余量</el-radio>
+        </el-radio-group>
+        </el-form-item>
+        
+        <el-form-item label="百分比阀值" v-if="alertMailForm.thresholdType == '0'">
           <el-select 
           filterable
           clearable
           reserve-keyword 
           class="queryFormInput"  placeholder="请输入阀值类型" v-model="alertMailForm.alertThreshold">
             <el-option v-for="item in alertThresholds" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="余量阀值" v-if="alertMailForm.thresholdType == '1'">
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword 
+          class="queryFormInput"  placeholder="请输入阀值类型" v-model="alertMailForm.alertThreshold">
+            <el-option v-for="item in alertThresholdsLast" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="发送次数">
@@ -341,7 +364,8 @@ export default {
       phone:'',
       id:'',
       alertThreshold:'',
-      alertTime:''
+      alertTime:'',
+      thresholdType:0
     }, 
     alertMailListDlgVisible:false,
     alertMailEditDlgVisible:false,
@@ -368,6 +392,15 @@ export default {
       {label:'1次', value:'1'},
       {label:'5次', value:'5'},
       {label:'10次', value:'10'}
+    ],
+    alertThresholdsLast:[
+      {label:'余量少于100G', value:'100'},
+      {label:'余量少于500G', value:'500'},
+      {label:'余量少于1000G', value:'1000'},
+      {label:'余量少于3000G', value:'3000'},
+      {label:'余量少于5000G', value:'5000'},
+      {label:'余量少于7000G', value:'7000'},
+      {label:'余量少于10000G', value:'10000'},
     ],
     alertThresholds:[
       {label:'流量池停用', value:'0'},
@@ -397,7 +430,7 @@ export default {
       table_column_alertInfos:[
         { prop: 'mailAddress', label: '邮箱地址', width: 100, sortable: true },
         { prop: 'phone', label: '手机号码', width: 100, sortable: true },
-        { prop: 'threshold', label: '阀值', width: 100, sortable: true },
+        { prop: 'threshold', label: '阀值', width: 150, sortable: true },
         { prop: 'times', label: '告警次数', width: 100, sortable: true },
         { prop: 'operation', label: '操作', width: 100, sortable: true }
         
@@ -439,6 +472,9 @@ export default {
   },
   watch: {},
   methods: {
+    optTypeMoveChangeItem(e){
+      this.alertMailForm.thresholdType = e
+    },
     sendTestMail:function(mailAddress){
       let params = {}
       params.mailAddress = mailAddress
@@ -533,6 +569,7 @@ export default {
       this.alertMailForm.phone = row.phone
       this.alertMailForm.alertThreshold = row.threshold
       this.alertMailForm.alertTime = row.times
+      this.alertMailForm.thresholdType = row.thresholdType
       this.alertMailEditDlgVisible = true
     },
     removePoolAlertInfo:function(id){
@@ -589,6 +626,7 @@ export default {
             params.phone = this.alertMailForm.phone
             params.alertThreshold = this.alertMailForm.alertThreshold
             params.alertTimes = this.alertMailForm.alertTime
+            params.thresholdType = this.alertMailForm.thresholdType
             apiBigflow.addPoolMail(params).then(res=>{
                   if(res.resultCode == 0){
                       // that.queryFlowPools()
@@ -614,6 +652,7 @@ export default {
             params.phone = this.alertMailForm.phone
             params.alertThreshold = this.alertMailForm.alertThreshold
             params.alertTimes = this.alertMailForm.alertTime
+            params.thresholdType = this.alertMailForm.thresholdType
             apiBigflow.modifyPoolAlertInfo(params).then(res=>{
                   if(res.resultCode == 0){
                       // that.queryFlowPools()
