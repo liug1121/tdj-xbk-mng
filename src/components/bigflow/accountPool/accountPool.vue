@@ -36,7 +36,7 @@
               <el-button type="text" size="small"  v-else @click="changeStatus(scope.row.id, 1)">启用</el-button>
               <el-button type="text" size="small" @click="openAmountDetailsDlg(scope.row.id)">账单明细</el-button>
               <el-button type="text" size="small" @click="okRemovePool(scope.row.id)">删除</el-button>
-              <el-button type="text" size="small" @click="openlertListDlg">告警设置</el-button>
+              <el-button type="text" size="small" @click="openlertListDlg(scope.row.id)">告警设置</el-button>
               <el-button type="text" size="small" @click="showEditPoolDlg(scope.row)">编辑</el-button>
             </div>
             <div v-else v-html="scope.row[p.prop]" />
@@ -129,19 +129,25 @@
 
     <el-dialog title="告警策略列表" :visible.sync="alertListDlgShowed" width="650px" @close="closelertListDlg">
       <el-button size="medium" type="primary" icon="el-icon-edit" @click="openEditAlertDlg">添加</el-button>
-      <el-table   :data="alertInfos" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" >
+      <el-table   :data="alertInfos" border max-height="600" align="center"  :cell-style="{height: '38px',padding:0}" >
         <el-table-column type="selection" width="55">
         </el-table-column>
-        <el-table-column v-for="(p, key) in table_column_alertInfos" :prop="p.prop" :label="p.label" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+        <el-table-column v-for="(p, key) in table_column_alertInfos" :prop="p.prop" :width="p.width" :label="p.label" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
           <template slot-scope="scope">
             <div v-if="p.prop == 'operation'">
-              <el-button  type="text" size="small" >删除</el-button>
-              <el-button  type="text" size="small" @click="openEditAlertDlg">修改</el-button>
+              <el-button  type="text" size="small" @click="removeAmountPoolAlertInfo(scope.row.id)">删除</el-button>
+              <el-button  type="text" size="small" @click="modifyEditAlertDlg(scope.row)">修改</el-button>
             </div>
             <div v-else>
               <div v-if="p.prop == 'threshold'">
-                <div v-if="scope.row.threshold > 0">可用量少于{{scope.row.threshold}}%</div>
-                <div v-else>账户池停用</div>
+                <div v-if="scope.row.thresholdType == 0">
+                    <div v-if="scope.row.threshold > 0">可用量少于{{scope.row.threshold}}%</div>
+                    <div v-else>账户池停用</div>
+                </div>
+                <div v-if="scope.row.thresholdType == 1">
+                    <div v-if="scope.row.threshold > 0">可用量少于{{scope.row.threshold}}元</div>
+                    <div v-else>账户池停用</div>
+                </div>
               </div>
               <div v-else v-html="scope.row[p.prop]" />
             </div>
@@ -155,19 +161,34 @@
       <el-form :model="alertForm"  label-width="110px">
         <el-form-item label="邮箱地址">
           <el-input style="width:300px;"  v-model="alertForm.address" placeholder="请输入邮箱" @blur="sendEmail"></el-input>
-          <el-button type="primary" @click="sendTestMail(alertMailForm.address)" >发送测试邮件</el-button>
+          <el-button type="primary" @click="sendTestMail(alertForm.address)" >发送测试邮件</el-button>
         </el-form-item>
         <el-form-item label="手机号码">
           <el-input style="width:300px;"  v-model="alertForm.phone" placeholder="请输入手机号码" @blur="sendPhone"></el-input>
-          <el-button type="primary" @click="sendTestSms(alertMailForm.phone)">发送测试短信</el-button>
+          <el-button type="primary" @click="sendTestSms(alertForm.phone)">发送测试短信</el-button>
         </el-form-item>
         <el-form-item label="阀值类型">
+          <el-radio-group  v-model="alertForm.thresholdType" @change="optTypeMoveChangeItem">
+            <el-radio :label='0'>百分比</el-radio>
+            <el-radio :label='1'>余量</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="百分比" v-if="alertForm.thresholdType == 0">
           <el-select 
           filterable
           clearable
           reserve-keyword 
-          class="queryFormInput"  placeholder="请输入阀值类型" v-model="alertForm.alertThreshold">
+          class="queryFormInput"  placeholder="请输入阀值" v-model="alertForm.alertThreshold">
             <el-option v-for="item in alertThresholds" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="剩余量"  v-if="alertForm.thresholdType == 1">
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword 
+          class="queryFormInput"  placeholder="请输入阀值" v-model="alertForm.alertThreshold">
+            <el-option v-for="item in alertLastThresholds" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="发送次数">
@@ -183,7 +204,7 @@
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeEditAlertDlg">取 消</el-button>
-        <el-button type="primary">确 定</el-button>
+        <el-button type="primary" @click="okModifyAlertMail">确 定</el-button>
       </span>  
     </el-dialog>
 
@@ -212,13 +233,18 @@ export default {
   },
   data () {
     return {
+        poolPackages:[],
         queryPoolForm:{},
         amountDetails:[
         ],
-        alertForm:{},
+        alertForm:{
+            thresholdType:0,
+            address:'',
+            phone:''
+
+        },
         editAlertShowed:false,
         alertInfos:[
-            {mailAddress:'sdsds'}
         ],
         amountDetailsDlgShowed:false,
 
@@ -263,7 +289,7 @@ export default {
       table_column_alertInfos:[
         { prop: 'mailAddress', label: '邮箱地址', width: 100, sortable: true },
         { prop: 'phone', label: '手机号码', width: 100, sortable: true },
-        { prop: 'threshold', label: '阀值', width: 100, sortable: true },
+        { prop: 'threshold', label: '阀值', width: 150, sortable: true },
         { prop: 'times', label: '告警次数', width: 100, sortable: true },
         { prop: 'operation', label: '操作', width: 100, sortable: true }
       ],
@@ -277,13 +303,20 @@ export default {
           { prop: 'billStatus', label: '出账状态', width: 100, sortable: true }
       ],
       alertThresholds:[
-        {label:'流量池停用', value:'0'},
-        {label:'可用量少于5%', value:'5'},
-        {label:'可用量少于10%', value:'10'},
-        {label:'可用量少于20%', value:'20'},
-        {label:'可用量少于30%', value:'30'},
-        {label:'可用量少于40%', value:'40'},
-        {label:'可用量少于50%', value:'50'}
+        {label:'余额少于5%', value:'5'},
+        {label:'余额少于10%', value:'10'},
+        {label:'余额少于20%', value:'20'},
+        {label:'余额少于30%', value:'30'},
+        {label:'余额少于40%', value:'40'},
+        {label:'余额少于50%', value:'50'}
+      ],
+      alertLastThresholds:[
+        {label:'余额少于1000元', value:'1000'},
+        {label:'余额少于2000元', value:'2000'},
+        {label:'余额少于5000元', value:'5000'},
+        {label:'余额少于6000元', value:'6000'},
+        {label:'余额少于8000元', value:'8000'},
+        {label:'余额少于10000元', value:'10000'}
       ],
       alertTimes:[
         {label:'1次', value:'1'},
@@ -302,6 +335,161 @@ export default {
   },
   watch: {},
   methods: {
+      sendPhone:function(){
+      var regPhone =/^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9]||17[0|1|2|3|5|6|7|8|9])\d{8}$/
+        if (this.alertForm.phone != '' && !regPhone.test(this.alertForm.phone)) {
+            this.$message({
+                message: '手机格式不正确',
+                type: 'error'
+            })
+            this.alertForm.phone = ''
+        }
+    },
+      sendEmail: function() {
+        // var regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+        var regEmail =/^(\w+([-.][A-Za-z0-9]+)*){3,18}@\w+([-.][A-Za-z0-9]+)*\.\w+([-.][A-Za-z0-9]+)*$/
+        if (this.alertForm.address != '' && !regEmail.test(this.alertForm.address)) {
+            this.$message({
+                message: '邮箱格式不正确',
+                type: 'error'
+            })
+            this.alertForm.address = ''
+        }
+    },
+      removeAmountPoolAlertInfo:function(id){
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+          let params = {}
+          params.id = id
+          apiBigflow.removeAmountPoolAlertInfo(params).then(res=>{
+                if(res.resultCode == 0){
+                    this.$message.success('删除成功')
+                    this.getPoolAlertInfos()
+                }else{
+                    this.$message.success('删除失败')
+                }
+
+            })
+        }).catch(() => {
+        });
+    },
+      getPoolAlertInfos:function(){
+      let params = {}
+      console.log('getPoolAlertInfos:' + JSON.stringify(this.alertForm))
+      params.amountPoolId = this.alertForm.amountPoolId
+      apiBigflow.getAmountPoolAlertInfos(params).then(res=>{
+            if(res.resultCode == 0){
+                this.alertInfos = res.data
+            }
+        })
+    },
+      okModifyAlertMail:function(){
+            if(this.alertForm.amountPoolId == null || this.alertForm.amountPoolId == undefined || this.alertForm.amountPoolId == ''){
+                this.$message.error('请先选择账户池')
+                return
+            }
+            
+            if(this.alertForm.address == '' && this.alertForm.phone == ''){
+                this.$message.error('邮箱和手机号码不能全为空')
+                return
+            }
+            if(this.alertForm.alertThreshold == null || this.alertForm.alertThreshold == undefined || this.alertForm.alertThreshold == ''){
+                this.$message.error('告警阀值不能为空')
+                return
+            }
+            if(this.alertForm.alertTime == null || this.alertForm.alertTime == undefined || this.alertForm.alertTime == ''){
+                this.$message.error('告警次数不能为空')
+                return
+            }
+            this.$confirm('您确认要此操作, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+
+                if(this.alertForm.id == '' || this.alertForm.id == undefined){
+                    let params = {}
+                    params.amountPoolId = this.alertForm.amountPoolId
+                    params.mailAddress = this.alertForm.address
+                    params.phone = this.alertForm.phone
+                    params.alertThreshold = this.alertForm.alertThreshold
+                    params.alertTimes = this.alertForm.alertTime
+                    params.thresholdType = this.alertForm.thresholdType
+                    apiBigflow.addAmountPoolAlertConfig(params).then(res=>{
+                        if(res.resultCode == 0){
+                            // that.queryFlowPools()
+                            this.$message.success('添加成功')
+                            this.getPoolAlertInfos()
+                            this.alertForm.address = ''
+                            this.alertForm.id = ''
+                            this.alertForm.alertThreshold = ''
+                            this.alertForm.alertTime = ''
+                            this.alertForm.phone = ''
+                            this.editAlertShowed = false
+                            
+                        }else{
+                            this.$message.success('添加失败')
+                        }
+                    })
+                }else{
+                    let params = {}
+                    params.id = this.alertForm.id
+                    params.amountPoolId = this.alertForm.amountPoolId
+                    // params.mailId = this.alertMailForm.address
+                    params.mailAddress = this.alertForm.address
+                    params.phone = this.alertForm.phone
+                    params.alertThreshold = this.alertForm.alertThreshold
+                    params.alertTimes = this.alertForm.alertTime
+                    params.thresholdType = this.alertForm.thresholdType
+                    apiBigflow.modifyPoolAlertInfo(params).then(res=>{
+                        if(res.resultCode == 0){
+                            this.$message.success('修改成功')
+                            this.getPoolAlertInfos()
+                            this.alertForm.address = ''
+                            this.alertForm.id = ''
+                            this.alertForm.alertThreshold = ''
+                            this.alertForm.alertTime = ''
+                            this.alertForm.phone = ''
+                            this.editAlertShowed = false
+                        }else{
+                            this.$message.success('修改失败')
+                        }
+                    })
+                }
+                
+                }).catch(() => {
+                });
+            },
+      sendTestSms:function(phone){
+        let params = {}
+        params.phone = phone
+        apiBigflow.testSms(params).then(res=>{
+                if(res.resultCode == 0){
+                    this.$message.success('发送成功')
+                }else{
+                    this.$message.error('发送失败')
+                }
+
+            })
+        },
+      sendTestMail:function(mailAddress){
+        let params = {}
+        params.mailAddress = mailAddress
+        apiBigflow.testMail(params).then(res=>{
+                if(res.resultCode == 0){
+                    this.$message.success('发送成功')
+                }else{
+                    this.$message.error('发送失败')
+                }
+
+            })
+        },
+      optTypeMoveChangeItem(e){
+        this.alertForm.thresholdType = e
+        },
       changeStatus:function(poolId, status){
           this.$confirm('您确认要此操作, 是否继续?', '提示', {
             confirmButtonText: '确定',
@@ -437,13 +625,32 @@ export default {
     closelertListDlg:function(){
         this.alertListDlgShowed = false
     },
-    openlertListDlg:function(){
+    openlertListDlg:function(amountPoolId){
         this.alertListDlgShowed = true
+        this.alertForm.amountPoolId = amountPoolId
+        this.getPoolAlertInfos()
     },
     closeEditAlertDlg:function(){
         this.editAlertShowed = false
     },
     openEditAlertDlg:function(){
+        let selecedAmountPoolId = this.alertForm.amountPoolId;
+        this.alertForm = {
+            thresholdType:0,
+            address:'',
+            phone:'',
+            amountPoolId:selecedAmountPoolId
+
+        }
+        this.editAlertShowed = true
+    },
+    modifyEditAlertDlg:function(row){
+      this.alertForm.id = row.id
+      this.alertForm.address = row.mailAddress
+      this.alertForm.phone = row.phone
+      this.alertForm.alertThreshold = row.threshold
+      this.alertForm.alertTime = row.times
+      this.alertForm.thresholdType = row.thresholdType
         this.editAlertShowed = true
     },
     closeAmountDetailsDlg:function(){

@@ -336,11 +336,20 @@ export default {
     addPoolMail: params =>{
         return API.POST('/bigflow/manage/v1.0/pools/alert/config/add', params)
     }, 
+    addAmountPoolAlertConfig: params =>{
+        return API.POST('/bigflow/manage/v1.0/amountpool/alert/config/add', params)
+    }, 
     getPoolAlertInfos: params =>{
         return API.POST('/bigflow/manage/v1.0/pools/alert/configs', params)
     }, 
+    getAmountPoolAlertInfos: params =>{
+        return API.POST('/bigflow/manage/v1.0/amountpool/alert/configs', params)
+    }, 
     removePoolAlertInfo: params =>{
         return API.POST('/bigflow/manage/v1.0/pools/alert/config/remove', params)
+    },
+    removeAmountPoolAlertInfo: params =>{
+        return API.POST('/bigflow/manage/v1.0/amountpool/alert/config/remove', params)
     },
     modifyPoolAlertInfo: params =>{
         return API.POST('/bigflow/manage/v1.0/pools/alert/config/modify', params)
