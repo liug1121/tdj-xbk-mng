@@ -238,10 +238,11 @@ export default {
         amountDetails:[
         ],
         alertForm:{
-            thresholdType:0,
             address:'',
+            id:'',
+            alertThreshold:'',
+            alertTime:'',
             phone:''
-
         },
         editAlertShowed:false,
         alertInfos:[
