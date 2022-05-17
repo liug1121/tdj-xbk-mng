@@ -223,9 +223,9 @@
         </span>
       </el-dialog>
 
-      <el-dialog title="维护产品" :visible.sync="bigflowProductDlgShow" width="430px" @close="bigflowProductDlgShow = false">
+      <el-dialog title="维护产品" :visible.sync="bigflowProductDlgShow" width="450px" @close="bigflowProductDlgShow = false">
         <!-- 内容主体区域 -->
-        <el-form :model="addBigflowProductForm" label-width="90px">
+        <el-form :model="addBigflowProductForm" label-width="120px">
           <el-form-item label="产品名">
             <el-input style="width:250px;" v-model="addBigflowProductForm.productName" placeholder="请输入产品名"></el-input>
           </el-form-item>
@@ -248,7 +248,7 @@
             <el-form-item label="连续出账月数">
               <el-input style="width:250px;" v-model="addBigflowProductForm.billMonth" placeholder="请输入月数" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
             </el-form-item>
-            <el-form-item label="超量单价(元)">
+            <el-form-item label="超量单价(元/M)">
               <el-input style="width:250px;" v-model="addBigflowProductForm.offPerPrice" placeholder="请输入月数" oninput="value=value.replace(/[^\d.]/g, '').replace(/\.{2,}/g, '.').replace('.', '$#$').replace(/\./g, '').replace('$#$', '.').replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3').replace(/^\./g, '')"></el-input>
             </el-form-item>
             <el-table   :data="productPrices" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}">
