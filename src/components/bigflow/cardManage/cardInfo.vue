@@ -100,7 +100,7 @@
         </div>
         <div class="cardNosNumber">选中<span class="red">0</span>条数据</div>
       </div> -->
-      <el-table  :data="cardInfos" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" @selection-change="handleSelectionChange">
+      <el-table  :data="cardInfos" border max-height="1000" align="center" :cell-style="{height: '38px',padding:0}" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55">
         </el-table-column>
         <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label"  :key="key" :width="p.width"  align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
@@ -119,7 +119,7 @@
         </el-table-column>
       </el-table>
       <!-- 分页区域 -->
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="[10,20,30]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="[10,20,30,100,200]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
         :total="total">
       </el-pagination>
     </el-card>
@@ -372,13 +372,13 @@ export default {
         openCardEndDate:'',
 
       cardInfos:[],
-      page: 1,
+      page: 0,
       pageSize: 10,
       // 列表总条数
       total: 0,
       // 列表，标题、字段
       table_column: [
-        { prop: 'iccid', label: 'ICCID', width: 150, sortable: true },
+        { prop: 'iccid', label: 'ICCID', width: 180, sortable: true },
         { prop: 'phoneNumber', label: 'MSISDN', width: 150, sortable: true },
         { prop: 'statusName', label: '卡状态', width: 80, sortable: true },
         // { prop: 'productCodeName', label: '卡品类', width: 80, sortable: true },
@@ -913,6 +913,7 @@ export default {
     createQueryParams:function(){
         let params = {}
         params.page = this.page
+        params.pageSize = this.pageSize
         if(this.iccid != '')
             params.iccidLike = this.iccid
         if(this.msisdn != '')
@@ -993,7 +994,7 @@ export default {
       }
     },
     handleSizeChange (newPage) {
-      this.page = newPage;
+      this.pageSize = newPage;
       this.queryCardInfos()
     },
     handleCurrentChange (newPage) {

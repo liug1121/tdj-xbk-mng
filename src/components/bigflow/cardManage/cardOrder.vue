@@ -74,7 +74,7 @@
               element-loading-text="加载中" > 
       </el-main>
       <el-table
-         :data="cardOrders" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" @selection-change="handleSelectionChange">
+         :data="cardOrders" border max-height="1000" align="center" :cell-style="{height: '38px',padding:0}" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55">
         </el-table-column>
         <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
@@ -84,7 +84,7 @@
         </el-table-column>
       </el-table>
       <!-- 分页区域 -->
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="[10,20,30]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="[10,20,30,100,200]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
         :total="total">  
       </el-pagination>
     </el-card>
@@ -577,6 +577,7 @@ export default {
       params.salerName = this.salerName
       params.salerPhone = this.salerPhone
       params.page = this.page
+      params.pageSize = this.pageSize
       if(this.orderId != '')
         params.orderIdlike = this.orderId
       if(this.cardStatus != '')
@@ -620,7 +621,7 @@ export default {
       console.log("orderIdOpt:" + this.orderIdOpt)
     },
     handleSizeChange (newPage) {
-      this.page = newPage;
+      this.pageSize = newPage;
       this.queryCardOrders()
     },
     handleCurrentChange (newPage) {
