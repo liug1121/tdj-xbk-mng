@@ -248,8 +248,8 @@
             <el-form-item label="连续出账月数">
               <el-input style="width:250px;" v-model="addBigflowProductForm.billMonth" placeholder="请输入月数" onkeyup="value=value.replace(/[^?\d.]/g,'')"></el-input>
             </el-form-item>
-            <el-form-item label="超量单价(元/M)">
-              <el-input style="width:250px;" v-model="addBigflowProductForm.offPerPrice" placeholder="请输入月数" oninput="value=value.replace(/[^\d.]/g, '').replace(/\.{2,}/g, '.').replace('.', '$#$').replace(/\./g, '').replace('$#$', '.').replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3').replace(/^\./g, '')"></el-input>
+            <el-form-item label="超量单价(元/G)">
+              <el-input style="width:250px;" v-model="addBigflowProductForm.offPerPrice" placeholder="请输入超量单价" oninput="value=value.replace(/[^\d.]/g, '').replace(/\.{2,}/g, '.').replace('.', '$#$').replace(/\./g, '').replace('$#$', '.').replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3').replace(/^\./g, '')"></el-input>
             </el-form-item>
             <el-table   :data="productPrices" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}">
               <el-table-column type="selection" width="55">
