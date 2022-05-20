@@ -63,7 +63,7 @@
         </el-table-column>
       </el-table>
       <!-- 分页区域 -->
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="[10,20,30]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="[10,20,30,100,200]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
         :total="total">
       </el-pagination>
     </el-card>
@@ -112,7 +112,7 @@ export default {
         {label:'卡扣费记账',value:'CARD_ACTIVED_DEDUCT'}
     ],
     cardChanges:[],
-      page: 1,
+      page: 0,
       pageSize: 10,
       // 列表总条数
       total: 0,
@@ -169,6 +169,7 @@ export default {
         this.loading = true
         let params = {}
         params.page = this.page
+        params.pageSize = this.pageSize
         if(this.payOutId != '')
             params.payOutId = this.payOutId
         if(this.phoneNumber != '')
@@ -196,11 +197,11 @@ export default {
     handleSelectionChange (val) {
     },
     handleSizeChange (newPage) {
-      this.page = newPage;
+      this.pageSize = newPage;
       this.queryCardChanges()
     },
     handleCurrentChange (newPage) {
-      this.page = newPage;
+      this.page = newPage - 1;
       this.queryCardChanges()
     },
   }
