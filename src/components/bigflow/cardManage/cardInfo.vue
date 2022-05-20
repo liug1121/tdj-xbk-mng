@@ -113,6 +113,10 @@
                 </div>
               </div>
             <div v-else>
+              <div v-if="p.prop == 'opts' && scope.row.isZxCard === 1">
+                <el-button  type="text" size="small" @click="showCurrentPackage(scope.row.iccid)">查询当前套餐</el-button>
+                <el-button  type="text" size="small" @click="toPayPackage(scope.row.iccid)">套餐充值</el-button>
+              </div>
               <div v-html="scope.row[p.prop]" />
             </div>
           </template>
@@ -217,6 +221,25 @@
       </span> 
     </el-dialog>
 
+    <el-dialog title="套餐充值" :visible.sync="payPackageDlgShowed" width="450px" @close="payPackageDlgShowed = false">
+      <!-- 内容主体区域 -->
+      <el-form :model="payPackageForm"  label-width="110px">
+        <el-form-item label="套餐">
+          <el-select class="queryFormInput"  clearable placeholder="请选择套餐" v-model="payPackageForm.updateProductCode">
+            <el-option v-for="item in products2Change" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="原因">
+          <el-input style="width:300px;" v-model="payPackageForm.reason" placeholder="请输入调整原因" ></el-input>
+        </el-form-item>
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="payPackageDlgShowed=false" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary"  :disabled="btnEnable" @click="okPayPackage">确 定</el-button>
+      </span> 
+    </el-dialog>
+
     <el-dialog title="变更通讯计划" :visible.sync="showChangeCommonTypeDlg" width="450px" @close="closeChangeCommonTypeDlg">
       <!-- 内容主体区域 -->
       <el-form :model="changeCommonTypeForm"  label-width="110px">
@@ -283,6 +306,24 @@
         <el-button type="primary" @click="okFile2Refresh" :disabled="btnEnable">确 定</el-button>
       </span>  
     </el-dialog> 
+
+    <el-dialog title="与CMP进行用量核查" :visible.sync="showFile2CheckDlg" width="450px" @close="closeFile2CheckDlg">
+        <el-upload class="unload-demo" accept=".xls, .xlsx" action="#" :file-list="file2CheckFiles" :http-request="uploadFile2CheckFile" :on-remove="removeUploadedFile2Check">
+          <el-button size="small" type="primary">点击上传</el-button>
+        </el-upload>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeFile2CheckDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okFile2Check" :disabled="btnEnable">确 定</el-button>
+      </span>  
+    </el-dialog> 
+
+    <el-dialog title="当前套餐" :visible.sync="currentPackageDlgshowd" width="450px" @close="currentPackageDlgshowd = false">
+        <!-- <div>{{currentPackageInfos}}</div> -->
+        <p v-html="currentPackageInfos"></p>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="currentPackageDlgshowd = false" :disabled="btnEnable">取 消</el-button>
+      </span>  
+    </el-dialog> 
     <el-main class="el-loading" v-loading="loading" element-loading-background="transparent"
         element-loading-text="加载中" > 
     </el-main>
@@ -298,6 +339,14 @@ export default {
   },
   data () {
     return {
+        payPackageDlgShowed:false,
+        payPackageForm:{
+          updateProductCode: '',
+          reason:'',
+          iccid:''
+        },
+        currentPackageDlgshowd:false,
+        currentPackageInfos:'套餐信息',
         amountId:'',
         showFile2RefreshDlg : false,
         showFile2CheckDlg:false,
@@ -400,7 +449,8 @@ export default {
         { prop: 'nextProductName', label: '未生效套餐', width: 160 },
         { prop: 'zone', label: '用量区域 ', width: 160 },
         { prop: 'gmtCreate', label: '首次绑定时间 ', width: 160 },
-        { prop: 'deviceNameNew', label: '设备名称 ', width: 160 }
+        { prop: 'deviceNameNew', label: '设备名称 ', width: 160 },
+        { prop: 'opts', label: '操作', width: 160 ,fixed: 'right'}
       ],
       isShowUsageDetails: false,
       detailIccid:'',
@@ -418,6 +468,49 @@ export default {
   },
   watch: {},
   methods: {
+    okPayPackage:function(){
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+          console.log('sds')
+            this.btnEnable = true
+            let params = {}
+            params.iccid = this.payPackageForm.iccid
+            params.packageId = this.payPackageForm.updateProductCode
+            params.reason = this.payPackageForm.reason
+        apiBigflow.payZxCardPackage(params).then(res=>{
+            if(res.resultCode == 0){
+                this.payPackageDlgShowed = false
+                this.$message.success('套餐充值成功')
+            }else{
+                this.$message.error('套餐充值失败:' + res.resultInfo)
+            }
+            this.btnEnable = false
+        })
+        }).catch(() => {
+        }); 
+    },
+    toPayPackage:function(iccid){
+      this.payPackageForm.iccid = iccid
+      this.payPackageDlgShowed = true
+      this.getProduct2Change(iccid)
+
+      // payZxCardPackage
+    },
+    showCurrentPackage:function(iccid){
+      this.currentPackageDlgshowd = true
+      let params = {}
+      params.iccid = iccid
+      apiBigflow.getZxCardPackageInfos(params).then(res=>{
+            if(res.resultCode == 0){
+                this.currentPackageInfos = res.data 
+            }else{
+                this.$message.error('查询月用量明细失败:' + res.resultInfo)
+            }
+        })
+    },
     getUsageDetails(iccid){
       let params = {}
       params.iccid = iccid
@@ -995,6 +1088,7 @@ export default {
     },
     handleSizeChange (newPage) {
       this.pageSize = newPage;
+      this.page = 0
       this.queryCardInfos()
     },
     handleCurrentChange (newPage) {

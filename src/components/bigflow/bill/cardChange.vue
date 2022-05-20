@@ -133,7 +133,8 @@ export default {
         { prop: 'payOrderId', label: '订单编号', width: 80, sortable: true },
         { prop: 'supplierName', label: '运营商', width: 80, sortable: true },
         { prop: 'chargeSceneName', label: '首充/续充', width: 50, sortable: true },
-        { prop: 'gmtCharge', label: '销售时间', width: 100, sortable: true }
+        { prop: 'gmtCharge', label: '销售时间', width: 100, sortable: true },
+        { prop: 'scene', label: '备注', width: 100, sortable: true }
       ],
     };
   },
