@@ -67,8 +67,8 @@
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowFlowPool-orderProduct'}" @click="openOrderDlg">订购套餐</el-button>
         
-        <el-button size="medium" type="primary" icon="el-icon-edit" 
-        v-permission="{indentity:'bigflowFlowPool-useChange'}" @click="openUpdateuseDlg">调整用量</el-button>
+        <!-- <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowFlowPool-useChange'}" @click="openUpdateuseDlg">调整用量</el-button> -->
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowFlowPool-useChange'}" @click="openUpdateExpireDlg">调整有效期</el-button>
       </div>
@@ -82,13 +82,15 @@
       <el-table   :data="flowPools" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55">
         </el-table-column>
-        <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+        <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
           <template slot-scope="scope">
             
             <div v-if="p.prop == 'operation'">
+              <el-button v-permission="{indentity:'bigflowFlowPool-sotp'}" type="text" size="small" @click="toAddFlowAmount(scope.row.poolId)">充流量</el-button>
+              <el-button v-permission="{indentity:'bigflowFlowPool-sotp'}" type="text" size="small" @click="openAmountDetails(scope.row.poolId)">账单明细</el-button>
               <el-button v-permission="{indentity:'bigflowFlowPool-sotp'}" type="text" size="small" @click="stopPool(scope.row.poolId)" v-if="scope.row.status=='open'">停用</el-button>
               <el-button v-permission="{indentity:'bigflowFlowPool-start'}" type="text" size="small" @click="openPool(scope.row.poolId)" v-else>启用</el-button>
-              <el-button v-permission="{indentity:'bigflowFlowPool-detail'}" type="text" size="small" >用量明细</el-button>
+              <!-- <el-button v-permission="{indentity:'bigflowFlowPool-detail'}" type="text" size="small" >用量明细</el-button> -->
               <el-button v-permission="{indentity:'bigflowFlowPool-delete'}" type="text" size="small" @click="removePool(scope.row.poolId)">删除</el-button>
               <el-button v-permission="{indentity:'bigflowFlowPool-delete'}" type="text" size="small" @click="showAlertMailList(scope.row.poolId)">告警设置</el-button>
               <el-button v-permission="{indentity:'bigflowFlowPool-delete'}" type="text" size="small" @click="toEditPool(scope.row)">编辑</el-button>
@@ -108,6 +110,17 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-dialog title="账单明细" :visible.sync="amountDetailsDlgShowed" width="800px" @close="amountDetailsDlgShowed = false">
+      <el-table   :data="amountDetails" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" >
+        <el-table-column type="selection" width="55">
+        </el-table-column>
+        <el-table-column v-for="(p, key) in table_column_amounts" :prop="p.prop" :label="p.label" :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+          <template slot-scope="scope">
+              <div  v-html="scope.row[p.prop]" />
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
       <!-- 分页区域 -->
       <!-- <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="[10,20,30]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
         :total="total">
@@ -195,7 +208,7 @@
       </span>  
     </el-dialog> 
 
-    <el-dialog title="调整用量" :visible.sync="showUpdateuseDlg" width="450px" @close="closeUpdateuseDlg">
+    <el-dialog title="充流量" :visible.sync="showUpdateuseDlg" width="450px" @close="closeUpdateuseDlg">
       <!-- 内容主体区域 -->  
       <el-form :model="updateuseForm"  label-width="110px">
         <el-form-item label="高速可用量">
@@ -329,6 +342,8 @@
           </el-select>
         </el-form-item>
       </el-form>
+
+
       
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
@@ -350,6 +365,8 @@ export default {
   },
   data () {
     return {
+    amountDetailsDlgShowed: false,
+    amountDetails:[],
     showEditFlowPoolDlg: false,
     editFlowPoolForm:{
       poolId:'',
@@ -442,6 +459,7 @@ export default {
         { prop: 'num', label: '总卡片数', width: 80, sortable: true },
         { prop: 'saleChannelName', label: '渠道', width: 150, sortable: true },
         { prop: 'productCodeName', label: '当前套餐', width: 80, sortable: true },
+        { prop: 'payDetails', label: '充值记录', width: 350, sortable: true },
         { prop: 'flowHighDoseName', label: '可用量', width: 80, sortable: true },
         { prop: 'flowUsedName', label: '当月已使用', width: 80, sortable: true },
         { prop: 'flowHightotalUsedName', label: '累计已使用', width: 80, sortable: true },
@@ -460,6 +478,12 @@ export default {
         { prop: 'pool_id', label: '池ID', width: 200},
         { prop: 'flow_usage', label: '用量', width: 200},
       ],
+      table_column_amounts:[
+        { prop: 'cycleId', label: '账期', width: 100, sortable: true },
+          { prop: 'usedUsage', label: '本期总用量', width: 100, sortable: true },
+          { prop: 'addedUsage', label: '本期充值总流量', width: 100, sortable: true },
+          { prop: 'billStatus', label: '出账状态', width: 100, sortable: true }
+      ]
     };
   },
   mounted () {
@@ -472,6 +496,23 @@ export default {
   },
   watch: {},
   methods: {
+    toAddFlowAmount:function(poolId){
+      this.poolId = poolId
+      this.openUpdateuseDlg()
+    },
+    openAmountDetails:function(poolId){
+      this.amountDetailsDlgShowed = true
+      let params = {}
+      params.poolId = poolId
+      apiBigflow.getFlowSharingPoolBillDetails(params).then(res=>{
+            if(res.resultCode == 0){
+              this.amountDetails = res.data
+            }else{
+                this.$message.error('查询失败:' + res.resultInfo)
+            }
+
+        })
+    },
     optTypeMoveChangeItem(e){
       this.alertMailForm.thresholdType = e
     },

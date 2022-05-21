@@ -435,5 +435,8 @@ export default {
     },
     payZxCardPackage: params =>{
         return API.POST('/bigflow/manage/v1.0/zxcard/card/packages/pay', params)
+    },
+    getFlowSharingPoolBillDetails: params =>{
+        return API.POST('/bigflow/manage/v1.0/flowpools/billdetails', params)
     }
 }
