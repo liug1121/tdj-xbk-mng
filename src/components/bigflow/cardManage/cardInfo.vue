@@ -430,6 +430,7 @@ export default {
         { prop: 'iccid', label: 'ICCID', width: 180, sortable: true },
         { prop: 'phoneNumber', label: 'MSISDN', width: 150, sortable: true },
         { prop: 'statusName', label: '卡状态', width: 80, sortable: true },
+        { prop: 'customerId', label: '绑定状态', width: 80, sortable: true },
         // { prop: 'productCodeName', label: '卡品类', width: 80, sortable: true },
        { prop: 'flowHighDose', label: '高速可用量', width: 80, sortable: true },
        { prop: 'flowMonthHighUsed', label: '当月已用量', width: 80, sortable: true },
