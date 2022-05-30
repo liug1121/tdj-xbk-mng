@@ -338,11 +338,12 @@ export default {
 }
 .vercode-img{
   margin-left: 3px;
+  margin-top: 5px;
   flex: 1;
 }
 .vercode-img img{
   margin-left: 25px;
-  margin-top: 2px;
+  margin-top: 1px;
   height: 35px;
   flex: 1;
   cursor: pointer;

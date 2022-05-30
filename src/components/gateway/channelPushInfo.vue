@@ -55,6 +55,12 @@
         <!-- <el-form-item label="推送名称">
           <el-input style="width:300px;" v-model="addPushInfo.channelName" placeholder="请输入推送名称" ></el-input>
         </el-form-item> -->
+        <el-form-item label="业务类型" >
+            <el-select style="width:200px"  size="small" v-model="addPushInfo.busiType" clearable filterable placeholder="请输入类型" >
+              <el-option v-for="item in butiTypes" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
         <el-form-item label="推送地址">
           <el-input style="width:300px;" v-model="addPushInfo.pushUrl" placeholder="请输推送地址" ></el-input>
         </el-form-item>
@@ -119,6 +125,7 @@ export default {
       // 列表，标题、字段
       table_column: [
         // { prop: 'channelName', label: '渠道名称', width: 200, fixed: 'left', sortable: true },
+        { prop: 'busiTypeName', label: '推送业务类型', width: 450, fixed: 'left', sortable: true },
         { prop: 'pushUrl', label: '推送链接', width: 450, fixed: 'left', sortable: true },
         { prop: 'operation', label: '操作', width: 440, fixed: 'left', sortable: true }
       ],
@@ -126,6 +133,13 @@ export default {
         { label: "学霸卡", value: 0 },
         { label: "大流量卡", value: 1 }
       ],
+      butiTypes: [
+        { label: "卡状态", value: 2 },
+        { label: "imei变更", value: 3 },
+        { label: "卡实名状态", value: 0 },
+        { label: "用量变更", value: 1 },
+        { label: "不限", value: -1 },
+      ]
     };
   },
   mounted () {
@@ -230,6 +244,7 @@ export default {
             params.type = this.treeSelectedType
             // params.name = this.addPushInfo.channelName
             params.url = this.addPushInfo.pushUrl
+            params.busiType = this.addPushInfo.busiType
             
             // if(params.type == null || params.type == undefined || params.type == ''){
             //   this.$message.error('请选择相应的类型')
@@ -239,10 +254,12 @@ export default {
               this.$message.error('请输入推送地址')
               return 
             }
+            console.log(JSON.stringify(params))
             apiSystem.addPushInfo(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryPushInfos()
                     alert('新增成功')
+                    this.showAddPushInfoDlg = false
                 }
             })
         }).catch(() => {
