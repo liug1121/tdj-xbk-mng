@@ -10,7 +10,7 @@
           <el-input class="queryFormInput" clearable placeholder="请输入iccid" style="width:150px" v-model="iccid"></el-input>
         </el-form-item>   
         <el-form-item label="渠道" class="queryFormItem">
-          <el-select class="queryFormInput"  
+          <el-select class="queryFormInput"  style="width:250px"
           filterable
           clearable
           reserve-keyword
@@ -31,8 +31,17 @@
           <el-date-picker style="width:140px"  type="date" placeholder="结束日期" value-format="yyyy-MM-dd" @change="endTimeChange" 
           v-model="endDateTime">
           </el-date-picker>
-          <el-button size="medium" type="primary" icon="el-icon-search" @click="queryBigflowStocks">查询</el-button>
         </el-form-item>
+        <el-form-item label="蜂窝帐号" class="queryFormItem" >
+          <el-select 
+           filterable
+           clearable
+           reserve-keyword
+           class="queryFormInput"  placeholder="请选择蜂窝帐号" v-model="fengwoAccount" style="width:250px">
+            <el-option v-for="item in fengwoAccounts" :key="item.account_id" :label="item.account_name" :value="item.account_id"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-button size="medium" type="primary" icon="el-icon-search" @click="queryBigflowStocks">查询</el-button>
       </el-form>
       <div class="button_content">
         <el-button size="medium" type="primary" icon="el-icon-download" 
@@ -265,7 +274,6 @@ export default {
       {value:7, name:'工业级物联网卡_Nano'},
       {value:8, name:'工业级物联网卡_Micro'}
     ],
-
     statusOptions:[
         {label:'录入', value:1},
         {label:'可销售', value:2},
@@ -273,6 +281,9 @@ export default {
         {label:'已激活', value:6},
         {label:'已注销', value:7},
         {label:'已销毁', value:9}
+    ],
+    fengwoAccount:'',
+    fengwoAccounts:[
     ],
     startDateTime:'',
     endDateTime:'',
@@ -309,9 +320,21 @@ export default {
       this.getAllChannels()
       this.queryBigflowStocks()
       this.getAllServiceInfo()
+      this.getFengwoAccounts()
   },
   watch: {},
   methods: {
+    getFengwoAccounts:function(){
+      // getFengwoConfigs
+      let params = {}
+      params.page=0
+      params.pageSize=10000
+        apiBigflow.getAllFengwoConfigs(params).then(res=>{
+            if(res.resultCode == 0){
+                this.fengwoAccounts = res.data
+            }
+        })
+    },
     openMoveCard2ChannelDlg:function(){
         this.showMoveCard2ChannelDlg = true
     }, 
@@ -531,6 +554,8 @@ export default {
             params.channelId = this.saleChannel
         if(this.cardStatus != '')
             params.status = this.cardStatus
+        if(this.fengwoAccount != '')
+            params.fengwoAccount = this.fengwoAccount
         apiBigflow.getBigflowStocks(params).then(res=>{
             if(res.resultCode == 0){
                 this.bigflowStocks = res.data

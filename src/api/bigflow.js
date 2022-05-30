@@ -241,6 +241,9 @@ export default {
     getFengwoConfigs: params =>{
         return API.POST('/bigflow/manage/v1.0/fengwo/accounts', params)
     },
+    getAllFengwoConfigs: params =>{
+        return API.GET('/bigflow/manage/v1.0/fengwo/accounts/all', params)
+    },
     addFengwoConfigs: params =>{
         return API.POST('/bigflow/manage/v1.0/fengwo/add', params)
     },
