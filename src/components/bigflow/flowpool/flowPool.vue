@@ -453,20 +453,20 @@ export default {
         
       ],
       table_column: [
-        { prop: 'poolId', label: '池ID', width: 100, sortable: true },
+        // { prop: 'poolId', label: '池ID', width: 100, sortable: true },
         { prop: 'poolName', label: '池名称', width: 100, sortable: true },
-        { prop: 'statusName', label: '状态', width: 80, sortable: true },
-        { prop: 'num', label: '总卡片数', width: 80, sortable: true },
-        { prop: 'saleChannelName', label: '渠道', width: 150, sortable: true },
+        { prop: 'statusName', label: '状态', width: 60, sortable: true },
+        { prop: 'num', label: '总卡片数', width: 60, sortable: true },
+        // { prop: 'saleChannelName', label: '渠道', width: 150, sortable: true },
         { prop: 'productCodeName', label: '当前套餐', width: 80, sortable: true },
-        { prop: 'payDetails', label: '充值记录', width: 350, sortable: true },
+        { prop: 'payDetails', label: '充值记录', width: 290, sortable: true },
         { prop: 'flowHighDoseName', label: '可用量', width: 80, sortable: true },
         { prop: 'flowUsedName', label: '当月已使用', width: 80, sortable: true },
         { prop: 'flowHightotalUsedName', label: '累计已使用', width: 80, sortable: true },
         { prop: 'surplusUsedName', label: '剩余总流量', width: 80, sortable: true },
-        { prop: 'lastPer', label: '剩余比率', width: 80, sortable: true },
+        // { prop: 'lastPer', label: '剩余比率', width: 80, sortable: true },
         { prop: 'expireDate', label: '有效期', width: 100 },
-        { prop: 'gmtCreate', label: '创建时间', width: 100 },
+        // { prop: 'gmtCreate', label: '创建时间', width: 100 },
         { prop: 'operation', label: '操作', width: 100}
         
       ],

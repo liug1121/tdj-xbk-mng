@@ -77,7 +77,7 @@
          :data="cardOrders" border max-height="1000" align="center" :cell-style="{height: '38px',padding:0}" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55">
         </el-table-column>
-        <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+        <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
           <template slot-scope="scope">
               <div v-html="scope.row[p.prop]" />
           </template>
@@ -327,7 +327,7 @@ export default {
       total: 0,
       // 列表，标题、字段
       table_column: [
-        { prop: 'orderId', label: '订单编号', width: 180, sortable: true },
+        { prop: 'orderId', label: '订单编号', width: 200, sortable: true },
         { prop: 'productName', label: '卡套餐', width: 100, sortable: true },
         { prop: 'iccid', label: 'ICCID', width: 180, sortable: true },
         { prop: 'phoneNumber', label: 'MSISDN', width: 150, sortable: true },
@@ -335,22 +335,22 @@ export default {
         { prop: 'saleChannelName', label: '渠道名称', width: 150, sortable: true },
         // { prop: 'salePoint', label: '销售网点', width: 50, sortable: true },
         // { prop: 'salePerson', label: '销售员', width: 50, sortable: true },
-        { prop: 'supplierName', label: '供应账户', width: 100, sortable: true },
+        // { prop: 'supplierName', label: '供应账户', width: 100, sortable: true },
         { prop: 'statusName', label: '订单状态', width: 80 },
-        { prop: 'giveUsage', label: '赠送用量', width: 80 },
-        { prop: 'giveUsageType', label: '赠送用量类型', width: 50 },
+        // { prop: 'giveUsage', label: '赠送用量', width: 80 },
+        // { prop: 'giveUsageType', label: '赠送用量类型', width: 50 },
         { prop: 'gmtCreate', label: '下单时间', width: 160, sortable: true },
-        { prop: 'gmtActive', label: '激活时间', width: 160 },
-        { prop: 'cashPledge', label: '押金金额', width: 160 },
-        { prop: 'pledgeByManagerName', label: '押金交款人', width: 160 },
-        { prop: 'cashPledgePayed', label: '押金是否已交', width: 160 },
-        { prop: 'pledgeWechatPayNo', label: '押金支付单号', width: 160 },
-        { prop: 'cashPledgeReturn', label: '押金退还状态', width: 160 },
-        { prop: 'cashPledgeReturnComment', label: '押金退还说明', width: 160 },
-        { prop: 'saled', label: '是否已售卖', width: 160 },
-        { prop: 'saledDate', label: '售卖日期', width: 160 },
-        { prop: 'saledPrice', label: '销售金额', width: 160 },
-        { prop: 'wechatPayNo', label: '支付单号', width: 160 }
+        // { prop: 'gmtActive', label: '激活时间', width: 160 },
+        // { prop: 'cashPledge', label: '押金金额', width: 160 },
+        // { prop: 'pledgeByManagerName', label: '押金交款人', width: 160 },
+        // { prop: 'cashPledgePayed', label: '押金是否已交', width: 160 },
+        // { prop: 'pledgeWechatPayNo', label: '押金支付单号', width: 160 },
+        // { prop: 'cashPledgeReturn', label: '押金退还状态', width: 160 },
+        // { prop: 'cashPledgeReturnComment', label: '押金退还说明', width: 160 },
+        // { prop: 'saled', label: '是否已售卖', width: 160 },
+        // { prop: 'saledDate', label: '售卖日期', width: 160 },
+        // { prop: 'saledPrice', label: '销售金额', width: 160 },
+        // { prop: 'wechatPayNo', label: '支付单号', width: 160 }
       ],
     };
   },
