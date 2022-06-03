@@ -40,7 +40,7 @@
           </el-form-item>
         </el-form>
         <el-table   v-loading="loading" :data="compareStatics" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
-            <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false" >
+            <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :key="key" align="center" :fixed="p.fixed?p.fixed:false" >
               <template slot-scope="scope">     
                 <div v-html="scope.row[p.prop]" />
               </template>
@@ -166,11 +166,12 @@ export default {
         { prop: 'billType', label: '出账类型', width: 80 },
         { prop: 'packageName', label: '套餐名', width: 100 },
         { prop: 'packageFee', label: '套餐出账金额', width: 70 },
-        { prop: 'dataUsageCountry', label: '全国总用量', width: 100 },
-        { prop: 'dataUsageCountryFee', label: '全国总用量出账金额', width: 70 },
-        { prop: 'dataUsageProvince', label: '省内总用量', width: 100 },
-        { prop: 'dataUsageProvinceFee', label: '省内总用量出账金额', width: 70 },
-        { prop: 'cardFee', label: '1毛钱出账金额', width: 70 },
+        { prop: 'areaName', label: '用量区域', width: 70 },
+        { prop: 'dataUsageCountry', label: '总用量', width: 100 },
+        { prop: 'dataUsageCountryFee', label: '用量出账金额', width: 70 },
+        // { prop: 'dataUsageProvince', label: '省内总用量', width: 100 },
+        // { prop: 'dataUsageProvinceFee', label: '省内总用量出账金额', width: 70 },
+        { prop: 'cardFee', label: '卡费总金额', width: 70 },
         { prop: 'fee', label: '出账金额汇总', width: 70 },
       ],
       compareStatics:[],

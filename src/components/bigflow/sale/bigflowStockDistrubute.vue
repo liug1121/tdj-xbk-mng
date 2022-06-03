@@ -169,15 +169,27 @@
           </el-select>
         </el-form-item>
         <div v-if="unitFeeShow== true">
-          <el-form-item label="省内单价(元/G)" >
+          <el-form-item label="流量单价(元/G)" >
+            <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.unitPrice" placeholder="请输入省内流量单价" ></el-input>
+          </el-form-item>
+          <el-form-item label="流量区域">
+          <el-select 
+            filterable
+          clearable
+          reserve-keyword
+            placeholder="请输入流量区域" v-model="channelBillingConfigForm.area">
+            <el-option v-for="item in areas" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+          <!-- <el-form-item label="省内单价(元/G)" >
             <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.provinceUnitPrice" placeholder="请输入省内流量单价" ></el-input>
           </el-form-item>
           <el-form-item label="全国单价(元/G)">
             <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.countryUnitPrice" placeholder="请输入全国流量单价" ></el-input>
-          </el-form-item>
+          </el-form-item> -->
         </div>
         
-        <el-form-item label="卡费出账类型">
+        <!-- <el-form-item label="卡费出账类型">
           <el-select 
             filterable
           clearable
@@ -185,7 +197,7 @@
             placeholder="请输入出账类型卡费出账类型" v-model="channelBillingConfigForm.cardFeePayType" @change="selectCardFeePayType">
             <el-option v-for="item in cardFeePayTypes" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <div v-if="isShow == true">
         <el-form-item label="开始月数">
           <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.cardFeeMonthFrom" placeholder="请输入开始月数" ></el-input>
@@ -222,12 +234,14 @@ export default {
       channelBillingConfigForm:{
          id:null,
 	       channelId:null,
+         unitPrice:null,
 	       provinceUnitPrice:null,
 	       countryUnitPrice:null,
 	       payType:null,
 	       cardFeePayType:null,
 	       cardFeeMonthFrom:null,
 	       cardFeeMonths:null,
+         area:null
       },
       showChannelFeeConfigDlg:false,
       channelBillingFeeConfigs:[],
@@ -276,11 +290,13 @@ export default {
 
       table_column_channelBillingFeeConfig:[
         { prop: 'payTypeName', label: '流量出账类型', width: 80 },
-        { prop: 'provinceUnitPrice', label: '省内流量单价（元/G）', width: 120 },
-        { prop: 'countryUnitPrice', label: '全国流量单价（元/G）', width: 120 },
-        { prop: 'cardFeePayTypeName', label: '卡费出账类型', width: 120 },
-        { prop: 'cardFeeMonthFrom', label: '卡费收取开始月份', width: 120 },
-        { prop: 'cardFeeMonths', label: '卡费收取总月数', width: 120 },
+        { prop: 'areaName', label: '流量区域', width: 120 },
+        { prop: 'unitPrice', label: '流量单价（元/G）', width: 120 },
+        // { prop: 'provinceUnitPrice', label: '省内流量单价（元/G）', width: 120 },
+        // { prop: 'countryUnitPrice', label: '全国流量单价（元/G）', width: 120 },
+        // { prop: 'cardFeePayTypeName', label: '卡费出账类型', width: 120 },
+        // { prop: 'cardFeeMonthFrom', label: '卡费收取开始月份', width: 120 },
+        // { prop: 'cardFeeMonths', label: '卡费收取总月数', width: 120 },
          { prop: 'opts', label: '操作', width: 120 }
       ],
       statusTypes:[
@@ -292,11 +308,15 @@ export default {
       {label:'下架状态', value:2},
     ],
 
-
+    areas:[
+      {name:'全国', value:'all'},
+      {name:'省内', value:'province'}
+    ],
     payTypes:[
       {name:'月套餐计费', value:1},
       {name:'实际用量计费', value:0},
-      {name:'包量套餐计费', value:2}
+      {name:'包量套餐计费', value:2},
+      {name:'账户池套餐计费', value:3}
     ],
     cardFeePayTypes:[
       {name:'根据实名状态，未实名的卡收取', value:0},
