@@ -69,4 +69,7 @@ export default {
   apiFwAccountTree: params => {
     return API.GET('boss/v1.0/card/billing/fwaccounttree', params)
   },
+  apiModifyChannelCardFee: params => {
+    return API.POST('boss/v1.0/cards/compare/channelbill/modify', params)
+  }
 }

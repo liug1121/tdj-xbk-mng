@@ -46,7 +46,7 @@
             <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :key="key" align="center" :fixed="p.fixed?p.fixed:false" >
               <template slot-scope="scope">     
                 <div v-if="p.prop == 'opts'">
-                  <el-button type="text" size="small" v-if="scope.row.dataUsageCountryFee !='没有设置出账规则'">录入卡费</el-button> 
+                  <el-button type="text" size="small" v-if="scope.row.dataUsageCountryFee !='没有设置出账规则'" @click="toInputCardFeeDlg(scope.row)">录入卡费</el-button> 
                   <el-button type="text" size="small" v-if="scope.row.dataUsageCountryFee !='没有设置出账规则'">账单导出</el-button> 
                 </div>
                 <div v-else v-html="scope.row[p.prop]" />
@@ -147,6 +147,20 @@
         <el-button type="primary" @click="okDistributeChannel">确 定</el-button>
       </span>  
     </el-dialog>
+
+
+    <el-dialog title="录入卡费" :visible.sync="inputCardFeeDlgShowed" width="450px" @close="closeInputCardFeeDlg">
+      <el-form :model="cardFeeForm"  label-width="110px">
+        <el-form-item label="卡费">
+          <el-input style="width:300px;" v-model="cardFeeForm.cardFee" placeholder="请输入卡费" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"></el-input>
+        </el-form-item>
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeInputCardFeeDlg">取 消</el-button>
+        <el-button type="primary" @click="okInputCardFee">确 定</el-button>
+      </span>  
+    </el-dialog>
   </div>
 </template>
 
@@ -206,6 +220,7 @@ export default {
       channels:[],
       UnionidsOptions: [],
       subAccountOptions: [],
+      inputCardFeeDlgShowed:false,
       queryBillForm: {
         channelId: null,
         channelName:null,
@@ -225,7 +240,13 @@ export default {
         { label: "学霸卡", value: 0 },
         { label: "大流量卡", value: 1 }
       ],
-      loading: false
+      loading: false,
+      cardFeeForm:{
+        cardFee:0.00,
+        channelId:'',
+        cycleId:'',
+        id:null
+      }
     }
   },
 
@@ -239,6 +260,43 @@ export default {
     // this.getChannelNames()
   },
   methods: {
+    clearInputCardFeeForm:function(){
+      this.cardFeeForm ={
+        cardFee:0.00,
+        channelId:'',
+        cycleId:''
+      }
+    },
+    closeInputCardFeeDlg:function(){
+      this.clearInputCardFeeForm()
+      this.inputCardFeeDlgShowed = false
+    },
+    okInputCardFee:function(){
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let params = this.cardFeeForm
+        API.apiModifyChannelCardFee(params).then(res => {
+          if (res.resultCode === 0) {
+            this.$message.success('录入成功')
+            this.clearInputCardFeeForm()
+            this.inputCardFeeDlgShowed = false
+            this.getCompareStatics()
+          } else {
+            this.$message.error(res.resultInfo)
+          }
+        })
+      }).catch(() => {
+      }); 
+    },
+    toInputCardFeeDlg:function(row){
+      this.inputCardFeeDlgShowed = true
+      this.cardFeeForm.channelId = row.channelId
+      this.cardFeeForm.cycleId = row.cycleId
+      this.cardFeeForm.cardFee = row.cardFee
+    },
     queryCardCompare:function(){
       this.getCompareStatics()
     },
@@ -314,23 +372,6 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // let params = {}
-        // params.name = this.addChannelForm.name
-        // params.parentId = this.addChannelForm.parentId
-        // params.contactMobile = this.addChannelForm.phone
-        // params.contactName = this.addChannelForm.salePerson
-        // params.password = this.addChannelForm.pwd
-
-        // params.channelId = localStorage.getItem('channelId');
-        // apiBigflow.addSaleChannel(params).then(res => {
-        //     if (res.resultCode === 0) {
-        //       this.$message.success('添加成功！')
-        //       this.$refs.channerTreeRef.getChannelTree()
-        //       this.hideAddChannelDlg()
-        //     } else {
-        //       this.$message.error(res.resultInfo)
-        //     }
-        //   })
       }).catch(() => {
       }); 
 
