@@ -45,7 +45,11 @@
         <el-table   v-loading="loading" :data="compareStatics" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
             <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :key="key" align="center" :fixed="p.fixed?p.fixed:false" >
               <template slot-scope="scope">     
-                <div v-html="scope.row[p.prop]" />
+                <div v-if="p.prop == 'opts'">
+                  <el-button type="text" size="small" v-if="scope.row.dataUsageCountryFee !='没有设置出账规则'">录入卡费</el-button> 
+                  <el-button type="text" size="small" v-if="scope.row.dataUsageCountryFee !='没有设置出账规则'">账单导出</el-button> 
+                </div>
+                <div v-else v-html="scope.row[p.prop]" />
               </template>
             </el-table-column>
           </el-table>
@@ -176,7 +180,8 @@ export default {
         // { prop: 'dataUsageProvince', label: '省内总用量', width: 100 },
         // { prop: 'dataUsageProvinceFee', label: '省内总用量出账金额', width: 70 },
         { prop: 'cardFee', label: '卡费总金额', width: 70 },
-        { prop: 'fee', label: '出账金额汇总', width: 70 }
+        { prop: 'fee', label: '出账金额汇总', width: 70 },
+        { prop: 'opts', label: '操作', width: 70 ,fixed: 'right' }
       ],
       compareStatics:[],
       subAccountView:false,
