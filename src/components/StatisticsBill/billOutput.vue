@@ -1,8 +1,10 @@
 <template>
   <!-- 输出 2021-01月 刘珍利  -->
   <div class="box_subject">
+    
      <el-row :gutter="20">
-    <el-col :span="5">
+    <el-col :span="7">
+      
       <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 4}" @click="treeSelect(4)">账单</div>
       <div class="heraderTop">
         
@@ -18,7 +20,8 @@
         <channelTree v-else-if="treeSelectedType == 1 || treeSelectedType == 4" ref="channerTreeRef" @channelChick="channelChick" @getChannelId="getChannelId" style="max-height:680px;overflow: auto"></channelTree>
         <fwAccountTree v-else-if="treeSelectedType == 2" ref="channerTreeRef" @channelChick="channelChick" @getChannelId="getFwAccount" style="max-height:680px;overflow: auto"></fwAccountTree>
     </el-col>
-    <el-col :span="19">
+    
+    <el-col :span="17">
     
     <el-card class="all_list">
       <!-- 按钮 -->
@@ -164,15 +167,16 @@ export default {
         { prop: 'cycleId', label: '帐期', width: 70 },
         { prop: 'channelName', label: '渠道', width: 126 },
         { prop: 'billType', label: '出账类型', width: 80 },
-        { prop: 'packageName', label: '套餐名', width: 100 },
+        // { prop: 'packageName', label: '套餐名', width: 100 },
         { prop: 'packageFee', label: '套餐出账金额', width: 70 },
-        { prop: 'areaName', label: '用量区域', width: 70 },
+        { prop: 'amountPoolBillFee', label: '卡连续出账费用', width: 70 },
+        { prop: 'usageArea', label: '用量区域', width: 70 },
         { prop: 'dataUsageCountry', label: '总用量', width: 100 },
         { prop: 'dataUsageCountryFee', label: '用量出账金额', width: 70 },
         // { prop: 'dataUsageProvince', label: '省内总用量', width: 100 },
         // { prop: 'dataUsageProvinceFee', label: '省内总用量出账金额', width: 70 },
         { prop: 'cardFee', label: '卡费总金额', width: 70 },
-        { prop: 'fee', label: '出账金额汇总', width: 70 },
+        { prop: 'fee', label: '出账金额汇总', width: 70 }
       ],
       compareStatics:[],
       subAccountView:false,

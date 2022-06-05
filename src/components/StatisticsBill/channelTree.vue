@@ -1,11 +1,15 @@
 <template>
-  <el-card>
+  <div class="device-tree">
     <el-input placeholder="输入关键字进行过滤" v-model="filterText">
     </el-input>
+    <el-scrollbar style="height:100%" >
+      <div class="ct-scrollbar">
     <el-tree v-loading="loading" class="filter-tree" :data="channelTree" :props="defaultProps" :filter-node-method="filterNode" node-key="channelId" ref="tree" @node-click="handleNodeClick" style="margin-top:10px;"
       :default-expanded-keys="[2]">
     </el-tree>
-  </el-card>
+    </div>
+    </el-scrollbar>
+  </div>
 </template>
 
 <script>
