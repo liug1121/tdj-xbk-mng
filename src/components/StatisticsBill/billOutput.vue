@@ -184,6 +184,8 @@ export default {
       table_column:[ 
         { prop: 'cycleId', label: '帐期', width: 70 },
         { prop: 'channelName', label: '渠道', width: 126 },
+        { prop: 'cardNum', label: '卡数量', width: 70 },
+        { prop: 'price', label: '单价', width: 70 },
         { prop: 'billType', label: '出账类型', width: 80 },
         // { prop: 'packageName', label: '套餐名', width: 100 },
         { prop: 'packageFee', label: '套餐出账金额', width: 70 },
@@ -195,6 +197,7 @@ export default {
         // { prop: 'dataUsageProvinceFee', label: '省内总用量出账金额', width: 70 },
         { prop: 'cardFee', label: '卡费总金额', width: 70 },
         { prop: 'fee', label: '出账金额汇总', width: 70 },
+        { prop: 'payedRecords', label: '充值记录', width: 140 },
         { prop: 'opts', label: '操作', width: 70 ,fixed: 'right' }
       ],
       compareStatics:[],
