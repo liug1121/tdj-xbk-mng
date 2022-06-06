@@ -35,7 +35,7 @@
        <div v-if="treeSelectedType == 4">
          <el-form :inline="true" ref="queryBillFormRef" :model="queryBillForm" class="queryForm">
           <el-form-item label="账期" class="queryFormItem">
-            <el-date-picker style="width:120px" v-model="queryBillForm.cycleId" type="month" placeholder="选择账期" value-format="yyyyMM">
+            <el-date-picker style="width:120px" v-model="queryBillForm.cycleId" type="month" placeholder="选择账期" value-format="yyyyMM"  >
             </el-date-picker>
           </el-form-item>
           <el-form-item class="queryFormItem">
@@ -43,7 +43,7 @@
           </el-form-item>
         </el-form>
         <el-table   v-loading="loading" :data="compareStatics" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
-            <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :key="key" align="center" :fixed="p.fixed?p.fixed:false" >
+            <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :key="key" align="center" :width="p.width" :fixed="p.fixed?p.fixed:false" >
               <template slot-scope="scope">     
                 <div v-if="p.prop == 'opts'">
                   <el-button type="text" size="small" v-if="scope.row.dataUsageCountryFee !='没有设置出账规则'" @click="toInputCardFeeDlg(scope.row)">录入卡费</el-button> 
@@ -181,6 +181,7 @@ export default {
   },
   data () {
     return {
+      defaultDate: new Date(),
       table_column:[ 
         { prop: 'cycleId', label: '帐期', width: 70 },
         { prop: 'channelName', label: '渠道', width: 126 },
@@ -188,8 +189,8 @@ export default {
         { prop: 'price', label: '单价', width: 70 },
         { prop: 'billType', label: '出账类型', width: 80 },
         // { prop: 'packageName', label: '套餐名', width: 100 },
-        { prop: 'packageFee', label: '套餐出账金额', width: 70 },
-        { prop: 'amountPoolBillFee', label: '卡连续出账费用', width: 70 },
+        // { prop: 'packageFee', label: '套餐出账金额', width: 70 },
+        { prop: 'amountPoolBillFee', label: '当月无用量卡费用', width: 70 },
         { prop: 'usageArea', label: '用量区域', width: 70 },
         { prop: 'dataUsageCountry', label: '总用量', width: 100 },
         { prop: 'dataUsageCountryFee', label: '用量出账金额', width: 70 },
@@ -197,7 +198,7 @@ export default {
         // { prop: 'dataUsageProvinceFee', label: '省内总用量出账金额', width: 70 },
         { prop: 'cardFee', label: '卡费总金额', width: 70 },
         { prop: 'fee', label: '出账金额汇总', width: 70 },
-        { prop: 'payedRecords', label: '充值记录', width: 140 },
+        { prop: 'payedRecords', label: '充值记录', width: 400 },
         { prop: 'opts', label: '操作', width: 70 ,fixed: 'right' }
       ],
       compareStatics:[],
@@ -254,15 +255,31 @@ export default {
   },
 
   mounted () {
+    this.queryBillForm.cycleId = this.formatTimer(new Date())
     this.getUnionidsOptions()
     this.getsubAccountOptions()
     this.getBillList()
     this.getXbChannels()
     this.getBigflowChannels()
-    this.getCompareStatics()
+    // this.getCompareStatics()
     // this.getChannelNames()
   },
   methods: {
+    formatTimer: function(date) {
+          // let date = new Date(value);
+          let y = date.getFullYear();
+          let MM = date.getMonth() + 1;
+          MM = MM < 10 ? "0" + MM : MM;
+          let d = date.getDate();
+          d = d < 10 ? "0" + d : d;
+          let h = date.getHours();
+          h = h < 10 ? "0" + h : h;
+          let m = date.getMinutes();
+          m = m < 10 ? "0" + m : m;
+          let s = date.getSeconds();
+          s = s < 10 ? "0" + s : s;
+          return y + "" + MM ;
+        },
     clearInputCardFeeForm:function(){
       this.cardFeeForm ={
         cardFee:0.00,
@@ -309,6 +326,15 @@ export default {
       console.log('sss' + JSON.stringify(this.queryBillForm.channelIds ))
       params.channelIds = this.queryBillForm.channelIds 
       params.cycle = this.queryBillForm.cycleId
+      if(params.cycle == undefined || params.cycle == ''){
+        this.$message.error('请先选择账期')
+        return
+      }
+      // if(params.cycle == undefined || params.cycle == ''){
+      //   let nowCycle = (new Date()).Format("yyyyMM") 
+      //   params.cycle = nowCycle
+      //   this.queryBillForm.cycleId = nowCycle
+      // }
       console.log('sdsds' + JSON.stringify(params))
       API.apiCompareStaticsList(params).then(res => {
         if (res.resultCode === 0) {
@@ -425,7 +451,11 @@ export default {
     // // 点击 tree 从子组件 获取 对应的 渠道id
     getChannelId (channelsID, channelName,allSubNodes) {
       console.log('***')
+      let queryCycle = this.formatTimer(new Date())
+      if(this.queryBillForm.cycleId != undefined && this.queryBillForm.cycleId !='')
+          queryCycle = this.queryBillForm.cycleId
       this.queryBillForm = {}
+      this.queryBillForm.cycleId = queryCycle
       console.log('***')
       this.channels = allSubNodes
       console.log(JSON.stringify(this.channels))
