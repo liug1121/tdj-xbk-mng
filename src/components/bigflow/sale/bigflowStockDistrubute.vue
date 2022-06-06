@@ -313,9 +313,9 @@ export default {
       {name:'省内', value:'province'}
     ],
     payTypes:[
-      {name:'月套餐出账', value:1},
+      // {name:'月套餐出账', value:1},
       {name:'实际用量出账', value:0},
-      {name:'包量套餐出账', value:2},
+      // {name:'包量套餐出账', value:2},
       {name:'账户池套餐出账', value:3}
     ],
     cardFeePayTypes:[
