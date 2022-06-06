@@ -46,8 +46,8 @@
             <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :key="key" align="center" :width="p.width" :fixed="p.fixed?p.fixed:false" >
               <template slot-scope="scope">     
                 <div v-if="p.prop == 'opts'">
-                  <el-button type="text" size="small" v-if="scope.row.dataUsageCountryFee !='没有设置出账规则'" @click="toInputCardFeeDlg(scope.row)">录入卡费</el-button> 
-                  <el-button type="text" size="small" v-if="scope.row.dataUsageCountryFee !='没有设置出账规则'">账单导出</el-button> 
+                  <el-button type="text" size="small" v-if="scope.row.dataUsageCountryFee !='没有设置出账规则'" @click="toInputCardFeeDlg(scope.row)">卡费</el-button> 
+                  <el-button type="text" size="small" v-if="scope.row.dataUsageCountryFee !='没有设置出账规则'">导出</el-button> 
                 </div>
                 <div v-else v-html="scope.row[p.prop]" />
               </template>
@@ -199,7 +199,7 @@ export default {
         { prop: 'cardFee', label: '卡费总金额', width: 70 },
         { prop: 'fee', label: '出账金额汇总', width: 70 },
         { prop: 'payedRecords', label: '充值记录', width: 400 },
-        { prop: 'opts', label: '操作', width: 70 ,fixed: 'right' }
+        { prop: 'opts', label: '操作', width: 100 ,fixed: 'right' }
       ],
       compareStatics:[],
       subAccountView:false,
@@ -336,6 +336,7 @@ export default {
       //   this.queryBillForm.cycleId = nowCycle
       // }
       console.log('sdsds' + JSON.stringify(params))
+      this.loading = true
       API.apiCompareStaticsList(params).then(res => {
         if (res.resultCode === 0) {
           this.compareStatics = res.data
@@ -351,6 +352,7 @@ export default {
         } else {
           this.$message.error(res.resultInfo)
         }
+        this.loading = false
       })
     },
     getXbChannels:function(){
