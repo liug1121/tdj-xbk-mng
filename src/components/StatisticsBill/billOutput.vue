@@ -47,7 +47,7 @@
               <template slot-scope="scope">     
                 <div v-if="p.prop == 'opts'">
                   <el-button type="text" size="small" v-if="scope.row.dataUsageCountryFee !='没有设置出账规则'" @click="toInputCardFeeDlg(scope.row)">卡费</el-button> 
-                  <el-button type="text" size="small" v-if="scope.row.dataUsageCountryFee !='没有设置出账规则'">导出</el-button> 
+                  <el-button type="text" size="small" v-if="scope.row.dataUsageCountryFee !='没有设置出账规则'" @click="toDownload(scope.row)">导出</el-button> 
                 </div>
                 <div v-else v-html="scope.row[p.prop]" />
               </template>
@@ -308,6 +308,28 @@ export default {
             this.$message.error(res.resultInfo)
           }
         })
+      }).catch(() => {
+      }); 
+    },
+    toDownload:function(row){
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let params = {}
+        params.channelId = row.channelId
+        params.cycleId = row.cycleId
+        this.loading = true
+        API.apiDownloadChannelBill(params).then(res => {
+        if (res.resultCode === 0) {
+          console.log(JSON.stringify(res))
+          this.$message.success('导出成功，稍后请在任务中查看，任务编号：' + res.data)
+        } else {
+          this.$message.error(res.resultInfo)
+        }
+        this.loading = false
+      })
       }).catch(() => {
       }); 
     },

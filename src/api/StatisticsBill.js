@@ -71,5 +71,8 @@ export default {
   },
   apiModifyChannelCardFee: params => {
     return API.POST('boss/v1.0/cards/compare/channelbill/modify', params)
+  },
+  apiDownloadChannelBill: params => {
+    return API.POST('boss/v1.0/cards/compare/bill/download', params)
   }
 }
