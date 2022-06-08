@@ -185,7 +185,8 @@ export default {
       table_column:[ 
         { prop: 'cycleId', label: '帐期', width: 70 },
         { prop: 'channelName', label: '渠道', width: 126 },
-        { prop: 'cardNum', label: '卡数量', width: 70 },
+        { prop: 'cardNum', label: '有用量卡数量', width: 70 },
+        { prop: 'cardNumHasNotUsage', label: '无用量卡数量', width: 70 },
         { prop: 'price', label: '单价', width: 70 },
         { prop: 'billType', label: '出账类型', width: 80 },
         // { prop: 'packageName', label: '套餐名', width: 100 },

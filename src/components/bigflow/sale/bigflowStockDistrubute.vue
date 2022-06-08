@@ -363,6 +363,7 @@ export default {
       console.log(row)
       this.channelBillingConfigForm = row
       this.showChannelFeeConfigDlg = true
+      this.selectPayType(this.channelBillingConfigForm.payType)
     },
     okChannelFeeConfig:function(){
       let that = this
@@ -374,6 +375,7 @@ export default {
         if(this.channelBillingConfigForm.id == null || this.channelBillingConfigForm.id == undefined){
             let params = this.channelBillingConfigForm
             params.channelId = this.selecedChannelCode
+            console.log('**' + JSON.stringify(params))
             apiBigflow.addChannelBillingFeeConfig(params).then(res=>{
               if(res.resultCode == 0){
                   that.getChannelBillingFeeConfigs()
@@ -657,6 +659,7 @@ export default {
     },
     // // 点击 tree 从子组件 获取 对应的 渠道id
     getChannelId (channelsID, channelName) {
+      this.channelBillingConfigForm = {}
         this.selecedChannelCode = channelsID
         this.selectedChannelName = channelName
         this.getChannelStocks()

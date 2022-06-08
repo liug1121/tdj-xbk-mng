@@ -214,6 +214,9 @@
         <el-form-item label="高速可用量">
           <el-input style="width:300px;" onkeyup="value=value.replace(/[^\-?\d.]/g,'')" v-model="updateuseForm.flowHighDose" placeholder="请输入变更原因" ></el-input>
         </el-form-item>
+        <el-form-item label="充值金额(元)">
+          <el-input style="width:300px;" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"   v-model="updateuseForm.addedAmount" placeholder="请输入充值金额" ></el-input>
+        </el-form-item>
         <el-form-item label="变更原因">
           <el-input style="width:300px;" v-model="updateuseForm.reason" placeholder="请输入变更原因" ></el-input>
         </el-form-item>
@@ -459,7 +462,9 @@ export default {
         { prop: 'num', label: '总卡片数', width: 60, sortable: true },
         // { prop: 'saleChannelName', label: '渠道', width: 150, sortable: true },
         { prop: 'productCodeName', label: '当前套餐', width: 80, sortable: true },
-        { prop: 'payDetails', label: '充值记录', width: 290, sortable: true },
+        // { prop: 'payDetails', label: '可用量充值记录', width: 290, sortable: true },
+        // { prop: 'payAmountsDetails', label: '账户余额充值记录', width: 290, sortable: true },
+        { prop: 'amount', label: '账户余额', width: 80, sortable: true },
         { prop: 'flowHighDoseName', label: '可用量', width: 80, sortable: true },
         { prop: 'flowUsedName', label: '当月已使用', width: 80, sortable: true },
         { prop: 'flowHightotalUsedName', label: '累计已使用', width: 80, sortable: true },
@@ -877,6 +882,7 @@ export default {
             params.flowHighDose = this.updateuseForm.flowHighDose
             params.reason = this.updateuseForm.reason
             params.poolId = this.poolId
+            params.addedAmount = this.updateuseForm.addedAmount
             apiBigflow.updateFlowPoolUse(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryFlowPools()
