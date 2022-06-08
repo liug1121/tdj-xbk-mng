@@ -43,7 +43,7 @@
           </el-form-item>
         </el-form>
         <el-table   v-loading="loading" :data="compareStatics" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
-            <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :key="key" align="center" :width="p.width" :fixed="p.fixed?p.fixed:false" >
+            <el-table-column v-for="(p, key) in table_column"  :prop="p.prop"  :label="p.label" :key="key" align="center" :width="p.width" :fixed="p.fixed?p.fixed:false" >
               <template slot-scope="scope">     
                 <div v-if="p.prop == 'opts'">
                   <el-button type="text" size="small" v-if="scope.row.dataUsageCountryFee !='没有设置出账规则'" @click="toInputCardFeeDlg(scope.row)">卡费</el-button> 
@@ -191,15 +191,18 @@ export default {
         { prop: 'billType', label: '出账类型', width: 80 },
         // { prop: 'packageName', label: '套餐名', width: 100 },
         // { prop: 'packageFee', label: '套餐出账金额', width: 70 },
-        { prop: 'amountPoolBillFee', label: '当月无用量卡费用', width: 70 },
+        { prop: 'amountPoolBillFee', label: '当月无用量卡费用', width: 100 },
         { prop: 'usageArea', label: '用量区域', width: 70 },
         { prop: 'dataUsageCountry', label: '总用量', width: 100 },
-        { prop: 'dataUsageCountryFee', label: '用量出账金额', width: 70 },
+        { prop: 'dataUsageCountryFee', label: '流量结算金额', width: 100 },
         // { prop: 'dataUsageProvince', label: '省内总用量', width: 100 },
-        // { prop: 'dataUsageProvinceFee', label: '省内总用量出账金额', width: 70 },
-        { prop: 'cardFee', label: '卡费总金额', width: 70 },
-        { prop: 'fee', label: '出账金额汇总', width: 70 },
-        { prop: 'payedRecords', label: '充值记录', width: 400 },
+        // { prop: 'dataUsageProvinceFee', label: '省内总', width: 70 },
+        { prop: 'cardFee', label: '卡费总金额', width: 100 },
+        { prop: 'fee', label: '出账金额汇总', width: 100 },
+        { prop: 'amountLast', label: '上月结余', width: 100 },
+        { prop: 'addedAmount', label: '本月充值', width: 100 },
+        { prop: 'amount', label: '本月结余', width: 100 },
+        // { prop: 'payedRecords', label: '充值记录', width: 400 },
         { prop: 'opts', label: '操作', width: 100 ,fixed: 'right' }
       ],
       compareStatics:[],
