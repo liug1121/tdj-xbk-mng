@@ -41,6 +41,9 @@
           <el-form-item class="queryFormItem">
             <el-button type="primary" size="mini" icon="el-icon-search" @click="queryCardCompare">查询</el-button>
           </el-form-item>
+          <el-form-item class="queryFormItem">
+            <el-button type="primary" size="mini" @click="toBillOutputDlg">一键出账</el-button>
+          </el-form-item>
         </el-form>
         <el-table   v-loading="loading" :data="compareStatics" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
             <el-table-column v-for="(p, key) in table_column"  :prop="p.prop"  :label="p.label" :key="key" align="center" :width="p.width" :fixed="p.fixed?p.fixed:false" >
@@ -161,6 +164,20 @@
         <el-button type="primary" @click="okInputCardFee">确 定</el-button>
       </span>  
     </el-dialog>
+
+    <el-dialog title="出账方式" :visible.sync="billOutputTypeDlgShowed" width="450px" @close="billOutputTypeDlgShowed = false">
+      <el-form :model="billOutputTypeForm"  label-width="110px">
+        <el-select style="width:200px"  size="small" v-model="billOutputTypeForm.type" clearable placeholder="请输入出账方式" >
+          <el-option v-for="item in billOutputTypes" :key="item.id" :label="item.name" :value="item.id">
+          </el-option>
+        </el-select>
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="billOutputTypeDlgShowed = false">取 消</el-button>
+        <el-button type="primary" @click="okBillOutput">确 定</el-button>
+      </span>  
+    </el-dialog>
   </div>
 </template>
 
@@ -181,6 +198,20 @@ export default {
   },
   data () {
     return {
+      billOutputTypeDlgShowed:false,
+      billOutputTypeForm:{
+        type:0
+      },
+      billOutputTypes:[
+        {
+          id:0,
+          name:'全部渠道出账'
+        },
+        {
+          id:1,
+          name:'所选渠道及子渠道'
+        }
+      ],
       defaultDate: new Date(),
       table_column:[ 
         { prop: 'cycleId', label: '帐期', width: 70 },
@@ -269,6 +300,41 @@ export default {
     // this.getChannelNames()
   },
   methods: {
+    toBillOutputDlg:function(){
+      this.billOutputTypeDlgShowed = true
+    },
+    okBillOutput:function(){
+  //     private List<String> channelIds;
+	// private Integer billOutputType;
+	// private String cycleId;
+      // apiBillOutput
+      if(this.queryBillForm.cycleId == undefined || this.queryBillForm.cycleId == '' || this.queryBillForm.cycleId == null){
+        this.$message.error('账单账期不能为空')
+        return
+      }
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let params = {}
+        params.billOutputType = this.billOutputTypeForm.type
+        params.cycleId = this.queryBillForm.cycleId
+        params.channelIds = this.queryBillForm.channelIds 
+        API.apiBillOutput(params).then(res => {
+          if (res.resultCode === 0) {
+            this.$message.success('操作成功，请稍后在任务：' + res.data + '中进行下载')
+            this.clearInputCardFeeForm()
+            this.inputCardFeeDlgShowed = false
+            this.getCompareStatics()
+          } else {
+            this.$message.error(res.resultInfo)
+          }
+        })
+      }).catch(() => {
+      }); 
+      this.billOutputTypeDlgShowed = false
+    },
     formatTimer: function(date) {
           // let date = new Date(value);
           let y = date.getFullYear();

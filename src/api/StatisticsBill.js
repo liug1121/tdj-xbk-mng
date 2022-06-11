@@ -74,5 +74,8 @@ export default {
   },
   apiDownloadChannelBill: params => {
     return API.POST('boss/v1.0/cards/compare/bill/download', params)
+  },
+  apiBillOutput: params => {
+    return API.POST('boss/v1.0/cards/compare/statics/bill/ouptput', params)
   }
 }
