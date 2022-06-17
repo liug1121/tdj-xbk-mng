@@ -9,7 +9,52 @@
           <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 0}" @click="tabSelect(0)">库存分配</div>
           <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 1}" @click="tabSelect(1)">大流量卡渠道产品</div>
           <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 2}" @click="tabSelect(2)" v-permission="{indentity:'bigflowStockDistrubute-billingRule'}">出账规则管理</div>
+          <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 3}" @click="tabSelect(3)" >渠道卡监控管理</div>
         </div>
+        <el-card v-if="selectedTab == 3">
+          <div class="button_content">
+            <el-button size="medium" type="primary" icon="el-icon-plus" @click="toAddLbsChannelConfig">添加卡监控规则</el-button>
+          </div>
+          <el-table  :data="lbsChannelConfigs" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
+            <el-table-column v-for="(p, key) in table_column_lbs" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" >
+              <template slot-scope="scope">
+                    <div v-if="p.prop == 'opts'">
+                      <el-button type="text" size="small" >编辑</el-button>
+                      <el-button type="text" size="small" >删除</el-button>
+                    </div>
+                    <div v-else v-html="scope.row[p.prop]" />
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-card>
+        <el-dialog title="卡监控配置" :visible.sync="lbsChannelConfigDlgShowed" width="500px" @close="lbsChannelConfigDlgShowed = false">
+          <el-form :model="lbsChannelConfigForm"  label-width="130px"> 
+              <el-form-item label="卡健康类型">
+              <el-select 
+                filterable
+              clearable
+              reserve-keyword
+                placeholder="请输入卡监控类型" v-model="lbsChannelConfigForm.type">
+                <el-option v-for="item in lbsChannelConfigTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="省份信息" v-if="lbsChannelConfigForm.type == 0 || lbsChannelConfigForm.type == 1">
+              <el-select 
+              multiple
+              filterable
+              clearable
+              reserve-keyword
+                placeholder="请选择省份信息" v-model="lbsChannelConfigForm.configValues">
+                <el-option v-for="item in provincesList" :key="item.provinceId" :label="item.provinceName" :value="item.provinceId"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-form>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="lbsChannelConfigDlgShowed = false">取 消</el-button>
+            <el-button type="primary" @click="okLbsChannelConfig">确 定</el-button>
+          </span>  
+        </el-dialog>
+
         <el-card v-if="selectedTab == 2">
           <div class="button_content">
             <el-button size="medium" type="primary" icon="el-icon-plus" @click="showAddFlowPool">添加规则</el-button>
@@ -219,8 +264,10 @@
 </template>
 
 <script>
+import API from 'api/baseSet'
 import channelTree from "./channelTree"
 import apiBigflow from 'api/bigflow'
+import apiChannel from 'api/channels'
 export default {
   name: 'channelList',
   components: {
@@ -229,6 +276,15 @@ export default {
   },
   data () {
     return {
+      lbsChannelConfigs:[],
+      provincesList:[],
+      lbsChannelConfigForm:{
+        configId:null,
+        channelId:'',
+        type:null,
+        configValues:[]
+      },
+      lbsChannelConfigDlgShowed:false,
       unitFeeShow:false,
       isShow:false,
       channelBillingConfigForm:{
@@ -288,6 +344,12 @@ export default {
         // { prop: 'opts', label: '操作', width: 150 }
       ],
 
+      table_column_lbs:[
+        { prop: 'lbsTypeName', label: '监控类型', width: 80 },
+        { prop: 'lbsNames', label: '配置信息', width: 80 },
+        { prop: 'opts', label: '操作', width: 200 }
+      ],
+
       table_column_channelBillingFeeConfig:[
         { prop: 'payTypeName', label: '流量出账类型', width: 80 },
         { prop: 'areaName', label: '流量区域', width: 120 },
@@ -298,6 +360,12 @@ export default {
         // { prop: 'cardFeeMonthFrom', label: '卡费收取开始月份', width: 120 },
         // { prop: 'cardFeeMonths', label: '卡费收取总月数', width: 120 },
          { prop: 'opts', label: '操作', width: 120 }
+      ],
+      lbsChannelConfigTypes:[
+        {label:'省份白名单', value:1},
+        {label:'省份黑名单', value:0},
+        {label:'imei白名单组', value:3},
+        {label:'imei黑名单组', value:2},
       ],
       statusTypes:[
         {label:'可销售', value:2},
@@ -328,6 +396,7 @@ export default {
   },
 
   mounted () {
+    this.getProvincesList()
     this.getChannels()
     this.getChannelStocks()
     this.getChannelProducts()
@@ -335,6 +404,63 @@ export default {
     this.getChannelBillingFeeConfigs()
   },
   methods: {
+    getLbsChannelConfigs:function(){
+      let params = {}
+        params.channelId = this.selecedChannelCode
+        apiChannel.apiAddChannelLbsConfig(params).then(res=>{
+          if(res.resultCode == 0){
+            this.lbsChannelConfigs = res.data
+          }
+      })
+    },
+    getProvincesList () {
+      API.apiProvincesList().then(res => {
+        if (res.resultCode === 0) {
+          this.provincesList = res.data
+          // console.log(this.provincesList);
+        } else {
+          this.$message.error(res.resultInfo)
+        }
+      })
+    },
+    okLbsChannelConfig:function(){
+      console.log(JSON.stringify(this.lbsChannelConfigForm))
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+      }).then(() => {
+        let params = {}
+        params = this.lbsChannelConfigForm
+        apiChannel.apiAddChannelLbsConfig(params).then(res=>{
+          if(res.resultCode == 0){
+              // that.getChannelBillingFeeConfigs()
+              this.$message.success('操作成功')
+              this.lbsChannelConfigDlgShowed = false
+          }else{
+              this.$message.error('操作失败')
+          }
+      })
+      }).catch(() => {
+      });
+    },
+    clearLbsChannelConfigForm:function(){
+      this.lbsChannelConfigForm = {
+        configId:null,
+        channelId:'',
+        type:null,
+        configValues:[]
+      }
+    },
+    toAddLbsChannelConfig:function(){
+      if(this.selecedChannelCode == null || this.selecedChannelCode == undefined || this.selecedChannelCode == ''){
+        this.$message.success('请先选择要操作的渠道')
+        return
+      }
+      this.lbsChannelConfigDlgShowed = true
+      this.clearLbsChannelConfigForm()
+      this.lbsChannelConfigForm.channelId = this.selecedChannelCode 
+    },
     selectPayType:function(value){
       if(value == 0){
         this.unitFeeShow = true
@@ -665,6 +791,7 @@ export default {
         this.getChannelStocks()
         this.getChannelBillingFeeConfigs()
         this.getChannelProducts()
+        this.getLbsChannelConfigs()
         // this.getSalePerson()
     }
   }

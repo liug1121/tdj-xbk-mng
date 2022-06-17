@@ -94,4 +94,12 @@ export default {
   apiRemoveChannel:params =>{
     return API.POST('boss/v1.0/channel/remove', params)
   }
+  ,
+  apiAddChannelLbsConfig:params =>{
+    return API.POST('boss/v1.0/channels/lbs/config/add', params)
+  },
+  apiAddChannelLbsConfig:params =>{
+    return API.POST('boss/v1.0/channels/lbs/config/configs', params)
+  }
+  
 }
