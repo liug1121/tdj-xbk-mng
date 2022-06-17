@@ -19,8 +19,8 @@
             <el-table-column v-for="(p, key) in table_column_lbs" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" >
               <template slot-scope="scope">
                     <div v-if="p.prop == 'opts'">
-                      <el-button type="text" size="small" >编辑</el-button>
-                      <el-button type="text" size="small" >删除</el-button>
+                      <el-button type="text" size="small" @click="toModifyLbsChannelConfig(scope.row)">编辑</el-button>
+                      <el-button type="text" size="small" @click="okRemoveLbsChannelConfig(scope.row)">删除</el-button>
                     </div>
                     <div v-else v-html="scope.row[p.prop]" />
               </template>
@@ -404,10 +404,48 @@ export default {
     this.getChannelBillingFeeConfigs()
   },
   methods: {
+    toModifyLbsChannelConfig:function(row){
+      this.lbsChannelConfigDlgShowed = true
+      this.lbsChannelConfigForm.configId = row.id
+      this.lbsChannelConfigForm.channelId = row.channel_id
+      this.lbsChannelConfigForm.type = row.lbs_type
+      if(row.lbs_values != undefined && row.lbs_values != '' && row.lbs_values != null){
+        let strLbsValues = row.lbs_values.split(',')
+        this.lbsChannelConfigForm.configValues = strLbsValues.map(value => {
+          return Number(value)
+        })
+      }
+      
+      console.log(JSON.stringify(this.lbsChannelConfigForm))
+      
+      // configId:null,
+      //   channelId:'',
+      //   type:null,
+      //   configValues:[]
+    },
+    okRemoveLbsChannelConfig:function(config){
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+      }).then(() => {
+        let params = {}
+        params.configId = config.id
+        apiChannel.apiRemoveChannelLbsConfig(params).then(res=>{
+          if(res.resultCode == 0){
+              this.$message.success('操作成功')
+              this.getLbsChannelConfigs()
+          }else{
+              this.$message.error('操作失败')
+          }
+      })
+      }).catch(() => {
+      });
+    },
     getLbsChannelConfigs:function(){
       let params = {}
         params.channelId = this.selecedChannelCode
-        apiChannel.apiAddChannelLbsConfig(params).then(res=>{
+        apiChannel.apiGetChannelLbsConfig(params).then(res=>{
           if(res.resultCode == 0){
             this.lbsChannelConfigs = res.data
           }
@@ -432,15 +470,29 @@ export default {
       }).then(() => {
         let params = {}
         params = this.lbsChannelConfigForm
-        apiChannel.apiAddChannelLbsConfig(params).then(res=>{
-          if(res.resultCode == 0){
-              // that.getChannelBillingFeeConfigs()
-              this.$message.success('操作成功')
-              this.lbsChannelConfigDlgShowed = false
-          }else{
-              this.$message.error('操作失败')
-          }
-      })
+        if(params.configId == undefined || params.configId == null || params.configId == ''){
+          apiChannel.apiAddChannelLbsConfig(params).then(res=>{
+              if(res.resultCode == 0){
+                  // that.getChannelBillingFeeConfigs()
+                  this.$message.success('操作成功')
+                  this.lbsChannelConfigDlgShowed = false
+                  this.getLbsChannelConfigs()
+              }else{
+                  this.$message.error('操作失败,' + res.resultInfo)
+              }
+          })
+        }else{
+          apiChannel.apiModifyChannelLbsConfig(params).then(res=>{
+              if(res.resultCode == 0){
+                  this.$message.success('操作成功')
+                  this.lbsChannelConfigDlgShowed = false
+                  this.getLbsChannelConfigs()
+              }else{
+                  this.$message.error('操作失败,' + res.resultInfo)
+              }
+          })
+        }
+        
       }).catch(() => {
       });
     },

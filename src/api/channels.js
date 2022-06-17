@@ -98,8 +98,14 @@ export default {
   apiAddChannelLbsConfig:params =>{
     return API.POST('boss/v1.0/channels/lbs/config/add', params)
   },
-  apiAddChannelLbsConfig:params =>{
+  apiGetChannelLbsConfig:params =>{
     return API.POST('boss/v1.0/channels/lbs/config/configs', params)
+  },
+  apiRemoveChannelLbsConfig:params =>{
+    return API.POST('boss/v1.0/channels/lbs/config/remove', params)
+  },
+  apiModifyChannelLbsConfig:params =>{
+    return API.POST('boss/v1.0/channels/lbs/config/modify', params)
   }
   
 }
