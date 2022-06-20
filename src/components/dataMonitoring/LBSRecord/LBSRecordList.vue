@@ -133,18 +133,18 @@ export default {
         startTime: null,
         page: 0,
         pageSize: 10,
-        lbsStatus:3
+        lbsStatus:null
       },
       excelName: '卡风险监控'
     };
   },
   created () {
     // let lbsStatus = this.$route.query.lbsStatus
-    let lbsStatus = 1
-    if(lbsStatus != undefined && lbsStatus != '' && lbsStatus != null){
-      console.log('this.lbsStatus[lbsStatus].value:' + this.lbsStatus[lbsStatus].value)
-      this.queryLBSlistFormModel.lbsStatus = this.lbsStatus[lbsStatus].value
-    }
+    // let lbsStatus = 1
+    // if(lbsStatus != undefined && lbsStatus != '' && lbsStatus != null){
+    //   console.log('this.lbsStatus[lbsStatus].value:' + this.lbsStatus[lbsStatus].value)
+    //   this.queryLBSlistFormModel.lbsStatus = this.lbsStatus[lbsStatus].value
+    // }
   },
   mounted () {
     this.getLBSlist()
