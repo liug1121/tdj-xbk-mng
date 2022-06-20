@@ -8,7 +8,7 @@
       <el-col :span="18">
 
        
-
+      <div class="channel-name">{{this.selectedChannelName}}</div>
        <el-card>
           <div class="button_content"> 
             <el-button size="medium" type="primary" icon="el-icon-plus"  v-permission="{indentity:'bigflowChannelList-add'}" @click="showMailConfigDlg">添加渠道邮箱</el-button>
@@ -1176,5 +1176,10 @@ export default {
   color:#145297;
     background-color: transparent;
     border-color: transparent;
+}
+.channel-name{
+  font-size: 18px;
+  margin: 10px;
+  color: #145297;
 }
 </style>
