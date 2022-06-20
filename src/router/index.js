@@ -341,9 +341,9 @@ const router = new Router({
       children: [
         {
           path: '/LBSRecordList',
-          name: 'LBS记录',
+          name: '卡风险监控',
           component: (resolve) => require(['components/dataMonitoring/LBSRecord/LBSRecordList.vue'], resolve),
-          meta: { title: 'LBS记录' },
+          meta: { title: '卡风险监控' },
         },
         {
           path: '/blacklistRecordList',

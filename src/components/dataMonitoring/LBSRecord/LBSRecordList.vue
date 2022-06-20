@@ -7,9 +7,15 @@
         <el-form-item label="ICCID" class="queryFormItem">
           <el-input class="queryFormInput" v-model="queryLBSlistFormModel.iccid" clearable placeholder="请输入ICCID" style="width:202px"></el-input>
         </el-form-item>
-        <!-- <el-form-item label="渠道" class="queryFormItem">
-          <channelSelect style="width:120px !important" @channelSelectId="channelSelectId"></channelSelect>
-        </el-form-item> -->
+        <el-form-item label="渠道" class="queryFormItem">
+          <el-select class="queryFormInput"  
+          filterable
+          clearable
+          reserve-keyword
+           placeholder="请选择渠道" v-model="queryLBSlistFormModel.channelId">
+            <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="创建时间" class="queryFormItem">
           <el-date-picker style="width:140px" v-model="queryLBSlistFormModel.startTime" type="date" placeholder="开始日期" value-format="yyyy-MM-dd" @change="startTimeChange">
           </el-date-picker>
@@ -38,8 +44,8 @@
           >查询</el-button>
           <el-button type="primary" size="mini" icon="el-icon-download" @click="exportButton()" 
           v-permission="{indentity:'xbkLBSRecordList-export'}">导出</el-button>
-          <el-button type="primary" size="mini" icon="el-icon-search" @click="importDialogVisible = true" 
-          >卡位置查询导入</el-button>
+          <!-- <el-button type="primary" size="mini" icon="el-icon-search" @click="importDialogVisible = true" 
+          >卡位置查询导入</el-button> -->
         </el-form-item>
       </el-form>
       <!-- 按钮区域 -->
@@ -52,7 +58,7 @@
         </el-table-column>
       </el-table>
       <!-- 分页 区域 -->
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="[10,20,30]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="[10,20,30,100,200]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
         :total="total">
       </el-pagination>
     </el-card>
@@ -78,6 +84,7 @@
 
 <script>
 import API from 'api/dataMoniting'
+import apiBigflow from 'api/bigflow'
 import channelSelect from './../../sale/channelSelect'
 export default {
   components: {
@@ -85,6 +92,7 @@ export default {
   },
   data () {
     return {
+      channels:[],
       file2Upload:'',
       fileList: [],
       importDialogVisible:false,
@@ -99,6 +107,7 @@ export default {
       table_column: [
         // { prop: 'channelName', label: '渠道', width: 180, fixed: 'left' },
         { prop: 'iccid', label: 'ICCID', width: 180 },
+        { prop: 'channelName', label: '渠道', width: 180 },
         { prop: 'lbsMessage', label: 'lbs定位信息', width: 180 },
         { prop: 'provinceName', label: '省份', width: 100 },
         { prop: 'cityName', label: '城市', width: 100 },
@@ -126,11 +135,12 @@ export default {
         pageSize: 10,
         lbsStatus:3
       },
-      excelName: 'LBS记录'
+      excelName: '卡风险监控'
     };
   },
   created () {
-    let lbsStatus = this.$route.query.lbsStatus
+    // let lbsStatus = this.$route.query.lbsStatus
+    let lbsStatus = 1
     if(lbsStatus != undefined && lbsStatus != '' && lbsStatus != null){
       console.log('this.lbsStatus[lbsStatus].value:' + this.lbsStatus[lbsStatus].value)
       this.queryLBSlistFormModel.lbsStatus = this.lbsStatus[lbsStatus].value
@@ -139,8 +149,17 @@ export default {
   mounted () {
     this.getLBSlist()
     this.getprovinceOptions()
+    this.getAllChannels()
   },
   methods: {
+    getAllChannels:function(){
+        let params = {}
+        apiBigflow.getAllChannels(params).then(res=>{
+            if(res.resultCode == 0){
+                this.channels = res.data
+            }
+        })
+    },
     cardUploadFile (item) {
       this.file2Upload = item.file
     },

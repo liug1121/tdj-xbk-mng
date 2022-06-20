@@ -6,10 +6,10 @@
       </el-col>
       <el-col :span="18">
         <div class="button_content">
-          <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 0}" @click="tabSelect(0)">库存分配</div>
-          <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 1}" @click="tabSelect(1)">大流量卡渠道产品</div>
+          <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 0}" @click="tabSelect(0)" v-permission="{indentity:'bigflowStockDistrubute-billingRule'}">库存分配</div>
+          <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 1}" @click="tabSelect(1)" >大流量卡渠道产品</div>
           <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 2}" @click="tabSelect(2)" v-permission="{indentity:'bigflowStockDistrubute-billingRule'}">出账规则管理</div>
-          <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 3}" @click="tabSelect(3)" >渠道卡监控管理</div>
+          <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 3}" @click="tabSelect(3)" v-permission="{indentity:'bigflowStockDistrubute-billingRule'}">渠道卡监控管理</div>
         </div>
         <el-card v-if="selectedTab == 3">
           <div class="button_content">
@@ -305,7 +305,7 @@ export default {
       productForm:{},
       showProductDlg:false,
       queryChannelProductForm:{},
-      selectedTab:0,
+      selectedTab:1,
       showDistrubuteDlg:false,
       distrubuteForm:{},
       queryChannelCardForm:{},

@@ -80,7 +80,7 @@ export default {
       children: [
         {
           icon: 'el-icon-s-help',
-          title: 'LBS记录',
+          title: '卡风险监控',
           path: '/LBSRecordList',
           type: 0
         },
