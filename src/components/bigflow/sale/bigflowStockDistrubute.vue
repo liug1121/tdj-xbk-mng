@@ -6,6 +6,7 @@
       </el-col>
       <el-col :span="18">
         <div class="button_content">
+          <div class="channel-name">{{this.selectedChannelName}}</div>
           <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 0}" @click="tabSelect(0)" v-permission="{indentity:'bigflowStockDistrubute-billingRule'}">库存分配</div>
           <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 1}" @click="tabSelect(1)" >大流量卡渠道产品</div>
           <div class="tree-tab-unselected" :class="{' tree-selected':selectedTab == 2}" @click="tabSelect(2)" v-permission="{indentity:'bigflowStockDistrubute-billingRule'}">出账规则管理</div>
@@ -884,5 +885,10 @@ export default {
   color:#145297;
     background-color: transparent;
     border-color: transparent;
+}
+.channel-name{
+  font-size: 18px;
+  margin: 10px;
+  color: #145297;
 }
 </style>
