@@ -51,7 +51,7 @@
       <!-- 按钮区域 -->
       <div class="button_content">
         <el-button size="medium" type="primary" icon="el-icon-download" 
-        v-permission="{indentity:'bigflowCardOrder-export'}" disabled>导出</el-button>
+        v-permission="{indentity:'bigflowCardOrder-export'}" @click="toExport">导出</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardOrder-createAndDistribution'}" @click="openOrderImportDlg">创建订单并分配渠道</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
@@ -569,6 +569,47 @@ export default {
               this.channels = res.data
           }
         })
+    },
+    toExport:function(){
+      let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = {}
+            params.cashPledgePayed = this.cashPledgePayed
+            params.salerName = this.salerName
+            params.salerPhone = this.salerPhone
+            params.page = this.page
+            params.pageSize = this.pageSize
+            if(this.orderId != '')
+              params.orderIdlike = this.orderId
+            if(this.cardStatus != '')
+              params.status = this.cardStatus
+            if(this.iccid != '')
+              params.iccidlike = this.iccid
+            if(this.msisdn != '')
+              params.phoneNumber = this.msisdn
+            if(this.orderStartDate != '')
+              params.gmtCreateStart = this.orderStartDate
+            if(this.orderEndDate != '')
+              params.gmtCreateEnd = this.orderEndDate
+            if(this.channel != '') 
+              params.saleChannel = this.channel
+            apiBigflow.exportCardOrders(params).then(res => {
+                if(res.resultCode == 0){
+                    that.queryCardOrders()
+                    that.showMoveOrderDlg = false
+                    this.$message.success('导出成功，请在我的任务中查看结果和下载，任务编号：' + res.data)
+                }else{
+                    this.$message.error('操作失败')
+                }
+            })
+            
+        }).catch(() => {
+        }); 
     },
     queryCardOrders:function(){
       this.loading = true
