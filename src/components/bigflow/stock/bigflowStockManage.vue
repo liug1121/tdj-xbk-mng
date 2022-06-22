@@ -45,7 +45,7 @@
       </el-form>
       <div class="button_content">
         <el-button size="medium" type="primary" icon="el-icon-download" 
-        v-permission="{indentity:'bigflowStockMng-export'}" disabled>导出</el-button>
+        v-permission="{indentity:'bigflowStockMng-export'}" @click="toExport">导出</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowStockMng-import'}" @click="openCardImportDlg">导入</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
@@ -324,6 +324,46 @@ export default {
   },
   watch: {},
   methods: {
+    toExport:function(){
+      // exportBigflowStocks
+      let that = this
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+      }).then(() => {
+          that.btnEnable = true
+          let params = {}
+          params.page = this.page
+          params.pageSize = this.pageSize
+          if(this.startDateTime != '')
+              params.gmtCreateStart = this.startDateTime
+          if(this.endDateTime != '')
+              params.gmtCreateEnd = this.endDateTime
+          if(this.phoneNumber != '')
+              params.phoneNumber = this.phoneNumber
+          if(this.iccid != '')
+              params.iccid = this.iccid
+          if(this.saleChannel != '')
+              params.channelId = this.saleChannel
+          if(this.cardStatus != '')
+              params.status = this.cardStatus
+          if(this.fengwoAccount != '')
+              params.fengwoAccount = this.fengwoAccount
+          apiBigflow.exportBigflowStocks(params).then(res=>{
+              if(res.resultCode == 0){
+                  that.queryBigflowStocks()
+                  that.showMoveCard2ChannelDlg = false
+                  // alert('操作成功')
+                  this.$message.success('导出成功，请在我的任务：' + res.data +'查看并下载导出的文件')
+              }else{
+                  this.$message.error('导出失败，失败原因：' + res.resultInfo)
+              }
+              that.btnEnable = false
+          })
+      }).catch(() => {
+      }); 
+    },
     getFengwoAccounts:function(){
       // getFengwoConfigs
       let params = {}
