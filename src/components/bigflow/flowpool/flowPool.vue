@@ -82,7 +82,7 @@
       <el-table   :data="flowPools" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55">
         </el-table-column>
-        <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+        <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
           <template slot-scope="scope">
             
             <div v-if="p.prop == 'operation'">
@@ -457,13 +457,11 @@ export default {
       ],
       table_column: [
         // { prop: 'poolId', label: '池ID', width: 100, sortable: true },
-        { prop: 'poolName', label: '池名称', width: 100, sortable: true },
+        { prop: 'poolName', label: '池名称', width: 200, sortable: true },
         { prop: 'statusName', label: '状态', width: 60, sortable: true },
         { prop: 'num', label: '总卡片数', width: 60, sortable: true },
         // { prop: 'saleChannelName', label: '渠道', width: 150, sortable: true },
         { prop: 'productCodeName', label: '当前套餐', width: 80, sortable: true },
-        // { prop: 'payDetails', label: '可用量充值记录', width: 290, sortable: true },
-        // { prop: 'payAmountsDetails', label: '账户余额充值记录', width: 290, sortable: true },
         { prop: 'amount', label: '账户余额', width: 80, sortable: true },
         { prop: 'flowHighDoseName', label: '可用量', width: 80, sortable: true },
         { prop: 'flowUsedName', label: '当月已使用', width: 80, sortable: true },
@@ -471,8 +469,10 @@ export default {
         { prop: 'surplusUsedName', label: '剩余总流量', width: 80, sortable: true },
         // { prop: 'lastPer', label: '剩余比率', width: 80, sortable: true },
         { prop: 'expireDate', label: '有效期', width: 100 },
+        { prop: 'payDetails', label: '可用量充值记录', width: 450, sortable: true },
+        { prop: 'payAmountsDetails', label: '账户余额充值记录', width: 450, sortable: true },
         // { prop: 'gmtCreate', label: '创建时间', width: 100 },
-        { prop: 'operation', label: '操作', width: 100}
+        { prop: 'operation', label: '操作', width: 100, fixed: 'right'}
         
       ],
       
