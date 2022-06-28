@@ -447,5 +447,9 @@ export default {
     },
     getFlowSharingPoolBillDetails: params =>{
         return API.POST('/bigflow/manage/v1.0/flowpools/billdetails', params)
+    },
+    modifychannelProductPrice: params =>{
+        return API.POST('/bigflow/manage/v1.0/channels/products/price/modify', params)
     }
+    
 }

@@ -92,8 +92,9 @@
                       <div v-if="p.prop == 'opts'" v-permission="{indentity:'bigflowStockDistrubute-productEdnt'}">
                         <!-- @click="okShowBigflowProductEdit(scope.row)" -->
                         
-                        <el-button type="text" size="small" v-if="scope.row.statusName == '下架状态'" @click="okChangeProductStatus(scope.row, 0)">上架</el-button>
-                        <el-button type="text" size="small" v-if="scope.row.statusName == '上架状态'" @click="okChangeProductStatus(scope.row, 1)">下架</el-button>
+                        <!-- <el-button type="text" size="small" v-if="scope.row.statusName == '下架状态'" @click="okChangeProductStatus(scope.row, 0)">上架</el-button>
+                        <el-button type="text" size="small" v-if="scope.row.statusName == '上架状态'" @click="okChangeProductStatus(scope.row, 1)">下架</el-button> -->
+                        <el-button type="text" size="small" @click="toProductEdit(scope.row)">编辑</el-button>
                         <el-button type="text" size="small" @click="okRemoveProduct(scope.row)">删除</el-button>
                         <!-- <el-button type="text" size="small" @click="okDeleteFengwo(scope.row)">删除</el-button> -->
                       </div>
@@ -258,6 +259,17 @@
         <el-button type="primary" @click="okChannelFeeConfig">确 定</el-button>
       </span>  
     </el-dialog>
+    <el-dialog title="编辑渠道产品" :visible.sync="showProductEditDlg" width="500px" @close="showProductEditDlg = false">
+      <el-form :model="productEditForm"  label-width="130px"> 
+        <el-form-item label="销售价格">
+          <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="productEditForm.salePrice" placeholder="请输入销售价格" ></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="showProductEditDlg = false">取 消</el-button>
+        <el-button type="primary" @click="okProductEdit">确 定</el-button>
+      </span>  
+    </el-dialog>
     <el-main class="el-loading" v-loading="loading" element-loading-background="transparent"
         element-loading-text="加载中" > 
     </el-main>
@@ -277,6 +289,11 @@ export default {
   },
   data () {
     return {
+      showProductEditDlg:false,
+      productEditForm:{
+        salePrice:'',
+        channelProductId:''
+      },
       lbsChannelConfigs:[],
       provincesList:[],
       lbsChannelConfigForm:{
@@ -342,7 +359,7 @@ export default {
         { prop: 'price', label: '销售价', width: 50 },
         { prop: 'statusName', label: '状态', width: 50 },
         { prop: 'memo', label: '产品说明', width: 230 },
-        // { prop: 'opts', label: '操作', width: 150 }
+        { prop: 'opts', label: '操作', width: 150 ,fixed:'right'}
       ],
 
       table_column_lbs:[
@@ -405,6 +422,31 @@ export default {
     this.getChannelBillingFeeConfigs()
   },
   methods: {
+    toProductEdit:function(product){
+      this.productEditForm.salePrice = product.price
+      this.productEditForm.channelProductId = product.id
+      this.showProductEditDlg = true
+    },
+    okProductEdit:function(){
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+      }).then(() => {
+        let params = {}
+        params = this.productEditForm
+        apiBigflow.modifychannelProductPrice(params).then(res=>{
+          if(res.resultCode == 0){
+              this.$message.success('操作成功')
+              this.getChannelProducts()
+              this.showProductEditDlg = false
+          }else{
+              this.$message.error('操作失败')
+          }
+      })
+      }).catch(() => {
+      });
+    },
     toModifyLbsChannelConfig:function(row){
       this.lbsChannelConfigDlgShowed = true
       this.lbsChannelConfigForm.configId = row.id
