@@ -12,7 +12,7 @@
       <el-col :span="19">
         <el-form  :inline="true" :model="queryPushInfo">
       </el-form>
-
+      <div class="channel-name">{{this.selectedChannelName}}</div>
       <div class="button_content">
         <el-button size="medium" type="primary" icon="el-icon-edit" @click="addPushInfoClick">添加</el-button>
       </div>
@@ -101,6 +101,7 @@ export default {
   },
   data () {
     return {
+    selectedChannelName:'',
     selectedChannelId:null,
     treeSelectedType:0,
     showEditPushInfoDlg:false,
@@ -162,6 +163,7 @@ export default {
     // // 点击 tree 从子组件 获取 对应的 渠道id
     getXbChannelId (channelsID, channelName,allSubNodes) {
       this.selectedChannelId = channelsID
+      this.selectedChannelName = channelName
       this.queryPushInfos()
     },
     channelChick (channel) {
@@ -170,6 +172,7 @@ export default {
     // // 点击 tree 从子组件 获取 对应的 渠道id
     getChannelId (channelsID, channelName,allSubNodes) {
       this.selectedChannelId = channelsID
+      this.selectedChannelName = channelName
       this.queryPushInfos()
     },
 
@@ -307,5 +310,10 @@ export default {
 .tree-selected {
   background:#6ab3fc;
   color: white;
+}
+.channel-name{
+  font-size: 18px;
+  margin: 10px;
+  color: #145297;
 }
 </style>
