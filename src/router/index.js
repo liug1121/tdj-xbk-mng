@@ -353,9 +353,9 @@ const router = new Router({
         },
         {
           path: '/blackCardList',
-          name: '卡监控',
+          name: 'IMEI池管理',
           component: (resolve) => require(['components/dataMonitoring/blackCard/blackCardList.vue'], resolve),
-          meta: { title: '卡监控' },
+          meta: { title: 'IMEI池管理' },
         },
         {
           path: '/blackGroupDetails',

@@ -1,7 +1,7 @@
 <template>
   <div class="box_subject">
     <el-card class="all_list">
-      <div class="heraderTop">
+      <!-- <div class="heraderTop">
         <el-form :inline="true"  :model="queryCardsForm" class="queryForm">
           <el-form-item label="iccid" class="queryFormItem"> 
            <el-input class="queryFormInput" v-model="queryCardsForm.iccid" clearable placeholder="请输入ICCID" style="width:202px"></el-input>
@@ -14,11 +14,6 @@
               <el-option v-for="item in blackCardlist" :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
             </el-select>
           </el-form-item>
-          <!-- <el-form-item label="IMEI监控组" class="queryFormItem">
-            <el-select class="queryFormInput" v-model="queryCardsForm.IMEIGroupId" clearable placeholder="请选择IMEI监控组">
-              <el-option v-for="item in blackCardlist" :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
-            </el-select>
-          </el-form-item> -->
           <el-form-item label="卡状态" class="queryFormItem">
             <el-select class="queryFormInput" v-model="queryCardsForm.status" clearable placeholder="请选择卡状态">
               <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
@@ -28,14 +23,15 @@
             <el-button type="primary" size="mini" icon="el-icon-search" @click="queryOk">查询</el-button>
           </el-form-item>
         </el-form>
-      </div>
+      </div> -->
        <div class="button_content">
-          <el-button size="medium" type="primary"  @click="importCardsToGroup()" 
+         <el-button size="medium" type="primary" @click="showCardScanPoolDlg" v-permission="{indentity:'xbkBlackCardList-add'}">新增</el-button>
+          <!-- <el-button size="medium" type="primary"  @click="importCardsToGroup()" 
           v-permission="{indentity:'xbkBlackCardList-add'}">卡导入</el-button>
           <el-button size="medium" type="primary"  @click="groupDlgShow" 
-          v-permission="{indentity:'xbkBlackCardList-add'}">监控组</el-button>
+          v-permission="{indentity:'xbkBlackCardList-add'}">监控组</el-button> -->
         </div>
-      <el-table v-loading="loading" :data="cardMonitors" border max-height="510px" align="center" :cell-style="{height: '38px',padding:0}" >
+      <!-- <el-table v-loading="loading" :data="cardMonitors" border max-height="510px" align="center" :cell-style="{height: '38px',padding:0}" >
         <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label" :width="p.width" :key="key" align="center" :fixed="p.fixed?p.fixed:false">
           <template slot-scope="scope">
             <div v-if="p.prop == 'opts'">
@@ -46,7 +42,20 @@
             </div>
           </template>
         </el-table-column>
-      </el-table>
+      </el-table> -->
+      <el-table v-loading="loading" :data="imeiPools" border max-height="510px" align="center" :cell-style="{height: '38px',padding:0}" >
+          <el-table-column v-for="(p, key) in tableImeiPoolColum" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false">
+            <template slot-scope="scope">
+              <div v-if="p.prop == 'opts'">
+                <el-button size="mini" type="primary" plain @click="showEditCardScanPoolImeiDlg(scope.row['id'])">imei信息编辑</el-button>
+                <el-button size="mini" type="primary" plain @click="removeCardScanPool(scope.row['id'])">删除</el-button>
+              </div>
+              <div v-else>
+                <div v-html="scope.row[p.prop]" />
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="[10,20,30]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
         :total="total">
       </el-pagination>

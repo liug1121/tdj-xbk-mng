@@ -30,7 +30,7 @@
         </el-card>
         <el-dialog title="卡监控配置" :visible.sync="lbsChannelConfigDlgShowed" width="500px" @close="lbsChannelConfigDlgShowed = false">
           <el-form :model="lbsChannelConfigForm"  label-width="130px"> 
-              <el-form-item label="卡健康类型">
+              <el-form-item label="卡监控类型">
               <el-select 
                 filterable
               clearable
@@ -47,6 +47,24 @@
               reserve-keyword
                 placeholder="请选择省份信息" v-model="lbsChannelConfigForm.configValues">
                 <el-option v-for="item in provincesList" :key="item.provinceId" :label="item.provinceName" :value="item.provinceId"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="imei池" v-if="lbsChannelConfigForm.type == 2">
+              <el-select 
+              filterable
+              clearable
+              reserve-keyword
+                placeholder="请选择imei池" v-model="lbsChannelConfigForm.imeiPoolId">
+                <el-option v-for="item in imeiBlackPoolsForSelected" :key="item.id" :label="item.name" :value="item.id"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="imei池" v-if="lbsChannelConfigForm.type == 3">
+              <el-select 
+              filterable
+              clearable
+              reserve-keyword
+                placeholder="请选择imei池" v-model="lbsChannelConfigForm.imeiPoolId">
+                <el-option v-for="item in imeiWhitePoolsForSelected" :key="item.id" :label="item.name" :value="item.id"></el-option>
               </el-select>
             </el-form-item>
           </el-form>
@@ -277,6 +295,7 @@
 </template>
 
 <script>
+import APIDataMoniter from 'api/dataMoniting'
 import API from 'api/baseSet'
 import channelTree from "./channelTree"
 import apiBigflow from 'api/bigflow'
@@ -289,6 +308,9 @@ export default {
   },
   data () {
     return {
+      imeiPools:[],
+      imeiWhitePoolsForSelected:[],
+      imeiBlackPoolsForSelected:[],
       showProductEditDlg:false,
       productEditForm:{
         salePrice:'',
@@ -409,7 +431,8 @@ export default {
       {name:'根据用量状态，当月用量为0的卡收取', value:1},
       // {name:'从N月开始收取1毛，连续收6个月或一直收取', value:2},
       {name:'不收卡费', value:3}
-    ]
+    ],
+    
     }
   },
 
@@ -420,8 +443,28 @@ export default {
     this.getChannelProducts()
     this.getProductCodes()
     this.getChannelBillingFeeConfigs()
+    this.getAllCardScanPools()
   },
   methods: {
+   getAllCardScanPools:function(){
+      APIDataMoniter.apiCardScanPools().then(res => {
+        if (res.resultCode === 0) {
+          this.imeiPools = res.data
+          this.imeiWhitePoolsForSelected = this.imeiPools.filter(pool=>{
+              if(pool.type === 0)
+                  return true
+              return false
+          })
+          this.imeiBlackPoolsForSelected = this.imeiPools.filter(pool=>{
+              if(pool.type === 1)
+                  return true
+              return false
+          })
+        } else {
+          this.$message.error(res.resultInfo)
+        }
+      })
+    },
     toProductEdit:function(product){
       this.productEditForm.salePrice = product.price
       this.productEditForm.channelProductId = product.id
@@ -452,19 +495,16 @@ export default {
       this.lbsChannelConfigForm.configId = row.id
       this.lbsChannelConfigForm.channelId = row.channel_id
       this.lbsChannelConfigForm.type = row.lbs_type
-      if(row.lbs_values != undefined && row.lbs_values != '' && row.lbs_values != null){
-        let strLbsValues = row.lbs_values.split(',')
-        this.lbsChannelConfigForm.configValues = strLbsValues.map(value => {
-          return Number(value)
-        })
+      if(this.lbsChannelConfigForm.type === 0 || this.lbsChannelConfigForm.type === 1){
+        if(row.lbs_values != undefined && row.lbs_values != '' && row.lbs_values != null){
+          let strLbsValues = row.lbs_values.split(',')
+          this.lbsChannelConfigForm.configValues = strLbsValues.map(value => {
+            return Number(value)
+          })
+        }
+      }else if(this.lbsChannelConfigForm.type === 2 || this.lbsChannelConfigForm.type === 3){
+        this.lbsChannelConfigForm.imeiPoolId = Number(row.lbs_values)
       }
-      
-      console.log(JSON.stringify(this.lbsChannelConfigForm))
-      
-      // configId:null,
-      //   channelId:'',
-      //   type:null,
-      //   configValues:[]
     },
     okRemoveLbsChannelConfig:function(config){
       this.$confirm('您确认要此操作, 是否继续?', '提示', {

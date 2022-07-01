@@ -92,7 +92,7 @@ export default {
         },
         {
           icon: 'el-icon-s-help',
-          title: '卡监控',
+          title: 'IMEI池管理',
           path: '/blackCardList',
           type: 0
         }

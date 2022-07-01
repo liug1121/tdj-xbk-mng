@@ -35,7 +35,7 @@
 
 
 
-        <el-card>
+        <!-- <el-card>
           <div class="button_content"> 
             <el-button size="medium" type="primary" icon="el-icon-plus"  v-permission="{indentity:'bigflowChannelList-add'}" @click="showAddImeiDlg()">添加imei规则</el-button>
           </div>
@@ -55,7 +55,7 @@
               </template>
             </el-table-column>
           </el-table>
-        </el-card>
+        </el-card> -->
         <el-card>
           <div class="button_content"> 
             <el-button size="medium" type="primary" icon="el-icon-plus" @click="showAddChannel" v-permission="{indentity:'bigflowChannelList-add'}">添加渠道</el-button>
