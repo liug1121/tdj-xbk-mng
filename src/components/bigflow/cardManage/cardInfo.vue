@@ -449,7 +449,7 @@ export default {
         { prop: 'amountPoolName', label: '账户池 ', width: 160 },
         { prop: 'channelName', label: '渠道 ', width: 160 },
         { prop: 'gmtActivate', label: '开卡时间', width: 180 },
-        // { prop: 'zone', label: '用量区域 ', width: 160 },
+        { prop: 'lbsInfo', label: '备注 ', width: 160 },
         // { prop: 'gmtCreate', label: '首次绑定时间 ', width: 160 },
         // { prop: 'deviceNameNew', label: '设备名称 ', width: 160 },
         { prop: 'opts', label: '操作', width: 120 ,fixed: 'right'}

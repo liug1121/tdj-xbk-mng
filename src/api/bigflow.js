@@ -450,6 +450,9 @@ export default {
     },
     modifychannelProductPrice: params =>{
         return API.POST('/bigflow/manage/v1.0/channels/products/price/modify', params)
+    },
+    getPoolBills: params =>{
+        return API.POST('/bigflow/manage/v1.0/flowpools/bills', params)
     }
     
 }

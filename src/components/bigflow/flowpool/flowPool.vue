@@ -3,7 +3,48 @@
     <div class="button_content">
           <div class="tree-tab-unselected" :class="{' tree-selected':listType == 0}" @click="listTypeSel(0)">流量池</div>
           <div class="tree-tab-unselected" :class="{' tree-selected':listType == 1}" @click="listTypeSel(1)">池用量明细</div>
+          <div class="tree-tab-unselected" :class="{' tree-selected':listType == 2}" @click="listTypeSel(2)">流量池充值记录</div>
         </div>
+    <el-card class="all_list" v-if="listType == 2">
+      <el-form :model="payedQueryForm" :inline="true">
+         <el-form-item label="渠道" class="queryFormItem">
+          <el-select class="queryFormInput"  
+          filterable
+          clearable
+          reserve-keyword
+           placeholder="请选择渠道" v-model="payedQueryForm.channel">
+            <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
+           </el-select>
+          </el-form-item>
+          <el-form-item label="流量池名称"  class="queryFormItem">
+  
+            <el-input class="queryFormInput" style="width:150px;" v-model="payedQueryForm.poolName" placeholder="请输入流量池名称" ></el-input>
+          </el-form-item>
+          <el-form-item label="开始时间" class="queryFormItem">
+            <el-date-picker style="width:140px"  type="date" placeholder="开始日期" value-format="yyyy-MM-dd" @change="startTimeChange" 
+            v-model="payedQueryForm.gmtCreateStart">  
+            </el-date-picker>
+            <span class="time-line">-</span>
+            <el-date-picker style="width:140px"  type="date" placeholder="结束日期" value-format="yyyy-MM-dd" @change="endTimeChange" 
+            v-model="payedQueryForm.gmtCreateEnd">
+            </el-date-picker>
+        </el-form-item>
+          <el-button size="medium" type="primary" icon="el-icon-search" @click="toQueryPoolBills">查询</el-button>
+      </el-form>
+      <el-table   :data="poolBills" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" >
+        <el-table-column type="selection" width="55">
+        </el-table-column>
+        <el-table-column v-for="(p, key) in table_column_flowpool_bills" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+          <template slot-scope="scope">
+            <div v-html="scope.row[p.prop]" />
+          </template>
+        </el-table-column>
+      </el-table>
+      <!-- 分页区域 -->
+      <el-pagination  @size-change="handlePoolBillsSizeChange" @current-change="handlePoolBillsCurrentChange" :current-page="page" :page-sizes="[10,20,30]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
+        :total="total">
+      </el-pagination>
+    </el-card>
     <el-card class="all_list" v-if="listType == 1">
       <el-form  :inline="true">
         <el-form-item label="渠道" class="queryFormItem">
@@ -368,6 +409,14 @@ export default {
   },
   data () {
     return {
+    poolBills:[],
+    payedQueryForm:{
+      channel:null,
+      gmtCreateStart:null,
+      gmtCreateEnd:null,
+      poolName:null
+
+    },
     amountDetailsDlgShowed: false,
     amountDetails:[],
     showEditFlowPoolDlg: false,
@@ -488,6 +537,13 @@ export default {
           { prop: 'usedUsage', label: '本期总用量', width: 100, sortable: true },
           { prop: 'addedUsage', label: '本期充值总流量', width: 100, sortable: true },
           { prop: 'billStatus', label: '出账状态', width: 100, sortable: true }
+      ],
+      table_column_flowpool_bills:[
+        { prop: 'poolName', label: '流量池名称', width: 100, sortable: true },
+        { prop: 'addedflow', label: '充值流量（G）', width: 100, sortable: true },
+        { prop: 'addedAmount', label: '金额', width: 100, sortable: true },
+         { prop: 'payReason', label: '原因', width: 100, sortable: true },
+        { prop: 'detailDateStr', label: '日期', width: 100, sortable: true }
       ]
     };
   },
@@ -498,9 +554,35 @@ export default {
       this.getAllChannels()
       this.queryFlowPools()
       this.getPdCodes()
+      this.toQueryPoolBills()
   },
   watch: {},
   methods: {
+    startTimeChange () {
+      this.payedQueryForm.gmtCreateStart = `${this.payedQueryForm.gmtCreateStart}`
+    },
+    endTimeChange () {
+      this.payedQueryForm.gmtCreateEnd = `${this.payedQueryForm.gmtCreateEnd}`
+    },
+    toQueryPoolBills:function(){
+      this.page = 0;
+      this.queryPoolBills()
+    },
+    queryPoolBills:function(){
+      let params = this.payedQueryForm
+      params.page = this.page
+      params.pageSize = this.pageSize
+      console.log(JSON.stringify(this.payedQueryForm))
+      apiBigflow.getPoolBills(params).then(res=>{
+            if(res.resultCode == 0){
+              this.poolBills = res.data
+              this.total = res.rowNum
+            }else{
+                this.$message.error('查询失败:' + res.resultInfo)
+            }
+
+        })
+    },
     toAddFlowAmount:function(poolId){
       this.poolId = poolId
       this.openUpdateuseDlg()
@@ -1036,6 +1118,16 @@ export default {
           }
           this.poolId =this.poolId.substr(0,this.poolId.length -1);
       }
+    },
+    handlePoolBillsSizeChange (newPage) {
+      console.log('newPage:' + this.detailPage)
+      this.pageSize = newPage;
+      this.queryPoolBills()
+    },
+    handlePoolBillsCurrentChange (newPage) {
+      console.log('newPage1:' + this.detailPage)
+      this.page = newPage;
+      this.queryPoolBills()
     },
     handleDetailSizeChange (newPage) {
       console.log('newPage:' + this.detailPage)
