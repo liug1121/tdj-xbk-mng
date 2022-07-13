@@ -41,8 +41,8 @@
         </el-table-column>
       </el-table>
       <!-- 分页区域 -->
-      <el-pagination  @size-change="handlePoolBillsSizeChange" @current-change="handlePoolBillsCurrentChange" :current-page="page" :page-sizes="[10,20,30]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
-        :total="total">
+      <el-pagination  @size-change="handlePoolBillsSizeChange" @current-change="handlePoolBillsCurrentChange" :current-page="poolBillsPage" :page-sizes="[10,20,30]" :page-size="poolBillsPageSize" layout="total, sizes, prev, pager, next, jumper"
+        :total="poolBillsTotal">
       </el-pagination>
     </el-card>
     <el-card class="all_list" v-if="listType == 1">
@@ -491,9 +491,12 @@ export default {
     flowPools:[],
     detailPage:0,
       page: 0,
+      poolBillsPage:0,
       pageSize: 10,
+      poolBillsPageSize:10,
       // 列表总条数
       total: 0,
+      poolBillsTotal:0,
       // 列表，标题、字段
   
       table_column_alertInfos:[
@@ -541,20 +544,20 @@ export default {
       table_column_flowpool_bills:[
         { prop: 'poolName', label: '流量池名称', width: 100, sortable: true },
         { prop: 'addedflow', label: '充值流量（G）', width: 100, sortable: true },
-        { prop: 'addedAmount', label: '金额', width: 100, sortable: true },
+        { prop: 'addedAmount', label: '金额（元）', width: 100, sortable: true },
          { prop: 'payReason', label: '原因', width: 100, sortable: true },
         { prop: 'detailDateStr', label: '日期', width: 100, sortable: true }
       ]
     };
   },
   mounted () {
-
+    this.queryPoolBills()
   },
   created(){
       this.getAllChannels()
       this.queryFlowPools()
       this.getPdCodes()
-      this.toQueryPoolBills()
+      
   },
   watch: {},
   methods: {
@@ -570,13 +573,15 @@ export default {
     },
     queryPoolBills:function(){
       let params = this.payedQueryForm
-      params.page = this.page
-      params.pageSize = this.pageSize
+      params.page = this.poolBillsPage
+      params.pageSize = this.poolBillsPageSize
+      console.log(this.pageSize)
       console.log(JSON.stringify(this.payedQueryForm))
       apiBigflow.getPoolBills(params).then(res=>{
             if(res.resultCode == 0){
               this.poolBills = res.data
-              this.total = res.rowNum
+              this.poolBillsTotal = res.rowNum
+              console.log(this.total)
             }else{
                 this.$message.error('查询失败:' + res.resultInfo)
             }
@@ -1121,12 +1126,12 @@ export default {
     },
     handlePoolBillsSizeChange (newPage) {
       console.log('newPage:' + this.detailPage)
-      this.pageSize = newPage;
+      this.poolBillsPageSize = newPage;
       this.queryPoolBills()
     },
     handlePoolBillsCurrentChange (newPage) {
       console.log('newPage1:' + this.detailPage)
-      this.page = newPage;
+      this.poolBillsPage = newPage;
       this.queryPoolBills()
     },
     handleDetailSizeChange (newPage) {

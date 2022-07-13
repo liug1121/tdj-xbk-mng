@@ -1,6 +1,49 @@
 <template>
   <div class="box_subject">
-      <el-card class="all_list">
+    <div class="button_content">
+          <div class="tree-tab-unselected" :class="{' tree-selected':listType == 0}" @click="listTypeSel(0)">账户池</div>
+          <div class="tree-tab-unselected" :class="{' tree-selected':listType == 1}" @click="listTypeSel(1)">充值记录</div>
+        </div>
+        <el-card class="all_list" v-if="listType===1">
+          <el-form :model="payedQueryForm" :inline="true">
+            <el-form-item label="渠道" class="queryFormItem">
+              <el-select class="queryFormInput"  
+              filterable
+              clearable
+              reserve-keyword
+              placeholder="请选择渠道" v-model="payedQueryForm.channelId">
+                <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
+              </el-select>
+              </el-form-item>
+              <el-form-item label="账户池名称"  class="queryFormItem">
+      
+                <el-input class="queryFormInput" style="width:150px;" v-model="payedQueryForm.poolName" placeholder="请输入流量池名称" ></el-input>
+              </el-form-item>
+              <el-form-item label="开始时间" class="queryFormItem">
+                <el-date-picker style="width:140px"  type="date" placeholder="开始日期" value-format="yyyy-MM-dd" @change="startTimeChange" 
+                v-model="payedQueryForm.startDate">  
+                </el-date-picker>
+                <span class="time-line">-</span>
+                <el-date-picker style="width:140px"  type="date" placeholder="结束日期" value-format="yyyy-MM-dd" @change="endTimeChange" 
+                v-model="payedQueryForm.endDate">
+                </el-date-picker>
+            </el-form-item>
+              <el-button size="medium" type="primary" icon="el-icon-search" @click="toQueryPoolBills">查询</el-button>
+          </el-form>
+          <el-table   :data="poolBills" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" >
+            <el-table-column type="selection" width="55">
+            </el-table-column>
+            <el-table-column v-for="(p, key) in table_column_amount_bill" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+              <template slot-scope="scope">
+                <div  v-html="scope.row[p.prop]" />
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-pagination :current-page="poolBillPage" :page-sizes="[10,20,30]" :page-size="poolBillPageSize" layout="total, sizes, prev, pager, next, jumper"
+            :total="poolBillTotal" @size-change="handlePoolBillSizeChange" @current-change="handlePoolBillCurrentChange">
+          </el-pagination>
+        </el-card>
+      <el-card class="all_list" v-if="listType===0">
       <el-form  :inline="true" :model="queryPoolForm" >
         <el-form-item label="账户名称" class="queryFormItem">
             <el-input class="queryFormInput" v-model="queryPoolForm.nameLike" clearable placeholder="请输入账户名称" style="width:150px"></el-input>
@@ -233,6 +276,15 @@ export default {
   },
   data () {
     return {
+      poolBills:[],
+      payedQueryForm:{
+      channelId:null,
+      startDate:null,
+      endDate:null,
+      poolName:null
+
+    },
+      listType:0,
         poolPackages:[],
         queryPoolForm:{},
         amountDetails:[
@@ -265,7 +317,10 @@ export default {
         editPoolDlgShowed:false,
         btnEnable:false,
         pageSize:10,
+        poolBillPageSize:10,
         currentPage:0,
+        poolBillPage:1,
+        poolBillTotal:0,
         total:0,
         loading:false,
         channels:[
@@ -304,6 +359,13 @@ export default {
           { prop: 'date', label: '生成日期', width: 100, sortable: true },
           { prop: 'billStatus', label: '出账状态', width: 100, sortable: true }
       ],
+      table_column_amount_bill:[
+        { prop: 'amount_name', label: '池名称', width: 100, sortable: true },
+        { prop: 'channel_name', label: '渠道名称', width: 100, sortable: true },
+        { prop: 'amount', label: '充值金额（元）', width: 100, sortable: true },
+        { prop: 'bill_date', label: '充值日期', width: 100, sortable: true },
+
+      ],
       alertThresholds:[
         {label:'余额少于5%', value:'5'},
         {label:'余额少于10%', value:'10'},
@@ -334,9 +396,34 @@ export default {
      this.getAllChannels()
      this.getAllPools()
      this.getAmountPoolProducts()
+     this.getPoolBills()
   },
   watch: {},
   methods: {
+    toQueryPoolBills:function(){
+      this.poolBillPage = 0
+      this.getPoolBills()
+    },
+    getPoolBills:function(){
+      let params = this.payedQueryForm
+      params.page = this.poolBillPage
+      params.pageSize = this.poolBillPageSize
+      apiBigflow.getAmountPoolBills(params).then(res=>{
+            if(res.resultCode == 0){
+                this.poolBills = res.data
+                this.poolBillTotal = res.rowNum
+            }
+        })
+    },
+    startTimeChange () {
+      this.payedQueryForm.startDate = `${this.payedQueryForm.startDate}`
+    },
+    endTimeChange () {
+      this.payedQueryForm.endDate = `${this.payedQueryForm.endDate}`
+    },
+    listTypeSel:function(selType){
+      this.listType = selType
+    },
       sendPhone:function(){
       var regPhone =/^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9]||17[0|1|2|3|5|6|7|8|9])\d{8}$/
         if (this.alertForm.phone != '' && !regPhone.test(this.alertForm.phone)) {
@@ -790,6 +877,15 @@ export default {
       this.currentPage = newPage -1;
       this.getAllPools()
     },
+    handlePoolBillSizeChange (newPage) {
+      this.poolBillPageSize = newPage;
+      this.getPoolBills()
+    },
+    handlePoolBillCurrentChange (newPage) {
+        console.log('newPage:' + newPage)
+      this.poolBillPage = newPage;
+      this.getPoolBills()
+    },
   }
 };
 </script>
@@ -798,5 +894,21 @@ export default {
   color:#145297;
     background-color: transparent;
     border-color: transparent;
+}
+.tree-tab-unselected {
+  display:inline-block;
+  background:silver;
+  color:white;
+  margin: 5px;
+  margin-top: 10px;
+  padding: 5px;
+  border-radius:5px;
+  width: 150px;
+  font-size: 5px;
+  text-align: center;
+}
+.tree-selected {
+  background:#6ab3fc;
+  color: white;
 }
 </style>
