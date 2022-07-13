@@ -29,6 +29,8 @@
                 </el-date-picker>
             </el-form-item>
               <el-button size="medium" type="primary" icon="el-icon-search" @click="toQueryPoolBills">查询</el-button>
+              <el-button size="medium" type="primary"  @click="toExportPoolBills">导出</el-button>
+              
           </el-form>
           <el-table   :data="poolBills" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" >
             <el-table-column type="selection" width="55">
@@ -400,6 +402,24 @@ export default {
   },
   watch: {},
   methods: {
+    toExportPoolBills:function(){
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+          let params = this.payedQueryForm
+          apiBigflow.exportAmountPoolBills(params).then(res=>{
+                if(res.resultCode == 0){
+                    this.$message.success('导出任务提交成功，请在任务：' + res.data + '中查看')
+                }else{
+                    this.$message.success('导出失败失败')
+                }
+
+            })
+        }).catch(() => {
+        });
+    },
     toQueryPoolBills:function(){
       this.poolBillPage = 0
       this.getPoolBills()
