@@ -421,7 +421,7 @@ export default {
         });
     },
     toQueryPoolBills:function(){
-      this.poolBillPage = 0
+      this.poolBillPage = 1
       this.getPoolBills()
     },
     getPoolBills:function(){

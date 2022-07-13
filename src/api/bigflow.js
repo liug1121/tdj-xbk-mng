@@ -459,5 +459,8 @@ export default {
     },
     exportAmountPoolBills: params =>{
         return API.POST('/bigflow/manage/v1.0/amountPool/pools/bills/export', params)
+    },
+    exportFlowPoolBills: params =>{
+        return API.POST('/bigflow/manage/v1.0/flowpools/bills/export', params)
     }
 }
