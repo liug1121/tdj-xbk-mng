@@ -588,7 +588,7 @@ export default {
       this.payedQueryForm.gmtCreateEnd = `${this.payedQueryForm.gmtCreateEnd}`
     },
     toQueryPoolBills:function(){
-      this.page = 0;
+      this.poolBillsPage = 1;
       this.queryPoolBills()
     },
     queryPoolBills:function(){
