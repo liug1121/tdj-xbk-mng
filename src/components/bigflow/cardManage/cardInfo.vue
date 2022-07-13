@@ -89,6 +89,8 @@
         v-permission="{indentity:'bigflowCardInfo-validityExtend'}" @click="openFile2CheckDlg">与CMP进行用量核查</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-validityExtend'}" @click="cardUsageCheck">单卡与CMP进行用量核查</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowCardInfo-validityExtend'}" @click="toExporBigflowCardInfos">导出</el-button>
         <!-- <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-validityExtend'}" @click="openFile2CheckDlg">与CMP进行用量核查</el-button> -->
         <!-- <el-button size="medium" type="primary" icon="el-icon-edit" 
@@ -470,6 +472,24 @@ export default {
   },
   watch: {},
   methods: {
+    toExporBigflowCardInfos:function(){
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            let params = this.createQueryParams()
+        apiBigflow.exporBigflowCardInfos(params).then(res=>{
+            if(res.resultCode == 0){
+                this.payPackageDlgShowed = false
+                this.$message.success('提交导出任务成功，请在任务：' + res.data + '中进行查看')
+            }else{
+                this.$message.error('导出失败:' + res.resultInfo)
+            }
+        })
+        }).catch(() => {
+        }); 
+    },
     okPayPackage:function(){
       this.$confirm('您确认要此操作, 是否继续?', '提示', {
             confirmButtonText: '确定',

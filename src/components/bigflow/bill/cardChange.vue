@@ -44,7 +44,7 @@
       </el-form>
       <div class="button_content">
         <el-button size="medium" type="primary" icon="el-icon-download" 
-        v-permission="{indentity:'bigflowCardChange-export'}" disabled>导出</el-button>
+        v-permission="{indentity:'bigflowCardChange-export'}" @click="toExportCardChanges">导出</el-button>
       </div>
       <!-- 列表区域 -->
       <!-- <div class="cardNos">
@@ -112,7 +112,7 @@ export default {
         {label:'卡扣费记账',value:'CARD_ACTIVED_DEDUCT'}
     ],
     cardChanges:[],
-      page: 0,
+      page: 1,
       pageSize: 10,
       // 列表总条数
       total: 0,
@@ -148,6 +148,42 @@ export default {
   },
   watch: {},
   methods: {
+    toExportCardChanges:function(){
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+          let params = {}
+          params.page = this.page
+          params.pageSize = this.pageSize
+          if(this.payOutId != '')
+              params.payOutId = this.payOutId
+          if(this.phoneNumber != '')
+              params.phoneNumber = this.phoneNumber
+          if(this.iccid != '')
+              params.iccid = this.iccid
+          if(this.cardStatus != '')
+              params.status = this.cardStatus
+          if(this.saleChannel != '')
+              params.saleChannel = this.saleChannel
+          if(this.typeName != '')
+              params.type = this.typeName
+          if(this.changeStartDateTime != '')
+              params.gmtChargeStart = this.changeStartDateTime
+          if(this.changeEndDateTime != '')
+              params.gmtChargeEnd = this.changeEndDateTime
+          apiBigflow.exportCardChanges(params).then(res=>{
+                if(res.resultCode == 0){
+                    this.$message.success('导出任务提交成功，请在任务：' + res.data + '中查看')
+                }else{
+                    this.$message.success('导出失败失败')
+                }
+
+            })
+        }).catch(() => {
+        });
+    },
     startTimeChange () {
       this.changeStartDateTime = `${this.changeStartDateTime}`
     },
@@ -202,7 +238,7 @@ export default {
       this.queryCardChanges()
     },
     handleCurrentChange (newPage) {
-      this.page = newPage - 1;
+      this.page = newPage;
       this.queryCardChanges()
     },
   }

@@ -462,5 +462,11 @@ export default {
     },
     exportFlowPoolBills: params =>{
         return API.POST('/bigflow/manage/v1.0/flowpools/bills/export', params)
+    },
+    exportCardChanges: params =>{
+        return API.POST('/bigflow/manage/v1.0/cardchanges/export', params)
+    },
+    exporBigflowCardInfos: params =>{
+        return API.POST('/bigflow/manage/v1.0/card/infos/export', params)
     }
 }
