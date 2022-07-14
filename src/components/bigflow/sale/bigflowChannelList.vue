@@ -99,6 +99,11 @@
             <el-option v-for="item in productTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
+         <el-form-item label="渠道类型" class="queryFormItem" >
+          <el-select class="queryFormInput" v-model="channelType" clearable placeholder="请选择卡产品品类">
+            <el-option v-for="item in channelTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
@@ -212,6 +217,7 @@ export default {
   data () {
     return {
       editManagerDialogVisible:false,
+      channelType:'',
       productType:'',
       mailConfigDialogVisible:false,
       mailConfigForm:{
@@ -297,6 +303,10 @@ export default {
       emeiTypes: [
         { label: '黑名单', value: 1 },
         { label: '白名单', value: 0 }
+      ],
+      channelTypes:[
+        { label: '一级渠道', value: 0 },
+        { label: '子渠道', value: 1 }
       ],
       // hideEditChannelDlg  
       // form 表单字段
@@ -731,6 +741,11 @@ export default {
             this.$message.error('登录密码必须填写')
             return
         }
+        console.log(this.channelType)
+        if(this.channelType === undefined || this.channelType === '' || this.channelType === null){
+          this.$message.error('渠道类型必须填写')
+            return
+        }
         this.$confirm('您确认要此操作, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -743,6 +758,7 @@ export default {
         params.contactName = this.addChannelForm.salePerson
         params.password = this.addChannelForm.pwd
         params.productType = this.productType
+        params.type = this.channelType
 
         params.channelId = localStorage.getItem('channelId');
         apiBigflow.addSaleChannel(params).then(res => {
