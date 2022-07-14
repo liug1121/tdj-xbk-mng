@@ -468,5 +468,10 @@ export default {
     },
     exporBigflowCardInfos: params =>{
         return API.POST('/bigflow/manage/v1.0/card/infos/export', params)
+    },
+    removeChannel: params =>{
+        return API.POST('/bigflow/manage/v1.0/channels/delete', params)
     }
+
+    
 }

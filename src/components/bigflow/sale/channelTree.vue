@@ -5,7 +5,10 @@
     </el-input>
     <el-scrollbar style="height:100%" >
       <div class="ct-scrollbar">
-    <el-tree v-loading="loading" class="filter-tree" :data="channelTree" :props="defaultProps" :filter-node-method="filterNode" node-key="channelId" ref="tree" @node-click="handleNodeClick" style="margin-top:10px;"
+    <el-tree v-loading="loading" class="filter-tree" :data="channelTree" :props="defaultProps" :filter-node-method="filterNode" node-key="channelId" ref="tree" 
+    @node-click="handleNodeClick" 
+    @node-contextmenu="rightClick" 
+    style="margin-top:10px;"
       :default-expanded-keys="[2]">
     </el-tree>
     </div>
@@ -97,7 +100,12 @@ export default {
       const channelsID = data.channelId
       const channelName = data.channelName
       this.$emit("getChannelId", channelsID, channelName)
-    }
+    },
+    rightClick(event, data, node, obj) {
+      const channelsID = data.channelId
+      const channelName = data.channelName
+      this.$emit("rightClick",event,channelsID, channelName)
+    },
   }
 }
 </script>

@@ -1,13 +1,19 @@
 <template>
   <!-- 渠道列表 2020-06月 刘珍利  -->
   <div class="box_subject">
+    <ul id="menu" v-show="isRightShow" :style="menuStyle"  @click="isRightShow=false">
+      <li class="menu-item" @click="toEditChannel">
+        编辑
+      </li>
+      <li class="menu-item" @click="toDeleteChannel">
+        删除
+      </li>
+    </ul>
     <el-row :gutter="20">
       <el-col :span="6">
-        <channelTree ref="channerTreeRef" @channelChick="channelChick" @getChannelId="getChannelId" style="max-height:680px;overflow: auto"></channelTree>
+        <channelTree v-if="isShowTree" ref="channerTreeRef" @rightClick="rightClick" @channelChick="channelChick" @getChannelId="getChannelId" style="max-height:680px;overflow: auto"></channelTree>
       </el-col>
       <el-col :span="18">
-
-       
       <div class="channel-name">{{this.selectedChannelName}}</div>
        <el-card>
           <div class="button_content"> 
@@ -112,6 +118,28 @@
       </span>   
     </el-dialog>
 
+    <el-dialog title= "编辑渠道" :visible.sync="showModifyChannelDlg" width="450px" @close="hideModifyChannelDlg">
+      <el-form :model="modifyChannelForm"  label-width="110px">
+          <el-form-item label="渠道名称">
+          <el-input style="width:300px;" v-model="modifyChannelForm.name" placeholder="请输入渠道名称" ></el-input>
+        </el-form-item>
+        <el-form-item label="父渠道">
+            <el-select 
+            filterable
+          clearable
+          reserve-keyword
+            placeholder="请输入父渠道" v-model="modifyChannelForm.parentId">
+            <el-option v-for="item in channels" :key="item.channelId" :label="item.name" :value="item.channelId"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="hideModifyChannelDlg">取 消</el-button>
+        <el-button type="primary" @click="okModifyChannel">确 定</el-button>
+      </span>   
+    </el-dialog>
+
     <el-dialog :title= dialogTitle :visible.sync="showEditChannelDlg" width="450px" @close="hideEditChannelDlg">
       <el-form :model="editChannelForm"  label-width="110px">
           <!-- <el-form-item label="渠道名称">
@@ -199,6 +227,9 @@
       <el-main class="el-loading" v-loading="loading" element-loading-background="transparent"
         element-loading-text="加载中" > 
     </el-main>
+     <!-- <el-dialog id="menu" title="修改管理员" :visible.sync="isRightShow" width="430px" @close="closeEditManagerButton">
+     
+      </el-dialog> -->
   </div>
 </template>
 
@@ -216,6 +247,27 @@ export default {
   },
   data () {
     return {
+      isShowTree:true,
+      showModifyChannelDlg:false,
+      modifyChannelForm:{
+        name:'',
+        parentId:'',
+        id:''
+      },
+      menuStyle:{
+        'z-index': 1,
+        'position': 'absolute',
+        'left': '100px',
+        'top': '100px',
+        'height': '70px',
+        'width': '60px',
+        'position': 'absolute',
+        'border-radius': '5px',
+        'border': '1px solid #ccc',
+        'background-color': 'white'
+        
+      },
+      isRightShow:false,
       editManagerDialogVisible:false,
       channelType:'',
       productType:'',
@@ -360,7 +412,8 @@ export default {
         managerId:'',
         name:'',
         pwd:''
-      }
+      },
+      channelIdRightSelected:'',
     }
   },
 
@@ -372,6 +425,63 @@ export default {
     this.getChannelTree()
   },
   methods: {
+    hideModifyChannelDlg:function(){
+      this.showModifyChannelDlg = false
+    }, 
+    okModifyChannel:function(){
+
+    },
+    toEditChannel:function(){
+      console.log('edit' + this.channelIdRightSelected)
+      this.isRightShow = false
+      this.showModifyChannelDlg = true
+      let seletedChannels = this.channels.filter(channel=>{
+          return channel.channelId === this.channelIdRightSelected
+      })
+       console.log(JSON.stringify(seletedChannels))
+       this.modifyChannelForm.id=seletedChannels[0].channelId
+       this.modifyChannelForm.parentId = seletedChannels[0].parentChannelId
+       this.modifyChannelForm.name = seletedChannels[0].name
+       console.log(JSON.stringify(this.modifyChannelForm))
+    },
+    toDeleteChannel:function(){
+      console.log('delete' + this.channelIdRightSelected)
+      this.isRightShow = false
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let params = {}
+        params.channelId=this.channelIdRightSelected
+        this.isShowTree = false
+        apiBigflow.removeChannel(params).then(res => {
+            if (res.resultCode === 0) {
+              this.$message.success('删除成功')
+              this.getChannelTree()
+              this.isShowTree = true
+            } else {
+              this.$message.error(res.resultInfo)
+              this.isShowTree = true
+            }
+          })
+      }).catch(() => {
+      });
+    },
+    closeRightMenu:function(){
+      console.log('closeRightMenu')
+      this.isRightShow = false
+
+    },
+    rightClick:function(event, channelsID, channelName){
+      console.log(channelsID + '  | ' + channelName)
+      this.channelIdRightSelected = channelsID
+      this.isRightShow = true
+      console.log(event.clientX  + '   ' + event.clientY)
+      this.menuStyle.left = event.clientX -200 + 'px'
+      this.menuStyle.top = event.clientY -100 + 'px'
+      document.addEventListener('click', this.closeRightMenu)
+    },
     closeEditManagerButton:function(){
       this.editManagerDialogVisible = false
     },
@@ -682,6 +792,10 @@ export default {
       apiBigflow.getSaleChannels(params).then(res => {
         if (res.resultCode === 0) {
             this.channels = res.data
+            this.channels.push({
+              channelId:'-1',
+              name:'无'
+            })
         } else {
           this.$message.error(res.resultInfo)
         }
@@ -1200,4 +1314,26 @@ export default {
   margin: 10px;
   color: #145297;
 }
+
+
+.menu{
+  z-index: 1;
+  position: absolute;
+  left: 10px;
+  top: 100px;
+}
+
+.menu-item {
+  line-height: 20px;
+  text-align: left;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #606266;
+  text-align: center;
+}
+li:hover {
+  background-color: #edf6ff;
+  color: #606266;
+}
+
 </style>
