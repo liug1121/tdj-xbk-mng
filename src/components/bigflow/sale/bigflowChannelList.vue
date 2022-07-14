@@ -766,6 +766,8 @@ export default {
               this.$message.success('添加成功！')
               this.$refs.channerTreeRef.getChannelTree()
               this.hideAddChannelDlg()
+              // this.getChannelList();
+              this.getChannelTree()
             } else {
               this.$message.error(res.resultInfo)
             }
