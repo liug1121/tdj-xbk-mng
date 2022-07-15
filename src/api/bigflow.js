@@ -471,7 +471,11 @@ export default {
     },
     removeChannel: params =>{
         return API.POST('/bigflow/manage/v1.0/channels/delete', params)
+    },
+    modifyChannel: params =>{
+        return API.POST('/bigflow/manage/v1.0/channels/modify', params)
     }
+    
 
     
 }

@@ -429,7 +429,26 @@ export default {
       this.showModifyChannelDlg = false
     }, 
     okModifyChannel:function(){
-
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let params = this.modifyChannelForm
+        this.isShowTree = false
+        apiBigflow.modifyChannel(params).then(res => {
+            if (res.resultCode === 0) {
+              this.$message.success('修改成功')
+              this.getChannelTree()
+              this.isShowTree = true
+              this.showModifyChannelDlg = false
+            } else {
+              this.$message.error(res.resultInfo)
+              this.isShowTree = true
+            }
+          })
+      }).catch(() => {
+      });
     },
     toEditChannel:function(){
       console.log('edit' + this.channelIdRightSelected)
