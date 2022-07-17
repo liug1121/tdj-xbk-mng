@@ -12,7 +12,7 @@
           <!-- <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 3}" @click="treeSelect(4)">渠道账单</div> -->
           <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 0}" @click="treeSelect(0)">学霸卡</div>
           <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 1}" @click="treeSelect(1)">大流量</div>
-          <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 2}" @click="treeSelect(2)">子账户</div>
+          <!-- <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 2}" @click="treeSelect(2)">子账户</div> -->
           <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 3}" @click="treeSelect(3)">无渠道</div>
         </div>
       </div >
@@ -24,6 +24,7 @@
     <el-col :span="17">
     
     <el-card class="all_list">
+      <div class="channel-name">{{channelName}}</div>
       <!-- 按钮 -->
       <div class="button_content" v-if="treeSelectedType != 4">
           <el-button class="upload-btn" size="medium" icon="el-icon-download" slot="trigger" type="primary" @click="exportButton" 
@@ -198,6 +199,7 @@ export default {
   },
   data () {
     return {
+      channelName:'',
       billOutputTypeDlgShowed:false,
       billOutputTypeForm:{
         type:0
@@ -520,6 +522,7 @@ export default {
       this.getBillList()
     },
     getFwAccount:function(fwAccountID, fwAccountName,allSubNodes){
+      this.channelName = fwAccountName
       if(allSubNodes.length > 1)
         return
       let subAccouts = []
@@ -531,6 +534,7 @@ export default {
     },
     // // 点击 tree 从子组件 获取 对应的 渠道id
     getXbChannelId (channelsID, channelName,allSubNodes) {
+      this.channelName = channelName
       this.queryBillForm = {}
       this.channels = allSubNodes
       let channelIds = []
@@ -545,6 +549,7 @@ export default {
     // // 点击 tree 从子组件 获取 对应的 渠道id
     getChannelId (channelsID, channelName,allSubNodes) {
       console.log('***')
+      this.channelName = channelName
       let queryCycle = this.formatTimer(new Date())
       if(this.queryBillForm.cycleId != undefined && this.queryBillForm.cycleId !='')
           queryCycle = this.queryBillForm.cycleId
@@ -733,5 +738,10 @@ export default {
   font-size: 15px;
   color: #6ab3fc;
   width: 400px;
+}
+.channel-name{
+  font-size: 18px;
+  margin: 10px;
+  color: #145297;
 }
 </style>
