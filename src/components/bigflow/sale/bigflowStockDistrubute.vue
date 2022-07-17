@@ -393,7 +393,7 @@ export default {
       table_column_channelBillingFeeConfig:[
         { prop: 'payTypeName', label: '流量出账类型', width: 80 },
         { prop: 'areaName', label: '流量区域', width: 120 },
-        { prop: 'unitPrice', label: '流量单价（元/G）', width: 120 },
+        { prop: 'unitPrice', label: '账户池套餐 或 流量单价（元/G）', width: 120 },
         // { prop: 'provinceUnitPrice', label: '省内流量单价（元/G）', width: 120 },
         // { prop: 'countryUnitPrice', label: '全国流量单价（元/G）', width: 120 },
         // { prop: 'cardFeePayTypeName', label: '卡费出账类型', width: 120 },
