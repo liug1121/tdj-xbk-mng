@@ -48,8 +48,8 @@
         v-permission="{indentity:'bigflowStockMng-export'}" @click="toExport">导出</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowStockMng-import'}" @click="openCardImportDlg">导入</el-button>
-        <el-button size="medium" type="primary" icon="el-icon-edit" 
-        v-permission="{indentity:'bigflowStockMng-moveNet'}" @click="openCardMoveDlg">迁移网路</el-button>
+        <!-- <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowStockMng-moveNet'}" @click="openCardMoveDlg">迁移网路</el-button> -->
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowStockMng-distributeForChannel'}" @click="openMoveCard2ChannelDlg">分配渠道</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
