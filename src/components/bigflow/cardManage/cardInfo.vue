@@ -293,6 +293,7 @@
         <el-upload class="unload-demo" accept=".xls, .xlsx" action="#" :file-list="file2CheckFiles" :http-request="uploadFile2CheckFile" :on-remove="removeUploadedFile2Check">
           <el-button size="small" type="primary">点击上传</el-button>
         </el-upload>
+        <a href='http://xbk.xuebaka.cn/download/template/cmp_usage_check.xlsx'>下载模板文件</a>
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeFile2CheckDlg" :disabled="btnEnable">取 消</el-button>
         <el-button type="primary" @click="okFile2Check" :disabled="btnEnable">确 定</el-button>
@@ -303,6 +304,7 @@
         <el-upload class="unload-demo" accept=".xls, .xlsx" action="#" :file-list="file2RefreshFiles" :http-request="uploadFile2RefreshFile" :on-remove="removeUploadedFile2Refresh">
           <el-button size="small" type="primary">点击上传</el-button>
         </el-upload>
+        <a href='http://xbk.xuebaka.cn/download/template/cmp_usage_check.xlsx'>下载模板文件</a>
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeFile2RefreshDlg" :disabled="btnEnable">取 消</el-button>
         <el-button type="primary" @click="okFile2Refresh" :disabled="btnEnable">确 定</el-button>
@@ -313,6 +315,7 @@
         <el-upload class="unload-demo" accept=".xls, .xlsx" action="#" :file-list="file2CheckFiles" :http-request="uploadFile2CheckFile" :on-remove="removeUploadedFile2Check">
           <el-button size="small" type="primary">点击上传</el-button>
         </el-upload>
+        <a href='http://xbk.xuebaka.cn/download/template/cmp_usage_check.xlsx'>下载模板文件</a>
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeFile2CheckDlg" :disabled="btnEnable">取 消</el-button>
         <el-button type="primary" @click="okFile2Check" :disabled="btnEnable">确 定</el-button>

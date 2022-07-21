@@ -138,7 +138,7 @@
         </el-form>
       </el-form>
       <span>
-          <p>1、下载模板后，填写数据。ICCID、卡号为必须字段，卡号可以带86。</p>
+          <p>1、<a href='http://xbk.xuebaka.cn/download/template/xbcard-stock.xlsx'>下载模板后</a>，填写数据。ICCID、卡号为必须字段，卡号可以带86。</p>
 
             <p>2、如果数据存在则做更新操作，只会更新：级别与状态两个字段，请注意。</p>
 

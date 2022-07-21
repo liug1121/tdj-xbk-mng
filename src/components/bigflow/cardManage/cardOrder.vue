@@ -202,7 +202,7 @@
       </el-form>
       </el-form>
       <span>
-          <p>1）下载模板后，填写数据。ICCID 字段为必填。</p>
+          <p>1）<a href='http://xbk.xuebaka.cn/download/template/movecard-stock.xlsx'>下载模板后</a>，填写数据。ICCID 字段为必填。</p>
 
             <p>2）会根据提交的信息创建订单，并分配库存渠道、销售员</p>
 

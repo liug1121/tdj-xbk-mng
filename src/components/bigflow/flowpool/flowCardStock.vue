@@ -215,6 +215,7 @@
             <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadFile" :on-remove="removeUploadedFile">
             <el-button size="small" type="primary">点击上传</el-button>
             </el-upload>
+             <a href='http://xbk.xuebaka.cn/download/template/movecard-stock.xlsx'>下载模板文件</a>
         </el-form>
       </el-form>
       
