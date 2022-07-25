@@ -548,7 +548,9 @@ export default {
         { prop: 'addedflow', label: '充值流量（G）', width: 100, sortable: true },
         { prop: 'addedAmount', label: '金额（元）', width: 100, sortable: true },
          { prop: 'payReason', label: '原因', width: 100, sortable: true },
-        { prop: 'detailDateStr', label: '日期', width: 100, sortable: true }
+        { prop: 'detailDateStr', label: '日期', width: 100, sortable: true },
+         { prop: 'operator', label: '操作人', width: 100, sortable: true }
+
       ]
     };
   },

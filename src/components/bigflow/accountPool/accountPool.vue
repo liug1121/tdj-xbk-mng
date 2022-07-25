@@ -366,7 +366,7 @@ export default {
         { prop: 'channel_name', label: '渠道名称', width: 100, sortable: true },
         { prop: 'amount', label: '充值金额（元）', width: 100, sortable: true },
         { prop: 'bill_date', label: '充值日期', width: 100, sortable: true },
-
+        { prop: 'operator', label: '操作人', width: 100, sortable: true },
       ],
       alertThresholds:[
         {label:'余额少于5%', value:'5'},
