@@ -73,6 +73,9 @@
         <!-- <div v-permission="{indentity:'xbkCardInfo-realStatusChange'}"> -->
           <el-button v-if="selectListNumber !==1" size="medium" type="primary" icon="el-icon-edit" disabled v-permission="{indentity:'xbkCardInfo-realStatusChange'}">实名状态修改</el-button>
           <el-button v-else size="medium" type="primary" icon="el-icon-edit" @click="RealstatusShow" v-permission="{indentity:'xbkCardInfo-realStatusChange'}">实名状态修改</el-button>
+
+          <el-button v-if="selectListNumber !==1" size="medium" type="primary" icon="el-icon-edit" disabled v-permission="{indentity:'xbkCardInfo-realStatusChange'}">解绑</el-button>
+          <el-button v-else size="medium" type="primary" icon="el-icon-edit" @click="toUnbind" v-permission="{indentity:'xbkCardInfo-realStatusChange'}">解绑</el-button>
         <!-- </div> -->
       </div>
       <!-- 列表区域 -->
@@ -438,6 +441,26 @@ export default {
   },
   watch: {},
   methods: {
+    toUnbind:function(){
+      this.$confirm('确认解绑该卡？')
+        .then(() => {
+          const data = {
+            phone: this.cardNos[0],
+            description:'后端人工接绑'
+          }
+          console.log(JSON.stringify(data));
+          API.apiUnbindCard(JSON.stringify(data)).then(res => {
+            if (res.resultCode === 0) {
+              this.$message.success('成功解绑！')
+              this.getCardInfolist()
+            } else {
+              this.$message.error(res.resultInfo)
+            }
+          })
+        })
+        .catch(() => {
+        });
+    },
     // 获取渠道的值 来自 子组件
     channelSelectId (channelSelectId) {
       this.queryCardInfoForm.channelId = channelSelectId

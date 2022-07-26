@@ -63,6 +63,9 @@ export default {
   apiUsagebalanceClear: params => {
     return API.POST('boss/v1.0/cardbalance/usagebalance/clear', params)
   },
+  apiUnbindCard: params => {
+    return API.POST('boss/v1.0/cards/unbind', params)
+  },
   // 调整用量额度
   apiUsagebalanceModify: params => {
     return API.POST('boss/v1.0/cardbalance/usagebalance/modify', params)
