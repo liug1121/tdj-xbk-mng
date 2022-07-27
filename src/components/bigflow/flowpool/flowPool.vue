@@ -87,6 +87,9 @@
     <el-card class="all_list" v-if="listType == 0">
       <!-- 查询区域 -->
       <el-form  :inline="true">
+         <el-form-item label="流量池名称" class="queryFormItem">
+            <el-input style="width:300px;"  v-model="poolName" placeholder="请输入流量池名称" ></el-input>
+        </el-form-item>
         <el-form-item label="卡状态" class="queryFormItem">
             <el-select class="queryFormInput"  clearable placeholder="请选择卡状态" v-model="status">
             <el-option v-for="item in statusTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
@@ -458,6 +461,7 @@ export default {
     loading: false,
     status:'',
     saleChannel:'',
+    poolName:'',
     channels:[],
     alertTimes:[
       {label:'1次', value:'1'},
@@ -1106,6 +1110,8 @@ export default {
             params.status = this.status
         if(this.saleChannel != '')
             params.saleChannel = this.saleChannel
+        if(this.poolName != '')
+            params.poolName = this.poolName
         apiBigflow.getFlowPools(params).then(res=>{
         if(res.resultCode == 0){
             this.flowPools = res.data
