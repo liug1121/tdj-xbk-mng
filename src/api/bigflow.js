@@ -439,6 +439,7 @@ export default {
     getAmountPoolBillDetails: params =>{
         return API.POST('/bigflow/manage/v1.0/amountPool/billdetails', params)
     } ,
+    
     getZxCardPackageInfos: params =>{
         return API.POST('/bigflow/manage/v1.0/zxcard/card/packages', params)
     },
@@ -474,7 +475,10 @@ export default {
     },
     modifyChannel: params =>{
         return API.POST('/bigflow/manage/v1.0/channels/modify', params)
-    }
+    },
+    getCardLbsPosition: params =>{
+        return API.POST('boss/v1.0/channels/lbs/card', params)
+    },
     
 
     

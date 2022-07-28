@@ -115,10 +115,12 @@
                 </div>
               </div>
             <div v-else>
-              <div v-if="p.prop == 'opts' && scope.row.isZxCard === 1">
-                <el-button  type="text" size="small" @click="showCurrentPackage(scope.row.iccid)">查询当前套餐</el-button>
-                <el-button  type="text" size="small" @click="toPayPackage(scope.row.iccid)">套餐充值</el-button>
+              <div v-if="p.prop == 'opts'">
+                <el-button v-if="scope.row.isZxCard === 1"  type="text" size="small" @click="showCurrentPackage(scope.row.iccid)">查询当前套餐</el-button>
+                <el-button v-if="scope.row.isZxCard === 1"  type="text" size="small" @click="toPayPackage(scope.row.iccid)">套餐充值</el-button>
+                <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toLbsPosition(scope.row.iccid)">查位置</el-button>
               </div>
+              
               <div v-html="scope.row[p.prop]" />
             </div>
           </template>
@@ -516,6 +518,19 @@ export default {
         })
         }).catch(() => {
         }); 
+    },
+    toLbsPosition:function(iccid){
+      let params = {}
+      params.iccid = iccid
+      this.loading = true
+      apiBigflow.getCardLbsPosition(params).then(res=>{
+            if(res.resultCode == 0){
+                this.$message.success(iccid + '当前位置:' + res.data.address)
+            }else{
+              this.$message.error('暂时获取不到位置')
+            }
+            this.loading = false
+        })
     },
     toPayPackage:function(iccid){
       this.payPackageForm.iccid = iccid
