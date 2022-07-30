@@ -33,6 +33,15 @@
         <el-form-item label="iccid" class="queryFormItem" >
           <el-input class="queryFormInput" clearable placeholder="请输入iccid" style="width:150px" v-model="queryPushLog.iccid"></el-input>
         </el-form-item>    
+        <el-form-item label="渠道" class="queryFormItem">
+          <el-select class="queryFormInput"  
+          filterable
+          clearable
+          reserve-keyword
+           placeholder="请选择渠道" v-model="queryPushLog.channelId">
+            <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="开始时间" class="queryFormItem" >
             <el-date-picker style="width:140px"  type="date" placeholder="开始日期" value-format="yyyy-MM-dd" @change="startTimeChange"  v-model="queryPushLog.startDate">
           </el-date-picker>
@@ -89,12 +98,15 @@
 
 <script>
 import apiSystem from './../../api/system'
+import apiBigflow from './../../api/bigflow'
 export default {
   components: {
 
   },
   data () {
     return {
+    channels:[],
+    channel:'',
     pushStaticFaild:[],
     pushStaticSuccess:[],
     showType:0, //0 总量    1 明细  
@@ -117,6 +129,7 @@ export default {
       table_column: [
         // { prop: 'channelName', label: '渠道', width: 200, fixed: 'left', sortable: true },
         { prop: 'iccid', label: 'iccid', width: 300, fixed: 'left', sortable: true },
+        { prop: 'channelName', label: '渠道名称', width: 300, fixed: 'left', sortable: true },
         { prop: 'duration', label: '耗时(毫秒)', width: 100, fixed: 'left', sortable: true },
         { prop: 'statusName', label: '状态', width: 175, sortable: true },
         { prop: 'createTime', label: '推送时间', width: 200, sortable: true },
@@ -137,9 +150,18 @@ export default {
     this.queryPushInfos()
     this.getPushStaticsSuccess()
     this.getPushStaticsFaild()
+    this.getAllChannels()
   },
   watch: {},
   methods: {
+    getAllChannels:function(){
+        let params = {}
+        apiBigflow.getAllChannels(params).then(res=>{
+            if(res.resultCode == 0){
+                this.channels = res.data
+            }
+        })
+    },
     showSelect:function(type){
       this.showType = type
     },
@@ -189,6 +211,8 @@ export default {
         params.endDate = this.queryPushLog.endDate
         params.status = this.queryPushLog.status
         params.channelId = this.queryPushLog.channelId
+        if(params.channelId === '')
+          params.channelId = null
         params.page = this.page
         params.pageSize = this.pageSize
         apiSystem.getPushLogs(params).then(res=>{
