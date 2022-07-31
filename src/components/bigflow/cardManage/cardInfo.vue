@@ -119,6 +119,7 @@
                 <el-button v-if="scope.row.isZxCard === 1"  type="text" size="small" @click="showCurrentPackage(scope.row.iccid)">查询当前套餐</el-button>
                 <el-button v-if="scope.row.isZxCard === 1"  type="text" size="small" @click="toPayPackage(scope.row.iccid)">套餐充值</el-button>
                 <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toLbsPosition(scope.row.iccid)">查位置</el-button>
+                <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toHistoryUsage(scope.row.iccid)">查历史用量</el-button>
               </div>
               
               <div v-html="scope.row[p.prop]" />
@@ -331,6 +332,17 @@
         <el-button @click="currentPackageDlgshowd = false" :disabled="btnEnable">取 消</el-button>
       </span>  
     </el-dialog> 
+     <el-dialog title="历史用量" :visible.sync="historyUsageDlgshowd" width="450px" @close="historyUsageDlgshowd = false">
+        <el-table  :data="historyUsages" border max-height="1000" align="center" :cell-style="{height: '38px',padding:0}" >
+        <el-table-column  width="55">
+        </el-table-column>
+        <el-table-column v-for="(p, key) in table_column_history_usage" :prop="p.prop" :label="p.label"  :key="key" :width="p.width"  align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+          <template slot-scope="scope">
+              <div v-html="scope.row[p.prop]" />
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog> 
     <el-main class="el-loading" v-loading="loading" element-loading-background="transparent"
         element-loading-text="加载中" > 
     </el-main>
@@ -346,6 +358,8 @@ export default {
   },
   data () {
     return {
+        historyUsageDlgshowd:false,
+        historyUsages:[],
         payPackageDlgShowed:false,
         payPackageForm:{
           updateProductCode: '',
@@ -433,6 +447,10 @@ export default {
       // 列表总条数
       total: 0,
       // 列表，标题、字段
+      table_column_history_usage: [
+        { prop: 'cycle', label: '账期', width: 180, sortable: true },
+        { prop: 'usage', label: '用量', width: 150, sortable: true },
+      ],
       table_column: [
         { prop: 'iccid', label: 'ICCID', width: 180, sortable: true },
         { prop: 'phoneNumber', label: 'MSISDN', width: 150, sortable: true },
@@ -518,6 +536,20 @@ export default {
         })
         }).catch(() => {
         }); 
+    },
+    toHistoryUsage:function(iccid){
+      let params = {}
+      params.iccid = iccid
+      this.loading = true
+      apiBigflow.getCardMonthUsageDetails(params).then(res=>{
+            if(res.resultCode == 0){
+              this.historyUsages = res.data
+              this.historyUsageDlgshowd = true
+            }else{
+              this.$message.error('暂时获取不到历史用量')
+            }
+            this.loading = false
+        })
     },
     toLbsPosition:function(iccid){
       let params = {}

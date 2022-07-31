@@ -30,11 +30,12 @@
       <el-table v-loading="loading" :data="managers" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55">
         </el-table-column>
-        <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+        <el-table-column v-for="(p, key) in table_column" :width="p.width" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
           <template slot-scope="scope">
               <div v-html="scope.row[p.prop]" />
               <div v-if="p.prop == 'operations'">
                 <el-button  size="mini" type="warning" plain @click="editManager(scope.row, 0)" >编辑</el-button>
+                <el-button  size="mini" type="warning" plain @click="removeManager(scope.row)" >删除</el-button>
                 <el-button  size="mini" type="warning" plain @click="roleSel(scope.row)" >分配角色</el-button>
               </div>
           </template>
@@ -108,6 +109,7 @@
 
 <script>
 import apiSystem from './../../api/system'
+import apiBigflow from './../../api/bigflow'
 export default {
   components: {
 
@@ -133,11 +135,11 @@ export default {
       total: 0,
       // 列表，标题、字段
       table_column: [
-        { prop: 'user_name', label: '登录名', width: 200, fixed: 'left'},
-        { prop: 'name', label: '用户名', width: 300},
-        { prop: 'channelNames', label: '渠道', width: 300},
-        { prop: 'phone', label: '电话', width: 300},
-        { prop: 'roleInfo', label: '角色', width: 300},
+        { prop: 'user_name', label: '登录名', width: 200},
+        { prop: 'name', label: '用户名', width: 100},
+        { prop: 'channelNames', label: '渠道', width: 200},
+        { prop: 'phone', label: '电话', width: 100},
+        { prop: 'roleInfo', label: '角色', width: 200},
         { prop: 'operations', label: '操作', width: 300}
       ],
       role_table_column:[
@@ -256,6 +258,23 @@ export default {
                     mError(res)
             }
         })
+    },
+    removeManager:function(row, type){
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let params = {}
+        params.managerId = row.id
+        apiBigflow.removeManger(params).then(res=>{
+            if(res.resultCode == 0){
+               this.queryManagers()
+            }
+        })
+        
+      }).catch(() => {
+      });
     },
     doEditManager:function(mSuccess, mError){
         let params = {}
