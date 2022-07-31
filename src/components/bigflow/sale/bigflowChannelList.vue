@@ -211,11 +211,19 @@
       <el-dialog title="修改管理员" :visible.sync="editManagerDialogVisible" width="430px" @close="closeEditManagerButton">
       <!-- 内容主体区域 -->
       <el-form :model="editManager"  label-width="120px">
+        <el-form-item label="登陆名" >
+          <el-input size="small" v-model="editManager.userName" placeholder="请输入登陆名" ></el-input>
+        </el-form-item>
         <el-form-item label="姓名" >
           <el-input size="small" v-model="editManager.name" placeholder="请输入姓名" ></el-input>
         </el-form-item>
         <el-form-item label="密码" >
           <el-input size="small" v-model="editManager.pwd" placeholder="请输入密码" ></el-input>
+        </el-form-item>
+        <el-form-item label="管理员角色" prop="usingInDevice">
+          <el-select size="small" style="width:100%;" v-model="editManager.roleId" placeholder="请选择管理员角色">
+            <el-option v-for="item in channelRoles" :key="item.id" :label="item.name" :value="item.id"></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
         <!-- 底部区域 -->
@@ -312,7 +320,8 @@ export default {
       table_column: [
         { prop: 'channelName', label: '渠道名称', width: 150 },
         { prop: 'name', label: '姓名', width: 150 },
-        { prop: 'mobile', label: '登陆帐号', width: 100 },
+        { prop: 'userName', label: '登陆帐号', width: 100 },
+        { prop: 'roleName', label: '角色名称', width: 100 },
         { prop: 'mobile', label: '手机号', width: 100 },
         { prop: 'type', label: '类型', width: 50 },
         { prop: 'qrCode', label: '登录密码', width: 100 },
@@ -411,7 +420,10 @@ export default {
       editManager:{
         managerId:'',
         name:'',
-        pwd:''
+        pwd:'',
+        userName:'',
+        roleId:'',
+        managerRoleId:''
       },
       channelIdRightSelected:'',
     }
@@ -535,7 +547,11 @@ export default {
       this.editManager.managerId = row.id
       this.editManager.name = row.name
       this.editManager.pwd = row.qrCode
+      this.editManager.userName = row.userName
+      this.editManager.roleId = row.roleId
+      this.editManager.managerRoleId = row.managerRoleId
       this.editManagerDialogVisible = true
+      console.log(JSON.stringify(this.editManager))
       // this.$confirm('您确认要此操作, 是否继续?', '提示', {
       //   confirmButtonText: '确定',
       //   cancelButtonText: '取消',

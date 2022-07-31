@@ -3,14 +3,15 @@
     <el-card class="all_list">
       <!-- 查询区域 -->
       <el-form  :inline="true">
-        <el-form-item label="">
-                <el-select 
+        <el-form-item label="用户名">
+           <el-input size="small"  placeholder="请输入用户名" v-model="queryName"></el-input>
+                <!-- <el-select 
                 filterable
                 clearable
                 reserve-keyword
                 class="queryFormInput"   placeholder="请选择用户名" v-model="queryName">
                     <el-option v-for="item in allManagers" :key="item.id" :label="item.name" :value="item.name"></el-option>
-                </el-select>
+                </el-select> -->
             </el-form-item>
         <el-button size="medium" type="primary" icon="el-icon-search" @click="queryManagers">查询</el-button>
       </el-form>
@@ -134,6 +135,7 @@ export default {
       table_column: [
         { prop: 'user_name', label: '登录名', width: 200, fixed: 'left'},
         { prop: 'name', label: '用户名', width: 300},
+        { prop: 'channelNames', label: '渠道', width: 300},
         { prop: 'phone', label: '电话', width: 300},
         { prop: 'roleInfo', label: '角色', width: 300},
         { prop: 'operations', label: '操作', width: 300}
