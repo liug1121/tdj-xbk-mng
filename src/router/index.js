@@ -358,6 +358,12 @@ const router = new Router({
           meta: { title: 'IMEI池管理' },
         },
         {
+          path: '/usageRecord',
+          name: '话单查询',
+          component: (resolve) => require(['components/dataMonitoring/record/usageRecord.vue'], resolve),
+          meta: { title: '话单查询' },
+        },
+        {
           path: '/blackGroupDetails',
           name: '黑名单卡组明细',
           component: (resolve) => require(['components/dataMonitoring/blackCard/blackGroupDetails.vue'], resolve),
