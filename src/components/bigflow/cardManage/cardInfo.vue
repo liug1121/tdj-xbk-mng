@@ -120,6 +120,7 @@
                 <el-button v-if="scope.row.isZxCard === 1"  type="text" size="small" @click="toPayPackage(scope.row.iccid)">套餐充值</el-button>
                 <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toLbsPosition(scope.row.iccid)">查位置</el-button>
                 <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toHistoryUsage(scope.row.iccid)">查历史用量</el-button>
+                <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toCoreBills(scope.row.iccid)">卡变更记录</el-button>
               </div>
               
               <div v-html="scope.row[p.prop]" />
@@ -343,6 +344,17 @@
         </el-table-column>
       </el-table>
     </el-dialog> 
+    <el-dialog title="卡变更信息" :visible.sync="coreBillsDlgshowd" width="1150px" @close="coreBillsDlgshowd = false">
+        <el-table  :data="coreBills" border max-height="1000" align="center" :cell-style="{height: '38px',padding:0}" >
+        <el-table-column  width="55">
+        </el-table-column>
+        <el-table-column v-for="(p, key) in table_column_core_bills" :prop="p.prop" :label="p.label"  :key="key" :width="p.width"  align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+          <template slot-scope="scope">
+              <div v-html="scope.row[p.prop]" />
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog> 
     <el-main class="el-loading" v-loading="loading" element-loading-background="transparent"
         element-loading-text="加载中" > 
     </el-main>
@@ -358,6 +370,8 @@ export default {
   },
   data () {
     return {
+        coreBillsDlgshowd:false,
+        coreBills:[],
         historyUsageDlgshowd:false,
         historyUsages:[],
         payPackageDlgShowed:false,
@@ -451,6 +465,14 @@ export default {
         { prop: 'cycle', label: '账期', width: 180, sortable: true },
         { prop: 'usage', label: '用量', width: 150, sortable: true },
       ],
+      table_column_core_bills:[
+        { prop: 'field', label: '类型', width: 180, sortable: true },
+        { prop: 'reason', label: '备注', width: 180, sortable: true },
+        { prop: 'operator', label: '操作人', width: 180, sortable: true },
+        { prop: 'gmt_create', label: '操作时间', width: 180, sortable: true },
+        { prop: 'value', label: 'value', width: 180, sortable: true },
+        { prop: 'status', label: 'status', width: 180, sortable: true }
+      ],
       table_column: [
         { prop: 'iccid', label: 'ICCID', width: 180, sortable: true },
         { prop: 'phoneNumber', label: 'MSISDN', width: 150, sortable: true },
@@ -536,6 +558,20 @@ export default {
         })
         }).catch(() => {
         }); 
+    },
+    toCoreBills:function(iccid){
+      let params = {}
+      params.iccid = iccid
+      this.loading = true
+      apiBigflow.getCardCoreBills(params).then(res=>{
+            if(res.resultCode == 0){
+              this.coreBills = res.data
+              this.coreBillsDlgshowd = true
+            }else{
+              this.$message.error('暂时获取卡变更记录')
+            }
+            this.loading = false
+        })
     },
     toHistoryUsage:function(iccid){
       let params = {}
