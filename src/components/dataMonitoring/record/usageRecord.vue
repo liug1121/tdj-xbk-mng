@@ -89,6 +89,7 @@ export default {
         apiBigflow.getUsageRecords(params).then(res=>{
             if(res.resultCode == 0){
                 this.usageRecords = res.data
+                this.total = res.rowNum
             }else{
                 this.$message.error('查询失败')
             }
