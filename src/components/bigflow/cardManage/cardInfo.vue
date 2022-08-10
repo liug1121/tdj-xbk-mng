@@ -118,9 +118,9 @@
               <div v-if="p.prop == 'opts'">
                 <el-button v-if="scope.row.isZxCard === 1"  type="text" size="small" @click="showCurrentPackage(scope.row.iccid)">查询当前套餐</el-button>
                 <el-button v-if="scope.row.isZxCard === 1"  type="text" size="small" @click="toPayPackage(scope.row.iccid)">套餐充值</el-button>
-                <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toLbsPosition(scope.row.iccid)">查位置</el-button>
-                <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toHistoryUsage(scope.row.iccid)">查历史用量</el-button>
-                <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toCoreBills(scope.row.iccid)">卡变更记录</el-button>
+                <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toLbsPosition(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-lbs'}">查位置</el-button>
+                <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toHistoryUsage(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-historyUsage'}">查历史用量</el-button>
+                <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toCoreBills(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-changeRecords'}">卡变更记录</el-button>
               </div>
               
               <div v-html="scope.row[p.prop]" />

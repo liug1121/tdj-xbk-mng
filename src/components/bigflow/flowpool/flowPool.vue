@@ -2,8 +2,8 @@
   <div class="box_subject">
     <div class="button_content">
           <div class="tree-tab-unselected" :class="{' tree-selected':listType == 0}" @click="listTypeSel(0)">流量池</div>
-          <div class="tree-tab-unselected" :class="{' tree-selected':listType == 1}" @click="listTypeSel(1)">池用量明细</div>
-          <div class="tree-tab-unselected" :class="{' tree-selected':listType == 2}" @click="listTypeSel(2)">流量池充值记录</div>
+          <div class="tree-tab-unselected" :class="{' tree-selected':listType == 1}" @click="listTypeSel(1)" v-permission="{indentity:'bigflowFlowPool-useChange'}">池用量明细</div>
+          <div class="tree-tab-unselected" :class="{' tree-selected':listType == 2}" @click="listTypeSel(2)" v-permission="{indentity:'bigflowFlowPool-useChange'}">流量池充值记录</div>
         </div>
     <el-card class="all_list" v-if="listType == 2">
       <el-form :model="payedQueryForm" :inline="true">

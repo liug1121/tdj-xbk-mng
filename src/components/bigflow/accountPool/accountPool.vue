@@ -2,7 +2,7 @@
   <div class="box_subject">
     <div class="button_content">
           <div class="tree-tab-unselected" :class="{' tree-selected':listType == 0}" @click="listTypeSel(0)">账户池</div>
-          <div class="tree-tab-unselected" :class="{' tree-selected':listType == 1}" @click="listTypeSel(1)">充值记录</div>
+          <div v-permission="{indentity:'bigflowFlowPool-start'}"  class="tree-tab-unselected" :class="{' tree-selected':listType == 1}" @click="listTypeSel(1)">充值记录</div>
         </div>
         <el-card class="all_list" v-if="listType===1">
           <el-form :model="payedQueryForm" :inline="true">
@@ -63,10 +63,10 @@
         <el-button size="medium" type="primary" icon="el-icon-search" @click="queryPools">搜索</el-button>
       </el-form>
       <div class="button_content">
-        <el-button size="medium" type="primary" icon="el-icon-edit" @click="showAddPoolDlg">添加</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" v-permission="{indentity:'bigflowFlowPool-start'}"  @click="showAddPoolDlg">添加</el-button>
         <!-- <el-button size="medium" type="primary" icon="el-icon-edit" @click="showAddAmountDlg">充值</el-button> -->
         <!-- <el-button size="medium" type="primary" icon="el-icon-edit" @click="openOrderPackageDlg">套餐订购</el-button> -->
-        <el-button size="medium" type="primary" icon="el-icon-edit" @click="openEditExpireDlg">调整有效期</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" v-permission="{indentity:'bigflowFlowPool-start'}"  @click="openEditExpireDlg">调整有效期</el-button>
       </div>
       <el-table   :data="pools" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" >
         <el-table-column type="selection" width="55">
@@ -75,14 +75,14 @@
           <template slot-scope="scope">
             <div v-if="p.prop == 'opts'">
                 
-              <el-button type="text" size="small" @click="showAddAmountDlg(scope.row.id)">充值</el-button>
-              <el-button type="text" size="small"  @click="openOrderPackageDlg(scope.row.id)">套餐订购</el-button>
-              <el-button type="text" size="small"  v-if="scope.row.status==='已启用'" @click="changeStatus(scope.row.id, 0)">停用</el-button>
-              <el-button type="text" size="small"  v-else @click="changeStatus(scope.row.id, 1)">启用</el-button>
-              <el-button type="text" size="small" @click="openAmountDetailsDlg(scope.row.id)">账单明细</el-button>
-              <el-button type="text" size="small" @click="okRemovePool(scope.row.id)">删除</el-button>
-              <el-button type="text" size="small" @click="openlertListDlg(scope.row.id)">告警设置</el-button>
-              <el-button type="text" size="small" @click="showEditPoolDlg(scope.row)">编辑</el-button>
+              <el-button type="text" size="small"  v-permission="{indentity:'bigflowFlowPool-start'}"  @click="showAddAmountDlg(scope.row.id)">充值</el-button>
+              <el-button type="text" size="small"  v-permission="{indentity:'bigflowFlowPool-start'}"  @click="openOrderPackageDlg(scope.row.id)">套餐订购</el-button>
+              <el-button type="text" size="small"  v-permission="{indentity:'bigflowFlowPool-start'}"  v-if="scope.row.status==='已启用'" @click="changeStatus(scope.row.id, 0)">停用</el-button>
+              <el-button type="text" size="small"  v-permission="{indentity:'bigflowFlowPool-start'}"  v-else @click="changeStatus(scope.row.id, 1)">启用</el-button>
+              <el-button type="text" size="small" v-permission="{indentity:'bigflowFlowPool-start'}"  @click="openAmountDetailsDlg(scope.row.id)">账单明细</el-button>
+              <el-button type="text" size="small" v-permission="{indentity:'bigflowFlowPool-start'}"  @click="okRemovePool(scope.row.id)">删除</el-button>
+              <el-button type="text" size="small" v-permission="{indentity:'bigflowFlowPool-start'}"  @click="openlertListDlg(scope.row.id)">告警设置</el-button>
+              <el-button type="text" size="small" v-permission="{indentity:'bigflowFlowPool-start'}"  @click="showEditPoolDlg(scope.row)">编辑</el-button>
             </div>
             <div v-else v-html="scope.row[p.prop]" />
           </template>

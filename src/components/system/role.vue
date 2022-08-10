@@ -132,8 +132,8 @@ export default {
   },
   watch: {},
   updated(){
-     this.refreshRoleFunctionsSelected() 
-     this.refreshOptsSelected()
+    this.refreshRoleFunctionsSelected() 
+    this.refreshOptsSelected()
   },
   methods: {
     toRoleModify:function(role){
@@ -240,19 +240,24 @@ export default {
 
     },
     refreshRoleFunctionsSelected:function(){
+        console.log('refreshRoleFunctionsSelected....')
+        console.log('refreshRoleFunctionsSelected this.roleMenus:' + JSON.stringify(this.roleMenus))
         this.roleMenus.forEach(roleMenu => {
             if (roleMenu.has == true) {    
                 this.$refs.functionSelTable.toggleRowSelection(roleMenu, true) 
             }
         })
+        console.log('refreshRoleFunctionsSelected this.roleMenus1111:' + JSON.stringify(this.roleMenus))
     },
     refreshOptsSelected:function(){
+        console.log('refreshOptsSelected....')
         if(this.selectedMenu.opts != undefined){
             this.selectedMenu.opts.forEach(opt => {
             if (opt.has == true) {    
                 this.$refs.optSelTable.toggleRowSelection(opt, true) 
             }
         })
+        console.log('refreshOptsSelected selectedMenu.opts:' + JSON.stringify(this.selectedMenu.opts))
         }
     },
     functionSel:function(role){
@@ -266,6 +271,7 @@ export default {
     },
     optSelDlgOpen:function(row){
         this.selectedMenu = row
+        console.log('this.selectedMenu:' + JSON.stringify(this.selectedMenu))
         this.optSelDlgShow = true
         this.operating = true
     },
@@ -273,6 +279,7 @@ export default {
         this.optSelDlgShow = false
     },
     optSelDlgOk:function(){
+        console.log('this.selectedMenu.opts:' + JSON.stringify(this.selectedMenu.opts))
         let opts = this.selectedMenu.opts.filter(opt=> opt.has)
         if(opts != undefined && opts.length > 0){
             this.$refs.functionSelTable.toggleRowSelection(this.selectedMenu, true)
@@ -335,6 +342,8 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        console.log('ok  this.roleMenus:' + JSON.stringify(this.roleMenus))
+        console.log('ok  this.selectedMenu:' + JSON.stringify(this.selectedMenu.opts))
         that.editRoleFunctions(res=>{
             let roleId = that.selectedRow.id
             that.getRoleFunctions(roleId)
@@ -354,6 +363,7 @@ export default {
         params.roleId = roleId
         let functions2Edit = []
         functions2Edit = this.roleMenus.filter(roleMenu=> roleMenu.has)
+        console.log('this.roleMenus:' + JSON.stringify(this.roleMenus))
         functions2Edit.forEach(roleMenu2Edit=>{
             if(roleMenu2Edit.opts != undefined){
                 let opts2Edit = roleMenu2Edit.opts.filter(opt=> opt.has)
@@ -395,6 +405,7 @@ export default {
         this.onRoleFunctionsSelect(rows, null)
     },
     onRoleFunctionsSelect(rows, row){
+        console.log('onRoleFunctionsSelect....')
         this.roleMenus.forEach(roleMenu=>{
             roleMenu.has = false
             rows.forEach(row=>{
@@ -403,6 +414,7 @@ export default {
                 }
             })
         }) 
+        console.log('this.roleMenus:' + JSON.stringify(this.roleMenus))
     },
     handleRoleFunctionsSelectionChange (val) {
     },
@@ -410,14 +422,16 @@ export default {
         let that = this
         this.selectedMenu.opts.forEach(opt=>{
             opt.has = false
-            this.selectedMenu.has = false
             rows.forEach(row=>{
                 if(opt.function_id == row.function_id){
                     opt.has = true
-                    that.selectedMenu.has = true
                 }
             })
+            let optSelected = this.selectedMenu.opts.filter(opt=> opt.has)
+            if(optSelected.length > 0 )
+                this.selectedMenu.has = true
         })  
+        console.log('onOptsSelect this.selectedMenu:' + JSON.stringify(this.selectedMenu))
     },
     onOptsSelectAll(rows){
         this.onOptsSelect(rows, null)
