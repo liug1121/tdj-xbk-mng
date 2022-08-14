@@ -482,7 +482,7 @@ export default {
         // { prop: 'customerId', label: '绑定状态', width: 80, sortable: true },
         // { prop: 'productCodeName', label: '卡品类', width: 80, sortable: true },
        { prop: 'flowHighDose', label: '高速可用量', width: 80, sortable: true },
-       { prop: 'flowMonthHighUsed', label: '当月已用量', width: 80, sortable: true },
+       { prop: 'flowMonthHighUsed', label: '已用量', width: 80, sortable: true },
         { prop: 'flowHighUsed', label: '累积高速已用量', width: 100, sortable: true },
         { prop: 'flowMediumDose', label: '中速可用量', width: 80, sortable: true },
         { prop: 'flowMediumUsed', label: '累积中速已用量', width: 80, sortable: true },
