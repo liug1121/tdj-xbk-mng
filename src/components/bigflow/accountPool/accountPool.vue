@@ -340,7 +340,7 @@ export default {
         { prop: 'usedAmount', label: '流量已用金额(元)', width: 80, sortable: true },
         { prop: 'billFee', label: '连续出账卡费(元)', width: 80, sortable: true },
         { prop: 'lastAmount', label: '余额(元)', width: 80, sortable: true },
-        { prop: 'lastPer', label: '余额比例(%)', width: 80, sortable: true },
+        // { prop: 'lastPer', label: '余额比例(%)', width: 80, sortable: true },
         { prop: 'expireDate', label: '有效期', width: 100 },
         { prop: 'amountChanges', label: '充值记录', width: 300 },
         { prop: 'opts', label: '操作', width: 100 }
