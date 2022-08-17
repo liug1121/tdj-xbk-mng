@@ -99,6 +99,23 @@
         <el-form-item label="密码">
           <el-input size="small"  placeholder="请输入密码" v-model="addManager.pwd"></el-input>
         </el-form-item>
+        <el-form-item label="管理员类型">
+          <el-select 
+          reserve-keyword
+          class="queryFormInput"   placeholder="请选择" v-model="addManager.managerType">
+            <el-option v-for="item in managerTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="渠道" v-if="addManager.managerType == 1">
+          <el-select 
+          multiple
+          filterable
+          clearable
+          reserve-keyword
+            placeholder="请选择渠道" v-model="addManager.manageredChannelIds">
+            <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="角色">
           <el-select 
           filterable
@@ -128,7 +145,9 @@ export default {
     return {
     channels:[],
     addManagerDlgShow:false,
-    addManager:{},
+    addManager:{
+      managerType:1
+    },
     queryName:'',
     loading: false,
     managers:[],
@@ -155,7 +174,11 @@ export default {
       ],
       role_table_column:[
         { prop: 'roleName', label: '角色名称', width: 300},  
-      ]
+      ],
+      managerTypes: [
+        { label: "渠道管理员", value: 1 },
+        { label: "系统管理员", value: 0 }
+      ],
     };
   },
   mounted () {
@@ -201,23 +224,34 @@ export default {
     addManagerClick:function(){
         let userName = this.addManager.userName
         if(userName === '' || userName == undefined){
-            alert('用户名不能为空')
+            this.$message.error('用户名不能为空')
             return
         }
         let nickName = this.addManager.name
         if(nickName === '' || nickName == undefined){
-            alert('姓名不能为空')
+            this.$message.error('姓名不能为空')
             return
         }
         let pwd = this.addManager.pwd
         if(pwd === '' || pwd == undefined){
-            alert('密码不能为空')
+            this.$message.error('密码不能为空')
             return
         }
         let roleId = this.addManager.roleId
         if(roleId === '' || roleId == undefined){
-            alert('角色不能为空')
+            this.$message.error('角色不能为空')
             return
+        }
+        let managerType = this.addManager.managerType
+        if(managerType === '' || managerType == undefined || managerType == null){
+          this.$message.error('管理员类型不能为空')
+          return
+        }
+        let manageredChannelIds = this.addManager.manageredChannelIds
+        console.log(JSON.stringify(manageredChannelIds))
+        if(manageredChannelIds == undefined || manageredChannelIds == null || manageredChannelIds.length == 0){
+          this.$message.error('渠道管理员管理的渠道不能为空')
+          return
         }
 
         let params = {}
@@ -225,6 +259,8 @@ export default {
         params.name = nickName
         params.pwd = pwd
         params.roleId = roleId
+        params.managerType = managerType
+        params.manageredChannelIds = manageredChannelIds
         let that = this
         this.$confirm('您确认要此操作, 是否继续?', '提示', {
             confirmButtonText: '确定',
@@ -234,9 +270,10 @@ export default {
             apiSystem.addManager(params).then(res=>{
             if(res.resultCode == 0){
                 that.queryAllManagers()
-                alert('添加成功')
+                this.$message.success('添加成功')
+                this.addManagerDlgShow = false
             }else{
-                alert('添加失败:' + res.resultInfo)
+                this.$message.error('添加失败:' + res.resultInfo)
             }
         })   
         }).catch(() => {
@@ -303,6 +340,7 @@ export default {
         params.pwd = this.manager2Edit.pwd
         params.name = this.manager2Edit.name
         params.phone = this.manager2Edit.phone
+        params.manageredChannelIds = this.manager2Edit.manageredChannelIds
         apiSystem.editManger(params).then(res=>{
             if(res.resultCode == 0){
                 if(mSuccess != null && mSuccess != undefined)
@@ -322,9 +360,11 @@ export default {
       }).then(() => {
         that.doEditManager(res=>{
             that.managerDlgShow = false
-            alert('修改成功')
+            this.$message.success('修改成功')
+            that.queryAllManagers()
+
         }, error=>{
-            alert('修改失败')
+            this.$message.error('修改失败')
         })
         
       }).catch(() => {
