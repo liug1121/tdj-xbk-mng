@@ -57,6 +57,16 @@
         <el-form-item label="电话">
           <el-input size="small"  placeholder="请输入电话" v-model="manager2Edit.phone"></el-input>
         </el-form-item>
+        <el-form-item label="渠道" >
+          <el-select 
+          multiple
+          filterable
+          clearable
+          reserve-keyword
+            placeholder="请选择渠道" v-model="manager2Edit.manageredChannelIds">
+            <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="managerDlgClose">取 消</el-button>
@@ -116,6 +126,7 @@ export default {
   },
   data () {
     return {
+    channels:[],
     addManagerDlgShow:false,
     addManager:{},
     queryName:'',
@@ -153,6 +164,7 @@ export default {
   created(){
       this.queryAllManagers()
       this.getAllSysRoles()
+      this.getAllChannels()
   },
   watch: {},
   updated(){
@@ -162,6 +174,14 @@ export default {
 
   },
   methods: {
+    getAllChannels:function(){
+        let params = {}
+        apiBigflow.getAllChannels(params).then(res=>{
+            if(res.resultCode == 0){
+                this.channels = res.data
+            }
+        })
+    },
     queryManagers:function(){
         this.queryManagers()
     },
