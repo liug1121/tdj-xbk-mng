@@ -395,7 +395,7 @@ export default {
             that.btnEnable = true
             let params = {}
             params.channelId = this.moveCard2ChannelForm.channelId
-            params.fileToken = this.moveCard2ChannelForm.fileTokeng
+            params.fileToken = this.moveCard2ChannelForm.fileToken
             apiBigflow.moveStockCards2Channel(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryBigflowStocks()
