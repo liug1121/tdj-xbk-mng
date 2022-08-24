@@ -216,6 +216,13 @@ export default {
             }
         })
     },
+    file2CardReset:(params) =>{
+        return API.POST('/bigflow/manage/v1.0/stock/card/file/reset', params, {
+            headers: {
+              'content-type': 'multipart/form-data'
+            }
+          })
+    },
     file2OrdersDelete: (params) => {
         return API.POST('/bigflow/manage/v1.0/order/file/delete', params, {
             headers: {

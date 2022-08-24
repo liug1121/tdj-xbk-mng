@@ -56,6 +56,8 @@
         v-permission="{indentity:'bigflowStockMng-distributeForHeadAndTail'}" @click="openStock2ChannelDlg">首尾分配渠道</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowStockMng-exportFor'}" disabled>按首尾条件导出</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowStockMng-exportFor'}" @click="openCardResetDlg">批量退库存</el-button>
       </div>
       <!-- 列表区域 -->
       <!-- <div class="cardNos">
@@ -107,6 +109,24 @@
         <el-button @click="closeStock2ChannelDlg" :disabled="btnEnable">取 消</el-button>
         <el-button type="primary" @click="okStock2Channel" :disabled="btnEnable">确 定</el-button>
       </span>
+    </el-dialog>
+
+    <el-dialog title="批量退库存" :visible.sync="showCardResetDlg" width="450px" @close="closeCardResetDlg">
+      <el-form   label-width="110px">
+        <el-form  label-width="120px">
+            <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadCardResetFile" :on-remove="removeUploadCardResetFile">
+            <el-button size="small" type="primary">点击上传</el-button>
+            </el-upload>
+        </el-form>
+      </el-form>
+      <span>
+          <p>1、<a href='http://xbk.xuebaka.cn/download/template/movecard-stock.xlsx'>下载模板后</a>，填写数据。ICCID、卡号为必须字段，卡号可以带86。</p>
+      </span>
+      
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeCardResetDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okCardReset" :disabled="btnEnable">确 定</el-button>
+      </span>  
     </el-dialog>
 
      <el-dialog title="文件导入" :visible.sync="showCardImportDlg" width="450px" @close="closeCardImportDlg">
@@ -246,6 +266,7 @@ export default {
   },
   data () {
     return {
+    showCardResetDlg:false,
     productType:-1,
     file2Upload:null,
     showMoveCard2ChannelDlg:false, 
@@ -324,6 +345,32 @@ export default {
   },
   watch: {},
   methods: {
+    closeCardResetDlg:function(){
+      this.showCardResetDlg = false
+    },  
+    okCardReset:function(){
+      let that = this
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+      }).then(() => {
+          that.btnEnable = true
+          let params = new FormData()
+          params.append('file', this.cardResetFile)
+          apiBigflow.file2CardReset(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryBigflowStocks()
+                    that.showCardResetDlg = false
+                    alert('操作成功，请在任务管理中查询执行结果，任务编号：' + res.data)
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+      }).catch(() => {
+      });
+    },
     toExport:function(){
       // exportBigflowStocks
       let that = this
@@ -471,6 +518,12 @@ export default {
       this.file2Upload  = null
       this.cardImportForm.fileToken = ''
     },
+    removeUploadCardResetFile(file,fileList){
+      this.cardResetFile = null
+    },
+    uploadCardResetFile(item){
+      this.cardResetFile = item.file
+    },
     uploadFile (item) {
       
         let params = new FormData()
@@ -522,7 +575,10 @@ export default {
           },
       openStock2ChannelDlg:function(){
           this.showStock2ChannelDlg = true
-      },    
+      },  
+      openCardResetDlg:function(){
+        this.showCardResetDlg = true
+      },  
       closeStock2ChannelDlg:function(){
           this.showStock2ChannelDlg = false
       },    
