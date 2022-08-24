@@ -46,7 +46,7 @@
         <el-form-item label="客户经理电话" class="queryFormItem" >
           <el-input class="queryFormInput" clearable placeholder="请输入客户经理电话" style="width:150px" v-model="salerPhone"></el-input>
         </el-form-item>
-        <el-button size="medium" type="primary" icon="el-icon-search" @click="queryCardOrders">查询</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-search" @click="toQueryCardOrders">查询</el-button>
       </el-form>
       <!-- 按钮区域 -->
       <div class="button_content">
@@ -610,6 +610,10 @@ export default {
             
         }).catch(() => {
         }); 
+    },
+    toQueryCardOrders:function(){
+      this.page = 0
+      this.queryCardOrders()
     },
     queryCardOrders:function(){
       this.loading = true

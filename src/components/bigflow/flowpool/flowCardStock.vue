@@ -38,7 +38,7 @@
            placeholder="请选择账户池" v-model="amountPoolId">
             <el-option v-for="item in amountPools" :key="item.id" :label="item.poolName" :value="item.id"></el-option>
           </el-select>
-          <el-button size="medium" type="primary" icon="el-icon-search" @click="queryFlowCardStocks">搜索</el-button>
+          <el-button size="medium" type="primary" icon="el-icon-search" @click="toQueryFlowCardStocks">搜索</el-button>
         </el-form-item>
       </el-form>
       <div class="button_content">
@@ -305,6 +305,10 @@ export default {
   },
   watch: {},
   methods: {
+    toQueryFlowCardStocks:function(){
+      this.page = 0
+      this.queryFlowCardStocks()
+    },
     getAllAmountPools:function(){
         this.loading = true
         let params = {}
@@ -589,6 +593,7 @@ export default {
     handleSelectBranchCom:function(item){
         console.log('handleSelectBranchCom:' + item)
     },
+    
     queryFlowCardStocks:function(){
         this.loading = true
         let params = {}

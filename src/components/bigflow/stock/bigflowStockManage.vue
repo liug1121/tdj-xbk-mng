@@ -41,7 +41,7 @@
             <el-option v-for="item in fengwoAccounts" :key="item.account_id" :label="item.account_name" :value="item.account_id"></el-option>
           </el-select>
         </el-form-item>
-        <el-button size="medium" type="primary" icon="el-icon-search" @click="queryBigflowStocks">查询</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-search" @click="toQUeryBigflowStocks">查询</el-button>
       </el-form>
       <div class="button_content">
         <el-button size="medium" type="primary" icon="el-icon-download" 
@@ -345,6 +345,10 @@ export default {
   },
   watch: {},
   methods: {
+    toQUeryBigflowStocks:function(){
+      this.page = 0
+      this.queryBigflowStocks()
+    },
     closeCardResetDlg:function(){
       this.showCardResetDlg = false
     },  
@@ -667,7 +671,7 @@ export default {
       this.queryBigflowStocks()
     },
     handleCurrentChange (newPage) {
-      this.page = newPage;
+      this.page = newPage ;
       this.queryBigflowStocks()
     },
   }
