@@ -86,7 +86,8 @@ export default {
               channelId: e.channelId,
               channelName: e.name,
               manager: e.manager,
-              parentChannelId: e.parentChannelId
+              parentChannelId: e.parentChannelId,
+              pushFromVoiceType:e.pushFromVoiceType
             }
           })
           this.channelTreeList.sort((a, b) => {
@@ -106,6 +107,7 @@ export default {
     handleNodeClick (data) {
       const channelsID = data.channelId
       const channelName = data.channelName
+      // const pushFromVoiceType = data.pushFromVoiceType
       let allSubNodes = []
       this.getAllTrees(data, allSubNodes)
       this.$emit("getChannelId", channelsID, channelName,allSubNodes)

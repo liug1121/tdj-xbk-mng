@@ -13,8 +13,22 @@
         <el-form  :inline="true" :model="queryPushInfo">
       </el-form>
       <div class="channel-name">{{this.selectedChannelName}}</div>
+      
       <div class="button_content">
+
+        
+        <!-- <el-form-item label="是否进行话单用量推送" >
+            <el-select style="width:200px"  size="small" v-model="pushFromVoice" clearable filterable placeholder="请选择" >
+              <el-option v-for="item in pushTypes" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item> -->
         <el-button size="medium" type="primary" icon="el-icon-edit" @click="addPushInfoClick">添加</el-button>
+          <el-select class="pushtype" style="width:200px"  size="small" v-model="pushFromVoice" clearable placeholder="请选择是否进行话单推送" @change="selectPushFromVoiceChanged">
+            <el-option v-for="item in pushTypes" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+
       </div>
       <!-- 列表区域 -->
       <div class="cardNos">
@@ -94,6 +108,7 @@
 import channelTree from "./channelTree"
 import xbChannelTree from "./xbChannelTree"
 import apiSystem from './../../api/system'
+import apiBigflow from './../../api/bigflow'
 export default {
   components: {
     channelTree,
@@ -101,6 +116,8 @@ export default {
   },
   data () {
     return {
+    selectedNode:null,
+    pushFromVoice:0,
     selectedChannelName:'',
     selectedChannelId:null,
     treeSelectedType:0,
@@ -130,6 +147,10 @@ export default {
         { prop: 'pushUrl', label: '推送链接', width: 450, fixed: 'left', sortable: true },
         { prop: 'operation', label: '操作', width: 440, fixed: 'left', sortable: true }
       ],
+      pushTypes:[
+        {label:"进行话单推送",value:1},
+        {label:"不进行话单推送",value:0},
+      ],
       types: [
         { label: "学霸卡", value: 0 },
         { label: "大流量卡", value: 1 }
@@ -151,7 +172,31 @@ export default {
   },
   watch: {},
   methods: {
-
+    selectPushFromVoiceChanged:function(value){
+      let that = this
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+      }).then(() => {
+          let params = {}
+          params.channelId = this.selectedChannelId
+          params.type = this.pushFromVoice
+          console.log(JSON.stringify(params))
+          apiBigflow.modifyChannelPushFromVoiceType(params).then(res=>{
+              if(res.resultCode == 0){
+                  this.$message.success('修改成功')
+              }
+          })
+      },()=>{
+        if(value === 0)
+          this.pushFromVoice = 1
+        else if(value === 1){
+          this.pushFromVoice = 0
+        }
+      }).catch(() => {
+      }); 
+    },
     treeSelect:function(type){
       this.treeSelectedType = type
     },
@@ -172,7 +217,16 @@ export default {
     // // 点击 tree 从子组件 获取 对应的 渠道id
     getChannelId (channelsID, channelName,allSubNodes) {
       this.selectedChannelId = channelsID
+      console.log(this.selectedChannelId)
       this.selectedChannelName = channelName
+      let params = {}
+      apiBigflow.getAllChannels(params).then(res=>{
+          if(res.resultCode == 0){
+            let selectedChannel = res.data.filter(channel=> channel.value === this.selectedChannelId)
+            this.pushFromVoice = selectedChannel[0].pushFromVoiceType
+            console.log(this.pushFromVoice)
+          }
+      })
       this.queryPushInfos()
     },
 
@@ -315,5 +369,8 @@ export default {
   font-size: 18px;
   margin: 10px;
   color: #145297;
+}
+.pushtype{
+  margin-left: 70%;
 }
 </style>

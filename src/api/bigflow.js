@@ -491,5 +491,8 @@ export default {
     },
     getUsageRecords: params =>{
         return API.POST('/bigflow/manage/v1.0/card/voicerecords', params)
+    },
+    modifyChannelPushFromVoiceType: params =>{
+        return API.POST('/bigflow/manage/v1.0/channels/modify/pushFromType', params)
     }
 }
