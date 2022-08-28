@@ -120,6 +120,7 @@
                 <el-button v-if="scope.row.isZxCard === 1"  type="text" size="small" @click="toPayPackage(scope.row.iccid)">套餐充值</el-button>
                 <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toLbsPosition(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-lbs'}">查位置</el-button>
                 <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toHistoryUsage(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-historyUsage'}">查历史用量</el-button>
+                <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toCardInfoChagnes(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-historyUsage'}">查信息变更记录</el-button>
                 <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toCoreBills(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-changeRecords'}">卡变更记录</el-button>
               </div>
               
@@ -335,9 +336,16 @@
     </el-dialog> 
      <el-dialog title="历史用量" :visible.sync="historyUsageDlgshowd" width="450px" @close="historyUsageDlgshowd = false">
         <el-table  :data="historyUsages" border max-height="1000" align="center" :cell-style="{height: '38px',padding:0}" >
-        <el-table-column  width="55">
+        <el-table-column v-for="(p, key) in table_column_history_usage" :prop="p.prop" :label="p.label"  :key="key"  align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+          <template slot-scope="scope">
+              <div v-html="scope.row[p.prop]" />
+          </template>
         </el-table-column>
-        <el-table-column v-for="(p, key) in table_column_history_usage" :prop="p.prop" :label="p.label"  :key="key" :width="p.width"  align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+      </el-table>
+    </el-dialog> 
+    <el-dialog title="卡信息变化" :visible.sync="cardInfoChangeDlgshowd" width="450px" @close="cardInfoChangeDlgshowd = false">
+        <el-table  :data="cardInfoChanges" border max-height="1000" align="center" :cell-style="{height: '38px',padding:0}" >
+        <el-table-column v-for="(p, key) in table_column_card_info_changes" :prop="p.prop" :label="p.label"  :key="key" align="center" >
           <template slot-scope="scope">
               <div v-html="scope.row[p.prop]" />
           </template>
@@ -346,9 +354,8 @@
     </el-dialog> 
     <el-dialog title="卡变更信息" :visible.sync="coreBillsDlgshowd" width="1150px" @close="coreBillsDlgshowd = false">
         <el-table  :data="coreBills" border max-height="1000" align="center" :cell-style="{height: '38px',padding:0}" >
-        <el-table-column  width="55">
-        </el-table-column>
-        <el-table-column v-for="(p, key) in table_column_core_bills" :prop="p.prop" :label="p.label"  :key="key" :width="p.width"  align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+       
+        <el-table-column v-for="(p, key) in table_column_core_bills" :prop="p.prop" :label="p.label"  :key="key"   align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
           <template slot-scope="scope">
               <div v-html="scope.row[p.prop]" />
           </template>
@@ -370,6 +377,8 @@ export default {
   },
   data () {
     return {
+        cardInfoChangeDlgshowd:false,
+        cardInfoChanges:[],  
         coreBillsDlgshowd:false,
         coreBills:[],
         historyUsageDlgshowd:false,
@@ -461,6 +470,10 @@ export default {
       // 列表总条数
       total: 0,
       // 列表，标题、字段
+      table_column_card_info_changes:[
+        { prop: 'change_info', label: 'imei信息', width: 150, sortable: true },
+        { prop: 'create_time', label: '时间', width: 180, sortable: true },
+      ],
       table_column_history_usage: [
         { prop: 'cycle', label: '账期', width: 180, sortable: true },
         { prop: 'usage', label: '用量', width: 150, sortable: true },
@@ -569,6 +582,20 @@ export default {
               this.coreBillsDlgshowd = true
             }else{
               this.$message.error('暂时获取卡变更记录')
+            }
+            this.loading = false
+        })
+    },
+    toCardInfoChagnes:function(iccid){
+      let params = {}
+      params.iccid = iccid
+      this.loading = true
+      apiBigflow.getCardInfoChanges(params).then(res=>{
+            if(res.resultCode == 0){
+              this.cardInfoChanges = res.data
+              this.cardInfoChangeDlgshowd = true
+            }else{
+              this.$message.error('暂时获取不到历史用量')
             }
             this.loading = false
         })

@@ -397,6 +397,9 @@ export default {
     getCardMonthUsageDetails: params =>{
         return API.POST('/bigflow/manage/v1.0/card/usage/month/detail', params)
     },
+    getCardInfoChanges: params =>{
+        return API.POST('/bigflow/manage/v1.0/card/info/changes', params)
+    },
     getCardCoreBills: params =>{
         return API.POST('/bigflow/manage/v1.0/card/corebills', params)
     },
