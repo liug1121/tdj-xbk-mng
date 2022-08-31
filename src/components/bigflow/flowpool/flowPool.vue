@@ -476,6 +476,9 @@ export default {
       {label:'余量少于5000G', value:'5000'},
       {label:'余量少于7000G', value:'7000'},
       {label:'余量少于10000G', value:'10000'},
+      {label:'余量少于20000G', value:'20000'},
+      {label:'余量少于30000G', value:'30000'},
+      {label:'余量少于50000G', value:'50000'}
     ],
     alertThresholds:[
       {label:'流量池停用', value:'0'},
