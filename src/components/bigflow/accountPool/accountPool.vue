@@ -338,6 +338,7 @@ export default {
         { prop: 'amount', label: '账户金额(元)', width: 80, sortable: true },
         { prop: 'creditAmount', label: '信用额度(元)', width: 80, sortable: true },
         { prop: 'usedAmount', label: '流量已用金额(元)', width: 80, sortable: true },
+        { prop: 'poolFlowUsed', label: '当月已用量(G)', width: 80, sortable: true },
         { prop: 'billFee', label: '连续出账卡费(元)', width: 80, sortable: true },
         { prop: 'lastAmount', label: '余额(元)', width: 80, sortable: true },
         // { prop: 'lastPer', label: '余额比例(%)', width: 80, sortable: true },
