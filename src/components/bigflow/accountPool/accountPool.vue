@@ -383,7 +383,10 @@ export default {
         {label:'余额少于5000元', value:'5000'},
         {label:'余额少于6000元', value:'6000'},
         {label:'余额少于8000元', value:'8000'},
-        {label:'余额少于10000元', value:'10000'}
+        {label:'余额少于10000元', value:'10000'},
+        {label:'余额少于20000元', value:'20000'},
+        {label:'余额少于30000元', value:'30000'},
+        {label:'余额少于50000元', value:'50000'}
       ],
       alertTimes:[
         {label:'1次', value:'1'},
