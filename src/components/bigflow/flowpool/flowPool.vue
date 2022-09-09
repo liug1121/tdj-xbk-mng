@@ -469,6 +469,10 @@ export default {
       {label:'10次', value:'10'}
     ],
     alertThresholdsLast:[
+      {label:'余量少于5G', value:'5'},
+      {label:'余量少于10G', value:'10'},
+      {label:'余量少于30G', value:'30'},
+      {label:'余量少于50G', value:'50'},
       {label:'余量少于100G', value:'100'},
       {label:'余量少于500G', value:'500'},
       {label:'余量少于1000G', value:'1000'},
@@ -478,7 +482,12 @@ export default {
       {label:'余量少于10000G', value:'10000'},
       {label:'余量少于20000G', value:'20000'},
       {label:'余量少于30000G', value:'30000'},
-      {label:'余量少于50000G', value:'50000'}
+      {label:'余量少于50000G', value:'50000'},
+      {label:'余量少于100000G', value:'100000'},
+      {label:'余量少于200000G', value:'200000'},
+      {label:'余量少于300000G', value:'300000'},
+      {label:'余量少于400000G', value:'400000'},
+      {label:'余量少于500000G', value:'500000'}
     ],
     alertThresholds:[
       {label:'流量池停用', value:'0'},

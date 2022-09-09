@@ -1,6 +1,7 @@
 <template>
   <div class="box">
     <el-container style="height: auto;">
+      <!-- <div class="left-menu">sdsdsd</div> -->
       <Aside class="el-aside" v-if="isShow"></Aside>
       <div class="hide-btn" @click="doControl">{{btnText}}</div>
       <Header></Header>
@@ -58,9 +59,10 @@ export default {
   /* margin-top:4%; */
   height: auto;
   /* width:180px; */
-  width: 12%;
+  width: 200px;
   overflow: hidden;
   /* display: none; */
+  /* position: fixed; */
 }
 
 .el-container.is-vertical {
@@ -121,5 +123,12 @@ export default {
   margin-left: 2px;
   margin-right: 2px;
   color: white;
+}
+.left-menu{
+  position: fixed;
+  top: 10px;
+  left: 0px;
+  background: red;
+  width:300px;
 }
 </style>
