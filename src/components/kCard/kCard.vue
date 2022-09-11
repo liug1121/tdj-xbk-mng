@@ -14,6 +14,41 @@
               <el-form-item label="订单号"  class="queryFormItem">
                 <el-input class="queryFormInput" style="width:150px;" v-model="queryForm.orderId" placeholder="请输入订单号" ></el-input>
               </el-form-item>
+              <el-form-item label="联系人手机号"  class="queryFormItem">
+                <el-input class="queryFormInput" style="width:150px;" v-model="queryForm.contactNum" placeholder="请输入联系人手机号" ></el-input>
+              </el-form-item>
+              <el-form-item label="是否点击" >
+                <el-select 
+                clearable
+                reserve-keyword 
+                class="queryFormInput"  placeholder="请输入" v-model="queryForm.statusClick">
+                  <el-option v-for="item in statusClick" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="是否提交预订单" >
+                <el-select 
+                clearable
+                reserve-keyword 
+                class="queryFormInput"  placeholder="请输入" v-model="queryForm.statusPreorder">
+                  <el-option v-for="item in statusPreorder" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="是否提交订单" >
+                <el-select 
+                clearable
+                reserve-keyword 
+                class="queryFormInput"  placeholder="请输入" v-model="queryForm.statusOrder">
+                  <el-option v-for="item in statusOrder" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="联通订单状态" >
+                <el-select 
+                clearable
+                reserve-keyword 
+                class="queryFormInput"  placeholder="请输入" v-model="queryForm.statusNotify">
+                  <el-option v-for="item in statusNotify" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
               <el-button size="medium" type="primary" icon="el-icon-search" @click="getZopOrders">查询</el-button>
               <el-button size="medium" type="primary" @click="toCreateOrder">创建订单</el-button>
               <el-button size="medium" type="primary" >导出</el-button>
@@ -87,22 +122,53 @@ export default {
         channels:[],
         queryForm:{
             channelId:'',
-            orderId:''
+            orderId:'',
+            contactNum:'',
+            statusClick:'',
+            statusPreorder:'',
+            statusOrder:'',
+            statusNotify:''
         },
+        statusClick:[
+          // {label:'全部', value:null},
+          {label:'未点击', value:0},
+          {label:'已点击', value:1},
+        ],
+        statusPreorder:[
+          // {label:'全部', value:null},
+          {label:'未提交', value:0},
+          {label:'已提交', value:1},
+        ],
+        statusOrder:[
+          // {label:'全部', value:null},
+          {label:'未提交', value:0},
+          {label:'已提交', value:1},
+        ],
+        statusNotify:[
+          // {label:'全部', value:null},
+          {label:'已激活', value:'1'},
+          {label:'退单', value:'2'},
+          {label:'转套餐(要根据产品id判断是否为享有特权的套餐)', value:'3'},
+          {label:'销户(激活后),', value:'4'},
+          {label:'首充数据同步', value:'6'},
+          {label:'开户完成', value:'C1'},
+           {label:'发货', value:'E0'}
+        ],
+        // 1：激活，2：退单(激活前)，3:转套餐(要根据产品id判断是否为享有特权的套餐)，4：销户(激活后),6:首充数据同步，C1：开户完成，E0：发货
         table_column_zop_order:[
             { prop: 'third_order_id', label: '订单号', width: 100, sortable: true },
             { prop: 'contact_num', label: '联系人手机号', width: 100, sortable: true },
             { prop: 'description', label: '备注', width: 100, sortable: true },
             { prop: 'phone_num', label: '卡号', width: 100, sortable: true },
-            { prop: 'status_clicked', label: '是否点击', width: 100, sortable: true },
+            { prop: 'statusClickName', label: '是否点击', width: 100, sortable: true },
             { prop: 'status_clicked_time', label: '点击时间', width: 100, sortable: true },
-            { prop: 'status_pre_order', label: '是否预订单', width: 100, sortable: true },
+            { prop: 'statusPreOrderName', label: '是否预订单', width: 100, sortable: true },
             { prop: 'status_pre_order_time', label: '预订单时间', width: 100, sortable: true },
-            { prop: 'status_order', label: '是否提交订单', width: 100, sortable: true },
+            { prop: 'statusOrderName', label: '是否提交订单', width: 100, sortable: true },
             { prop: 'status_order', label: '订单时间', width: 100, sortable: true },
             { prop: 'order_notify_order_state', label: '订单状态', width: 100, sortable: true },
             { prop: 'order_data_short_url', label: '实名链接', width: 100, sortable: true },
-            { prop: 'order_notify_order_state', label: '订单状态', width: 100, sortable: true },
+            { prop: 'statusNofityName', label: '订单状态', width: 100, sortable: true },
             { prop: 'order_notify_time', label: '订单状态变更时间', width: 100, sortable: true },
             { prop: 'opts', label: '操作', width: 100, sortable: true ,fixed: 'right'}
         ],
@@ -141,6 +207,10 @@ export default {
         let params = {}
         params.channelId = this.queryForm.channelId
         params.orderId = this.queryForm.orderId
+        params.contactNum = this.queryForm.contactNum
+        params.statusClick = this.queryForm.statusClick
+        params.statusOrder = this.queryForm.statusOrder
+        params.statusNotify = this.queryForm.statusNotify
         params.page = 0
         params.pageSize = 100
         // console.log(JSON.stringify(params))
