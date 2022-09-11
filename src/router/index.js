@@ -160,6 +160,14 @@ const router = new Router({
           }
         },
         {
+          path: '/kcard',
+          name: 'K卡订单',
+          component: (resolve) => require(['components/kCard/kCard.vue'], resolve),
+          meta: {
+            title: 'K卡订单'
+          }
+        },
+        {
           path: '/bigflowCardStock',
           name: '卡片库存',
           component: (resolve) => require(['components/bigflow/flowpool/flowCardStock.vue'], resolve),

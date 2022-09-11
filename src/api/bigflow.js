@@ -19,7 +19,6 @@ export default {
     getAllServiceInfo: params =>{
         return API.GET('/bigflow/manage/v1.0/serviceinfos', params)
     },
-    
     getCardInfos:params =>{
         return API.POST('/bigflow/manage/v1.0/card/infos', params)
     },
@@ -497,5 +496,8 @@ export default {
     },
     modifyChannelPushFromVoiceType: params =>{
         return API.POST('/bigflow/manage/v1.0/channels/modify/pushFromType', params)
+    },
+    getZopOrders: params =>{
+        return API.POST('/bigflow/manage/v1.0/zop/orders', params)
     }
 }

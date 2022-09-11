@@ -252,6 +252,7 @@
 </template>
 
 <script>
+import apiBoss from './../../../api/cardInfo'
 import apiBigflow from './../../../api/bigflow'
 import editCardInfo from './../../cardInfo/editCardInfo'
 import channelSelect from './../../sale/channelSelect'

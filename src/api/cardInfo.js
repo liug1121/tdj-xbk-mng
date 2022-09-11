@@ -1,6 +1,9 @@
 import * as API from './'
 
 export default {
+  getCardOrders: params => {
+    return API.POST('boss/v1.0/card/orders', params)
+  },
   // 获取卡信息列表
   apiCardInfoList: params => {
     return API.POST('boss/v1.0/cards', params)
