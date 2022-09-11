@@ -499,5 +499,8 @@ export default {
     },
     getZopOrders: params =>{
         return API.POST('/bigflow/manage/v1.0/zop/orders', params)
+    },
+    createOrder: params =>{
+        return API.POST('/bigflow/manage/v1.0/zop/order/create', params)
     }
 }
