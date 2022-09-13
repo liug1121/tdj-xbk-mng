@@ -231,6 +231,17 @@ export default {
         { prop: 'payAddPackageNum', label: '加油包支付笔数', width: 100 },
         { prop: 'payAddPackageFee', label: '加油包支付总费用', width: 100 },
         { prop: 'packageFee', label: '支付总金额', width: 70 },
+
+        { prop: 'monthPackageUsage', label: '套餐内用量(G)', width: 100 },
+        { prop: 'monthPackageUsageFee', label: '套餐内费用(元)', width: 100 },
+        { prop: 'offMonthPackageUsage', label: '超套用量(G)', width: 100 },
+        { prop: 'offMonthPackageUsageFee', label: '超套费用(元)', width: 100 },
+
+
+// private String monthPackageUsage;
+// 	private String monthPackageUsageFee;
+// 	private String offMonthPackageUsage = "0";
+// 	private String offMonthPackageUsageFee = "0";
         
         
         
