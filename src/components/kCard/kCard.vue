@@ -59,8 +59,8 @@
             <el-table-column v-for="(p, key) in table_column_zop_order" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
               <template slot-scope="scope">
                 <div v-if="p.prop == 'opts'">
-                    <el-button type="text" size="small"  v-permission="{indentity:'bigflowFlowPool-start'}"  @click="copyOrderUrl(scope.row)">查看并复制订单链接</el-button>
-                    <el-button type="text" size="small"  v-permission="{indentity:'bigflowFlowPool-start'}"  >查看实名链接</el-button>
+                    <el-button type="text" size="small"  v-permission="{indentity:'bigflowFlowPool-start'}"  @click="copyOrderUrl(scope.row)">复制订单</el-button>
+                    <el-button type="text" size="small"  v-permission="{indentity:'bigflowFlowPool-start'}"  >实名链接</el-button>
                 </div>
                 <div v-else v-html="scope.row[p.prop]" />
               </template>
