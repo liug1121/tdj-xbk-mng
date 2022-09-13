@@ -233,6 +233,17 @@
             <el-option v-for="item in payTypes" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
+        <div v-if="billType == 2">
+          <el-form-item label="月套餐可用量(G)" >
+            <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.monthDose" placeholder="请输入" ></el-input>
+          </el-form-item>
+          <el-form-item label="月套餐费用(元)">
+            <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.monthFee" placeholder="请输入" ></el-input>
+          </el-form-item>
+          <el-form-item label="超量单价（元/G）">
+            <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.offPerFee" placeholder="请输入" ></el-input>
+          </el-form-item>
+        </div>
         <div v-if="unitFeeShow== true">
           <el-form-item label="流量单价(元/G)" >
             <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.unitPrice" placeholder="请输入省内流量单价" ></el-input>
@@ -308,6 +319,7 @@ export default {
   },
   data () {
     return {
+      billType:'',
       imeiPools:[],
       imeiWhitePoolsForSelected:[],
       imeiBlackPoolsForSelected:[],
@@ -337,7 +349,10 @@ export default {
 	       cardFeePayType:null,
 	       cardFeeMonthFrom:null,
 	       cardFeeMonths:null,
-         area:null
+         area:null,
+         monthDose:0,
+         monthFee:'',
+         offPerFee:''
       },
       showChannelFeeConfigDlg:false,
       channelBillingFeeConfigs:[],
@@ -394,9 +409,9 @@ export default {
         { prop: 'payTypeName', label: '流量出账类型', width: 80 },
         { prop: 'areaName', label: '流量区域', width: 120 },
         { prop: 'unitPrice', label: '账户池套餐 或 流量单价（元/G）', width: 120 },
-        // { prop: 'provinceUnitPrice', label: '省内流量单价（元/G）', width: 120 },
-        // { prop: 'countryUnitPrice', label: '全国流量单价（元/G）', width: 120 },
-        // { prop: 'cardFeePayTypeName', label: '卡费出账类型', width: 120 },
+        { prop: 'monthDose', label: '套餐内可用量', width: 120 },
+        { prop: 'monthFee', label: '套餐内费用(元)', width: 120 },
+        { prop: 'offPerFee', label: '超套单价（元/G）', width: 120 },
         // { prop: 'cardFeeMonthFrom', label: '卡费收取开始月份', width: 120 },
         // { prop: 'cardFeeMonths', label: '卡费收取总月数', width: 120 },
          { prop: 'opts', label: '操作', width: 120 }
@@ -601,8 +616,9 @@ export default {
     selectPayType:function(value){
       if(value == 0){
         this.unitFeeShow = true
-      }else
+      } else
         this.unitFeeShow = false
+      this.billType = value
     },
     selectCardFeePayType:function(value){
       if(value != 3){
@@ -621,6 +637,7 @@ export default {
         return
       }
       this.showChannelFeeConfigDlg = true 
+      this.billType = ''
     },
     okEditChannelFeeConfig:function(row){
       console.log(row)
@@ -650,6 +667,7 @@ export default {
           })
         }else{
             let params = this.channelBillingConfigForm
+            console.log('params:' + JSON.stringify(params))
             apiBigflow.modifyChannelBillingFeeConfig(params).then(res=>{
               if(res.resultCode == 0){
                   that.getChannelBillingFeeConfigs()
