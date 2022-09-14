@@ -233,6 +233,82 @@
             <el-option v-for="item in payTypes" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
+        <div v-if="billType == 4">
+           <el-form-item label="出账类型">
+            <el-select 
+            clearable
+            reserve-keyword
+              placeholder="请输入出账类型" v-model="channelBillingConfigForm.outBillType">
+              <el-option v-for="item in outBillTypes" :key="item.value" :label="item.name" :value="item.value"></el-option>
+            </el-select>
+          </el-form-item>
+          <div v-if="channelBillingConfigForm.outBillType == 0">
+            <el-form-item label="套内套餐类型">
+              <el-select 
+              clearable
+              reserve-keyword
+                placeholder="请选择套内套餐类型" v-model="channelBillingConfigForm.cardLowDoseType">
+                <el-option v-for="item in cardLowDoseTypes" :key="item.value" :label="item.name" :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </div>
+          <div v-if="channelBillingConfigForm.outBillType == 1">
+            <el-form-item label="套内用量类型">
+              <el-select 
+              clearable
+              reserve-keyword
+                placeholder="请选择套内用量类型" v-model="channelBillingConfigForm.lowDoseType">
+                <el-option v-for="item in lowDoseTypes" :key="item.value" :label="item.name" :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </div>
+          <el-form-item label="单卡套餐内用量(G)" v-if="channelBillingConfigForm.lowDoseType == 0">
+            <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.cardLowDose" placeholder="请输入" ></el-input>
+          </el-form-item>
+          <el-form-item label="套餐内用量(G)" v-if="channelBillingConfigForm.lowDoseType != 0">
+            <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.lowDose" placeholder="请输入" ></el-input>
+          </el-form-item>
+          <el-form-item label="套餐内费用(元)" >
+            <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.lowDoseFee" placeholder="请输入" ></el-input>
+          </el-form-item>
+          <el-form-item label="超量是否关停">
+            <el-select 
+            clearable
+            reserve-keyword
+              placeholder="请选择是否关停" v-model="channelBillingConfigForm.closeForOffUsage">
+              <el-option v-for="item in closeForOffUsageTypes" :key="item.value" :label="item.name" :value="item.value"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="超量出账规则">
+            <el-select 
+            clearable
+            reserve-keyword
+              placeholder="请选择超量出账规则" v-model="channelBillingConfigForm.offRule">
+              <el-option v-for="item in offRules" :key="item.value" :label="item.name" :value="item.value"></el-option>
+            </el-select>
+          </el-form-item>
+          <div v-if="channelBillingConfigForm.offRule == 0">
+            <el-form-item label="超量单价（元/G）">
+              <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.offRuleFee" placeholder="请输入" ></el-input>
+            </el-form-item>
+          </div>
+          <div v-if="channelBillingConfigForm.offRule == 1">
+            <el-table   :data="offLevelPrices" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}">
+              <el-table-column type="selection" width="55">
+              </el-table-column>
+              <el-table-column v-for="(p, key) in table_column_price" :prop="p.prop" :label="p.label"  :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+                <template slot-scope="scope">
+                  <div v-if="p.prop == 'opts'">
+                    <el-button type="text" size="small" @click="removePrice(scope.row.id)">删除</el-button>
+                    <el-button type="text" size="small" @click="modifyPrice(scope.row)">修改</el-button>
+                  </div> 
+                  <div v-else v-html="scope.row[p.prop]" />
+                </template>
+              </el-table-column>
+            </el-table>
+            <el-button type="primary" @click="addPrice">添加价格规则</el-button>
+          </div>
+        </div>
         <div v-if="billType == 2">
           <el-form-item label="月套餐可用量(G)" >
             <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.monthDose" placeholder="请输入" ></el-input>
@@ -302,6 +378,24 @@
     <el-main class="el-loading" v-loading="loading" element-loading-background="transparent"
         element-loading-text="加载中" > 
     </el-main>
+
+    <el-dialog title="价格规则" :visible.sync="priceShowed" width="430px" @close="priceShowed = false">
+      <!-- 内容主体区域 -->
+      <el-form :model="priceForm" ref="addFormRef" label-width="90px">
+        <el-form-item label="档位（M）">
+          <el-input style="width:250px;" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"  v-model="priceForm.level" placeholder="请输入档位"></el-input>
+        </el-form-item>
+        <el-form-item label="价格（元）">
+          <el-input style="width:250px;" oninput="value=value.replace(/[^\d.]/g, '').replace(/\.{2,}/g, '.').replace('.', '$#$').replace(/\./g, '').replace('$#$', '.').replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3').replace(/^\./g, '')"  v-model="priceForm.price" placeholder="请输入价格"></el-input>
+          <!-- <el-input-number style="width:250px;" auto-complete="off" :precision="2" :controls="false"  v-model="amountPriceForm.price" placeholder="请输入价格"></el-input-number> -->
+        </el-form-item>
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="amountPpriceShowed = false">取 消</el-button>
+        <el-button type="primary" @click="okPrice">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -352,7 +446,16 @@ export default {
          area:null,
          monthDose:0,
          monthFee:'',
-         offPerFee:''
+         offPerFee:'',
+         outBillType: 1,
+         lowDose:0,
+         lowDoseFee:'0.00',
+         closeForOffUsage: 1,
+         offRule:0,
+         offRuleFee: '0.00',
+         lowDoseType:1,
+         cardLowDose:0,
+         cardLowDoseType:0
       },
       showChannelFeeConfigDlg:false,
       channelBillingFeeConfigs:[],
@@ -430,7 +533,30 @@ export default {
       {label:'上架状态', value:1},
       {label:'下架状态', value:2},
     ],
-
+    cardLowDoseTypes:[
+      {name:'单卡总用量', value:0},
+      {name:'所有卡平均用量', value:1},
+    ],
+    lowDoseTypes:[
+      {name:'按实际出账卡动态累计', value:0},
+      {name:'固定用量', value:1},
+    ],
+    offRules:[
+      {name:'按单价计费（元/G）', value:0},
+      {name:'按跳档计费', value:1},
+    ],
+    closeForOffUsageTypes:[
+      {name:'不关停', value:0},
+      {name:'关停', value:1},
+    ],
+    loseDoseTypes: [
+      {name:'无', value:0},
+      {name:'有', value:1},
+    ],
+    outBillTypes:[
+      {name:'单卡', value:0},
+      {name:'卡池', value:1},
+    ],
     areas:[
       {name:'全国', value:'all'},
       {name:'省内', value:'province'}
@@ -441,7 +567,8 @@ export default {
       // {name:'包量套餐出账', value:2},
       {name:'账户池套餐出账', value:3},
       {name:'单卡套餐', value:1},
-      {name:'包月流量池套餐', value:2}
+      {name:'包月流量池套餐', value:2},
+      {name:'自定义出账规则', value:4}
     ],
     cardFeePayTypes:[
       {name:'根据实名状态，未实名的卡收取', value:0},
@@ -449,7 +576,16 @@ export default {
       // {name:'从N月开始收取1毛，连续收6个月或一直收取', value:2},
       {name:'不收卡费', value:3}
     ],
-    
+    priceForm:{},
+    priceShowed:false,
+    // 列表，标题、字段
+    offLevelPrices:[
+    ],
+    table_column_price:[
+      { prop: 'level', label: '档位(M)', width: 100, sortable: true },
+      { prop: 'price', label: '价格(元)', width: 100, sortable: true },
+      { prop: 'opts', label: '操作', width: 100, sortable: true }
+    ],
     }
   },
 
@@ -463,6 +599,96 @@ export default {
     this.getAllCardScanPools()
   },
   methods: {
+    clearChannelBillConfigForm:function(){
+      let form = {
+         id:null,
+	       channelId:null,
+         unitPrice:null,
+	       provinceUnitPrice:null,
+	       countryUnitPrice:null,
+	       payType:null,
+	       cardFeePayType:null,
+	       cardFeeMonthFrom:null,
+	       cardFeeMonths:null,
+         area:null,
+         monthDose:0,
+         monthFee:'',
+         offPerFee:'',
+         outBillType: 1,
+         lowDose:0,
+         lowDoseFee:'0.00',
+         closeForOffUsage: 1,
+         offRule:0,
+         offRuleFee: '0.00',
+         lowDoseType:1,
+         cardLowDose:0,
+         cardLowDoseType:0
+      }
+      this.channelBillingConfigForm = form
+    },
+    getNextAmountPriceRowId(){
+      var s = [];
+      var hexDigits = "0123456789abcdef";
+      for (var i = 0; i < 36; i++) {
+          s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+      }
+      s[14] = "4";  // bits 12-15 of the time_hi_and_version field to 0010
+      s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);  // bits 6-7 of the clock_seq_hi_and_reserved to 01
+      s[8] = s[13] = s[18] = s[23] = "-";
+  
+      var uuid = s.join("");
+      console.log(uuid)
+      return uuid;
+    },
+    okPrice:function(){
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+      }).then(() => {
+        if(this.priceForm.id == undefined || this.priceForm.id == null){
+        let row2Add = {
+          id:this.getNextAmountPriceRowId(),
+          level:this.priceForm.level,
+          price:this.priceForm.price
+        }
+        this.offLevelPrices.push(row2Add)
+        this.priceShowed = false
+      }else{
+        this.offLevelPrices.forEach(price => {
+          if(price.id === this.priceForm.id){
+            price.level = this.priceForm.level
+            price.price = this.priceForm.price
+          }
+        });
+        this.priceShowed = false
+      }
+      }).catch(() => {
+      })
+    },
+    modifyPrice:function(price){
+      this.priceForm.id = price.id
+      this.priceForm.level = price.level
+      this.priceForm.price = price.price
+      this.priceShowed = true
+    },
+    removePrice:function(id){
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+      }).then(() => {
+        this.offLevelPrices = this.offLevelPrices.filter(function(item) {
+            return item.id !== id
+        });
+      }).catch(() => {
+      })
+      
+    },
+    addPrice:function(){
+      this.priceForm = {}
+      this.priceShowed = true
+    },
    getAllCardScanPools:function(){
       APIDataMoniter.apiCardScanPools().then(res => {
         if (res.resultCode === 0) {
@@ -638,6 +864,7 @@ export default {
       }
       this.showChannelFeeConfigDlg = true 
       this.billType = ''
+      this.clearChannelBillConfigForm()
     },
     okEditChannelFeeConfig:function(row){
       console.log(row)
