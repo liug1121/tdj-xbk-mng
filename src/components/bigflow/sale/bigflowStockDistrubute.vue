@@ -872,52 +872,114 @@ export default {
       this.showChannelFeeConfigDlg = true
       this.selectPayType(this.channelBillingConfigForm.payType)
     },
-    okChannelFeeConfig:function(){
-      let that = this
-      this.$confirm('您确认要此操作, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-      }).then(() => {
-        if(this.channelBillingConfigForm.id == null || this.channelBillingConfigForm.id == undefined){
-            let params = this.channelBillingConfigForm
-            params.channelId = this.selecedChannelCode
-            console.log('**' + JSON.stringify(params))
-            apiBigflow.addChannelBillingFeeConfig(params).then(res=>{
-              if(res.resultCode == 0){
-                  that.getChannelBillingFeeConfigs()
-                  that.showChannelFeeConfigDlg = false
-                  this.$message.success('操作成功')
-              }else{
-                  this.$message.success('操作失败')
-              }
-          })
-        }else{
-            let params = this.channelBillingConfigForm
-            console.log('params:' + JSON.stringify(params))
-            apiBigflow.modifyChannelBillingFeeConfig(params).then(res=>{
-              if(res.resultCode == 0){
-                  that.getChannelBillingFeeConfigs()
-                  that.showChannelFeeConfigDlg = false
-                  this.$message.success('操作成功')
-              }else{
-                  this.$message.success('操作失败')
-              }
-          })
+    feeConfigValid:function(){
+      if(this.billType == null || this.billType == undefined){
+        this.$message.error('流量出账类型不能为空')
+        return false;
+      }
+      if(this.billType ===4){
+        console.log(this.channelBillingConfigForm.outBillType)
+        if(this.channelBillingConfigForm.outBillType == null || this.channelBillingConfigForm.outBillType == undefined || this.channelBillingConfigForm.outBillType === ''){
+          this.$message.error('出账类型不能为空')
+          return false;
         }
-      //   let params = {}
-      //   params.id = row.id
-      //   apiBigflow.removeChannelProductStatus(params).then(res=>{
-      //     if(res.resultCode == 0){
-      //         that.getChannelProducts()
-      //         that.showProductDlg = false
-      //         this.$message.success('操作成功')
-      //     }else{
-      //         this.$message.success('操作失败')
-      //     }
-      // })
-      }).catch(() => {
-      });
+        if(this.channelBillingConfigForm.outBillType === 0){
+          if(this.channelBillingConfigForm.cardLowDoseType == null || this.channelBillingConfigForm.cardLowDoseType == undefined || this.channelBillingConfigForm.cardLowDoseType === ''){
+            this.$message.error('套内套餐类型不能为空')
+            return false;
+          }
+          if(this.channelBillingConfigForm.lowDose == null || this.channelBillingConfigForm.lowDose == undefined || this.channelBillingConfigForm.lowDose === '' || this.channelBillingConfigForm.lowDose < 0){
+            this.$message.error('套餐内用量不能为空或者小于0')
+            return false;
+          }
+          if(this.channelBillingConfigForm.lowDoseFee == null || this.channelBillingConfigForm.lowDoseFee == undefined || this.channelBillingConfigForm.lowDoseFee === ''){
+            this.$message.error('套餐内费用不能为空')
+            return false;
+          }
+        }else if(this.channelBillingConfigForm.outBillType === 1){
+          if(this.channelBillingConfigForm.lowDoseType == null || this.channelBillingConfigForm.lowDoseType == undefined || this.channelBillingConfigForm.lowDoseType === ''){
+            this.$message.error('套内用量类型不能为空')
+            return false;
+          }
+          if(this.channelBillingConfigForm.lowDoseType === 0){
+            if(this.channelBillingConfigForm.cardLowDose == null || this.channelBillingConfigForm.cardLowDose == undefined || this.channelBillingConfigForm.cardLowDose === '' || this.channelBillingConfigForm.cardLowDose < 0){
+              this.$message.error('单卡套餐内用量不能为空或者小于零')
+              return false;
+            }
+            if(this.channelBillingConfigForm.lowDoseFee == null || this.channelBillingConfigForm.lowDoseFee == undefined || this.channelBillingConfigForm.lowDoseFee === ''){
+              this.$message.error('套餐内费用不能为空')
+              return false;
+            }
+          }else if(this.channelBillingConfigForm.lowDoseType === 1){
+            if(this.channelBillingConfigForm.lowDose == null || this.channelBillingConfigForm.lowDose == undefined || this.channelBillingConfigForm.lowDose === '' || this.channelBillingConfigForm.lowDose < 0){
+              this.$message.error('套餐内用量不能为空或者小于零')
+              return false;
+            }
+            if(this.channelBillingConfigForm.lowDoseFee == null || this.channelBillingConfigForm.lowDoseFee == undefined || this.channelBillingConfigForm.lowDoseFee === ''){
+              this.$message.error('套餐内费用不能为空')
+              return false;
+            }
+          }
+        }
+        
+        if(this.channelBillingConfigForm.closeForOffUsage == null || this.channelBillingConfigForm.closeForOffUsage == undefined || this.channelBillingConfigForm.closeForOffUsage === ''){
+          this.$message.error('超量是否关停不能为空')
+          return false;
+        }
+        
+        if(this.channelBillingConfigForm.offRule === 0){
+          if(this.channelBillingConfigForm.offRuleFee == null || this.channelBillingConfigForm.offRuleFee == undefined || this.channelBillingConfigForm.offRuleFee === ''){
+            this.$message.error('超量单价不能为空')
+            return false;
+          }
+        }else if(this.channelBillingConfigForm.offRule === 1){
+          if(this.offLevelPrices == null || this.offLevelPrices == undefined || this.offLevelPrices === '' || this.offLevelPrices.length == 0){
+            this.$message.error('跳档价格为空')
+            return false;
+          }
+        }
+      }
+      return true
+    },
+    okChannelFeeConfig:function(){
+      console.log(this.billType)
+      if(!this.feeConfigValid()){
+        return
+      }
+      // let that = this
+      // this.$confirm('您确认要此操作, 是否继续?', '提示', {
+      //     confirmButtonText: '确定',
+      //     cancelButtonText: '取消',
+      //     type: 'warning'
+      // }).then(() => {
+      //   if(this.channelBillingConfigForm.id == null || this.channelBillingConfigForm.id == undefined){
+      //       let params = this.channelBillingConfigForm
+      //       params.channelId = this.selecedChannelCode
+      //       console.log('**' + JSON.stringify(params))
+      //       apiBigflow.addChannelBillingFeeConfig(params).then(res=>{
+      //         if(res.resultCode == 0){
+      //             that.getChannelBillingFeeConfigs()
+      //             that.showChannelFeeConfigDlg = false
+      //             this.$message.success('操作成功')
+      //         }else{
+      //             this.$message.success('操作失败')
+      //         }
+      //     })
+      //   }else{
+      //       let params = this.channelBillingConfigForm
+      //       console.log('params:' + JSON.stringify(params))
+      //       apiBigflow.modifyChannelBillingFeeConfig(params).then(res=>{
+      //         if(res.resultCode == 0){
+      //             that.getChannelBillingFeeConfigs()
+      //             that.showChannelFeeConfigDlg = false
+      //             this.$message.success('操作成功')
+      //         }else{
+      //             this.$message.success('操作失败')
+      //         }
+      //     })
+      //   }
+      // }).catch(() => {
+      // });
     },
     getChannelBillingFeeConfigs:function(){
       let params = {}
