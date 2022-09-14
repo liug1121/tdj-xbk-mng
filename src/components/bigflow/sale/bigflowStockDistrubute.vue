@@ -515,9 +515,17 @@ export default {
         { prop: 'monthDose', label: '套餐内可用量', width: 120 },
         { prop: 'monthFee', label: '套餐内费用(元)', width: 120 },
         { prop: 'offPerFee', label: '超套单价（元/G）', width: 120 },
-        // { prop: 'cardFeeMonthFrom', label: '卡费收取开始月份', width: 120 },
-        // { prop: 'cardFeeMonths', label: '卡费收取总月数', width: 120 },
-         { prop: 'opts', label: '操作', width: 120 }
+
+        { prop: 'outBillType', label: '自定义出账类型', width: 120 },
+        { prop: 'lowDose', label: '套餐内用量(G)', width: 120 },
+        { prop: 'lowDoseFee', label: '套餐内费用(元)', width: 120 },
+        { prop: 'closeForOffUsageName', label: '超量是否关停', width: 120 },
+        { prop: 'offRuleName', label: '超量出账规则', width: 120 },
+        { prop: 'offRuleFee', label: '超量单价（元/G）', width: 120 },
+        { prop: 'lowDoseTypeName', label: '套内用量类型', width: 120 },
+        { prop: 'cardLowDose', label: '单卡套餐内用量(G)', width: 120 },
+        { prop: 'cardLowDoseTypeName', label: '单卡套内套餐类型', width: 120 },
+        { prop: 'opts', label: '操作', width: 120 }
       ],
       lbsChannelConfigTypes:[
         {label:'省份白名单', value:1},
@@ -871,6 +879,8 @@ export default {
       this.channelBillingConfigForm = row
       this.showChannelFeeConfigDlg = true
       this.selectPayType(this.channelBillingConfigForm.payType)
+      console.log('row:' + JSON.stringify(row))
+      this.offLevelPrices = row.prices
     },
     feeConfigValid:function(){
       if(this.billType == null || this.billType == undefined){
@@ -921,12 +931,10 @@ export default {
             }
           }
         }
-        
         if(this.channelBillingConfigForm.closeForOffUsage == null || this.channelBillingConfigForm.closeForOffUsage == undefined || this.channelBillingConfigForm.closeForOffUsage === ''){
           this.$message.error('超量是否关停不能为空')
           return false;
         }
-        
         if(this.channelBillingConfigForm.offRule === 0){
           if(this.channelBillingConfigForm.offRuleFee == null || this.channelBillingConfigForm.offRuleFee == undefined || this.channelBillingConfigForm.offRuleFee === ''){
             this.$message.error('超量单价不能为空')
@@ -946,40 +954,42 @@ export default {
       if(!this.feeConfigValid()){
         return
       }
-      // let that = this
-      // this.$confirm('您确认要此操作, 是否继续?', '提示', {
-      //     confirmButtonText: '确定',
-      //     cancelButtonText: '取消',
-      //     type: 'warning'
-      // }).then(() => {
-      //   if(this.channelBillingConfigForm.id == null || this.channelBillingConfigForm.id == undefined){
-      //       let params = this.channelBillingConfigForm
-      //       params.channelId = this.selecedChannelCode
-      //       console.log('**' + JSON.stringify(params))
-      //       apiBigflow.addChannelBillingFeeConfig(params).then(res=>{
-      //         if(res.resultCode == 0){
-      //             that.getChannelBillingFeeConfigs()
-      //             that.showChannelFeeConfigDlg = false
-      //             this.$message.success('操作成功')
-      //         }else{
-      //             this.$message.success('操作失败')
-      //         }
-      //     })
-      //   }else{
-      //       let params = this.channelBillingConfigForm
-      //       console.log('params:' + JSON.stringify(params))
-      //       apiBigflow.modifyChannelBillingFeeConfig(params).then(res=>{
-      //         if(res.resultCode == 0){
-      //             that.getChannelBillingFeeConfigs()
-      //             that.showChannelFeeConfigDlg = false
-      //             this.$message.success('操作成功')
-      //         }else{
-      //             this.$message.success('操作失败')
-      //         }
-      //     })
-      //   }
-      // }).catch(() => {
-      // });
+      let that = this
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+      }).then(() => {
+        if(this.channelBillingConfigForm.id == null || this.channelBillingConfigForm.id == undefined){
+            let params = this.channelBillingConfigForm
+            params.channelId = this.selecedChannelCode
+            params.prices = this.offLevelPrices
+            console.log('**' + JSON.stringify(params))
+            apiBigflow.addChannelBillingFeeConfig(params).then(res=>{
+              if(res.resultCode == 0){
+                  that.getChannelBillingFeeConfigs()
+                  that.showChannelFeeConfigDlg = false
+                  this.$message.success('操作成功')
+              }else{
+                  this.$message.success('操作失败')
+              }
+          })
+        }else{
+            let params = this.channelBillingConfigForm
+            params.prices = this.offLevelPrices
+            console.log('params:' + JSON.stringify(params))
+            apiBigflow.modifyChannelBillingFeeConfig(params).then(res=>{
+              if(res.resultCode == 0){
+                  that.getChannelBillingFeeConfigs()
+                  that.showChannelFeeConfigDlg = false
+                  this.$message.success('操作成功')
+              }else{
+                  this.$message.success('操作失败')
+              }
+          })
+        }
+      }).catch(() => {
+      });
     },
     getChannelBillingFeeConfigs:function(){
       let params = {}
@@ -988,6 +998,9 @@ export default {
       apiBigflow.getChannelBillingFeeConfigs(params).then(res=>{
           if(res.resultCode == 0){
             this.channelBillingFeeConfigs = res.data
+            // this.offLevelPrices = res.data.prices
+            // console.log(JSON.stringify(res.data))
+            // console.log(JSON.stringify(this.offLevelPrices ))
               // that.getChannelProducts()
               // that.showProductDlg = false
               // this.$message.success('操作成功')
