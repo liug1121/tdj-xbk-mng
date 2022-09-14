@@ -516,15 +516,15 @@ export default {
         { prop: 'monthFee', label: '套餐内费用(元)', width: 120 },
         { prop: 'offPerFee', label: '超套单价（元/G）', width: 120 },
 
-        { prop: 'outBillType', label: '自定义出账类型', width: 120 },
+        { prop: 'outBillTypeName', label: '自定义出账类型', width: 120 },
         { prop: 'lowDose', label: '套餐内用量(G)', width: 120 },
         { prop: 'lowDoseFee', label: '套餐内费用(元)', width: 120 },
         { prop: 'closeForOffUsageName', label: '超量是否关停', width: 120 },
         { prop: 'offRuleName', label: '超量出账规则', width: 120 },
         { prop: 'offRuleFee', label: '超量单价（元/G）', width: 120 },
         { prop: 'lowDoseTypeName', label: '套内用量类型', width: 120 },
-        { prop: 'cardLowDose', label: '单卡套餐内用量(G)', width: 120 },
         { prop: 'cardLowDoseTypeName', label: '单卡套内套餐类型', width: 120 },
+        { prop: 'cardLowDose', label: '单卡套餐内用量(G)', width: 120 },
         { prop: 'opts', label: '操作', width: 120 }
       ],
       lbsChannelConfigTypes:[
