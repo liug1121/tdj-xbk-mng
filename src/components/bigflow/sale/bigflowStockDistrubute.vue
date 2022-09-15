@@ -268,7 +268,7 @@
           <el-form-item label="套餐内用量(G)" v-if="channelBillingConfigForm.lowDoseType != 0">
             <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.lowDose" placeholder="请输入" ></el-input>
           </el-form-item>
-          <el-form-item label="套餐内费用(元)" >
+          <el-form-item label="套餐内费用(元/G)" >
             <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.lowDoseFee" placeholder="请输入" ></el-input>
           </el-form-item>
           <el-form-item label="超量是否关停">
@@ -382,10 +382,10 @@
     <el-dialog title="价格规则" :visible.sync="priceShowed" width="430px" @close="priceShowed = false">
       <!-- 内容主体区域 -->
       <el-form :model="priceForm" ref="addFormRef" label-width="90px">
-        <el-form-item label="档位（M）">
+        <el-form-item label="档位（G）">
           <el-input style="width:250px;" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"  v-model="priceForm.level" placeholder="请输入档位"></el-input>
         </el-form-item>
-        <el-form-item label="价格（元）">
+        <el-form-item label="价格（元/G）">
           <el-input style="width:250px;" oninput="value=value.replace(/[^\d.]/g, '').replace(/\.{2,}/g, '.').replace('.', '$#$').replace(/\./g, '').replace('$#$', '.').replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3').replace(/^\./g, '')"  v-model="priceForm.price" placeholder="请输入价格"></el-input>
           <!-- <el-input-number style="width:250px;" auto-complete="off" :precision="2" :controls="false"  v-model="amountPriceForm.price" placeholder="请输入价格"></el-input-number> -->
         </el-form-item>
@@ -590,7 +590,7 @@ export default {
     offLevelPrices:[
     ],
     table_column_price:[
-      { prop: 'level', label: '档位(M)', width: 100, sortable: true },
+      { prop: 'level', label: '档位(G)', width: 100, sortable: true },
       { prop: 'price', label: '价格(元)', width: 100, sortable: true },
       { prop: 'opts', label: '操作', width: 100, sortable: true }
     ],

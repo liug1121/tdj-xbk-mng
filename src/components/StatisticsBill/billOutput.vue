@@ -221,7 +221,7 @@ export default {
         { prop: 'cardNum', label: '有用量卡数量', width: 70 },
         { prop: 'cardNumHasNotUsage', label: '无用量卡数量', width: 70 },
         { prop: 'usageArea', label: '用量区域', width: 70 },
-        { prop: 'dataUsageCountry', label: '总用量', width: 100 },
+        { prop: 'dataUsageCountry', label: '总用量(G)', width: 100 },
         { prop: 'billType', label: '出账类型', width: 80 },
         { prop: 'price', label: '单价', width: 70 },
         { prop: 'dataUsageCountryFee', label: '流量结算金额', width: 100 },
@@ -237,16 +237,10 @@ export default {
         { prop: 'offMonthPackageUsage', label: '超套用量(G)', width: 100 },
         { prop: 'offMonthPackageUsageFee', label: '超套费用(元)', width: 100 },
 
+        { prop: 'commonLowUsageFee', label: '套餐内费用(元)', width: 100 },
+        { prop: 'commonoffUsageFee', label: '超套费用(元)', width: 100 },
+        { prop: 'commonTotalFee', label: '费用合计(元)', width: 100 },
 
-// private String monthPackageUsage;
-// 	private String monthPackageUsageFee;
-// 	private String offMonthPackageUsage = "0";
-// 	private String offMonthPackageUsageFee = "0";
-        
-        
-        
-        // { prop: 'dataUsageProvince', label: '省内总用量', width: 100 },
-        // { prop: 'dataUsageProvinceFee', label: '省内总', width: 70 },
         { prop: 'amountPoolBillFee', label: '当月无用量卡费用', width: 100 },
         { prop: 'cardFee', label: '卡费总金额', width: 100 },
         { prop: 'fee', label: '出账金额汇总', width: 100 },
