@@ -518,7 +518,7 @@ export default {
 
         { prop: 'outBillTypeName', label: '自定义出账类型', width: 120 },
         { prop: 'lowDose', label: '套餐内用量(G)', width: 120 },
-        { prop: 'lowDoseFee', label: '套餐内费用(元)', width: 120 },
+        { prop: 'lowDoseFee', label: '套餐内费用(元/G)', width: 120 },
         { prop: 'closeForOffUsageName', label: '超量是否关停', width: 120 },
         { prop: 'offRuleName', label: '超量出账规则', width: 120 },
         { prop: 'offRuleFee', label: '超量单价（元/G）', width: 120 },
