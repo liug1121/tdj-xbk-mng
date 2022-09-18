@@ -292,7 +292,12 @@
               <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.offRuleFee" placeholder="请输入" ></el-input>
             </el-form-item>
           </div>
-          <div v-if="channelBillingConfigForm.offRule == 1">
+          <div v-if="channelBillingConfigForm.offRule == 2">
+            <el-form-item label="无流量卡费(元/张)">
+              <el-input style="width:300px;" onkeyup="value=value.replace(/[^\d.]/g, '').replace(/\.{2,}/g, '.').replace('.', '$#$').replace(/\./g, '').replace('$#$', '.').replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3').replace(/^\./g, '')" v-model="channelBillingConfigForm.noUsageCardFee" placeholder="请输入" ></el-input>
+            </el-form-item>
+          </div>
+          <div v-if="channelBillingConfigForm.offRule == 1 || channelBillingConfigForm.offRule == 2">
             <el-table   :data="offLevelPrices" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}">
               <el-table-column type="selection" width="55">
               </el-table-column>
@@ -385,14 +390,14 @@
         <el-form-item label="档位（G）">
           <el-input style="width:250px;" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"  v-model="priceForm.level" placeholder="请输入档位"></el-input>
         </el-form-item>
-        <el-form-item label="价格（元/G）">
+        <el-form-item label="价格（元）">
           <el-input style="width:250px;" oninput="value=value.replace(/[^\d.]/g, '').replace(/\.{2,}/g, '.').replace('.', '$#$').replace(/\./g, '').replace('$#$', '.').replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3').replace(/^\./g, '')"  v-model="priceForm.price" placeholder="请输入价格"></el-input>
           <!-- <el-input-number style="width:250px;" auto-complete="off" :precision="2" :controls="false"  v-model="amountPriceForm.price" placeholder="请输入价格"></el-input-number> -->
         </el-form-item>
       </el-form>
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
-        <el-button @click="amountPpriceShowed = false">取 消</el-button>
+        <el-button @click="priceShowed = false">取 消</el-button>
         <el-button type="primary" @click="okPrice">确 定</el-button>
       </span>
     </el-dialog>
@@ -551,7 +556,8 @@ export default {
     ],
     offRules:[
       {name:'按单价计费（元/G）', value:0},
-      {name:'按跳档计费', value:1},
+      {name:'按跳档流量单价计费', value:1},
+      {name:'按跳档流量单卡计费', value:2}
     ],
     closeForOffUsageTypes:[
       {name:'不关停', value:0},
@@ -930,6 +936,10 @@ export default {
               return false;
             }
           }
+          if(this.channelBillingConfigForm.offRule == 2){
+              this.$message.error('出账类型为卡池，超量单价规则不能为单卡')
+              return false;
+          }
         }
         if(this.channelBillingConfigForm.closeForOffUsage == null || this.channelBillingConfigForm.closeForOffUsage == undefined || this.channelBillingConfigForm.closeForOffUsage === ''){
           this.$message.error('超量是否关停不能为空')
@@ -940,10 +950,16 @@ export default {
             this.$message.error('超量单价不能为空')
             return false;
           }
-        }else if(this.channelBillingConfigForm.offRule === 1){
+        }else if(this.channelBillingConfigForm.offRule === 1 || this.channelBillingConfigForm.offRule === 2){
           if(this.offLevelPrices == null || this.offLevelPrices == undefined || this.offLevelPrices === '' || this.offLevelPrices.length == 0){
             this.$message.error('跳档价格为空')
             return false;
+          }
+          if(this.channelBillingConfigForm.offRule === 2){
+            if(this.channelBillingConfigForm.noUsageCardFee == null || this.channelBillingConfigForm.noUsageCardFee == undefined || this.channelBillingConfigForm.noUsageCardFee === ''){
+            this.$message.error('无用量卡费不能为空')
+            return false;
+          }
           }
         }
       }
