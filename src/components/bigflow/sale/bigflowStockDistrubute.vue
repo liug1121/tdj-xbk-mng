@@ -312,6 +312,9 @@
               </el-table-column>
             </el-table>
             <el-button type="primary" @click="addPrice">添加价格规则</el-button>
+            <el-form-item label="超出档位单价（元/G）">
+              <el-input style="width:300px;" onkeyup="value=value.replace(/[^\d.]/g, '').replace(/\.{2,}/g, '.').replace('.', '$#$').replace(/\./g, '').replace('$#$', '.').replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3').replace(/^\./g, '')" v-model="channelBillingConfigForm.leveloffUsgeFee" placeholder="请输入" ></el-input>
+            </el-form-item>
           </div>
         </div>
         <div v-if="billType == 2">
@@ -953,6 +956,10 @@ export default {
         }else if(this.channelBillingConfigForm.offRule === 1 || this.channelBillingConfigForm.offRule === 2){
           if(this.offLevelPrices == null || this.offLevelPrices == undefined || this.offLevelPrices === '' || this.offLevelPrices.length == 0){
             this.$message.error('跳档价格为空')
+            return false;
+          }
+          if(this.channelBillingConfigForm.leveloffUsgeFee == null || this.channelBillingConfigForm.leveloffUsgeFee == undefined || this.channelBillingConfigForm.leveloffUsgeFee === ''){
+            this.$message.error('超出档位单价不能为空')
             return false;
           }
           if(this.channelBillingConfigForm.offRule === 2){
