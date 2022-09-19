@@ -3,25 +3,28 @@
   <div class="box_subject">
     
      <el-row :gutter="20">
-    <el-col :span="7">
+    <el-col :span="6" v-if="depShowed">
       
-      <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 4}" @click="treeSelect(4)">账单</div>
       <div class="heraderTop">
         
         <div class="button_content">
           <!-- <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 3}" @click="treeSelect(4)">渠道账单</div> -->
-          <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 0}" @click="treeSelect(0)">学霸卡</div>
-          <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 1}" @click="treeSelect(1)">大流量</div>
+          <!-- <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 0}" @click="treeSelect(0)">学霸卡</div> -->
+          <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 1}" @click="treeSelect(1)">CMP原始账单</div>
+           <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 4}" @click="treeSelect(4)">渠道账单</div>
           <!-- <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 2}" @click="treeSelect(2)">子账户</div> -->
-          <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 3}" @click="treeSelect(3)">无渠道</div>
+          <!-- <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 3}" @click="treeSelect(3)">无渠道</div> -->
         </div>
       </div >
       <xbChannelTree v-if="treeSelectedType == 0" ref="xbChannerTreeRef" @channelChick="xbChannelChick" @getChannelId="getXbChannelId" style="max-height:680px;overflow: auto"></xbChannelTree>
-        <channelTree v-else-if="treeSelectedType == 1 || treeSelectedType == 4" ref="channerTreeRef" @channelChick="channelChick" @getChannelId="getChannelId" style="max-height:680px;overflow: auto"></channelTree>
+        <channelTree v-else-if="(treeSelectedType == 1 || treeSelectedType == 4) " ref="channerTreeRef" @channelChick="channelChick" @getChannelId="getChannelId" style="max-height:680px;overflow: auto"></channelTree>
         <fwAccountTree v-else-if="treeSelectedType == 2" ref="channerTreeRef" @channelChick="channelChick" @getChannelId="getFwAccount" style="max-height:680px;overflow: auto"></fwAccountTree>
     </el-col>
+    <el-col :span="1">
+      <div class="hid-dep" @click="hidDep(!depShowed)">{{hipDepBtnText}}</div>
+    </el-col>
+    <el-col :span="spanWidth">
     
-    <el-col :span="17">
     
     <el-card class="all_list">
       <div class="channel-name">{{channelName}}</div>
@@ -199,6 +202,10 @@ export default {
   },
   data () {
     return {
+      spanWidth:17,
+      depShowed:true,
+      hipDepBtnText:'隐藏部门选择',
+      treeSelectedType: 1,
       channelName:'',
       billOutputTypeDlgShowed:false,
       billOutputTypeForm:{
@@ -256,7 +263,7 @@ export default {
       allBigflowChannels:[],
       showDistributeChannelDlg:false,
       distributeChannelForm:{},
-      treeSelectedType:0,
+      // treeSelectedType:0,
       page: 1,
       pageSize: 10,
       // 列表总条数
@@ -314,6 +321,17 @@ export default {
     // this.getChannelNames()
   },
   methods: {
+    hidDep:function(depShowed){
+      this.depShowed = depShowed
+      
+      if(this.depShowed){
+        this.hipDepBtnText='隐藏部门选择'
+        this.spanWidth = 17
+      }else{
+        this.hipDepBtnText='显示部门选择'
+        this.spanWidth = 23
+      }
+    },
     toBillOutputDlg:function(){
       this.billOutputTypeDlgShowed = true
     },
@@ -729,7 +747,7 @@ export default {
   margin-top: 10px;
   padding: 5px;
   border-radius:5px;
-  width: 40px;
+  width: 80px;
   font-size: 5px;
   text-align: center;
 }
@@ -755,5 +773,20 @@ export default {
   font-size: 18px;
   margin: 10px;
   color: #145297;
+}
+.hid-dep{
+  margin-top: 60%;
+  text-align: center;
+  font-size: 13px;
+  cursor:pointer;
+  background: gray;
+  height: 120px;
+  width: 20px;
+  margin-left: 2px;
+  margin-right: 2px;
+  color: white;
+}
+.all_list{
+  width: 100%;
 }
 </style>
