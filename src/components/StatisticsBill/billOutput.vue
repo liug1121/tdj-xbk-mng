@@ -53,7 +53,7 @@
             <el-table-column v-for="(p, key) in table_column"  :prop="p.prop"  :label="p.label" :key="key" align="center" :width="p.width" :fixed="p.fixed?p.fixed:false" >
               <template slot-scope="scope">     
                 <div v-if="p.prop == 'opts'">
-                  <el-button type="text" size="small" v-if="scope.row.dataUsageCountryFee !='没有设置出账规则'" @click="toInputCardFeeDlg(scope.row)">卡费</el-button> 
+                  <el-button type="text" size="small" v-if="scope.row.dataUsageCountryFee !='没有设置出账规则'" @click="toInputCardFeeDlg(scope.row)">编辑</el-button> 
                   <el-button type="text" size="small" v-if="scope.row.dataUsageCountryFee !='没有设置出账规则'" @click="toDownload(scope.row)">导出</el-button> 
                 </div>
                 <div v-else v-html="scope.row[p.prop]" />
@@ -154,10 +154,37 @@
     </el-dialog>
 
 
-    <el-dialog title="录入卡费" :visible.sync="inputCardFeeDlgShowed" width="450px" @close="closeInputCardFeeDlg">
-      <el-form :model="cardFeeForm"  label-width="110px">
-        <el-form-item label="卡费">
-          <el-input style="width:300px;" v-model="cardFeeForm.cardFee" placeholder="请输入卡费" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"></el-input>
+    <el-dialog title="编辑" :visible.sync="inputCardFeeDlgShowed" width="500px" @close="closeInputCardFeeDlg">
+      <el-form :model="billEditForm"  label-width="auto" > 
+        <el-form-item label="卡费单价">  
+          <el-input style="width:200px;" v-model="billEditForm.cardPerFee" placeholder="请输入" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"></el-input>
+        </el-form-item>
+        <el-form-item label="当月新提卡数">
+          <el-input style="width:200px;" v-model="billEditForm.newCardNum" placeholder="请输入" onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"></el-input>
+        </el-form-item>
+        <el-form-item label="卡费成本">
+          <el-input style="width:200px;" v-model="billEditForm.cardFeeCost" placeholder="请输入" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"></el-input>
+        </el-form-item>
+        <el-form-item label="大流量卡流量成本（元）">
+          <el-input style="width:200px;" v-model="billEditForm.bigflowUsageCost" placeholder="请输入" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"></el-input>
+        </el-form-item>
+        <el-form-item label="大流量卡平台分摊成本（元）">
+          <el-input style="width:200px;" v-model="billEditForm.bigflowPlatformCost" placeholder="请输入" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"></el-input>
+        </el-form-item>
+        <el-form-item label="大流量卡语音成本（元）" >
+          <el-input style="width:200px;" v-model="billEditForm.bigflowVoiceCost" placeholder="请输入" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"></el-input>
+        </el-form-item>
+        <el-form-item label="大流量卡短信成本（元）" >
+          <el-input style="width:200px;" v-model="billEditForm.bigflowSmsCost" placeholder="请输入" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"></el-input>
+        </el-form-item>
+        <el-form-item label="学霸卡语音成本（元）">
+          <el-input style="width:200px;" v-model="billEditForm.xuebaVoiceCost" placeholder="请输入" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"></el-input>
+        </el-form-item>
+        <el-form-item label="学霸卡短信成本（元）">
+          <el-input style="width:200px;" v-model="billEditForm.xuebaSmsCost" placeholder="请输入" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"></el-input>
+        </el-form-item>
+        <el-form-item label="其他成本（元）">
+          <el-input style="width:200px;" v-model="billEditForm.otherCost" placeholder="请输入" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"></el-input>
         </el-form-item>
       </el-form>
       <!-- 底部区域 -->
@@ -231,6 +258,9 @@ export default {
         { prop: 'newCardNum', label: '当月新提卡数', width: 100 },
         { prop: 'dataUsageCountry', label: '总用量(G)', width: 100 },
         { prop: 'cardPerFee', label: '卡费单价', width: 100 },
+
+
+
         { prop: 'totalIncome', label: '总收入', width: 100 },
         { prop: 'usageIncome', label: '流量收入', width: 100 },
         { prop: 'cardFeeIncome', label: '卡费收入', width: 100 },
@@ -245,10 +275,10 @@ export default {
         { prop: 'xuebaUsageCost', label: '学霸卡套内流量成本', width: 100 },
         { prop: 'xuebaOffUsageCost', label: '学霸卡超套流量成本', width: 100 },
         { prop: 'xuebaVoiceCost', label: '学霸卡语音成本', width: 100 },
-        { prop: 'xuebaVoiceCost', label: '学霸卡短信成本', width: 100 },
-        { prop: 'xuebaVoiceCost', label: '其他成本成本', width: 100 },
+        { prop: 'xuebaSmsCost', label: '学霸卡短信成本', width: 100 },
+        { prop: 'otherCost', label: '其他成本成本', width: 100 },
 
-        { prop: 'xuebaVoiceCost', label: '毛利', width: 100 },
+        { prop: 'profit', label: '毛利', width: 100 },
 
 
 
@@ -322,11 +352,22 @@ export default {
         { label: "大流量卡", value: 1 }
       ],
       loading: false,
-      cardFeeForm:{
+      billEditForm:{
         cardFee:0.00,
         channelId:'',
         cycleId:'',
-        id:null
+        id:null,
+        newCardNum:'',
+        cardPerFee:'',
+        newCardNum:'', 
+        cardFeeCost:'',
+        bigflowUsageCost:'',
+        bigflowPlatformCost:'', 
+        bigflowVoiceCost:'', 
+        bigflowSmsCost:'', 
+        xuebaVoiceCost:'', 
+        xuebaSmsCost:'', 
+        otherCost:''
       }
     }
   },
@@ -377,7 +418,7 @@ export default {
         API.apiBillOutput(params).then(res => {
           if (res.resultCode === 0) {
             this.$message.success('操作成功，请稍后在任务：' + res.data + '中进行下载')
-            this.clearInputCardFeeForm()
+            this.clearInputBillEditForm()
             this.inputCardFeeDlgShowed = false
             this.getCompareStatics()
           } else {
@@ -403,15 +444,26 @@ export default {
           s = s < 10 ? "0" + s : s;
           return y + "" + MM ;
         },
-    clearInputCardFeeForm:function(){
-      this.cardFeeForm ={
+    clearInputBillEditForm:function(){
+      this.billEditForm ={
         cardFee:0.00,
         channelId:'',
-        cycleId:''
+        cycleId:'',
+        newCardNum:'',
+        cardPerFee:'',
+        newCardNum:'', 
+        cardFeeCost:'',
+        bigflowUsageCost:'',
+        bigflowPlatformCost:'', 
+        bigflowVoiceCost:'', 
+        bigflowSmsCost:'', 
+        xuebaVoiceCost:'', 
+        xuebaSmsCost:'', 
+        otherCost:''
       }
     },
     closeInputCardFeeDlg:function(){
-      this.clearInputCardFeeForm()
+      this.clearInputBillEditForm()
       this.inputCardFeeDlgShowed = false
     },
     okInputCardFee:function(){
@@ -420,11 +472,11 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        let params = this.cardFeeForm
+        let params = this.billEditForm
         API.apiModifyChannelCardFee(params).then(res => {
           if (res.resultCode === 0) {
             this.$message.success('录入成功')
-            this.clearInputCardFeeForm()
+            this.clearInputBillEditForm()
             this.inputCardFeeDlgShowed = false
             this.getCompareStatics()
           } else {
@@ -458,9 +510,9 @@ export default {
     },
     toInputCardFeeDlg:function(row){
       this.inputCardFeeDlgShowed = true
-      this.cardFeeForm.channelId = row.channelId
-      this.cardFeeForm.cycleId = row.cycleId
-      this.cardFeeForm.cardFee = row.cardFee
+      this.billEditForm.channelId = row.channelId
+      this.billEditForm.cycleId = row.cycleId
+      this.billEditForm.cardFee = row.cardFee
     },
     queryCardCompare:function(){
       this.getCompareStatics()
