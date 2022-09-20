@@ -10,8 +10,8 @@
         <div class="button_content">
           <!-- <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 3}" @click="treeSelect(4)">渠道账单</div> -->
           <!-- <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 0}" @click="treeSelect(0)">学霸卡</div> -->
-          <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 1}" @click="treeSelect(1)">CMP原始账单</div>
-           <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 4}" @click="treeSelect(4)">渠道账单</div>
+          <!-- <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 1}" @click="treeSelect(1)">CMP原始账单</div> -->
+           <!-- <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 4}" @click="treeSelect(4)">渠道账单</div> -->
           <!-- <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 2}" @click="treeSelect(2)">子账户</div> -->
           <!-- <div class="tree-tab-unselected" :class="{' tree-selected':treeSelectedType == 3}" @click="treeSelect(3)">无渠道</div> -->
         </div>
@@ -29,12 +29,12 @@
     <el-card class="all_list">
       <div class="channel-name">{{channelName}}</div>
       <!-- 按钮 -->
-      <div class="button_content" v-if="treeSelectedType != 4">
+      <!-- <div class="button_content" v-if="treeSelectedType != 4">
           <el-button class="upload-btn" size="medium" icon="el-icon-download" slot="trigger" type="primary" @click="exportButton" 
           v-permission="{indentity:'xbkBillOutput-export'}">导出</el-button>
           <el-button class="upload-btn" size="medium" icon="el-icon-download" slot="trigger" type="primary" @click="refreshCardsChannels" 
           v-permission="{indentity:'xbkBillOutput-export'}">重新刷新卡渠道</el-button>
-        </div>
+        </div> -->
 
        <div v-if="treeSelectedType == 4">
          <el-form :inline="true" ref="queryBillFormRef" :model="queryBillForm" class="queryForm">
@@ -62,9 +62,8 @@
           </el-table>
        </div>
         
-      <div v-else>
+      <!-- <div v-else>
         <div class="heraderTop">
-        <!-- 查询区域 -->
         <el-form :inline="true" ref="queryBillFormRef" :model="queryBillForm" class="queryForm">
           <el-form-item label="子账户" class="queryFormItem">
             <el-select style="width:150px" size="small" v-model="queryBillForm.subAccount" clearable filterable placeholder="请输入子账户关键词">
@@ -119,11 +118,10 @@
           </el-table-column>
         </el-table-column>
       </el-table>
-      <!-- 分页 区域 -->
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="[10,20,30]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
         :total="total">
       </el-pagination>
-      </div>
+      </div> -->
     </el-card>
     </el-col>
     </el-row>
@@ -205,7 +203,7 @@ export default {
       spanWidth:17,
       depShowed:true,
       hipDepBtnText:'隐藏部门选择',
-      treeSelectedType: 1,
+      treeSelectedType: 4,
       channelName:'',
       billOutputTypeDlgShowed:false,
       billOutputTypeForm:{
@@ -225,36 +223,59 @@ export default {
       table_column:[ 
         { prop: 'cycleId', label: '帐期', width: 70 },
         { prop: 'channelName', label: '渠道', width: 126 },
+        { prop: 'cardStockNum', label: '库存卡数', width: 126 },
+        { prop: 'billType', label: '出账类型', width: 80 },
+        { prop: 'activedCardNum', label: '出账卡数', width: 126 },
         { prop: 'cardNum', label: '有用量卡数量', width: 70 },
         { prop: 'cardNumHasNotUsage', label: '无用量卡数量', width: 70 },
-        { prop: 'usageArea', label: '用量区域', width: 70 },
+        { prop: 'newCardNum', label: '当月新提卡数', width: 100 },
         { prop: 'dataUsageCountry', label: '总用量(G)', width: 100 },
-        { prop: 'billType', label: '出账类型', width: 80 },
-        { prop: 'price', label: '单价', width: 70 },
-        { prop: 'dataUsageCountryFee', label: '流量结算金额', width: 100 },
-        { prop: 'payTotalNum', label: '支付笔数合计', width: 100 },
-        { prop: 'payPackageNum', label: '套餐支付笔数', width: 100 },
-        { prop: 'payPackageFee', label: '套餐支付总费用', width: 100 },
-        { prop: 'payAddPackageNum', label: '加油包支付笔数', width: 100 },
-        { prop: 'payAddPackageFee', label: '加油包支付总费用', width: 100 },
-        { prop: 'packageFee', label: '支付总金额', width: 70 },
+        { prop: 'cardPerFee', label: '卡费单价', width: 100 },
+        { prop: 'totalIncome', label: '总收入', width: 100 },
+        { prop: 'usageIncome', label: '流量收入', width: 100 },
+        { prop: 'cardFeeIncome', label: '卡费收入', width: 100 },
 
-        { prop: 'monthPackageUsage', label: '套餐内用量(G)', width: 100 },
-        { prop: 'monthPackageUsageFee', label: '套餐内费用(元)', width: 100 },
-        { prop: 'offMonthPackageUsage', label: '超套用量(G)', width: 100 },
-        { prop: 'offMonthPackageUsageFee', label: '超套费用(元)', width: 100 },
+        { prop: 'totalCost', label: '总成本', width: 100 },
+        { prop: 'cardFeeCost', label: '卡费成本', width: 100 },
+        { prop: 'bigflowUsageCost', label: '大流量卡流量成本', width: 100 },
+        { prop: 'bigflowPlatformCost', label: '大流量卡平台分摊成本', width: 100 },
+        { prop: 'bigflowVoiceCost', label: '大流量卡语音成本', width: 100 },
+        { prop: 'bigflowSmsCost', label: '大流量卡短信成本', width: 100 },
 
-        { prop: 'commonLowUsageFee', label: '套餐内费用(元)', width: 100 },
-        { prop: 'commonoffUsageFee', label: '超套费用(元)', width: 100 },
-        { prop: 'commonTotalFee', label: '费用合计(元)', width: 100 },
+        { prop: 'xuebaUsageCost', label: '学霸卡套内流量成本', width: 100 },
+        { prop: 'xuebaOffUsageCost', label: '学霸卡超套流量成本', width: 100 },
+        { prop: 'xuebaVoiceCost', label: '学霸卡语音成本', width: 100 },
+        { prop: 'xuebaVoiceCost', label: '学霸卡短信成本', width: 100 },
+        { prop: 'xuebaVoiceCost', label: '其他成本成本', width: 100 },
 
-        { prop: 'amountPoolBillFee', label: '当月无用量卡费用', width: 100 },
-        { prop: 'cardFee', label: '卡费总金额', width: 100 },
-        { prop: 'fee', label: '出账金额汇总', width: 100 },
-        // { prop: 'amountLast', label: '上月结余', width: 100 },
-        // { prop: 'addedAmount', label: '本月充值', width: 100 },
-        // { prop: 'amount', label: '本月结余', width: 100 },
-        // { prop: 'payedRecords', label: '充值记录', width: 400 },
+        { prop: 'xuebaVoiceCost', label: '毛利', width: 100 },
+
+
+
+        
+        
+        // { prop: 'price', label: '单价', width: 70 },
+        // { prop: 'dataUsageCountryFee', label: '流量结算金额', width: 100 },
+        // { prop: 'payTotalNum', label: '支付笔数合计', width: 100 },
+        // { prop: 'payPackageNum', label: '套餐支付笔数', width: 100 },
+        // { prop: 'payPackageFee', label: '套餐支付总费用', width: 100 },
+        // { prop: 'payAddPackageNum', label: '加油包支付笔数', width: 100 },
+        // { prop: 'payAddPackageFee', label: '加油包支付总费用', width: 100 },
+        // { prop: 'packageFee', label: '支付总金额', width: 70 },
+
+        // { prop: 'monthPackageUsage', label: '套餐内用量(G)', width: 100 },
+        // { prop: 'monthPackageUsageFee', label: '套餐内费用(元)', width: 100 },
+        // { prop: 'offMonthPackageUsage', label: '超套用量(G)', width: 100 },
+        // { prop: 'offMonthPackageUsageFee', label: '超套费用(元)', width: 100 },
+
+        // { prop: 'commonLowUsageFee', label: '套餐内费用(元)', width: 100 },
+        // { prop: 'commonoffUsageFee', label: '超套费用(元)', width: 100 },
+        // { prop: 'commonTotalFee', label: '费用合计(元)', width: 100 },
+
+        // { prop: 'amountPoolBillFee', label: '当月无用量卡费用', width: 100 },
+        // { prop: 'cardFee', label: '卡费总金额', width: 100 },
+        // { prop: 'fee', label: '出账金额汇总', width: 100 },
+        
         { prop: 'opts', label: '操作', width: 100 ,fixed: 'right' }
       ],
       compareStatics:[],
@@ -312,8 +333,8 @@ export default {
 
   mounted () {
     this.queryBillForm.cycleId = this.formatTimer(new Date())
-    this.getUnionidsOptions()
-    this.getsubAccountOptions()
+    // this.getUnionidsOptions()
+    // this.getsubAccountOptions()
     this.getBillList()
     this.getXbChannels()
     this.getBigflowChannels()
