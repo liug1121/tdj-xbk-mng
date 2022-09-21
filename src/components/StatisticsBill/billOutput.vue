@@ -43,12 +43,24 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item class="queryFormItem">
-            <el-button type="primary" size="mini" icon="el-icon-search" @click="queryCardCompare">查询</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-search" @click="queryCardCompare">查询账单</el-button>
+          </el-form-item>
+          <el-form-item class="queryFormItem">
+            <el-button type="primary" size="mini" icon="el-icon-search" @click="queryAllCardCompare">查询全部渠道账单</el-button>
           </el-form-item>
           <el-form-item class="queryFormItem">
             <el-button type="primary" size="mini" @click="toBillOutputDlg">一键出账</el-button>
           </el-form-item>
         </el-form>
+        <div>
+          <table class="total">
+            <tr>
+              <td>收入合计:{{totalIncome}}（元）</td>
+              <td>成本合计:{{totalCost}}（元）</td>
+              <td>毛利合计:{{totalProfit}}（元）</td>
+            </tr>
+          </table>
+        </div>
         <el-table   v-loading="loading" :data="compareStatics" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}" :header-cell-style="rowClass">
             <el-table-column v-for="(p, key) in table_column"  :prop="p.prop"  :label="p.label" :key="key" align="center" :width="p.width" :fixed="p.fixed?p.fixed:false" >
               <template slot-scope="scope">    
@@ -163,9 +175,9 @@
         <el-form-item label="当月新提卡数">
           <el-input style="width:200px;" v-model="billEditForm.newCardNum" placeholder="请输入" onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"></el-input>
         </el-form-item>
-        <el-form-item label="卡费成本">
+        <!-- <el-form-item label="卡费成本">
           <el-input style="width:200px;" v-model="billEditForm.cardFeeCost" placeholder="请输入" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="大流量卡流量成本（元）">
           <el-input style="width:200px;" v-model="billEditForm.bigflowUsageCost" placeholder="请输入" onkeyup="value=value.replace(/[^\-?\d.]/g,'')"></el-input>
         </el-form-item>
@@ -228,6 +240,9 @@ export default {
   },
   data () {
     return {
+      totalIncome:'',
+      totalCost:'', 
+      totalProfit:'',
       spanWidth:17,
       depShowed:true,
       hipDepBtnText:'隐藏部门选择',
@@ -376,7 +391,7 @@ export default {
     this.queryBillForm.cycleId = this.formatTimer(new Date())
     // this.getUnionidsOptions()
     // this.getsubAccountOptions()
-    this.getBillList()
+    // this.getBillList()
     this.getXbChannels()
     this.getBigflowChannels()
     // this.getCompareStatics()
@@ -531,6 +546,11 @@ export default {
       this.billEditForm.xuebaSmsCost = row.xuebaSmsCost
       this.billEditForm.otherCost = row.otherCost
     },
+    queryAllCardCompare:function(){
+      this.queryBillForm.channelIds = null
+      this.channelName = ''
+      this.getCompareStatics()
+    },
     queryCardCompare:function(){
       this.getCompareStatics()
     },
@@ -554,6 +574,9 @@ export default {
       API.apiCompareStaticsList(params).then(res => {
         if (res.resultCode === 0) {
           this.compareStatics = res.data
+          this.totalIncome = res.totalIncome
+          this.totalCost = res.totalCost
+          this.totalProfit = res.totalProfit
           // this.allXbChannels = Object.values(res.data).map(function (e) {
           //   return {
           //     channelId: e.channelId,
@@ -639,7 +662,7 @@ export default {
       let channelIds = []
       channelIds.push('-1')
       this.queryBillForm.channelIds = channelIds
-      this.getBillList()
+      // this.getBillList()
     },
     getFwAccount:function(fwAccountID, fwAccountName,allSubNodes){
       this.channelName = fwAccountName
@@ -650,7 +673,7 @@ export default {
         subAccouts.push(allSubNodes[i].channelId)
       }
       this.queryBillForm.subFwAccounts = subAccouts
-      this.getBillList()
+      // this.getBillList()
     },
     // // 点击 tree 从子组件 获取 对应的 渠道id
     getXbChannelId (channelsID, channelName,allSubNodes) {
@@ -662,7 +685,7 @@ export default {
         channelIds.push(this.channels[i].channelId)
       }
       this.queryBillForm.channelIds = channelIds
-      this.getBillList()
+      // this.getBillList()
     },
     channelChick (channel) {
     },
@@ -683,7 +706,7 @@ export default {
         channelIds.push(this.channels[i].channelId)
       }
       this.queryBillForm.channelIds = channelIds
-      this.getBillList()
+      // this.getBillList()
       this.getCompareStatics()
     },
 
@@ -709,40 +732,40 @@ export default {
     },
     // 获取列表
     getBillList () {
-      let params = this.queryBillForm
-      this.loading = true
-      API.apiBillList(params).then(res => {
-        if (res.resultCode === 0) {
-          let data = res.data
-          this.billList = data.records
-          this.totalDataUsage = data.dataUsage
-          this.dataUsageCountry = data.dataUsageCountry
-          this.dataUsageProvince = data.dataUsageProvince
-          this.cardFee = data.cardFee
-          this.dataUsageFee = data.dataUsageFee
-          this.fee = data.fee
-          this.dataUsageCountry = data.dataUsageCountry
-          this.dataUsageCountry = data.dataUsageCountry
-          for (let i = 0; i < this.billList.length; i++) {
-            this.billList[i].channels.reverse()
-          }
-          console.log(this.billList);
-          this.total = res.rowNum
-          this.loading = false
-        } else {
-          this.$message.error(res.resultInfo)
-        }
-      })
+      // let params = this.queryBillForm
+      // this.loading = true
+      // API.apiBillList(params).then(res => {
+      //   if (res.resultCode === 0) {
+      //     let data = res.data
+      //     this.billList = data.records
+      //     this.totalDataUsage = data.dataUsage
+      //     this.dataUsageCountry = data.dataUsageCountry
+      //     this.dataUsageProvince = data.dataUsageProvince
+      //     this.cardFee = data.cardFee
+      //     this.dataUsageFee = data.dataUsageFee
+      //     this.fee = data.fee
+      //     this.dataUsageCountry = data.dataUsageCountry
+      //     this.dataUsageCountry = data.dataUsageCountry
+      //     for (let i = 0; i < this.billList.length; i++) {
+      //       this.billList[i].channels.reverse()
+      //     }
+      //     console.log(this.billList);
+      //     this.total = res.rowNum
+      //     this.loading = false
+      //   } else {
+      //     this.$message.error(res.resultInfo)
+      //   }
+      // })
     },
     // 监听 pagesize 改变的事件
     handleSizeChange (newSize) {
       this.queryBillForm.pageSize = newSize
-      this.getBillList()
+      // this.getBillList()
     },
     // 监听 页码值 改变的事件
     handleCurrentChange (newPage) {
       this.queryBillForm.page = newPage - 1
-      this.getBillList()
+      // this.getBillList()
     },
     refreshCardsChannels:function(){
       this.$confirm('您确认要此操作, 是否继续?', '提示', {
@@ -811,7 +834,7 @@ export default {
         channelIds.push('-1')
         this.queryBillForm.channelIds = channelIds
       }
-      this.getBillList()
+      // this.getBillList()
     }
   }
 }
@@ -877,6 +900,9 @@ export default {
   color: white;
 }
 .all_list{
+  width: 100%;
+}
+.total{
   width: 100%;
 }
 </style>

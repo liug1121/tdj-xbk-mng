@@ -11,6 +11,7 @@
             </div>
             <div v-if="p.prop == 'result_infoCL'">
               <span v-if="scope.row.result_info === 'success'">成功</span>
+              <span v-if="scope.row.result_info === 'faild'">失败</span>
             </div>
             <div v-else>
               <div v-html="scope.row[p.prop]" />
@@ -52,7 +53,7 @@ export default {
         { prop: 'result_infoCL', label: '结果信息', width: 80 },
         { prop: 'target_local_file_pathCL', label: '下载文件地址', width: 300 },
         { prop: 'source_local_file_path', label: '原文件路径', width: 300 },
-        { prop: 'type', label: '类型', width: 80 },
+        { prop: 'typeName', label: '类型', width: 80 },
         { prop: 'uuid', label: 'uuid', width: 155 }
       ],
       loading: false

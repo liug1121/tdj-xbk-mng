@@ -613,11 +613,11 @@ export default {
     ],
     payTypes:[
       // {name:'月套餐出账', value:1},
-      {name:'实际用量出账', value:0},
+      // {name:'实际用量出账', value:0},
       // {name:'包量套餐出账', value:2},
-      {name:'账户池套餐出账', value:3},
+      // {name:'账户池套餐出账', value:3},
       {name:'单卡套餐', value:1},
-      {name:'包月流量池套餐', value:2},
+      // {name:'包月流量池套餐', value:2},
       {name:'自定义出账规则', value:4}
     ],
     cardFeePayTypes:[
