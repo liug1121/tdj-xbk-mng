@@ -49,9 +49,10 @@
             <el-button type="primary" size="mini" @click="toBillOutputDlg">一键出账</el-button>
           </el-form-item>
         </el-form>
-        <el-table   v-loading="loading" :data="compareStatics" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}">
+        <el-table   v-loading="loading" :data="compareStatics" border max-height="510" align="center" :cell-style="{height: '38px',padding:0}" :header-cell-style="rowClass">
             <el-table-column v-for="(p, key) in table_column"  :prop="p.prop"  :label="p.label" :key="key" align="center" :width="p.width" :fixed="p.fixed?p.fixed:false" >
-              <template slot-scope="scope">     
+              <template slot-scope="scope">    
+               
                 <div v-if="p.prop == 'opts'">
                   <el-button type="text" size="small" v-if="scope.row.dataUsageCountryFee !='没有设置出账规则'" @click="toInputCardFeeDlg(scope.row)">编辑</el-button> 
                   <el-button type="text" size="small" v-if="scope.row.dataUsageCountryFee !='没有设置出账规则'" @click="toDownload(scope.row)">导出</el-button> 
@@ -357,9 +358,8 @@ export default {
         channelId:'',
         cycleId:'',
         id:null,
-        newCardNum:'',
         cardPerFee:'',
-        newCardNum:'', 
+        newCardNum:0, 
         cardFeeCost:'',
         bigflowUsageCost:'',
         bigflowPlatformCost:'', 
@@ -383,6 +383,13 @@ export default {
     // this.getChannelNames()
   },
   methods: {
+    rowClass({ rowIndex, columnIndex }) {
+      if (rowIndex === 0) {
+        if(columnIndex===10 || columnIndex===13 || columnIndex===24){
+          return {color:'red'}
+        }
+      }
+    },
     hidDep:function(depShowed){
       this.depShowed = depShowed
       
@@ -512,7 +519,17 @@ export default {
       this.inputCardFeeDlgShowed = true
       this.billEditForm.channelId = row.channelId
       this.billEditForm.cycleId = row.cycleId
-      this.billEditForm.cardFee = row.cardFee
+      // this.billEditForm.cardFee = row.cardFee
+      this.billEditForm.newCardNum = row.newCardNum
+      this.billEditForm.cardPerFee = row.cardPerFee
+      this.billEditForm.cardFeeCost = row.cardFeeCost
+      this.billEditForm.bigflowUsageCost = row.bigflowUsageCost
+      this.billEditForm.bigflowPlatformCost = row.bigflowPlatformCost
+      this.billEditForm.bigflowVoiceCost = row.bigflowVoiceCost
+      this.billEditForm.bigflowSmsCost = row.bigflowSmsCost
+      this.billEditForm.xuebaVoiceCost = row.xuebaVoiceCost
+      this.billEditForm.xuebaSmsCost = row.xuebaSmsCost
+      this.billEditForm.otherCost = row.otherCost
     },
     queryCardCompare:function(){
       this.getCompareStatics()
