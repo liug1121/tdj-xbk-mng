@@ -247,13 +247,25 @@
               <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.cmpDiscount" placeholder="请输入" ></el-input>
             </el-form-item>
             <el-form-item label="">
-              <el-upload class="unload-demo" accept=".xls, .xlsx" action="#" :file-list="fileList" :http-request="uploadFile">
+              <!-- <el-upload class="unload-demo" accept=".xls, .xlsx" action="#" :file-list="fileList" :http-request="uploadFile">
                 <el-button size="small" type="primary">点击上传CMP资费计划</el-button>
-              </el-upload>
+              </el-upload> -->
             </el-form-item>
-            <el-form-item label="">
-              点击查看CMP资费计划配置
-            </el-form-item>
+              <el-table   :data="cmpFeeConfigs" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}">
+                <!-- <el-table-column type="selection" width="55">
+                </el-table-column> -->
+                <el-table-column v-for="(p, key) in table_column_cmp_fee_config" :prop="p.prop" :label="p.label"  :key="key" :width="p.width" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
+                  <template slot-scope="scope">
+                    <!-- <div v-if="p.prop == 'opts'">
+                      <el-button type="text" size="small" @click="removePrice(scope.row.id)">删除</el-button>
+                      <el-button type="text" size="small" @click="modifyPrice(scope.row)">修改</el-button>
+                    </div>  -->
+                    <div v-html="scope.row[p.prop]" />
+                  </template>
+                </el-table-column>
+              </el-table>
+              <!-- <el-button type="primary" @click="addCmpFeeConfig">添加价格规则</el-button> -->
+            
           </div>
           <div v-if="channelBillingConfigForm.outBillType == 0">
             <el-form-item label="套内套餐类型">
@@ -446,6 +458,68 @@ export default {
   },
   data () {
     return {
+      cmpFeeConfigs:[
+        {
+          cmpFeeCode: '南京友众力2_MON-FLEX_10M_Merged_0.22',
+          lowUsage: 10,
+          lowUsagePrice: '0.22',
+          offUsgePerPrice: '5.5'
+        },
+        {
+          cmpFeeCode: '南京友众力2_MON-FLEX_100M_Merged_0.9',
+          lowUsage: 100,
+          lowUsagePrice: '0.9',
+          offUsgePerPrice: '5.5'
+        },
+        {
+          cmpFeeCode: '南京友众力2_MON-FLEX_300M_Merged_1.8',
+          lowUsage: 300,
+          lowUsagePrice: '1.8',
+          offUsgePerPrice: '5.5'
+        },
+        {
+          cmpFeeCode: '南京友众力2_MON-FLEX_500M_Merged_2.7',
+          lowUsage: 500,
+          lowUsagePrice: '2.7',
+          offUsgePerPrice: '5.5'
+        },
+        {
+          cmpFeeCode: '南京友众力2_MON-FLEX_1024M_Merged_5',
+          lowUsage: 1024,
+          lowUsagePrice: '5',
+          offUsgePerPrice: '5.5'
+        },
+        {
+          cmpFeeCode: '南京友众力2_MON-FLEX_2048M_Merged_7',
+          lowUsage: 2048,
+          lowUsagePrice: '7',
+          offUsgePerPrice: '5.5'
+        },
+        {
+          cmpFeeCode: '南京友众力2_MON-FLEX_5120M_Merged_12',
+          lowUsage: 5120,
+          lowUsagePrice: '12',
+          offUsgePerPrice: '5.5'
+        },
+        {
+          cmpFeeCode: '南京友众力2_MON-FLEX_7168M_Merged_15.6',
+          lowUsage: 7168,
+          lowUsagePrice: '15.6',
+          offUsgePerPrice: '5.5'
+        },
+        {
+          cmpFeeCode: '南京友众力2_MON-FLEX_11264M_Merged_21.5',
+          lowUsage: 11264,
+          lowUsagePrice: '21.5',
+          offUsgePerPrice: '5.5'
+        },
+        {
+          cmpFeeCode: '南京友众力2_MON-FLEX_15360M_Merged_27',
+          lowUsage: 15360,
+          lowUsagePrice: '27',
+          offUsgePerPrice: '5.5'
+        }
+      ],
       fileList:[],
       file:'',
       billType:'',
@@ -546,21 +620,21 @@ export default {
 
       table_column_channelBillingFeeConfig:[
         { prop: 'payTypeName', label: '流量出账类型', width: 80 },
-        { prop: 'areaName', label: '流量区域', width: 120 },
-        { prop: 'unitPrice', label: '账户池套餐 或 流量单价（元/G）', width: 120 },
-        { prop: 'monthDose', label: '套餐内可用量', width: 120 },
-        { prop: 'monthFee', label: '套餐内费用(元)', width: 120 },
-        { prop: 'offPerFee', label: '超套单价（元/G）', width: 120 },
+        // { prop: 'areaName', label: '流量区域', width: 120 },
+        // { prop: 'unitPrice', label: '账户池套餐 或 流量单价（元/G）', width: 120 },
+        // { prop: 'monthDose', label: '套餐内可用量', width: 120 },
+        // { prop: 'monthFee', label: '套餐内费用(元)', width: 120 },
+        // { prop: 'offPerFee', label: '超套单价（元/G）', width: 120 },
 
-        { prop: 'outBillTypeName', label: '自定义出账类型', width: 120 },
-        { prop: 'lowDose', label: '套餐内用量(G)', width: 120 },
-        { prop: 'lowDoseFee', label: '套餐内费用(元/G)', width: 120 },
+        // { prop: 'outBillTypeName', label: '自定义出账类型', width: 120 },
+        // { prop: 'lowDose', label: '套餐内用量(G)', width: 120 },
+        // { prop: 'lowDoseFee', label: '套餐内费用(元/G)', width: 120 },
         { prop: 'closeForOffUsageName', label: '超量是否关停', width: 120 },
         { prop: 'offRuleName', label: '超量出账规则', width: 120 },
-        { prop: 'offRuleFee', label: '超量单价（元/G）', width: 120 },
+        // { prop: 'offRuleFee', label: '超量单价（元/G）', width: 120 },
         { prop: 'lowDoseTypeName', label: '套内用量类型', width: 120 },
         { prop: 'cardLowDoseTypeName', label: '单卡套内套餐类型', width: 120 },
-        { prop: 'cardLowDose', label: '单卡套餐内用量(G)', width: 120 },
+        // { prop: 'cardLowDose', label: '单卡套餐内用量(G)', width: 120 },
         { prop: 'opts', label: '操作', width: 120,fixed:'right'}
       ],
       lbsChannelConfigTypes:[
@@ -639,6 +713,12 @@ export default {
       { prop: 'price', label: '价格(元/G)', width: 100, sortable: true },
       { prop: 'opts', label: '操作', width: 100, sortable: true }
     ],
+    table_column_cmp_fee_config:[
+      { prop: 'cmpFeeCode', label: 'CMP资费计划', width: 311, sortable: true },
+      { prop: 'lowUsage', label: '套内用量(M)', width: 49, sortable: true },
+      { prop: 'lowUsagePrice', label: '套内用量价格(元)', width: 49, sortable: true },
+      { prop: 'offUsgePerPrice', label: '超套单价(元/G)', width: 49, sortable: true }
+    ]
     }
   },
 
@@ -652,6 +732,7 @@ export default {
     this.getAllCardScanPools()
   },
   methods: {
+    addCmpFeeConfig:function(){},
     uploadFile (item) {
       console.log(item);
       const that = this
