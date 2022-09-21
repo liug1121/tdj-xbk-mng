@@ -55,6 +55,8 @@
         <div>
           <table class="total">
             <tr>
+              <td>渠道数量:{{totalChannelNum}}</td>
+              <td>用量合计:{{totalUsage}}（G）</td>
               <td>收入合计:{{totalIncome}}（元）</td>
               <td>成本合计:{{totalCost}}（元）</td>
               <td>毛利合计:{{totalProfit}}（元）</td>
@@ -240,8 +242,12 @@ export default {
   },
   data () {
     return {
+      totalChannelNum:'',
+      totalUsage:'',
       totalIncome:'',
       totalCost:'', 
+      totalUsage:'',
+      totalChannelNum:'',
       totalProfit:'',
       spanWidth:17,
       depShowed:true,
@@ -577,6 +583,8 @@ export default {
           this.totalIncome = res.totalIncome
           this.totalCost = res.totalCost
           this.totalProfit = res.totalProfit
+          this.totalUsage = res.totalUsage
+          this.totalChannelNum = res.totalChannelNum
           // this.allXbChannels = Object.values(res.data).map(function (e) {
           //   return {
           //     channelId: e.channelId,
@@ -904,5 +912,9 @@ export default {
 }
 .total{
   width: 100%;
+  font-size: 10px;
+  background: gray;
+  margin-bottom: 3px;
+  color: white;
 }
 </style>
