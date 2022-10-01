@@ -319,7 +319,8 @@
                 <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="channelBillingConfigForm.offRuleFee" placeholder="请输入" ></el-input>
               </el-form-item>
             </div>
-            <div v-if="channelBillingConfigForm.offRule == 2">
+            <!-- <div v-if="channelBillingConfigForm.offRule == 2"> -->
+            <div>
               <el-form-item label="卡费类型">
               <el-select 
               clearable

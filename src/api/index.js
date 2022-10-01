@@ -1,4 +1,5 @@
 import axios from 'axios'
+import qs from 'qs'
 // import QS from 'qs'
 
 // axios.defaults.baseURL = 'http://xbk.tdj.cn/ceshi/'
@@ -13,6 +14,8 @@ if (process.env.VUE_APP_CURRENTMODE == 'production') {
 axios.defaults.timeout = 500000
 // 设置 POST 请求头
 axios.defaults.headers.post['Content-Type'] = 'application/json'
+// axios.defaults.headers.post['Content-Type'] = 'application/json'
+
 // 添加请求拦截器
 axios.interceptors.request.use(function (config) {
   // 在发送请求之前做些什么
@@ -34,6 +37,7 @@ axios.interceptors.response.use(function (response) {
 // 通用方法
 export const POST = (url, params, config = {}) => {
   return axios.post(url, params, config).then(res => res.data)
+  // return axios.post(url, qs.stringify(params), config).then(res => res.data)
 }
 
 export const GET = (url, params) => {

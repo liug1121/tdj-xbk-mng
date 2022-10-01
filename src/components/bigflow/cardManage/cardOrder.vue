@@ -252,7 +252,6 @@
 </template>
 
 <script>
-import apiBoss from './../../../api/cardInfo'
 import apiBigflow from './../../../api/bigflow'
 import editCardInfo from './../../cardInfo/editCardInfo'
 import channelSelect from './../../sale/channelSelect'
@@ -638,6 +637,7 @@ export default {
         params.gmtCreateEnd = this.orderEndDate
       if(this.channel != '') 
         params.saleChannel = this.channel
+      // apiLogin.getCardOrders(params).then(res => {
       apiBigflow.getCardOrders(params).then(res => {
           if(res.resultCode == 0){
               this.cardOrders = res.data

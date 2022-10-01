@@ -17,6 +17,7 @@
     "file-saver": "^2.0.2",
     "lib-flexible": "^0.3.2",
     "qrcode": "^1.4.4",
+    "qs": "^6.11.0",
     "v-charts": "^1.19.0",
     "v-fit-columns": "^0.2.0",
     "vue": "^2.6.10",
