@@ -122,6 +122,7 @@
                 <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toHistoryUsage(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-historyUsage'}">查历史用量</el-button>
                 <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toCardInfoChagnes(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-historyUsage'}">查信息变更记录</el-button>
                 <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toCoreBills(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-changeRecords'}">卡变更记录</el-button>
+                <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toSwitchCard(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-changeRecords'}">切换到电信卡</el-button>
               </div>
               
               <div v-html="scope.row[p.prop]" />
@@ -377,6 +378,7 @@ export default {
   },
   data () {
     return {
+        // swichCardDlgShowed: false,
         cardInfoChangeDlgshowd:false,
         cardInfoChanges:[],  
         coreBillsDlgshowd:false,
@@ -510,6 +512,8 @@ export default {
         { prop: 'channelName', label: '渠道 ', width: 160 },
         { prop: 'gmtActivate', label: '开卡时间', width: 180 },
         { prop: 'lbsInfo', label: '备注 ', width: 160 },
+        { prop: 'iccidCt', label: '电信卡ICCID', width: 180, sortable: true },
+        { prop: 'phoneNumberCt', label: '电信卡号码', width: 180, sortable: true },
         // { prop: 'gmtCreate', label: '首次绑定时间 ', width: 160 },
         // { prop: 'deviceNameNew', label: '设备名称 ', width: 160 },
         { prop: 'opts', label: '操作', width: 120 ,fixed: 'right'}
@@ -569,6 +573,24 @@ export default {
             }
             this.btnEnable = false
         })
+        }).catch(() => {
+        }); 
+    },
+    toSwitchCard: function(iccid){
+      this.$confirm('您确认要切换到电信卡?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            let params = {}
+            params.iccid = iccid
+            apiBigflow.switch2ctcard(params).then(res=>{
+                if(res.resultCode == 0){
+                    this.$message.success('已经切换到电信卡，新的iccid：' + res.data)
+                }else{
+                    this.$message.error('切换电信卡失败:' + res.resultInfo)
+                }
+            })
         }).catch(() => {
         }); 
     },

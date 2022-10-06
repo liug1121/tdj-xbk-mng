@@ -502,5 +502,8 @@ export default {
     },
     createOrder: params =>{
         return API.POST('/bigflow/manage/v1.0/zop/order/create', params)
+    },
+    switch2ctcard: params =>{
+        return API.POST('/bigflow/manage/v1.0/card/switch2ctcard', params)
     }
 }
