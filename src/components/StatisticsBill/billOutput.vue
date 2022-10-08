@@ -251,7 +251,7 @@ export default {
       totalProfit:'',
       spanWidth:17,
       depShowed:true,
-      hipDepBtnText:'隐藏部门选择',
+      hipDepBtnText:'隐藏渠道选择',
       treeSelectedType: 4,
       channelName:'',
       billOutputTypeDlgShowed:false,
@@ -415,10 +415,10 @@ export default {
       this.depShowed = depShowed
       
       if(this.depShowed){
-        this.hipDepBtnText='隐藏部门选择'
+        this.hipDepBtnText='隐藏渠道选择'
         this.spanWidth = 17
       }else{
-        this.hipDepBtnText='显示部门选择'
+        this.hipDepBtnText='显示渠道选择'
         this.spanWidth = 23
       }
     },
