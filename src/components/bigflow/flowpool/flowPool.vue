@@ -214,6 +214,9 @@
         <el-form-item label="流量池名称">
           <el-input style="width:300px;"  v-model="editFlowPoolForm.poolName" placeholder="请输入流量池名称" ></el-input>
         </el-form-item>
+        <el-form-item label="信用额度（GB）">
+          <el-input style="width:300px;"  v-model="editFlowPoolForm.creditFlowUsedGB" onkeyup="value=value.replace(/[^\-?\d.]/g,'')" placeholder="请输入流量池名称" ></el-input>
+        </el-form-item>
       </el-form>
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
@@ -427,7 +430,8 @@ export default {
     showEditFlowPoolDlg: false,
     editFlowPoolForm:{
       poolId:'',
-      poolName:''
+      poolName:'',
+      creditFlowUsedGB:0
     },
     
     alertInfos:[],
@@ -532,7 +536,7 @@ export default {
         { prop: 'num', label: '总卡片数', width: 60, sortable: true },
         // { prop: 'saleChannelName', label: '渠道', width: 150, sortable: true },
         { prop: 'productCodeName', label: '当前套餐', width: 80, sortable: true },
-        { prop: 'amount', label: '账户余额', width: 80, sortable: true },
+        { prop: 'crditFlowUsedGBStr', label: '信用额度（GB）', width: 80, sortable: true },
         { prop: 'flowHighDoseName', label: '可用量', width: 80, sortable: true },
         { prop: 'flowUsedName', label: '当月已使用', width: 80, sortable: true },
         { prop: 'flowHightotalUsedName', label: '累计已使用', width: 80, sortable: true },
@@ -694,6 +698,7 @@ export default {
     toEditPool:function(pool){
       this.editFlowPoolForm.poolId = pool.poolId
       this.editFlowPoolForm.poolName = pool.poolName
+      this.editFlowPoolForm.creditFlowUsedGB = pool.creditFlowUsedGB
       this.showEditFlowPoolDlg = true
     },
     okEditFlowPool :function(){
@@ -705,6 +710,11 @@ export default {
           let params = {}
           params.poolId = this.editFlowPoolForm.poolId
           params.poolName = this.editFlowPoolForm.poolName
+          params.creditFlowUsedGB = this.editFlowPoolForm.creditFlowUsedGB
+          if(params.creditFlowUsedGB < 0){
+            this.$message.error('信用额度不能少于0')
+            return
+          }
           apiBigflow.modifyPool(params).then(res=>{
                 if(res.resultCode == 0){
                     this.$message.success('修改成功')
