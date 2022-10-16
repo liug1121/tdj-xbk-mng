@@ -262,6 +262,7 @@ export default {
   },
   data () {
     return {
+        uploadedFile: '',
         cashPledgePayed: null,
         salerName: null,
         salerPhone: null,
@@ -446,6 +447,7 @@ export default {
     uploadFile (item) {
         let params = new FormData()
         params.append('file', item.file)
+        this.uploadedFile = item.file
         apiBigflow.uploadFile(params).then(res=>{
             if(res.resultCode == 0){
                this.orderImportForm.fileToken = res.data
@@ -470,15 +472,10 @@ export default {
             type: 'warning'
         }).then(() => {
             that.btnEnable = true
-            let params = {}
-            params.name = this.orderImportForm.name
-            params.saleChannel = this.orderImportForm.saleChannel
-            params.salePerson2 = this.orderImportForm.salePerson2
-            params.giveUsage = this.orderImportForm.giveUsage
-            params.giveUsageType = this.orderImportForm.giveUsageType
-            params.productCode = this.orderImportForm.productCode
-            params.fileToken = this.orderImportForm.fileToken
-            params.type = this.orderImportForm.type
+            let params = new FormData()
+            params.append('file', this.uploadedFile)
+            params.append('channelId', this.orderImportForm.saleChannel)
+            params.append('productCode', this.orderImportForm.productCode)
             apiBigflow.importOrder2Channel(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryCardOrders()

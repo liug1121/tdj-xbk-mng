@@ -165,8 +165,15 @@ export default {
           }
         })
       },
+    // importOrder2Channel: params =>{
+    //     return API.POST('/bigflow/manage/v1.0/order/channel/import', params)
+    // },
     importOrder2Channel: params =>{
-        return API.POST('/bigflow/manage/v1.0/order/channel/import', params)
+        return API.POST('/bigflow/manage/v1.0/order/channel/import', params, {
+            headers: {
+                'content-type': 'multipart/form-data'
+              }
+        })
     },
     importPoolCards: params =>{
         return API.POST('/bigflow/manage/v1.0/flowpools/card/import', params, {
