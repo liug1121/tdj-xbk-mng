@@ -51,6 +51,9 @@
           <el-form-item class="queryFormItem">
             <el-button type="primary" size="mini" @click="toBillOutputDlg">一键出账</el-button>
           </el-form-item>
+           <el-form-item class="queryFormItem">
+            <el-button type="primary" size="mini" @click="exportCompareStatics">账单导出</el-button>
+          </el-form-item>
         </el-form>
         <div>
           <table class="total">
@@ -69,7 +72,7 @@
                
                 <div v-if="p.prop == 'opts'">
                   <el-button type="text" size="small" v-if="scope.row.dataUsageCountryFee !='没有设置出账规则'" @click="toInputCardFeeDlg(scope.row)">编辑</el-button> 
-                  <el-button type="text" size="small" v-if="scope.row.dataUsageCountryFee !='没有设置出账规则'" @click="toDownload(scope.row)">导出</el-button> 
+                  <!-- <el-button type="text" size="small" v-if="scope.row.dataUsageCountryFee !='没有设置出账规则'" @click="toDownload(scope.row)">导出</el-button>  -->
                 </div>
                 <div v-else v-html="scope.row[p.prop]" />
               </template>
@@ -560,7 +563,29 @@ export default {
     queryCardCompare:function(){
       this.getCompareStatics()
     },
-      // apiCompareStaticsList
+    exportCompareStatics:function(){
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let params = {}
+        params.channelIds = this.queryBillForm.channelIds 
+        params.cycle = this.queryBillForm.cycleId
+        if(params.cycle == undefined || params.cycle == ''){
+          this.$message.error('请先选择账期')
+          return
+        }
+        API.apiCompareStaticsExport(params).then(res => {
+        if (res.resultCode === 0) {
+          this.$message.success('账单导出成功，请到任务：' + res.data + '中查看');
+        } else {
+          this.$message.error(res.resultInfo)
+        }
+      })
+      }).catch(() => {
+      }); 
+    },
     getCompareStatics:function(){
       let params = {}
       console.log('sss' + JSON.stringify(this.queryBillForm.channelIds ))

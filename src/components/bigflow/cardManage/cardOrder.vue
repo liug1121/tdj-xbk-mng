@@ -461,6 +461,13 @@ export default {
         this.showOrderImportDlg = false
     },
     okOrderImport:function(){
+          if(this.orderImportForm.saleChannel == undefined || this.orderImportForm.saleChannel == '' || this.orderImportForm.saleChannel == null){
+            this.$message.error('渠道不能为空')
+            return
+          }
+          if(this.orderImportForm.productCode == undefined){
+            this.orderImportForm.productCode = ''
+          }
          if(this.orderImportForm.fileToken == undefined || this.orderImportForm.fileToken == ''){
             alert('请先上传要操作的excel文件')
             return
