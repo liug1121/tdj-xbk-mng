@@ -523,9 +523,9 @@ export default {
                 if(res.resultCode == 0){
                     that.queryCardOrders()
                     that.showMoveOrderDlg = false
-                    alert('操作成功')
+                    this.$message.success('操作成功,' + res.data.infos)
                 }else{
-                    alert('操作失败:' + res.resultInfo)
+                    this.$message.success('操作失败:' + res.resultInfo)
                 }
                 that.btnEnable = false
             })
