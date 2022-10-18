@@ -525,7 +525,7 @@ export default {
                     that.showMoveOrderDlg = false
                     this.$message.success('操作成功,' + res.data.infos)
                 }else{
-                    this.$message.success('操作失败:' + res.resultInfo)
+                    this.$message.error('操作失败:' + res.resultInfo)
                 }
                 that.btnEnable = false
             })

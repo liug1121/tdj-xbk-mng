@@ -495,7 +495,7 @@ export default {
                 if(res.resultCode == 0){
                     that.queryFlowCardStocks()
                     that.showMovePoolByIccidsDlg = false
-                    alert('操作成功')
+                    alert('操作成功，' + res.data.infos)
                 }else{
                     alert('操作失败:' + res.resultInfo)
                 }
