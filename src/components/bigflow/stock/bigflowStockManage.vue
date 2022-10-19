@@ -455,7 +455,7 @@ export default {
                 if(res.resultCode == 0){
                     that.queryBigflowStocks()
                     that.showMoveCard2ChannelDlg = false
-                    this.$message.error('操作成功')
+                    this.$message.success('操作成功')
                 }else{
                     this.$message.error('操作失败:' + res.resultInfo)
                 }
