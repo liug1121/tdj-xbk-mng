@@ -984,9 +984,9 @@ export default {
                 if(res.resultCode == 0){
                     that.queryCardInfos()
                     that.showChangeProductDlg = false
-                    alert('操作成功')
+                    this.$message.success('操作成功')
                 }else{
-                    alert('操作失败:' + res.resultInfo)
+                    this.$message.error('操作失败:' + res.resultInfo)
                 }
                 that.btnEnable = false
             })

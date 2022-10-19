@@ -266,6 +266,7 @@ export default {
   },
   data () {
     return {
+    uploadedFile: '',
     showCardResetDlg:false,
     productType:-1,
     file2Upload:null,
@@ -443,10 +444,13 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
         }).then(() => {
+            console.log('sdsd111')
             that.btnEnable = true
-            let params = {}
-            params.channelId = this.moveCard2ChannelForm.channelId
-            params.fileToken = this.moveCard2ChannelForm.fileToken
+            let params = new FormData()
+            params.append('file', this.uploadedFile)
+            params.append('channelId', this.moveCard2ChannelForm.channelId)
+            params.append('fileToken', this.moveCard2ChannelForm.fileToken)
+            console.log('sdsd')
             apiBigflow.moveStockCards2Channel(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryBigflowStocks()
@@ -499,6 +503,7 @@ export default {
     },
     uploadMoveStockCard2ChannelFile (item) {
         let params = new FormData()
+        this.uploadedFile = item.file
         params.append('file', item.file)
         apiBigflow.uploadFile(params).then(res=>{
             if(res.resultCode == 0){
@@ -545,7 +550,7 @@ export default {
       okCardImport:function(){
         //   importPoolCards
         if(this.cardImportForm.fileToken == undefined || this.cardImportForm.fileToken == ''){
-            alert('请先上传要操作的excel文件')
+            this.$message.success('请先上传要操作的excel文件')
             return
         }
         let that = this
@@ -565,9 +570,9 @@ export default {
                 if(res.resultCode == 0){
                     that.queryBigflowStocks()
                     that.showCardImportDlg = false
-                    alert('操作成功，请在任务管理中查询执行结果，任务编号：' + res.data)
+                    this.$message.success('操作成功，请在任务管理中查询执行结果，任务编号：' + res.data)
                 }else{
-                    alert('操作失败:' + res.resultInfo)
+                    this.$message.success('操作失败:' + res.resultInfo)
                 }
                 that.btnEnable = false
             })
@@ -602,7 +607,7 @@ export default {
                 if(res.resultCode == 0){
                     that.queryBigflowStocks()
                     that.showStock2ChannelDlg = false
-                    this.$message.error('操作成功')
+                    this.$message.success('操作成功，' + res.data.infos)
                 }else{
                     this.$message.error('操作失败:' + res.resultInfo)
                 }
