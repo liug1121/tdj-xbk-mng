@@ -364,7 +364,7 @@ export default {
       let that = this
         // importPoolCards
         if(this.poolCardImortForm.fileToken == undefined || this.poolCardImortForm.fileToken == ''){
-            alert('请先上传要操作的excel文件')
+            this.$message.error('请先上传要操作的excel文件')
             return
         }
         
@@ -384,9 +384,9 @@ export default {
                 if(res.resultCode == 0){
                     that.queryFlowCardStocks()
                     that.showPoolCardImortDlg = false
-                    alert('操作成功')
+                    this.$message.success('操作成功')
                 }else{
-                    alert('操作失败:' + res.resultInfo)
+                    this.$message.error('操作失败:' + res.resultInfo)
                 }
                 that.btnEnable = false
             })
@@ -397,7 +397,7 @@ export default {
         let that = this
         // importPoolCards
         if(this.poolCardImortForm.fileToken == undefined || this.poolCardImortForm.fileToken == ''){
-            alert('请先上传要操作的excel文件')
+            this.$message.error('请先上传要操作的excel文件')
             return
         }
         
@@ -417,9 +417,9 @@ export default {
                 if(res.resultCode == 0){
                     that.queryFlowCardStocks()
                     that.showPoolCardImortDlg = false
-                    alert('操作成功')
+                    this.$message.success('操作成功')
                 }else{
-                    alert('操作失败:' + res.resultInfo)
+                    this.$message.error('操作失败:' + res.resultInfo)
                 }
                 that.btnEnable = false
             })
@@ -450,59 +450,85 @@ export default {
         this.$message.error('账户池不能为空')
         return 
       }
-      let that = this
-        this.$confirm('您确认要此操作, 是否继续?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-        }).then(() => {
-            that.btnEnable = true
-            let params = {}
-            params.iccidStart = this.movePoolByIccidsForm.iccidStart
-            params.iccidEnd = this.movePoolByIccidsForm.iccidEnd
-            params.reason = this.movePoolByIccidsForm.reason
-            params.poolId = this.movePoolByIccidsForm.poolId
-            params.useLimitStatus = this.movePoolByIccidsForm.useLimitStatus
-            apiBigflow.moveAmountPoolbetweenIccids(params).then(res=>{
-                if(res.resultCode == 0){
-                    that.queryFlowCardStocks()
-                    that.showMovePoolByIccidsDlg = false
-                    this.$message.success('操作成功')
-                }else{
-                    this.$message.success('操作失败:' + res.resultInfo)
-                }
-                that.btnEnable = false
-            })
-        }).catch(() => {
-        });
+      let params = {}
+      params.iccidStart = this.movePoolByIccidsForm.iccidStart
+      params.iccidEnd = this.movePoolByIccidsForm.iccidEnd
+      params.reason = this.movePoolByIccidsForm.reason
+      params.poolId = this.movePoolByIccidsForm.poolId
+      params.useLimitStatus = this.movePoolByIccidsForm.useLimitStatus
+      apiBigflow.getMoveAmountPoolbetweenIccidsCardNum(params).then(res=>{
+          if(res.resultCode == 0){
+              let that = this
+              this.$confirm('您确认要此操作，本次操作总卡数：' + res.data + ' 张, 是否继续?', '提示', {
+                  confirmButtonText: '确定',
+                  cancelButtonText: '取消',
+                  type: 'warning'
+              }).then(() => {
+                  that.btnEnable = true
+                  let params = {}
+                  params.iccidStart = this.movePoolByIccidsForm.iccidStart
+                  params.iccidEnd = this.movePoolByIccidsForm.iccidEnd
+                  params.reason = this.movePoolByIccidsForm.reason
+                  params.poolId = this.movePoolByIccidsForm.poolId
+                  params.useLimitStatus = this.movePoolByIccidsForm.useLimitStatus
+                  apiBigflow.moveAmountPoolbetweenIccids(params).then(res=>{
+                      if(res.resultCode == 0){
+                          that.queryFlowCardStocks()
+                          that.showMovePoolByIccidsDlg = false
+                          this.$message.success('操作成功')
+                      }else{
+                          this.$message.success('操作失败:' + res.resultInfo)
+                      }
+                      that.btnEnable = false
+                  })
+              }).catch(() => {
+              });
+          }else{
+              this.$message.success('操作失败:' + res.resultInfo)
+          }
+          // that.btnEnable = false
+      })
     },
     okMovePoolByIccids:function(){
-        let that = this
-        this.$confirm('您确认要此操作, 是否继续?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-        }).then(() => {
-            that.btnEnable = true
-            let params = {}
+      let params = {}
             params.iccidStart = this.movePoolByIccidsForm.iccidStart
             params.iccidEnd = this.movePoolByIccidsForm.iccidEnd
             params.reason = this.movePoolByIccidsForm.reason
             params.poolId = this.movePoolByIccidsForm.poolId
             params.useLimitStatus = this.movePoolByIccidsForm.useLimitStatus
-
-            apiBigflow.movePoolIccidsBetween(params).then(res=>{
+            apiBigflow.getMovePoolIccidsBetweenCardNum(params).then(res=>{
                 if(res.resultCode == 0){
-                    that.queryFlowCardStocks()
-                    that.showMovePoolByIccidsDlg = false
-                    alert('操作成功，' + res.data.infos)
+                    let that = this
+                this.$confirm('您确认要此操作，本次操作总卡数：' + res.data + ' 张, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    that.btnEnable = true
+                    let params = {}
+                    params.iccidStart = this.movePoolByIccidsForm.iccidStart
+                    params.iccidEnd = this.movePoolByIccidsForm.iccidEnd
+                    params.reason = this.movePoolByIccidsForm.reason
+                    params.poolId = this.movePoolByIccidsForm.poolId
+                    params.useLimitStatus = this.movePoolByIccidsForm.useLimitStatus
+
+                    apiBigflow.movePoolIccidsBetween(params).then(res=>{
+                        if(res.resultCode == 0){
+                            that.queryFlowCardStocks()
+                            that.showMovePoolByIccidsDlg = false
+                            this.$message.success('操作成功，' + res.data.infos)
+                        }else{
+                            this.$message.error('操作失败:' + res.resultInfo)
+                        }
+                        that.btnEnable = false
+                    })
+                }).catch(() => {
+                });
                 }else{
-                    alert('操作失败:' + res.resultInfo)
+                    this.$message.error('操作失败:' + res.resultInfo)
                 }
-                that.btnEnable = false
+                // that.btnEnable = false
             })
-        }).catch(() => {
-        });
     },
     closeMovePoolDlg:function(){
         this.showMovePoolDlg = false
@@ -549,9 +575,9 @@ export default {
                 if(res.resultCode == 0){
                     that.queryFlowCardStocks()
                     that.showMovePoolDlg = false
-                    alert('操作成功')
+                    this.$message.success('操作成功')
                 }else{
-                    alert('操作失败:' + res.resultInfo)
+                    this.$message.error('操作失败:' + res.resultInfo)
                 }
                 that.btnEnable = false
             })
@@ -560,7 +586,7 @@ export default {
     },   
     openMovePoolDlg:function(){
         if(this.iccids2Opt == ''){
-            alert("请选择要操作的卡")
+            this.$message.error("请选择要操作的卡")
             return
         }
         this.showMovePoolDlg = true

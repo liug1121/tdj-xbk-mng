@@ -136,17 +136,26 @@ export default {
     movePool: params =>{
         return API.POST('/bigflow/manage/v1.0/flowpools/move', params)
     },
+    getMovePoolIccidsBetweenCardNum: params =>{
+        return API.POST('/bigflow/manage/v1.0/flowpools/move/iccidbetween/cardNum', params)
+    },
     movePoolIccidsBetween: params =>{
         return API.POST('/bigflow/manage/v1.0/flowpools/move/iccidbetween', params)
     },
     getChannelProducts: params =>{
         return API.POST('/bigflow/manage/v1.0/channels/products', params)
     },
+    getStock2ChannelCardNum: params =>{
+        return API.POST('/bigflow/manage/v1.0/bigflowcardstocks/tochannel/cardNum', params)
+    },
     stock2Channel: params =>{
         return API.POST('/bigflow/manage/v1.0/bigflowcardstocks/tochannel', params)
     },
     getAllProduct2Change: params =>{
         return API.POST('/bigflow/manage/v1.0/order/products2change', params)
+    },
+    getMoveOrderByIccidsBetweenCardNum: params =>{
+        return API.POST('/bigflow/manage/v1.0/order/move/iccidbetween/cardnum', params)
     } ,
     moveOrderByIccidsBetween: params =>{
         return API.POST('/bigflow/manage/v1.0/order/move/iccidbetween', params)
@@ -443,6 +452,9 @@ export default {
     },
     modifyAmountPoolPackage: params =>{
         return API.POST('/bigflow/manage/v1.0/amountPool/pacakge/modify', params)
+    },
+    getMoveAmountPoolbetweenIccidsCardNum: params =>{
+        return API.POST('/bigflow/manage/v1.0/amountPool/move/iccidbetween/cardNum', params)
     },
     moveAmountPoolbetweenIccids: params =>{
         return API.POST('/bigflow/manage/v1.0/amountPool/move/iccidbetween', params)

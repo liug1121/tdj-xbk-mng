@@ -503,34 +503,50 @@ export default {
         this.showMoveOrderDlg = false
     },
     okMoveOrder:function(){
-        let that = this
-        this.$confirm('您确认要此操作, 是否继续?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-        }).then(() => {
-            that.btnEnable = true
-            let params = {}
-            params.name = this.moveOrderForm.name
-            params.saleChannel = this.moveOrderForm.saleChannel
-            params.salePerson2 = this.moveOrderForm.salePerson2
-            params.iccidStart = this.moveOrderForm.iccidStart
-            params.iccidEnd = this.moveOrderForm.iccidEnd
-            params.productCode = this.moveOrderForm.productCode
-            params.giveUsage = this.moveOrderForm.giveUsage
-            params.giveUsageType = this.moveOrderForm.giveUsageType
-            apiBigflow.moveOrderByIccidsBetween(params).then(res=>{
-                if(res.resultCode == 0){
-                    that.queryCardOrders()
-                    that.showMoveOrderDlg = false
-                    this.$message.success('操作成功,' + res.data.infos)
-                }else{
-                    this.$message.error('操作失败:' + res.resultInfo)
-                }
-                that.btnEnable = false
-            })
-        }).catch(() => {
-        }); 
+      let params = {}
+      params.name = this.moveOrderForm.name
+      params.saleChannel = this.moveOrderForm.saleChannel
+      params.salePerson2 = this.moveOrderForm.salePerson2
+      params.iccidStart = this.moveOrderForm.iccidStart
+      params.iccidEnd = this.moveOrderForm.iccidEnd
+      params.productCode = this.moveOrderForm.productCode
+      params.giveUsage = this.moveOrderForm.giveUsage
+      params.giveUsageType = this.moveOrderForm.giveUsageType
+      apiBigflow.getMoveOrderByIccidsBetweenCardNum(params).then(res=>{
+          if(res.resultCode == 0){
+              let that = this
+              this.$confirm('您确认要此操作, 本次操作总卡数为： ' + res.data + ' 张，是否继续?', '提示', {
+                  confirmButtonText: '确定',
+                  cancelButtonText: '取消',
+                  type: 'warning'
+              }).then(() => {
+                  that.btnEnable = true
+                  let params = {}
+                  params.name = this.moveOrderForm.name
+                  params.saleChannel = this.moveOrderForm.saleChannel
+                  params.salePerson2 = this.moveOrderForm.salePerson2
+                  params.iccidStart = this.moveOrderForm.iccidStart
+                  params.iccidEnd = this.moveOrderForm.iccidEnd
+                  params.productCode = this.moveOrderForm.productCode
+                  params.giveUsage = this.moveOrderForm.giveUsage
+                  params.giveUsageType = this.moveOrderForm.giveUsageType
+                  apiBigflow.moveOrderByIccidsBetween(params).then(res=>{
+                      if(res.resultCode == 0){
+                          that.queryCardOrders()
+                          that.showMoveOrderDlg = false
+                          this.$message.success('操作成功,' + res.data.infos)
+                      }else{
+                          this.$message.error('操作失败:' + res.resultInfo)
+                      }
+                      that.btnEnable = false
+                  })
+              }).catch(() => {
+              }); 
+          }else{
+              this.$message.error('操作失败:' + res.resultInfo)
+          }
+          // that.btnEnable = false
+      })
     },
     getChannelSalePersions:function(channelId){
         let seletedChannels = this.channels.filter(channel=>{

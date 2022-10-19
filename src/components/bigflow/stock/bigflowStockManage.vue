@@ -592,29 +592,40 @@ export default {
           this.showStock2ChannelDlg = false
       },    
       okStock2Channel:function(){
-         let that = this
-        this.$confirm('您确认要此操作, 是否继续?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-        }).then(() => {
-            that.btnEnable = true
-            let params = {}
+        let params = {}
             params.iccidStart = this.stock2ChannelForm.iccidStart
             params.iccidEnd = this.stock2ChannelForm.iccidEnd
             params.channelId = this.stock2ChannelForm.channelId
-            apiBigflow.stock2Channel(params).then(res=>{
+            apiBigflow.getStock2ChannelCardNum(params).then(res=>{
                 if(res.resultCode == 0){
-                    that.queryBigflowStocks()
-                    that.showStock2ChannelDlg = false
-                    this.$message.success('操作成功，' + res.data.infos)
+                    let that = this
+                this.$confirm('您确认要此操作,本次操作总卡数为：' + res.data + ' 张， 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    that.btnEnable = true
+                    let params = {}
+                    params.iccidStart = this.stock2ChannelForm.iccidStart
+                    params.iccidEnd = this.stock2ChannelForm.iccidEnd
+                    params.channelId = this.stock2ChannelForm.channelId
+                    apiBigflow.stock2Channel(params).then(res=>{
+                        if(res.resultCode == 0){
+                            that.queryBigflowStocks()
+                            that.showStock2ChannelDlg = false
+                            this.$message.success('操作成功，' + res.data.infos)
+                        }else{
+                            this.$message.error('操作失败:' + res.resultInfo)
+                        }
+                        that.btnEnable = false
+                    })
+                }).catch(() => {
+                }); 
                 }else{
                     this.$message.error('操作失败:' + res.resultInfo)
                 }
-                that.btnEnable = false
+                // that.btnEnable = false
             })
-        }).catch(() => {
-        }); 
       },  
     startTimeChange () {
       this.startDateTime = `${this.startDateTime}`
