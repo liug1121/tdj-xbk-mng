@@ -529,5 +529,8 @@ export default {
     },
     switch2ctcard: params =>{
         return API.POST('/bigflow/manage/v1.0/card/switch2ctcard', params)
+    },
+    getCtCardInfo: params =>{
+        return API.POST('/bigflow/manage/v1.0/ct/card', params)
     }
 }

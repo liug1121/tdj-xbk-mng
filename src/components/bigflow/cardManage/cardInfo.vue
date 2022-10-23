@@ -122,7 +122,7 @@
                 <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toHistoryUsage(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-historyUsage'}">查历史用量</el-button>
                 <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toCardInfoChagnes(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-historyUsage'}">查信息变更记录</el-button>
                 <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toCoreBills(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-changeRecords'}">卡变更记录</el-button>
-                <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toSwitchCard(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-changeRecords'}">切换到电信卡</el-button>
+                <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toCtCard(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-changeRecords'}">电信卡信息</el-button>
               </div>
               
               <div v-html="scope.row[p.prop]" />
@@ -290,8 +290,6 @@
         <el-button @click="closeExpireDateExtendDlg" :disabled="btnEnable">取 消</el-button>
         <el-button v-if="optType == 2" type="primary" @click="okFileExpireDateExtend" :disabled="btnEnable">确 定</el-button>
         <el-button v-else type="primary" @click="okExpireDateExtend" :disabled="btnEnable">确 定</el-button>
-
-        
       </span>  
     </el-dialog> 
 
@@ -366,6 +364,40 @@
     <el-main class="el-loading" v-loading="loading" element-loading-background="transparent"
         element-loading-text="加载中" > 
     </el-main>
+
+    <el-dialog title="电信卡信息" :visible.sync="ctCardInfoDlgShowed" width="450px" @close="ctCardInfoDlgShowed = false">
+      <!-- 内容主体区域 --> 
+      <el-form :model="ctCardInfo"  label-width="110px">
+        <el-form-item label="电信ICCID">
+          <el-input style="width:300px;" readonly  v-model="ctCardInfo.iccidCt" ></el-input>
+        </el-form-item>
+        <el-form-item label="电信号码">
+          <el-input style="width:300px;" readonly v-model="ctCardInfo.phoneNumber" ></el-input>
+        </el-form-item>
+        <el-form-item label="联通ICCID">
+          <el-input style="width:300px;" readonly v-model="ctCardInfo.iccidBigflow" ></el-input>
+        </el-form-item>
+        <el-form-item label="imei">
+          <el-input style="width:300px;" readonly  v-model="ctCardInfo.imei" ></el-input>
+        </el-form-item>
+        <el-form-item label="mac">
+          <el-input style="width:300px;" readonly v-model="ctCardInfo.mac" ></el-input>
+        </el-form-item>
+        <el-form-item label="sn">
+          <el-input style="width:300px;" readonly v-model="ctCardInfo.sn" ></el-input>
+        </el-form-item>
+        <el-form-item label="设备当前卡类型">
+          <el-select class="queryFormInput"  clearable placeholder="请选择" v-model="ctCardInfo.cardUsingType" @change="typeChanged">
+            <el-option v-for="item in cardUsingType" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="ctCardInfoDlgShowed = false" :disabled="btnEnable">取 消</el-button>
+        <el-button  @click="toSwitchCard" type="primary" :disabled="btnEnable">保 存</el-button>
+      </span>  
+    </el-dialog> 
   </div> 
 </template>
 
@@ -378,6 +410,14 @@ export default {
   },
   data () {
     return {
+        ctCardInfo:{
+          iccid: '',
+          phoneNumber:'',
+          imei:'',
+          mac:'',
+          sn:''
+        },
+        ctCardInfoDlgShowed: false,
         // swichCardDlgShowed: false,
         cardInfoChangeDlgshowd:false,
         cardInfoChanges:[],  
@@ -452,6 +492,10 @@ export default {
             {value:'1', name:'已查询出的全部卡'},
             {value:'2', name:'文件导入'}
         ],
+        cardUsingType:[
+            {value:0, name:'联通卡'},
+            {value:1, name:'电信卡'}
+        ],
         optType:'',
         uploadedFile:null,
         uploadedFile2CheckFile:null,
@@ -512,8 +556,8 @@ export default {
         { prop: 'channelName', label: '渠道 ', width: 160 },
         { prop: 'gmtActivate', label: '开卡时间', width: 180 },
         { prop: 'lbsInfo', label: '备注 ', width: 160 },
-        { prop: 'iccidCt', label: '电信卡ICCID', width: 180, sortable: true },
-        { prop: 'phoneNumberCt', label: '电信卡号码', width: 180, sortable: true },
+        // { prop: 'iccidCt', label: '电信卡ICCID', width: 180, sortable: true },
+        // { prop: 'phoneNumberCt', label: '电信卡号码', width: 180, sortable: true },
         // { prop: 'gmtCreate', label: '首次绑定时间 ', width: 160 },
         // { prop: 'deviceNameNew', label: '设备名称 ', width: 160 },
         { prop: 'opts', label: '操作', width: 120 ,fixed: 'right'}
@@ -576,19 +620,51 @@ export default {
         }).catch(() => {
         }); 
     },
-    toSwitchCard: function(iccid){
+    toCtCard: function(iccid){
+      let params = {}
+      params.iccid = iccid
+      apiBigflow.getCtCardInfo(params).then(res=>{
+          if(res.resultCode == 0){
+              this.ctCardInfo = res.data
+          }else{
+              this.$message.error('切换电信卡失败:' + res.resultInfo)
+          }
+      })
+      this.ctCardInfoDlgShowed = true
+    },
+    typeChanged: function(cardType){
+      // if(cardType === 1){
+      //   if(this.ctCardInfo.cardNowUsingType === 1)
+      //     return
+      //   if(this.ctCardInfo.cardNowUsingType === 0){
+      //     this.toSwitchCard(this.ctCardInfo.iccidBigflow)
+      //   }else if(cardType === 0){
+      //     console.log('ssss')
+      //     if(this.ctCardInfo.cardNowUsingType === 0)
+      //      return
+      //     if(this.ctCardInfo.cardNowUsingType === 1){
+      //       console.log('1111')
+      //       this.$message.error('设备已经切换到电信卡，不能在切换回联通卡')
+      //     }
+      //   }
+      // }
+      // console.log('cardUsingType:' + this.ctCardInfo.cardUsingType)
+      // console.log('cardType:' + cardType)
+    },
+    toSwitchCard: function(){
       this.$confirm('您确认要切换到电信卡?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
         }).then(() => {
             let params = {}
-            params.iccid = iccid
+            params.iccid = this.ctCardInfo.iccidBigflow
+            params.cardUsingType = this.ctCardInfo.cardUsingType
             apiBigflow.switch2ctcard(params).then(res=>{
                 if(res.resultCode == 0){
-                    this.$message.success('已经切换到电信卡，新的iccid：' + res.data)
+                    this.$message.success('操作成功')
                 }else{
-                    this.$message.error('切换电信卡失败:' + res.resultInfo)
+                    this.$message.error('操作失败:' + res.resultInfo)
                 }
             })
         }).catch(() => {
