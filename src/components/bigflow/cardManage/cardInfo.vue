@@ -122,7 +122,7 @@
                 <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toHistoryUsage(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-historyUsage'}">查历史用量</el-button>
                 <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toCardInfoChagnes(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-historyUsage'}">查信息变更记录</el-button>
                 <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toCoreBills(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-changeRecords'}">卡变更记录</el-button>
-                <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toCtCard(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-changeRecords'}">电信卡信息</el-button>
+                <el-button v-if="scope.row.isZxCard !== 1 && scope.row.deviceType == 1"  type="text" size="small" @click="toCtCard(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-changeRecords'}">电信卡信息</el-button>
               </div>
               
               <div v-html="scope.row[p.prop]" />
