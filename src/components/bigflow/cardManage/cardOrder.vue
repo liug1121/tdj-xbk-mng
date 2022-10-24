@@ -445,14 +445,14 @@ export default {
         this.orderImportForm.fileToken = ''
     },
     uploadFile (item) {
-        let params = new FormData()
-        params.append('file', item.file)
+        // let params = new FormData()
+        // params.append('file', item.file)
         this.uploadedFile = item.file
-        apiBigflow.uploadFile(params).then(res=>{
-            if(res.resultCode == 0){
-               this.orderImportForm.fileToken = res.data
-            }
-        })
+        // apiBigflow.uploadFile(params).then(res=>{
+        //     if(res.resultCode == 0){
+        //        this.orderImportForm.fileToken = res.data
+        //     }
+        // })
     },
     openOrderImportDlg:function(){
         this.showOrderImportDlg = true
@@ -468,10 +468,10 @@ export default {
           if(this.orderImportForm.productCode == undefined){
             this.orderImportForm.productCode = ''
           }
-         if(this.orderImportForm.fileToken == undefined || this.orderImportForm.fileToken == ''){
-            alert('请先上传要操作的excel文件')
-            return
-        }
+        //  if(this.orderImportForm.fileToken == undefined || this.orderImportForm.fileToken == ''){
+        //     alert('请先上传要操作的excel文件')
+        //     return
+        // }
         let that = this
         this.$confirm('您确认要此操作, 是否继续?', '提示', {
             confirmButtonText: '确定',

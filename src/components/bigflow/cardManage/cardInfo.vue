@@ -122,7 +122,7 @@
                 <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toHistoryUsage(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-historyUsage'}">查历史用量</el-button>
                 <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toCardInfoChagnes(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-historyUsage'}">查信息变更记录</el-button>
                 <el-button v-if="scope.row.isZxCard !== 1"  type="text" size="small" @click="toCoreBills(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-changeRecords'}">卡变更记录</el-button>
-                <el-button v-if="scope.row.isZxCard !== 1 && scope.row.deviceType == 1"  type="text" size="small" @click="toCtCard(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-changeRecords'}">电信卡信息</el-button>
+                <el-button v-if="scope.row.isZxCard !== 1 && scope.row.deviceType == 1"  type="text" size="small" @click="toCtCard(scope.row.iccid)" v-permission="{indentity:'bigflowCardInfo-changeRecords'}">设备管理</el-button>
               </div>
               
               <div v-html="scope.row[p.prop]" />
@@ -365,7 +365,7 @@
         element-loading-text="加载中" > 
     </el-main>
 
-    <el-dialog title="电信卡信息" :visible.sync="ctCardInfoDlgShowed" width="450px" @close="ctCardInfoDlgShowed = false">
+    <el-dialog title="设备管理" :visible.sync="ctCardInfoDlgShowed" width="450px" @close="ctCardInfoDlgShowed = false">
       <!-- 内容主体区域 --> 
       <el-form :model="ctCardInfo"  label-width="110px">
         <el-form-item label="电信ICCID">

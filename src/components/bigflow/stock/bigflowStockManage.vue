@@ -434,10 +434,10 @@ export default {
         this.showMoveCard2ChannelDlg = false
     }, 
     okMoveCard2Channel:function(){
-        if(this.moveCard2ChannelForm.fileToken == undefined || this.moveCard2ChannelForm.fileToken == ''){
-            alert('请先上传要操作的excel文件')
-            return
-        }
+        // if(this.moveCard2ChannelForm.fileToken == undefined || this.moveCard2ChannelForm.fileToken == ''){
+        //     alert('请先上传要操作的excel文件')
+        //     return
+        // }
         let that = this
         this.$confirm('您确认要此操作, 是否继续?', '提示', {
             confirmButtonText: '确定',
@@ -449,7 +449,8 @@ export default {
             let params = new FormData()
             params.append('file', this.uploadedFile)
             params.append('channelId', this.moveCard2ChannelForm.channelId)
-            params.append('fileToken', this.moveCard2ChannelForm.fileToken)
+            // params.append('fileToken', this.moveCard2ChannelForm.fileToken)
+            params.append('fileToken', '')
             console.log('sdsd')
             apiBigflow.moveStockCards2Channel(params).then(res=>{
                 if(res.resultCode == 0){
@@ -502,14 +503,14 @@ export default {
         this.moveCard2ChannelForm.fileToken = ''
     },
     uploadMoveStockCard2ChannelFile (item) {
-        let params = new FormData()
+        // let params = new FormData()
         this.uploadedFile = item.file
-        params.append('file', item.file)
-        apiBigflow.uploadFile(params).then(res=>{
-            if(res.resultCode == 0){
-               this.moveCard2ChannelForm.fileToken = res.data
-            }
-        })
+        // params.append('file', item.file)
+        // apiBigflow.uploadFile(params).then(res=>{
+        //     if(res.resultCode == 0){
+        //        this.moveCard2ChannelForm.fileToken = res.data
+        //     }
+        // })
     },
     removeUploadedMoveCardFile(file,fileList){
         this.cardMoveForm.fileToken = ''
@@ -534,25 +535,24 @@ export default {
       this.cardResetFile = item.file
     },
     uploadFile (item) {
-      
-        let params = new FormData()
-        params.append('file', item.file)
+        // let params = new FormData()
+        // params.append('file', item.file)
         this.file2Upload = item.file
-        apiBigflow.uploadFile(params).then(res=>{
-            if(res.resultCode == 0){
-               this.cardImportForm.fileToken = res.data
-            }
-        })
+        // apiBigflow.uploadFile(params).then(res=>{
+        //     if(res.resultCode == 0){
+        //        this.cardImportForm.fileToken = res.data
+        //     }
+        // })
     },
       closeCardImportDlg:function(){
           this.showCardImportDlg = false
       }, 
       okCardImport:function(){
         //   importPoolCards
-        if(this.cardImportForm.fileToken == undefined || this.cardImportForm.fileToken == ''){
-            this.$message.success('请先上传要操作的excel文件')
-            return
-        }
+        // if(this.cardImportForm.fileToken == undefined || this.cardImportForm.fileToken == ''){
+        //     this.$message.success('请先上传要操作的excel文件')
+        //     return
+        // }
         let that = this
         this.$confirm('您确认要此操作, 是否继续?', '提示', {
             confirmButtonText: '确定',
@@ -564,7 +564,8 @@ export default {
             params.append('file', this.file2Upload)
             params.append('serviceName', this.cardImportForm.serviceName)
             params.append('type', this.cardImportForm.type)
-            params.append('fileToken', this.cardImportForm.fileToken)
+            // params.append('fileToken', this.cardImportForm.fileToken)
+            params.append('fileToken', '')
             params.append('productType', this.cardImportForm.productType)
             apiBigflow.importStockCards(params).then(res=>{
                 if(res.resultCode == 0){

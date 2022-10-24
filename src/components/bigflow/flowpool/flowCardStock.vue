@@ -345,14 +345,14 @@ export default {
         this.file2Upload = null
     },
     uploadFile (item) {
-        let params = new FormData()
-        params.append('file', item.file)
+        // let params = new FormData()
+        // params.append('file', item.file)
         this.file2Upload = item.file
-        apiBigflow.uploadFile(params).then(res=>{
-            if(res.resultCode == 0){
-               this.poolCardImortForm.fileToken = res.data
-            }
-        })
+        // apiBigflow.uploadFile(params).then(res=>{
+        //     if(res.resultCode == 0){
+        //        this.poolCardImortForm.fileToken = res.data
+        //     }
+        // })
     },
     openPoolCardImortDlg:function(){
         this.showPoolCardImortDlg = true
@@ -363,10 +363,10 @@ export default {
     okAmountPoolCardImort:function(){
       let that = this
         // importPoolCards
-        if(this.poolCardImortForm.fileToken == undefined || this.poolCardImortForm.fileToken == ''){
-            this.$message.error('请先上传要操作的excel文件')
-            return
-        }
+        // if(this.poolCardImortForm.fileToken == undefined || this.poolCardImortForm.fileToken == ''){
+        //     this.$message.error('请先上传要操作的excel文件')
+        //     return
+        // }
         
         this.$confirm('您确认要此操作, 是否继续?', '提示', {
             confirmButtonText: '确定',
@@ -396,10 +396,10 @@ export default {
     okPoolCardImort:function(){
         let that = this
         // importPoolCards
-        if(this.poolCardImortForm.fileToken == undefined || this.poolCardImortForm.fileToken == ''){
-            this.$message.error('请先上传要操作的excel文件')
-            return
-        }
+        // if(this.poolCardImortForm.fileToken == undefined || this.poolCardImortForm.fileToken == ''){
+        //     this.$message.error('请先上传要操作的excel文件')
+        //     return
+        // }
         
         this.$confirm('您确认要此操作, 是否继续?', '提示', {
             confirmButtonText: '确定',
@@ -412,7 +412,8 @@ export default {
             params.append('poolId', this.poolCardImortForm.poolId)
             params.append('useLimitStatus', this.poolCardImortForm.useLimitStatus)
             params.append('reason', this.poolCardImortForm.reason)
-            params.append('fileToken', this.poolCardImortForm.fileToken)
+            // params.append('fileToken', this.poolCardImortForm.fileToken)
+            params.append('fileToken', '')
             apiBigflow.importPoolCards(params).then(res=>{
                 if(res.resultCode == 0){
                     that.queryFlowCardStocks()
