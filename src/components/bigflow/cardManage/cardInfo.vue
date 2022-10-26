@@ -391,6 +391,9 @@
             <el-option v-for="item in cardUsingType" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="数据同步状态">
+          <el-input style="width:300px;" readonly v-model="ctCardInfo.optSendStatusName" ></el-input>
+        </el-form-item>
       </el-form>
       <!-- 底部区域 -->
       <span slot="footer" class="dialog-footer">
