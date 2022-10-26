@@ -377,14 +377,26 @@
         <el-form-item label="联通ICCID">
           <el-input style="width:300px;" readonly v-model="ctCardInfo.iccidBigflow" ></el-input>
         </el-form-item>
-        <el-form-item label="imei">
+        <el-form-item label="IMEI">
           <el-input style="width:300px;" readonly  v-model="ctCardInfo.imei" ></el-input>
         </el-form-item>
-        <el-form-item label="mac">
+        <el-form-item label="MAC">
           <el-input style="width:300px;" readonly v-model="ctCardInfo.mac" ></el-input>
         </el-form-item>
-        <el-form-item label="sn">
+        <el-form-item label="SN">
           <el-input style="width:300px;" readonly v-model="ctCardInfo.sn" ></el-input>
+        </el-form-item>
+        <el-form-item label="信号强度(dBm)">
+          <el-input style="width:300px;" readonly v-model="ctCardInfo.rssi" ></el-input>
+        </el-form-item>
+        <el-form-item label="设备登陆名">
+          <el-input style="width:300px;" readonly v-model="ctCardInfo.userName" ></el-input>
+        </el-form-item>
+        <el-form-item label="设备登陆密码">
+          <el-input style="width:300px;" readonly v-model="ctCardInfo.pwd" ></el-input>
+        </el-form-item>
+        <el-form-item label="SIM卡切换密码">
+          <el-input style="width:300px;" readonly v-model="ctCardInfo.switchPwd" ></el-input>
         </el-form-item>
         <el-form-item label="设备当前卡类型">
           <el-select class="queryFormInput"  clearable placeholder="请选择" v-model="ctCardInfo.cardUsingType" @change="typeChanged">
