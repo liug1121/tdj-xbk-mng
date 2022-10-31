@@ -1,6 +1,10 @@
 <template>
   <!-- 我的任务 刘珍利  -->
   <div class="box_subject">
+    <div class="button_content">
+        <el-button class="upload-btn" size="medium"  slot="trigger" type="primary"  @click="refresh"
+        >刷新页面</el-button>
+      </div>
     <el-card class="all_list">
       <!-- 卡库存 List 区域 -->
       <el-table v-loading="loading" :data="taskslist" border max-height="600px" align="center" :cell-style="{height: '38px',padding:0}">
@@ -63,6 +67,9 @@ export default {
     this.getTaskslist()
   },
   methods: {
+    refresh(){
+      this.getTaskslist()
+    },
     //获取分页列表
     getTaskslist () {
       // 获取查询字段
