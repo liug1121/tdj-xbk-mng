@@ -177,7 +177,7 @@ export default {
                 if(res.resultCode == 0){
                     this.$message.success('导出任务提交成功，请在任务：' + res.data + '中查看')
                 }else{
-                    this.$message.success('导出失败失败')
+                    this.$message.error('导出失败:' + res.resultInfo)
                 }
 
             })
