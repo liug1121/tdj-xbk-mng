@@ -32,7 +32,7 @@
           v-model="endDateTime">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="蜂窝帐号" class="queryFormItem" >
+        <el-form-item  v-permission="{indentity:'bigflowStockMng-export'}" label="蜂窝帐号" class="queryFormItem" >
           <el-select 
            filterable
            clearable

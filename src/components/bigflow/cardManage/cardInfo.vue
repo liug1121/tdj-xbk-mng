@@ -389,6 +389,18 @@
         <el-form-item label="信号强度(dBm)">
           <el-input style="width:300px;" readonly v-model="ctCardInfo.rssi" ></el-input>
         </el-form-item>
+        <el-form-item label="联通卡用量">
+          <el-input style="width:300px;" readonly v-model="ctCardInfo.usedBigflow" ></el-input>
+        </el-form-item>
+        <el-form-item label="电信卡用量">
+          <el-input style="width:300px;" readonly v-model="ctCardInfo.usedCt" ></el-input>
+        </el-form-item>
+        <el-form-item label="联通卡实名状态">
+          <el-input style="width:300px;" readonly v-model="ctCardInfo.authStatusBigflow" ></el-input>
+        </el-form-item>
+        <el-form-item label="电信卡实名状态">
+          <el-input style="width:300px;" readonly v-model="ctCardInfo.authStatusCt" ></el-input>
+        </el-form-item>
         <el-form-item label="设备登陆名">
           <el-input style="width:300px;" readonly v-model="ctCardInfo.userName" ></el-input>
         </el-form-item>
