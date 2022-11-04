@@ -235,6 +235,11 @@
             <el-option v-for="item in products2Change" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="物流商品">
+          <el-select class="queryFormInput"  clearable placeholder="请选择物流商品" v-model="orderLogisticImportForm.goodId">
+            <el-option v-for="item in goods" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form  label-width="120px">
         <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadFile" :on-remove="removeUploadedFile">
           <el-button size="small" type="primary">点击上传</el-button>
@@ -353,6 +358,11 @@ export default {
       { label: "未交押金", value: 0 },
       { label: "已交押金", value: 1 }
     ],
+    goods:[{
+      value:'89860619', 
+      name: '测试商品'
+    } 
+    ],
     giveTypes:[{
         value:1,
         name:'包含套餐'
@@ -418,9 +428,6 @@ export default {
   watch: {},
   methods: {
     closeLogisticOrderImportDlg:function(){
-      this.showLogisticOrderImportDlg = false
-    },
-    okLogisticOrderImport:function(){
       this.showLogisticOrderImportDlg = false
     },
     closePledgeOptDlg:function(){
@@ -520,6 +527,39 @@ export default {
     },
     closeOrderImportDlg:function (){
         this.showOrderImportDlg = false
+    },
+    okLogisticOrderImport:function(){
+          if(this.orderLogisticImportForm.saleChannel == undefined || this.orderLogisticImportForm.saleChannel == '' || this.orderLogisticImportForm.saleChannel == null){
+            this.$message.error('渠道不能为空')
+            return
+          }
+          if(this.orderLogisticImportForm.productCode == undefined){
+            this.orderLogisticImportForm.productCode = ''
+          }
+        let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = new FormData()
+            params.append('file', this.uploadedFile)
+            params.append('channelId', this.orderLogisticImportForm.saleChannel)
+            params.append('productCode', this.orderLogisticImportForm.productCode)
+            params.append('goodId', this.orderLogisticImportForm.goodId)
+            apiBigflow.importLogisticOrder2Channel(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryCardOrders()
+                    this.showLogisticOrderImportDlg = false
+                    alert('操作成功')
+                }else{
+                    alert('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        }); 
     },
     okOrderImport:function(){
           if(this.orderImportForm.saleChannel == undefined || this.orderImportForm.saleChannel == '' || this.orderImportForm.saleChannel == null){
