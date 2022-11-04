@@ -55,6 +55,8 @@
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardOrder-createAndDistribution'}" @click="openOrderImportDlg">创建订单并分配渠道</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowCardOrder-createAndDistribution'}" @click="openLogisticOrderImportDlg">创建物流订单并分配渠道</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardOrder-distribution'}" @click="openMoveOrderDlg">首尾分配渠道</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardOrder-exportFor'}" disabled>按首尾条件导出</el-button>
@@ -216,6 +218,44 @@
       </span>  
     </el-dialog>
 
+
+    <el-dialog title="物流订单文件导入" :visible.sync="showLogisticOrderImportDlg" width="450px" @close="closeLogisticOrderImportDlg">
+      <el-form :model="orderLogisticImportForm"  label-width="110px">
+        <el-form-item label="分配渠道">
+          <el-select 
+          filterable
+          clearable
+          reserve-keyword
+          class="queryFormInput"  placeholder="请选择分配渠道" v-model="orderLogisticImportForm.saleChannel" @change="handleSelectChannel">
+            <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="预充值套餐">
+          <el-select class="queryFormInput"  clearable placeholder="请选择预充值套餐" v-model="orderLogisticImportForm.productCode">
+            <el-option v-for="item in products2Change" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form  label-width="120px">
+        <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadFile" :on-remove="removeUploadedFile">
+          <el-button size="small" type="primary">点击上传</el-button>
+        </el-upload>
+      </el-form>
+      </el-form>
+      <span>
+          <p>1）<a href='http://xbk.xuebaka.cn/download/template/movecard-stock.xlsx'>下载模板后</a>，填写数据。ICCID 字段为必填。</p>
+
+            <p>2）会根据提交的信息创建订单，并分配库存渠道、销售员</p>
+
+            <p>3）如果订单存在，库存也已经分配过了。会进行覆盖更新</p>
+
+            <p>4）卡状态不是 “可销售” 的不能进行操作，“已激活” 的也不可以。请确保提交的文件或所选择的信息是符合条件的</p>
+      </span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeLogisticOrderImportDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okLogisticOrderImport" :disabled="btnEnable">确 定</el-button>
+      </span>  
+    </el-dialog>
+
     <el-dialog title="批量删除订单" :visible.sync="showBatchDeleteOrder" width="450px" @close="closeBatchDeleteOrderDlg">
       <el-form  label-width="110px"> 
         <el-form  label-width="120px">
@@ -262,6 +302,7 @@ export default {
   },
   data () {
     return {
+        showLogisticOrderImportDlg: false,
         uploadedFile: '',
         cashPledgePayed: null,
         salerName: null,
@@ -284,6 +325,7 @@ export default {
         showBatchDeleteOrder:false,
         showOrderImportDlg:false,  
         orderImportForm:{},
+        orderLogisticImportForm:{},
         showMoveOrderDlg:false, 
         moveOrderForm:{}, 
         btnEnable:false,
@@ -351,7 +393,17 @@ export default {
         // { prop: 'saled', label: '是否已售卖', width: 160 },
         // { prop: 'saledDate', label: '售卖日期', width: 160 },
         // { prop: 'saledPrice', label: '销售金额', width: 160 },
-        // { prop: 'wechatPayNo', label: '支付单号', width: 160 }
+        // { prop: 'wechatPayNo', label: '支付单号', width: 160 },
+        { prop: 'logisticReceiveName', label: '物流联系人', width: 160 },
+        { prop: 'logisticReceivePhone', label: '联系电话', width: 160 },
+        { prop: 'logisticProvince', label: '配送省份', width: 160 },
+        { prop: 'logisticCity', label: '配送城市', width: 160 },
+        { prop: 'logisticAddress', label: '配送地址', width: 160 },
+        { prop: 'logisticGoodBarCode', label: '商品编码', width: 160 },
+        { prop: 'logisticGoodName', label: '商品名称', width: 160 },
+        { prop: 'logisticCode', label: '物流单号', width: 160 },
+        { prop: 'logisticName', label: '物流公司', width: 160 },
+        { prop: 'jackyunTradeCode', label: '吉客云单号', width: 160 }
       ],
     };
   },
@@ -365,6 +417,12 @@ export default {
   },
   watch: {},
   methods: {
+    closeLogisticOrderImportDlg:function(){
+      this.showLogisticOrderImportDlg = false
+    },
+    okLogisticOrderImport:function(){
+      this.showLogisticOrderImportDlg = false
+    },
     closePledgeOptDlg:function(){
       this.showPledgeOptDlg = false
     },
@@ -456,6 +514,9 @@ export default {
     },
     openOrderImportDlg:function(){
         this.showOrderImportDlg = true
+    },
+    openLogisticOrderImportDlg:function(){
+      this.showLogisticOrderImportDlg = true
     },
     closeOrderImportDlg:function (){
         this.showOrderImportDlg = false
