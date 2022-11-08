@@ -381,6 +381,9 @@ export default {
       // 列表，标题、字段
       table_column: [
         { prop: 'orderId', label: '订单编号', width: 200, sortable: true },
+        { prop: 'shopOrderId', label: '网店订单编号', width: 200, sortable: true },
+        { prop: 'shopName', label: '网店名称', width: 200, sortable: true },
+        
         { prop: 'productName', label: '卡套餐', width: 100, sortable: true },
         { prop: 'iccid', label: 'ICCID', width: 180, sortable: true },
         { prop: 'phoneNumber', label: 'MSISDN', width: 150, sortable: true },
