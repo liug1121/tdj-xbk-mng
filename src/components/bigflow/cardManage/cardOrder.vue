@@ -230,7 +230,7 @@
             <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="预充值套餐">
+        <!-- <el-form-item label="预充值套餐">
           <el-select class="queryFormInput"  clearable placeholder="请选择预充值套餐" v-model="orderLogisticImportForm.productCode">
             <el-option v-for="item in products2Change" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
@@ -239,7 +239,7 @@
           <el-select class="queryFormInput"  clearable placeholder="请选择物流商品" v-model="orderLogisticImportForm.goodId">
             <el-option v-for="item in goods" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form  label-width="120px">
         <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadFile" :on-remove="removeUploadedFile">
           <el-button size="small" type="primary">点击上传</el-button>
@@ -384,12 +384,12 @@ export default {
         { prop: 'productName', label: '卡套餐', width: 100, sortable: true },
         { prop: 'iccid', label: 'ICCID', width: 180, sortable: true },
         { prop: 'phoneNumber', label: 'MSISDN', width: 150, sortable: true },
-        { prop: 'name', label: '买家姓名', width: 80, sortable: true },
+        // { prop: 'name', label: '买家姓名', width: 80, sortable: true },
         { prop: 'saleChannelName', label: '渠道名称', width: 150, sortable: true },
         // { prop: 'salePoint', label: '销售网点', width: 50, sortable: true },
         // { prop: 'salePerson', label: '销售员', width: 50, sortable: true },
         // { prop: 'supplierName', label: '供应账户', width: 100, sortable: true },
-        { prop: 'statusName', label: '订单状态', width: 80 },
+        // { prop: 'statusName', label: '订单状态', width: 80 },
         // { prop: 'giveUsage', label: '赠送用量', width: 80 },
         // { prop: 'giveUsageType', label: '赠送用量类型', width: 50 },
         { prop: 'gmtCreate', label: '下单时间', width: 160, sortable: true },
@@ -404,13 +404,13 @@ export default {
         // { prop: 'saledDate', label: '售卖日期', width: 160 },
         // { prop: 'saledPrice', label: '销售金额', width: 160 },
         // { prop: 'wechatPayNo', label: '支付单号', width: 160 },
-        { prop: 'logisticReceiveName', label: '物流联系人', width: 160 },
+        // { prop: 'logisticReceiveName', label: '物流联系人', width: 160 },
         { prop: 'logisticReceivePhone', label: '联系电话', width: 160 },
-        { prop: 'logisticProvince', label: '配送省份', width: 160 },
-        { prop: 'logisticCity', label: '配送城市', width: 160 },
+        // { prop: 'logisticProvince', label: '配送省份', width: 160 },
+        // { prop: 'logisticCity', label: '配送城市', width: 160 },
         { prop: 'logisticAddress', label: '配送地址', width: 160 },
-        { prop: 'logisticGoodBarCode', label: '商品编码', width: 160 },
-        { prop: 'logisticGoodName', label: '商品名称', width: 160 },
+        // { prop: 'logisticGoodBarCode', label: '商品编码', width: 160 },
+        // { prop: 'logisticGoodName', label: '商品名称', width: 160 },
         { prop: 'logisticCode', label: '物流单号', width: 160 },
         { prop: 'logisticName', label: '物流公司', width: 160 },
         { prop: 'jackyunTradeCode', label: '吉客云单号', width: 160 }
@@ -535,6 +535,10 @@ export default {
           }
           if(this.orderLogisticImportForm.productCode == undefined){
             this.orderLogisticImportForm.productCode = ''
+          }
+          if(this.uploadedFile == undefined || this.uploadedFile == null || this.uploadedFile == ''){
+            this.$message.error('请先上传要导入的物流订单文件')
+            return
           }
         let that = this
         this.$confirm('您确认要此操作, 是否继续?', '提示', {
