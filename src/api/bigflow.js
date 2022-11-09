@@ -191,6 +191,13 @@ export default {
               }
         })
     },
+    importLogisticReturnOrder2Channel: params =>{
+        return API.POST('/bigflow/manage/v1.0/logistic/order/return/import', params, {
+            headers: {
+                'content-type': 'multipart/form-data'
+              }
+        })
+    },
     importPoolCards: params =>{
         return API.POST('/bigflow/manage/v1.0/flowpools/card/import', params, {
             headers: {

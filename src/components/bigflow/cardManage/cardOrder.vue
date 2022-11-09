@@ -6,17 +6,25 @@
         <el-form-item label="订单编号" class="queryFormItem" >
           <el-input class="queryFormInput" clearable placeholder="请输入订单编号" style="width:150px" v-model="orderId"></el-input>
         </el-form-item>
+        <el-form-item label="网店订单编号" class="queryFormItem" >
+          <el-input class="queryFormInput" clearable placeholder="请输入订单编号" style="width:150px" v-model="shopOrderId"></el-input>
+        </el-form-item>
         <el-form-item label="ICCID" class="queryFormItem" >
           <el-input class="queryFormInput" clearable placeholder="请输入iccid" style="width:150px" v-model="iccid"></el-input>
         </el-form-item>
         <el-form-item label="MSISDN" class="queryFormItem" >
           <el-input class="queryFormInput" clearable placeholder="请输入msisdn" style="width:150px" v-model="msisdn"></el-input>
         </el-form-item>
-        <el-form-item label="卡状态" class="queryFormItem">
+        <el-form-item label="订单状态" class="queryFormItem">
+          <el-select class="queryFormInput"  clearable placeholder="请选择卡状态" v-model="orderStatus">
+            <el-option v-for="item in orderStatusOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <!-- <el-form-item label="卡状态" class="queryFormItem">
           <el-select class="queryFormInput"  clearable placeholder="请选择卡状态" v-model="cardStatus">
             <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="下单时间" class="queryFormItem">
           <el-date-picker style="width:140px"  type="date" placeholder="开始日期" value-format="yyyy-MM-dd" @change="startTimeChange" 
           v-model="orderStartDate">
@@ -56,6 +64,8 @@
         v-permission="{indentity:'bigflowCardOrder-createAndDistribution'}" @click="openOrderImportDlg">创建订单并分配渠道</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardOrder-createAndDistribution'}" @click="openLogisticOrderImportDlg">创建物流订单并分配渠道</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowCardOrder-createAndDistribution'}" @click="openLogisticOrderReturnImportDlg">退货订单导入</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardOrder-distribution'}" @click="openMoveOrderDlg">首尾分配渠道</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
@@ -230,16 +240,6 @@
             <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
-        <!-- <el-form-item label="预充值套餐">
-          <el-select class="queryFormInput"  clearable placeholder="请选择预充值套餐" v-model="orderLogisticImportForm.productCode">
-            <el-option v-for="item in products2Change" :key="item.value" :label="item.name" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="物流商品">
-          <el-select class="queryFormInput"  clearable placeholder="请选择物流商品" v-model="orderLogisticImportForm.goodId">
-            <el-option v-for="item in goods" :key="item.value" :label="item.name" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item> -->
         <el-form  label-width="120px">
         <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadFile" :on-remove="removeUploadedFile">
           <el-button size="small" type="primary">点击上传</el-button>
@@ -247,17 +247,31 @@
       </el-form>
       </el-form>
       <span>
-          <p>1）<a href='http://xbk.xuebaka.cn/download/template/logistic-template.xlsx'>下载模板后</a>，填写数据。ICCID 字段为必填。</p>
-
-            <p>2）会根据提交的信息创建订单，并分配库存渠道、销售员</p>
-
-            <p>3）如果订单存在，库存也已经分配过了。会进行覆盖更新</p>
-
-            <p>4）卡状态不是 “可销售” 的不能进行操作，“已激活” 的也不可以。请确保提交的文件或所选择的信息是符合条件的</p>
+          <p>1）<a href='http://xbk.xuebaka.cn/download/template/logistic-template.xlsx'>下载模板后</a></p>
       </span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeLogisticOrderImportDlg" :disabled="btnEnable">取 消</el-button>
         <el-button type="primary" @click="okLogisticOrderImport" :disabled="btnEnable">确 定</el-button>
+      </span>  
+    </el-dialog>
+
+    <el-dialog title="退货订单文件导入" :visible.sync="showLogisticReturnOrderImportDlg" width="450px" @close="closeLogisticReturnOrderImportDlg">
+      <el-form :model="returnOrderLogisticImportForm"  label-width="110px">
+        <el-form-item label="备注信息">
+          <el-input style="width:300px;"  v-model="returnOrderLogisticImportForm.returnDescription"  placeholder="请输入" ></el-input>
+        </el-form-item>
+        <el-form  label-width="120px">
+        <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadFile" :on-remove="removeUploadedFile">
+          <el-button size="small" type="primary">点击上传</el-button>
+        </el-upload>
+      </el-form>
+      </el-form>
+      <span>
+          <p>1）<a href='http://xbk.xuebaka.cn/download/template/logistic-template.xlsx'>下载模板后</a></p>
+      </span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeLogisticReturnOrderImportDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okLogisticReturnOrderImport" :disabled="btnEnable">确 定</el-button>
       </span>  
     </el-dialog>
 
@@ -307,6 +321,12 @@ export default {
   },
   data () {
     return {
+        orderStatus: null,
+        shopOrderId:null,
+        returnOrderLogisticImportForm:{
+          returnDescription:''
+        },
+        showLogisticReturnOrderImportDlg: false,
         showLogisticOrderImportDlg: false,
         uploadedFile: '',
         cashPledgePayed: null,
@@ -345,6 +365,9 @@ export default {
         salePersons:[],
         loading: false,
 
+    orderStatusOptions:[
+      { label: "已退货", value: 11 }
+    ],
     statusOptions: [
         { label: "已录入", value: 1 },
         { label: "已发货", value: 2 },
@@ -393,7 +416,7 @@ export default {
         // { prop: 'salePoint', label: '销售网点', width: 50, sortable: true },
         // { prop: 'salePerson', label: '销售员', width: 50, sortable: true },
         // { prop: 'supplierName', label: '供应账户', width: 100, sortable: true },
-        // { prop: 'statusName', label: '订单状态', width: 80 },
+        { prop: 'statusName', label: '订单状态', width: 80 },
         // { prop: 'giveUsage', label: '赠送用量', width: 80 },
         // { prop: 'giveUsageType', label: '赠送用量类型', width: 50 },
         { prop: 'gmtCreate', label: '下单时间', width: 160, sortable: true },
@@ -417,7 +440,11 @@ export default {
         // { prop: 'logisticGoodName', label: '商品名称', width: 160 },
         { prop: 'logisticCode', label: '物流单号', width: 160 },
         { prop: 'logisticName', label: '物流公司', width: 160 },
-        { prop: 'jackyunTradeCode', label: '吉客云单号', width: 160 }
+        { prop: 'jackyunTradeCode', label: '吉客云单号', width: 160 },
+        { prop: 'returnShopOrderId', label: '网店退货单号', width: 160 },
+        { prop: 'returnDescription', label: '退货说明', width: 160 }
+        
+        
       ],
     };
   },
@@ -431,6 +458,9 @@ export default {
   },
   watch: {},
   methods: {
+    closeLogisticReturnOrderImportDlg:function(){
+      this.showLogisticReturnOrderImportDlg = false
+    },
     closeLogisticOrderImportDlg:function(){
       this.showLogisticOrderImportDlg = false
     },
@@ -526,11 +556,46 @@ export default {
     openOrderImportDlg:function(){
         this.showOrderImportDlg = true
     },
+    openLogisticOrderReturnImportDlg:function(){
+      this.showLogisticReturnOrderImportDlg = true
+    },
     openLogisticOrderImportDlg:function(){
       this.showLogisticOrderImportDlg = true
     },
     closeOrderImportDlg:function (){
         this.showOrderImportDlg = false
+    },
+    okLogisticReturnOrderImport:function(){
+      if(this.returnOrderLogisticImportForm.returnDescription == undefined || this.returnOrderLogisticImportForm.returnDescription == '' || this.returnOrderLogisticImportForm.returnDescription == null){
+        this.$message.error('备注信息不能为空')
+        return
+      }
+      if(this.uploadedFile == undefined || this.uploadedFile == null || this.uploadedFile == ''){
+        this.$message.error('请先上传要导入的物流订单文件')
+        return
+      }
+      let that = this
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+      }).then(() => {
+          that.btnEnable = true
+          let params = new FormData()
+          params.append('file', this.uploadedFile)
+          params.append('returnDescription', this.returnOrderLogisticImportForm.returnDescription)
+          apiBigflow.importLogisticReturnOrder2Channel(params).then(res=>{
+              if(res.resultCode == 0){
+                  that.queryCardOrders()
+                  this.showLogisticReturnOrderImportDlg = false
+                  alert('操作成功')
+              }else{
+                  alert('操作失败:' + res.resultInfo)
+              }
+              that.btnEnable = false
+          })
+      }).catch(() => {
+      }); 
     },
     okLogisticOrderImport:function(){
           if(this.orderLogisticImportForm.saleChannel == undefined || this.orderLogisticImportForm.saleChannel == '' || this.orderLogisticImportForm.saleChannel == null){
@@ -727,6 +792,10 @@ export default {
               params.gmtCreateEnd = this.orderEndDate
             if(this.channel != '') 
               params.saleChannel = this.channel
+            if(this.shopOrderId != '') 
+              params.shopOrderId = this.shopOrderId  
+            if(this.orderStatus != '') 
+              params.orderStatus = this.orderStatus  
             apiBigflow.exportCardOrders(params).then(res => {
                 if(res.resultCode == 0){
                     that.queryCardOrders()
@@ -766,6 +835,11 @@ export default {
         params.gmtCreateEnd = this.orderEndDate
       if(this.channel != '') 
         params.saleChannel = this.channel
+      if(this.shopOrderId != '') 
+        params.shopOrderId = this.shopOrderId
+      if(this.orderStatus != ''){
+        params.orderStatus = this.orderStatus
+      }
       // apiLogin.getCardOrders(params).then(res => {
       apiBigflow.getCardOrders(params).then(res => {
           if(res.resultCode == 0){
