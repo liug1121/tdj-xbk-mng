@@ -35,17 +35,17 @@
             <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="押金状态" class="queryFormItem">
+        <!-- <el-form-item label="押金状态" class="queryFormItem">
           <el-select class="queryFormInput"  clearable placeholder="请选择卡状态" v-model="cashPledgePayed">
             <el-option v-for="item in cashPledgePayedTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="客户经理" class="queryFormItem" >
+        </el-form-item> -->
+        <!-- <el-form-item label="客户经理" class="queryFormItem" >
           <el-input class="queryFormInput" clearable placeholder="请输入客户经理" style="width:150px" v-model="salerName"></el-input>
         </el-form-item>
         <el-form-item label="客户经理电话" class="queryFormItem" >
           <el-input class="queryFormInput" clearable placeholder="请输入客户经理电话" style="width:150px" v-model="salerPhone"></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-button size="medium" type="primary" icon="el-icon-search" @click="toQueryCardOrders">查询</el-button>
       </el-form>
       <!-- 按钮区域 -->
@@ -386,6 +386,7 @@ export default {
         
         { prop: 'productName', label: '卡套餐', width: 100, sortable: true },
         { prop: 'iccid', label: 'ICCID', width: 180, sortable: true },
+        { prop: 'imei', label: 'IMEI', width: 180, sortable: true },
         { prop: 'phoneNumber', label: 'MSISDN', width: 150, sortable: true },
         // { prop: 'name', label: '买家姓名', width: 80, sortable: true },
         { prop: 'saleChannelName', label: '渠道名称', width: 150, sortable: true },
