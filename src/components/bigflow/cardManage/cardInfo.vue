@@ -67,6 +67,15 @@
           v-model="openCardEndDate">
           </el-date-picker>
         </el-form-item>
+        <el-form-item  v-permission="{indentity:'bigflowStockMng-export'}" label="蜂窝帐号" class="queryFormItem" >
+          <el-select 
+           filterable
+           clearable
+           reserve-keyword
+           class="queryFormInput"  placeholder="请选择蜂窝帐号" v-model="fengwoAccount" style="width:250px">
+            <el-option v-for="item in fengwoAccounts" :key="item.account_id" :label="item.account_name" :value="item.account_id"></el-option>
+          </el-select>
+        </el-form-item>
         <el-button size="medium" type="primary" icon="el-icon-search" @click="okQueryCards">查询</el-button>
       </el-form>
       <!-- 按钮区域 -->
@@ -437,6 +446,8 @@ export default {
   },
   data () {
     return {
+        fengwoAccounts:[],
+        fengwoAccount:null,
         ctCardInfo:{
           iccid: '',
           phoneNumber:'',
@@ -602,9 +613,20 @@ export default {
       this.getAllChannels()
       this.getAllPools()
       this.queryCardInfos()
+      this.getFengwoAccounts()
   },
   watch: {},
   methods: {
+    getFengwoAccounts:function(){
+      let params = {}
+      params.page=0
+      params.pageSize=10000
+        apiBigflow.getAllFengwoConfigs(params).then(res=>{
+            if(res.resultCode == 0){
+                this.fengwoAccounts = res.data
+            }
+        })
+    },
     toExporBigflowCardInfos:function(){
       this.$confirm('您确认要此操作, 是否继续?', '提示', {
             confirmButtonText: '确定',

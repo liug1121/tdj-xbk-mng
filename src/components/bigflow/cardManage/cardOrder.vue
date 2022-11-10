@@ -267,7 +267,7 @@
       </el-form>
       </el-form>
       <span>
-          <p>1）<a href='http://xbk.xuebaka.cn/download/template/logistic-template.xlsx'>下载模板后</a></p>
+          <p>1）<a href='http://xbk.xuebaka.cn/download/template/logistic-return.xlsx'>下载模板后</a></p>
       </span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeLogisticReturnOrderImportDlg" :disabled="btnEnable">取 消</el-button>
