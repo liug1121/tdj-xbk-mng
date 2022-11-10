@@ -575,6 +575,8 @@ export default {
         { prop: 'phoneNumber', label: 'MSISDN', width: 150, sortable: true },
         { prop: 'statusName', label: '卡状态', width: 80, sortable: true },
         { prop: 'authStatusName', label: '认证状态', width: 70 },
+        { prop: 'fengwoAccount', label: '蜂窝帐号', width: 70 },
+        
         
         // { prop: 'customerId', label: '绑定状态', width: 80, sortable: true },
         // { prop: 'productCodeName', label: '卡品类', width: 80, sortable: true },
@@ -1309,6 +1311,8 @@ export default {
             params.gmtActivateStart = this.openCardStartDate
         if(this.openCardEndDate != '')
             params.gmtActivateEnd = this.openCardEndDate
+        if(this.fengwoAccount != '' && this.fengwoAccount != null && this.fengwoAccount != undefined)
+            params.serviceName = this.fengwoAccount
         return params
     },
     okQueryCards:function(){
