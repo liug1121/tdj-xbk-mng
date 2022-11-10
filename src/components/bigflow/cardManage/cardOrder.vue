@@ -87,8 +87,8 @@
       </el-main>
       <el-table
          :data="cardOrders" border max-height="1000" align="center" :cell-style="{height: '38px',padding:0}" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55">
-        </el-table-column>
+        <!-- <el-table-column type="selection" width="55">
+        </el-table-column> -->
         <el-table-column v-for="(p, key) in table_column" :prop="p.prop" :label="p.label"   :key="key" align="center" :fixed="p.fixed?p.fixed:false" :sortable="p.sortable">
           <template slot-scope="scope">
               <div v-html="scope.row[p.prop]" />
@@ -876,7 +876,7 @@ export default {
       this.queryCardOrders()
     },
     handleCurrentChange (newPage) {
-      this.page = newPage;
+      this.page = newPage - 1;
       this.queryCardOrders()
     },
   }
