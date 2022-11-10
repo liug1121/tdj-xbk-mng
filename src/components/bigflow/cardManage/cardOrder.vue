@@ -442,6 +442,8 @@ export default {
         { prop: 'logisticName', label: '物流公司', width: 160 },
         { prop: 'jackyunTradeCode', label: '吉客云单号', width: 160 },
         { prop: 'returnShopOrderId', label: '网店退货单号', width: 160 },
+        { prop: 'returnLogisticCode', label: '退货物流单号', width: 160 },
+        { prop: 'returnLogisticName', label: '退货物流公司', width: 160 },
         { prop: 'returnDescription', label: '退货说明', width: 160 }
         
         
