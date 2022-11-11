@@ -321,6 +321,7 @@ export default {
   },
   data () {
     return {
+        page:1,
         orderStatus: null,
         shopOrderId:null,
         returnOrderLogisticImportForm:{
@@ -397,7 +398,6 @@ export default {
     channels:[],
       products2Change:[],
       cardOrders: [],
-      page: 0,
       pageSize: 10,
       // 列表总条数
       total: 0,
@@ -812,7 +812,7 @@ export default {
         }); 
     },
     toQueryCardOrders:function(){
-      this.page = 0
+      this.page = 1
       this.queryCardOrders()
     },
     queryCardOrders:function(){
@@ -821,7 +821,7 @@ export default {
       params.cashPledgePayed = this.cashPledgePayed
       params.salerName = this.salerName
       params.salerPhone = this.salerPhone
-      params.page = this.page
+      params.page = this.page - 1
       params.pageSize = this.pageSize
       if(this.orderId != '')
         params.orderIdlike = this.orderId
@@ -876,7 +876,8 @@ export default {
       this.queryCardOrders()
     },
     handleCurrentChange (newPage) {
-      this.page = newPage - 1;
+      console.log(newPage)
+      this.page = newPage;
       this.queryCardOrders()
     },
   }
