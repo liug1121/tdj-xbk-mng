@@ -43,6 +43,24 @@
             <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item  v-permission="{indentity:'bigflowStockMng-export'}" label="蜂窝帐号" class="queryFormItem" >
+          <el-select 
+           filterable
+           clearable
+           reserve-keyword
+           class="queryFormInput"  placeholder="请选择蜂窝帐号" v-model="fengwoAccount" style="width:250px">
+            <el-option v-for="item in fengwoAccounts" :key="item.account_id" :label="item.account_name" :value="item.account_id"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="共享池" class="queryFormItem">
+          <el-select class="queryFormInput"  
+          filterable
+          clearable
+          reserve-keyword
+           placeholder="请选择渠道" v-model="poolId">
+            <el-option v-for="item in pools" :key="item.value" :label="item.name" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
         <!-- <el-form-item label="押金状态" class="queryFormItem">
           <el-select class="queryFormInput"  clearable placeholder="请选择卡状态" v-model="cashPledgePayed">
             <el-option v-for="item in cashPledgePayedTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
@@ -321,6 +339,10 @@ export default {
   },
   data () {
     return {
+        fengwoAccount:'',
+        poolId:'',
+        pools:[],
+        fengwoAccounts:[],
         page:1,
         orderStatus: null,
         shopOrderId:null,
@@ -413,6 +435,9 @@ export default {
         { prop: 'phoneNumber', label: 'MSISDN', width: 150, sortable: true },
         // { prop: 'name', label: '买家姓名', width: 80, sortable: true },
         { prop: 'saleChannelName', label: '渠道名称', width: 150, sortable: true },
+        { prop: 'fengwoAccount', label: '蜂窝帐号', width: 150, sortable: true },
+        { prop: 'flowSharingPoolName', label: '共享池', width: 150, sortable: true },
+        
         // { prop: 'salePoint', label: '销售网点', width: 50, sortable: true },
         // { prop: 'salePerson', label: '销售员', width: 50, sortable: true },
         // { prop: 'supplierName', label: '供应账户', width: 100, sortable: true },
@@ -454,12 +479,33 @@ export default {
 
   },
   created(){
+      console.log('created...')
       this.getAllChannels()
       this.queryCardOrders()
       this.getProducts2Change()
+      this.getFengwoAccounts()
+      this.getAllPools()
   },
   watch: {},
   methods: {
+    getAllPools:function(){
+        let params = {}
+        apiBigflow.getAllPools(params).then(res=>{
+            if(res.resultCode == 0){
+                this.pools = res.data
+            }
+        })
+    },
+    getFengwoAccounts:function(){
+      let params = {}
+      params.page=0
+      params.pageSize=10000
+        apiBigflow.getAllFengwoConfigs(params).then(res=>{
+            if(res.resultCode == 0){
+                this.fengwoAccounts = res.data
+            }
+        })
+    },
     closeLogisticReturnOrderImportDlg:function(){
       this.showLogisticReturnOrderImportDlg = false
     },
@@ -798,6 +844,9 @@ export default {
               params.shopOrderId = this.shopOrderId  
             if(this.orderStatus != '') 
               params.orderStatus = this.orderStatus  
+            if(this.fengwoAccount != null && this.fengwoAccount != '' && this.fengwoAccount != undefined){
+              params.fengwoAccount = this.fengwoAccount
+            }
             apiBigflow.exportCardOrders(params).then(res => {
                 if(res.resultCode == 0){
                     that.queryCardOrders()
@@ -842,6 +891,13 @@ export default {
       if(this.orderStatus != ''){
         params.orderStatus = this.orderStatus
       }
+      if(this.fengwoAccount != '' && this.fengwoAccount != undefined && this.fengwoAccount != null){
+        params.fengwoAccount = this.fengwoAccount 
+      }
+      if(this.poolId != '' && this.poolId != undefined && this.poolId != null){
+        params.poolId = this.poolId 
+      }
+      
       // apiLogin.getCardOrders(params).then(res => {
       apiBigflow.getCardOrders(params).then(res => {
           if(res.resultCode == 0){
