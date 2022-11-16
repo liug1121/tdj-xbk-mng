@@ -543,8 +543,8 @@ export default {
         { prop: 'surplusUsedName', label: '剩余总流量', width: 80, sortable: true },
         // { prop: 'lastPer', label: '剩余比率', width: 80, sortable: true },
         { prop: 'expireDate', label: '有效期', width: 100 },
-        { prop: 'payDetails', label: '可用量充值记录', width: 450, sortable: true },
-        { prop: 'payAmountsDetails', label: '账户余额充值记录', width: 450, sortable: true },
+        // { prop: 'payDetails', label: '可用量充值记录', width: 450, sortable: true },
+        // { prop: 'payAmountsDetails', label: '账户余额充值记录', width: 450, sortable: true },
         // { prop: 'gmtCreate', label: '创建时间', width: 100 },
         { prop: 'operation', label: '操作', width: 100, fixed: 'right'}
         
