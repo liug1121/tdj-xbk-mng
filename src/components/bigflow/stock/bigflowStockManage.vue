@@ -315,7 +315,7 @@ export default {
     cardStatus  :'',
     channels:[],
     bigflowStocks:[],
-      page: 0,
+      page: 1,
       pageSize: 10,
       // 列表总条数
       total: 0,
@@ -347,7 +347,7 @@ export default {
   watch: {},
   methods: {
     toQUeryBigflowStocks:function(){
-      this.page = 0
+      this.page = 1
       this.queryBigflowStocks()
     },
     closeCardResetDlg:function(){
@@ -655,9 +655,10 @@ export default {
         console.log('handleSelectBranchCom:' + item)
     },
     queryBigflowStocks:function(){
+      console.log('queryBigflowStocks')
         this.loading = true
         let params = {}
-        params.page = this.page
+        params.page = this.page - 1
         params.pageSize = this.pageSize
         if(this.startDateTime != '')
             params.gmtCreateStart = this.startDateTime

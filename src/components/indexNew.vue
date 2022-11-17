@@ -40,8 +40,8 @@
              </div>
            </div>
         </div>
-        <div class="board-row">
-          <span>风险告警</span>
+        <!-- <div class="board-row"> -->
+          <!-- <span>风险告警</span>
            <div class="alert-panel" @click="toLbs">
              <div class="left">
                <span class="title">风险区域</span>
@@ -52,21 +52,18 @@
              <div class="right">
                <img src="../assets/images/smsIcon.png"  alt="" />
              </div>
-           </div>
-           <div class="alert-panel" @click="toPool"> 
+           </div> -->
+           <!-- <div class="alert-panel" @click="toPool"> 
              <div class="left">
                <span class="title">风险用量</span>
                <div class="info">
                 可用量少于10%的流量池：{{sharingPoolNum}}（个）
                </div>
-               <!-- <div class="info">
-                可用量少于10%的卡：1200（张）
-               </div> -->
              </div>
              <div class="right">
                <img src="../assets/images/smsIcon.png"  alt="" />
              </div>
-           </div>
+           </div> -->
            <!-- <div class="alert-panel"> 
              <div class="left">
                <span class="title">风险类型</span>
@@ -81,9 +78,9 @@
                <img src="../assets/images/smsIcon.png"  alt="" />
              </div>
            </div> -->
-        </div>
+        <!-- </div> -->
         
-        <div class="board-row">
+        <!-- <div class="board-row">
           <span>卡统计</span>
           <div class="chart">
             <el-form  :inline="true" >
@@ -120,9 +117,9 @@
                 <div id="china_map"></div>
             </div>
           </div>  
-        </div>
+        </div> -->
 
-        <div class="board-row">
+        <!-- <div class="board-row">
           <span>增长趋势</span>
           <div class="chart">
             <div class="chart-form">
@@ -167,7 +164,7 @@
               <VeLine  :data="chartData"></VeLine>
             </div>
             
-        </div>
+        </div> -->
       </div>
       
     </el-card>
@@ -379,14 +376,14 @@ export default {
     this.$nextTick(()=>{
           this.initEchartMap();
       })
-    this.getChinaMapDatas()
-    this.getAllChannels()
-    this.getStopedCardNumForChannels()
-    this.getSharingPoolNumForChannels()
-    this.getImeiNumForChannels()
-    this.getCardStatusNumForChannels()
-    this.getCardNumForChannels()
-    this.getCardDataUsageForChannels()
+    // this.getChinaMapDatas()
+    // this.getAllChannels()
+    // this.getStopedCardNumForChannels()
+    // this.getSharingPoolNumForChannels()
+    // this.getImeiNumForChannels()
+    // this.getCardStatusNumForChannels()
+    // this.getCardNumForChannels()
+    // this.getCardDataUsageForChannels()
   },
   methods:{
     getChinaMapDatas:function(){
@@ -623,7 +620,7 @@ export default {
 <style scoped>
 .all_list {
   height: 100%;
-  height: 1600px;
+  height: 1000px;
   background: #f6f6f6;
 }
 .board{

@@ -549,7 +549,7 @@ export default {
         openCardEndDate:'',
 
       cardInfos:[],
-      page: 0,
+      page: 1,
       pageSize: 10,
       // 列表总条数
       total: 0,
@@ -1289,7 +1289,7 @@ export default {
     },
     createQueryParams:function(){
         let params = {}
-        params.page = this.page
+        params.page = this.page - 1
         params.pageSize = this.pageSize
         if(this.iccid != '')
             params.iccidLike = this.iccid
@@ -1316,7 +1316,7 @@ export default {
         return params
     },
     okQueryCards:function(){
-      this.page = 0
+      this.page = 1
       this.queryCardInfos()
     },
     queryCardInfos:function(){

@@ -276,7 +276,7 @@ export default {
         {label:'已销毁', value:9}
     ],
     flowCardStocks:[],
-      page: 0,
+      page: 1,
       pageSize: 10,
       // 列表总条数
       total: 0,
@@ -306,7 +306,7 @@ export default {
   watch: {},
   methods: {
     toQueryFlowCardStocks:function(){
-      this.page = 0
+      this.page = 1
       this.queryFlowCardStocks()
     },
     getAllAmountPools:function(){
@@ -624,7 +624,7 @@ export default {
     queryFlowCardStocks:function(){
         this.loading = true
         let params = {}
-        params.page = this.page
+        params.page = this.page - 1
         params.pageSize = this.pageSize
         if(this.iccid != '')
             params.iccidLike = this.iccid
