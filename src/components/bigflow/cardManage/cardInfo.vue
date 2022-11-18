@@ -89,6 +89,8 @@
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-flowChange'}" @click="openDosChangeDlg">可用量变更</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowCardInfo-flowChange'}" @click="openFileDosChangeDlg">批量可用量变更</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-productChange'}" @click="openChangeProductDlg">变更卡套餐</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-planChange'}" @click="openChangeCommonTypeDlg">变更卡通讯计划</el-button>
@@ -216,6 +218,36 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeDosChangeDlg" :disabled="btnEnable">取 消</el-button>
         <el-button type="primary" @click="okDosChange" :disabled="btnEnable">确 定</el-button>
+      </span> 
+    </el-dialog>
+
+    <el-dialog title="批量变更可用量" :visible.sync="fileDosChangeDlgShowed" width="450px" @close="closeFileDosChangeDlg">
+      <!-- 内容主体区域 -->
+      <el-form :model="fileDosChangeForm"  label-width="110px">
+        <el-form-item label="高速可用量">
+          <el-input style="width:300px;" onkeyup="value=value.replace(/[^\-?\d.]/g,'')" v-model.number="fileDosChangeForm.chargeHighDoseG" placeholder="请输入高速可用量" ></el-input>
+        </el-form-item>
+        <!-- <el-form-item label="中速可用量">
+          <el-input style="width:300px;" onkeyup="value=value.replace(/[^\-?\d.]/g,'')" v-model.number="fileDosChangeForm.chargeMediumDoseG" placeholder="请输入中速可用量" ></el-input>
+        </el-form-item> -->
+        <el-form-item label="原因">
+          <el-input style="width:300px;" v-model="fileDosChangeForm.reason" placeholder="请输入调整原因" ></el-input>
+        </el-form-item>
+        <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadFile" :on-remove="removeUploadedFile">
+          <el-button size="small" type="primary">点击上传</el-button>
+        </el-upload>
+         <a href='http://xbk.xuebaka.cn/download/template/dosChagne.xlsx'>下载模板文件</a>
+      </el-form>
+      <div class="notice">
+        <p>1）变更以G为单位，例如：输入1，代表1G</p>
+        <p>2）变更逻辑：在原来基础上加上变更的用量。 例如：原来有10G，变更1G，最后会变成11G</p>
+        <p>输入负数就是减： 输入-1，就会变成9G。</p>
+        <p>3）必填参数如果不需要变更，输入0即可</p>
+      </div>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeFileDosChangeDlg" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okFileDosChange" :disabled="btnEnable">确 定</el-button>
       </span> 
     </el-dialog>
 
@@ -446,6 +478,12 @@ export default {
   },
   data () {
     return {
+      fileDosChangeForm:{
+        chargeHighDoseG:0 ,
+        chargeMediumDoseG:0,
+        reason:''
+      },
+        fileDosChangeDlgShowed: false,
         fengwoAccounts:[],
         fengwoAccount:null,
         ctCardInfo:{
@@ -619,6 +657,43 @@ export default {
   },
   watch: {},
   methods: {
+    okFileDosChange:function(){
+      if(this.uploadedFile == undefined || this.uploadedFile == null || this.uploadedFile == ''){
+        this.$message.error('文件不能为空' )
+        return
+      }
+      
+      let that = this
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+      }).then(() => {
+          that.btnEnable = true
+          let params = new FormData()
+          params.append('file', this.uploadedFile)
+          params.append('changedDose', this.fileDosChangeForm.chargeHighDoseG)
+          params.append('reason', this.fileDosChangeForm.reason)
+          apiBigflow.file2ChangeDose(params).then(res=>{
+              if(res.resultCode == 0){
+                  that.queryCardInfos()
+                  that.fileDosChangeDlgShowed = false
+                  this.$message.success('操作成功,请在任务：' + res.data + "中查询处理结果")
+
+              }else{
+                  this.$message.error('操作失败:' + res.resultInfo)
+              }
+              that.btnEnable = false
+          })
+      }).catch(() => {
+      }); 
+    },
+    closeFileDosChangeDlg:function(){
+      this.fileDosChangeDlgShowed = false
+    },
+    openFileDosChangeDlg:function(){
+      this.fileDosChangeDlgShowed = true
+    },
     getFengwoAccounts:function(){
       let params = {}
       params.page=0

@@ -483,6 +483,13 @@ export default {
             }
           })
     },
+    file2ChangeDose:(params) => {
+        return API.POST('/bigflow/manage/v1.0/card/dose/file/change/import', params, {
+            headers: {
+              'content-type': 'multipart/form-data'
+            }
+          })
+    },
     modifyAmountPoolStatus: params =>{
         return API.POST('/bigflow/manage/v1.0/amountPool/status/modify', params)
     } ,
