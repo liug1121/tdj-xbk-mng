@@ -216,6 +216,15 @@
             <el-option v-for="item in productStatus" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="超量规则类型">
+          <el-select 
+            filterable
+          clearable
+          reserve-keyword
+            placeholder="请输入" v-model="productForm.offRuleType">
+            <el-option v-for="item in offRuleTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="showProductDlg = false">取 消</el-button>
@@ -415,6 +424,15 @@
         <el-form-item label="销售价格">
           <el-input style="width:300px;" onkeyup="value=value.replace(/[^?\d.]/g,'')" v-model="productEditForm.salePrice" placeholder="请输入销售价格" ></el-input>
         </el-form-item>
+        <el-form-item label="超量规则类型">
+          <el-select 
+            filterable
+          clearable
+          reserve-keyword
+            placeholder="请输入" v-model="productEditForm.offRuleType">
+            <el-option v-for="item in offRuleTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="showProductEditDlg = false">取 消</el-button>
@@ -530,7 +548,8 @@ export default {
       showProductEditDlg:false,
       productEditForm:{
         salePrice:'',
-        channelProductId:''
+        channelProductId:'',
+        offRuleType:0
       },
       lbsChannelConfigs:[],
       provincesList:[],
@@ -610,6 +629,7 @@ export default {
         { prop: 'price', label: '销售价', width: 50 },
         { prop: 'statusName', label: '状态', width: 50 },
         { prop: 'memo', label: '产品说明', width: 230 },
+        { prop: 'offRuleTypeName', label: '超量规则', width: 100 },
         { prop: 'opts', label: '操作', width: 150 ,fixed:'right'}
       ],
 
@@ -651,6 +671,10 @@ export default {
     productStatus:[
       {label:'上架状态', value:1},
       {label:'下架状态', value:2},
+    ],
+    offRuleTypes:[
+      {label:'超量关停', value:0},
+      {label:'超量限速', value:1},
     ],
     cardLowDoseTypes:[
       {name:'单卡总用量', value:0},
@@ -852,6 +876,7 @@ export default {
     toProductEdit:function(product){
       this.productEditForm.salePrice = product.price
       this.productEditForm.channelProductId = product.id
+      this.productEditForm.offRuleType = product.offRuleType
       this.showProductEditDlg = true
     },
     okProductEdit:function(){
@@ -1253,6 +1278,7 @@ export default {
         params.productCode = this.productForm.productCode
         params.status = this.productForm.status
         params.merchId = this.selecedChannelCode
+        params.offRuleType = this.productForm.offRuleType
         apiBigflow.addChannelProduct(params).then(res=>{
           if(res.resultCode == 0){
               that.getChannelProducts()
