@@ -20,8 +20,8 @@
         <!-- <span style="padding-left:10px;">{{username}}</span> -->
         <div class="dropdown">
         <button @click="myFunction" class="dropbtn">{{username}}
-          <span v-if="userType == 0">(<span class="alert">1</span>)</span>
         </button>
+        <span v-if="userType == 0 && alertNum > 0" class="alert" @click="toAlert">{{alertNum}}条待处理告警</span>
           <div id="myDropdown" class="dropdown-content">
             <a href="#home" @click="openEditPwdDlg">修改密码</a>
             <a href="#home" @click="logout()">退出登陆</a>
@@ -62,6 +62,7 @@ import zgzTabs from './tabs'
 export default {
   data () {
     return {
+      alertNum:0,
       oldPwd:'',
       newPwd:'',
       newPwdComfirm:'',
@@ -85,6 +86,7 @@ export default {
     this.username = window.sessionStorage.getItem('userName')
     this.userType = window.sessionStorage.getItem('managerType')
     console.log('userType:' +  this.userType)
+    this.getAlertNum()
     // window.sessionStorage.setItem('userType', res.data.type)
   },
   watch: {
@@ -106,6 +108,26 @@ export default {
     }
   },
   methods: {
+    getAlertNum:function(){
+      // getAlertNum
+      let params = {}
+      // params.userName = this.username
+      // params.oldPwd = this.oldPwd
+      // params.newPwd = this.newPwd
+      apiBigflow.getAlertNum(params).then(res=>{
+          if(res.resultCode == 0){
+            this.alertNum = res.data
+              // this.editPwdDlgShowed = false
+              // this.$message.success('修改成功')
+          }else{
+              // this.$message.error('修改失败:' + res.resultInfo)
+          }
+      })
+    },
+    toAlert:function(){
+      console.log('toAlert')
+      this.$router.push("/alerts")
+    },
     okEditPwd:function(){
       if(this.oldPwd == undefined || this.oldPwd == null || this.oldPwd == ''){
         this.$message.error('原密码不能为空')
@@ -256,6 +278,7 @@ export default {
 .alert{
   color: red;
   margin: 2px;
-  font-size: 16px;
+  /* font-size: 12px; */
+  cursor: pointer;
 }
 </style>

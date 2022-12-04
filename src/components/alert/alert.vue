@@ -53,8 +53,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="alertDoDlgShowed = false" :disabled="btnEnable">取 消</el-button>
-        <el-button type="primary" @click="okAlertDo" :disabled="btnEnable">确 定</el-button>
+        <el-button @click="alertDoDlgShowed = false">取 消</el-button>
+        <el-button type="primary" @click="okAlertDo">确 定</el-button>
       </span>  
     </el-dialog> 
   </div>
@@ -101,6 +101,7 @@ export default {
   },
   mounted () {
     // this.getTaskslist()
+    this.getAlerts()
   },
   methods: {
     okAlertDo:function(){

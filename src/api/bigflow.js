@@ -419,6 +419,9 @@ export default {
     modifyMangerPwd: params =>{
         return API.POST('boss/v1.0/system/managers/pwd/modify', params)
     },
+    getAlertNum: params =>{
+        return API.GET('boss/v1.0/poolalertsys/num', params)
+    },
     modifyPool: params =>{
         return API.POST('/bigflow/manage/v1.0/pools/modify', params)
     },
