@@ -226,6 +226,14 @@ const router = new Router({
       },
       children: [
         {
+          path: '/alerts',
+          name: '告警处理',
+          component: (resolve) => require(['components/alert/alert.vue'], resolve),
+          meta: {
+            title: '告警处理'
+          }
+        },
+        {
           path: '/tasks',
           name: '我的任务',
           component: (resolve) => require(['components/tasks/tasksList.vue'], resolve),
