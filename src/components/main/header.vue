@@ -19,7 +19,9 @@
         <!-- <span  style="margin-left:20px;"><img class="usr-img" style="position: relative;top: 8px;" src="@/assets/images/user_pic.png" /></span> -->
         <!-- <span style="padding-left:10px;">{{username}}</span> -->
         <div class="dropdown">
-        <button @click="myFunction" class="dropbtn">{{username}}</button>
+        <button @click="myFunction" class="dropbtn">{{username}}
+          <span v-if="userType == 0">(<span class="alert">1</span>)</span>
+        </button>
           <div id="myDropdown" class="dropdown-content">
             <a href="#home" @click="openEditPwdDlg">修改密码</a>
             <a href="#home" @click="logout()">退出登陆</a>
@@ -65,6 +67,7 @@ export default {
       newPwdComfirm:'',
       editPwdDlgShowed: false,
       username: "",
+      userType:-1,
       ismyCollapse: true,
       breadList: ["卡信息"]
     };
@@ -80,6 +83,9 @@ export default {
     this.ismyCollapse = this.isCollapse;
     // console.log(JSON.stringify(window.sessionStorage))
     this.username = window.sessionStorage.getItem('userName')
+    this.userType = window.sessionStorage.getItem('managerType')
+    console.log('userType:' +  this.userType)
+    // window.sessionStorage.setItem('userType', res.data.type)
   },
   watch: {
     //监听data里面的ismyCollapse值的动态变化，修改仓库值，注意，仓库中接受的数据跟data里数据不能重名，会报错
@@ -247,4 +253,9 @@ export default {
 .dropdown a:hover {background-color: #f1f1f1}
 
 .show {display:block;}
+.alert{
+  color: red;
+  margin: 2px;
+  font-size: 16px;
+}
 </style>
