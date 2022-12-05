@@ -11,11 +11,16 @@
          <el-form-item label="处理状态" class="queryFormItem">
           <el-select class="queryFormInput"  
           filterable
-          clearable
           reserve-keyword
            placeholder="请选择" v-model="alertQueryForm.status">
             <el-option v-for="item in alertStatus" :key="item.value" :label="item.name" :value="item.value"></el-option>
            </el-select>
+          </el-form-item>
+          <el-form-item label="池名称" class="queryFormItem" >
+            <el-input class="queryFormInput" clearable placeholder="请输入" style="width:150px" v-model="alertQueryForm.poolName"></el-input>
+          </el-form-item>
+          <el-form-item label="操作人" class="queryFormItem" >
+            <el-input class="queryFormInput" clearable placeholder="请输入" style="width:150px" v-model="alertQueryForm.operator"></el-input>
           </el-form-item>
           <el-button size="medium" type="primary" icon="el-icon-search" @click="refresh">查询</el-button>
       </el-form>
@@ -71,7 +76,9 @@ export default {
         alertId:-1
       },
       alertQueryForm:{
-        status :0
+        status :0,
+        poolName:'',
+        operator:''
       },
       alertStatus:[
         {name:'未处理', value:0},
@@ -88,7 +95,7 @@ export default {
         { prop: 'poolName', label: '池名称', width: 300 },
         { prop: 'cycle_id', label: '账期', width: 155},
         { prop: 'threshold', label: '告警阀值', width: 80 },
-        { prop: 'alert_msg', label: '告警内容', width: 200 },
+        // { prop: 'alert_msg', label: '告警内容', width: 200 },
         { prop: 'create_time', label: '告警时间', width: 80 },
         { prop: 'statusName', label: '当前状态', width: 300 },
         { prop: 'operator', label: '操作人', width: 80 },
@@ -137,6 +144,8 @@ export default {
     getAlerts(){
       let params={}
       params.status = this.alertQueryForm.status
+      params.poolName = this.alertQueryForm.poolName
+      params.operator =  this.alertQueryForm.operator
       params.page = this.page
       params.pageSize = this.pageSize
       this.loading = true
