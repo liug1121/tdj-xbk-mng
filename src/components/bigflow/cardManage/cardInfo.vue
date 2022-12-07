@@ -93,7 +93,7 @@
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-productChange'}" @click="openChangeProductDlg">变更卡套餐</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
-        v-permission="{indentity:'bigflowCardInfo-productChange'}" @click="toClearNextProdut">清空下月套餐</el-button>
+        v-permission="{indentity:'bigflowCardInfo-productChange'}" @click="toClearNextProdut">清空未生效套餐</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-planChange'}" @click="openChangeCommonTypeDlg">变更卡通讯计划</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
