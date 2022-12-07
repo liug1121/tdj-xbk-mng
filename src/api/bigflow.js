@@ -9,6 +9,9 @@ export default {
     getAllChannels: params =>{
         return API.GET('/bigflow/manage/v1.0/channels', params)
     },
+    exportCardStockBetweenIccid19: params =>{
+        return API.POST('/bigflow/manage/v1.0/bigflowcardstocks/export/between', params)
+    },
     getAllPackages: params =>{
         return API.GET('/bigflow/manage/v1.0/packages', params)
     }
@@ -252,6 +255,13 @@ export default {
     },
     file2CardReset:(params) =>{
         return API.POST('/bigflow/manage/v1.0/stock/card/file/reset', params, {
+            headers: {
+              'content-type': 'multipart/form-data'
+            }
+          })
+    },
+    file2ChangeFwAccount:(params) =>{
+        return API.POST('/bigflow/manage/v1.0/bigflowcardstocks/servicename/modify', params, {
             headers: {
               'content-type': 'multipart/form-data'
             }

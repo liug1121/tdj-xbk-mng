@@ -55,9 +55,11 @@
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowStockMng-distributeForHeadAndTail'}" @click="openStock2ChannelDlg">首尾分配渠道</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
-        v-permission="{indentity:'bigflowStockMng-exportFor'}" disabled>按首尾条件导出</el-button>
+        v-permission="{indentity:'bigflowStockMng-exportFor'}" @click="toExportBetweenIccid">按首尾条件导出</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowStockMng-exportFor'}" @click="openCardResetDlg">批量退库存</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowStockMng-exportFor'}" @click="toChangeFwAccount">迁移网络</el-button>
       </div>
       <!-- 列表区域 -->
       <!-- <div class="cardNos">
@@ -126,6 +128,48 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeCardResetDlg" :disabled="btnEnable">取 消</el-button>
         <el-button type="primary" @click="okCardReset" :disabled="btnEnable">确 定</el-button>
+      </span>  
+    </el-dialog>
+    <el-dialog title="首尾ICCID导出" :visible.sync="exportBetweenIccidDlgShowed" width="450px" @close="exportBetweenIccidDlgShowed = false">
+      <!-- 内容主体区域 -->  
+      <el-form :model="exportBetweenIccidForm"  label-width="110px">
+        <el-form-item label="首iccid(19位)">
+          <el-input style="width:300px;" v-model="exportBetweenIccidForm.iccid19Start" placeholder="请输入首iccid" ></el-input>
+        </el-form-item>
+        <el-form-item label="尾iccid(19位)">
+          <el-input style="width:300px;" v-model="exportBetweenIccidForm.iccid19End" placeholder="请输入尾iccid" ></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="exportBetweenIccidDlgShowed = false" :disabled="btnEnable">取 消</el-button>
+        <el-button   type="primary" @click="okExportBetwwenIccid" :disabled="btnEnable">确 定</el-button>
+      </span>   
+    </el-dialog>
+
+     <el-dialog title="迁移网络" :visible.sync="changeFwAccountDlgShowed" width="450px" @close="changeFwAccountDlgShowed = false">
+      <el-form   label-width="110px">
+        <el-form  label-width="120px">
+            <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadFileForMoveFwAccount" :on-remove="removeFileForMoveFwAccount">
+            <el-button size="small" type="primary">点击上传</el-button>
+            </el-upload>
+        </el-form>
+        <el-form-item  label="蜂窝帐号" class="queryFormItem" >
+          <el-select 
+           filterable
+           clearable
+           reserve-keyword
+           class="queryFormInput"  placeholder="请选择蜂窝帐号" v-model="fwAccount2Modify" style="width:250px">
+            <el-option v-for="item in fengwoAccounts" :key="item.account_id" :label="item.account_name" :value="item.account_id"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span>
+          <p>1、<a href='http://xbk.xuebaka.cn/download/template/movecard-stock.xlsx'>下载模板后</a>，填写数据。ICCID、卡号为必须字段，卡号可以带86。</p>
+      </span>
+      
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="changeFwAccountDlgShowed = false" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okChangeFwAccount" :disabled="btnEnable">确 定</el-button>
       </span>  
     </el-dialog>
 
@@ -266,6 +310,15 @@ export default {
   },
   data () {
     return {
+    exportBetweenIccidDlgShowed: false,
+    exportBetweenIccidForm:{
+      iccid19Start: '',
+      iccid19End:'',
+      isCount:true
+    },
+    fwAccount2Modify:'',
+    changeFwAccountDlgShowed:false,
+    fileForMoveFwAccount: '',
     uploadedFile: '',
     showCardResetDlg:false,
     productType:-1,
@@ -346,6 +399,97 @@ export default {
   },
   watch: {},
   methods: {
+    toExportBetweenIccid:function(){
+      this.exportBetweenIccidDlgShowed = true
+    },
+    okExportBetwwenIccid: function(){
+      if(this.exportBetweenIccidForm.iccid19Start.length != 19 ||  
+      this.exportBetweenIccidForm.iccid19End.length != 19){
+        this.$message.error('首尾iccid必须19位')
+        return
+      }
+      let params = {}
+      params.iccid19Start = this.exportBetweenIccidForm.iccid19Start
+      params.iccid19End = this.exportBetweenIccidForm.iccid19End
+      params.isCount = true
+        apiBigflow.exportCardStockBetweenIccid19(params).then(res=>{
+            if(res.resultCode == 0){
+                let cardNum = res.data
+                if(cardNum === 0){
+                  this.$message.success('没有要导出的记录')
+                  this.exportBetweenIccidDlgShowed = false;
+                  return
+                }
+                if(cardNum > 20000){
+                  this.$message.error('一次不能超过两万条记录')
+                  return
+                }
+                let that = this
+                this.$confirm('一共有'+ cardNum +'条记录，您确认要此操作, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    that.btnEnable = true
+                    let exportParams = {}
+                    exportParams.iccid19Start = this.exportBetweenIccidForm.iccid19Start
+                    exportParams.iccid19End = this.exportBetweenIccidForm.iccid19End
+                    exportParams.isCount = false
+                    apiBigflow.exportCardStockBetweenIccid19(exportParams).then(res=>{
+                          if(res.resultCode == 0){
+                              this.$message.success('操作成功，请在任务管理中查询执行结果，任务编号：' + res.data)
+                              this.exportBetweenIccidDlgShowed = false;
+                          }else{
+                              this.$message.error('操作失败:' + res.resultInfo)
+                          }
+                          that.btnEnable = false
+                      })
+                }).catch(() => {
+                });
+            }
+        })
+    },
+    okChangeFwAccount:function(){
+      let that = this
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+      }).then(() => {
+          that.btnEnable = true
+          let params = new FormData()
+          if(this.fileForMoveFwAccount === ''){
+            this.$message.error('文件不能为空')
+            that.btnEnable = false
+            return
+          }
+          if(this.fwAccount2Modify === ''){
+            this.$message.error('蜂窝帐号不能为空')
+            that.btnEnable = false
+            return
+          }
+          params.append('file', this.fileForMoveFwAccount)
+          params.append('serviceName', this.fwAccount2Modify)
+          apiBigflow.file2ChangeFwAccount(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryBigflowStocks()
+                    that.changeFwAccountDlgShowed = false
+                    this.$message.success('操作成功，请在任务管理中查询执行结果，任务编号：' + res.data)
+                }else{
+                    this.$message.error('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+      }).catch(() => {
+      });
+      
+    },
+    uploadFileForMoveFwAccount:function(item){
+      this.fileForMoveFwAccount = item.file
+    },
+    removeFileForMoveFwAccount:function(){
+      this.fileForMoveFwAccount = ''
+    },
     toQUeryBigflowStocks:function(){
       this.page = 1
       this.queryBigflowStocks()
@@ -367,9 +511,9 @@ export default {
                 if(res.resultCode == 0){
                     that.queryBigflowStocks()
                     that.showCardResetDlg = false
-                    alert('操作成功，请在任务管理中查询执行结果，任务编号：' + res.data)
+                    this.$message.success('操作成功，请在任务管理中查询执行结果，任务编号：' + res.data)
                 }else{
-                    alert('操作失败:' + res.resultInfo)
+                    this.$message.error('操作失败:' + res.resultInfo)
                 }
                 that.btnEnable = false
             })
@@ -586,6 +730,10 @@ export default {
       openStock2ChannelDlg:function(){
           this.showStock2ChannelDlg = true
       },  
+      toChangeFwAccount:function(){
+        this.changeFwAccountDlgShowed = true
+        // this.fileForMoveFwAccount = ''
+      },
       openCardResetDlg:function(){
         this.showCardResetDlg = true
       },  
