@@ -93,6 +93,8 @@
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-productChange'}" @click="openChangeProductDlg">变更卡套餐</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowCardInfo-productChange'}" @click="toClearNextProdut">清空下月套餐</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-planChange'}" @click="openChangeCommonTypeDlg">变更卡通讯计划</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-validityExtend'}" @click="openExpireDateExtendDlg">有效期延长</el-button>
@@ -192,6 +194,20 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeDosClearDlg" :disabled="btnEnable">取 消</el-button>
         <el-button type="primary" @click="okDosClear" :disabled="btnEnable">确 定</el-button>
+      </span> 
+    </el-dialog>
+
+     <el-dialog title="未生效套餐清空" :visible.sync="clearNextProductDlgShowed" width="450px" @close="clearNextProductDlgShowed = false">
+      <!-- 内容主体区域 -->
+      <el-form :model="clearNextProductForm"  label-width="110px">
+        <el-form-item label="原因">
+          <el-input style="width:300px;" v-model="clearNextProductForm.reason" placeholder="请输入调整原因" ></el-input>
+        </el-form-item>
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="clearNextProductDlgShowed=false" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okClearNextProduct" :disabled="btnEnable">确 定</el-button>
       </span> 
     </el-dialog>
 
@@ -478,6 +494,10 @@ export default {
   },
   data () {
     return {
+      clearNextProductDlgShowed:false,
+      clearNextProductForm:{
+        reason:''
+      },
       fileDosChangeForm:{
         chargeHighDoseG:0 ,
         chargeMediumDoseG:0,
@@ -657,6 +677,42 @@ export default {
   },
   watch: {},
   methods: {
+    toClearNextProdut:function(){
+      if(this.iccids2Opt == ''){
+          this.$message.error('请先选择要操作的卡')
+          return
+      }
+      this.clearNextProductDlgShowed = true
+    },
+    okClearNextProduct:function(){
+      if(this.clearNextProductForm.reason === ''){
+        this.$message.error('原因不能为空')
+        return
+      }
+      let that = this
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+      }).then(() => {
+          that.btnEnable = true
+          let params = {}
+          params.iccid = this.iccids2Opt 
+          params.reason = this.clearNextProductForm.reason
+          apiBigflow.clearCardNextProduct(params).then(res=>{
+              if(res.resultCode == 0){
+                  that.queryCardInfos()
+                  that.clearNextProductDlgShowed = false
+                  this.$message.success('操作成功,请在任务：' + res.data + "中查询处理结果")
+
+              }else{
+                  this.$message.error('操作失败:' + res.resultInfo)
+              }
+              that.btnEnable = false
+          })
+      }).catch(() => {
+      }); 
+    },
     okFileDosChange:function(){
       if(this.uploadedFile == undefined || this.uploadedFile == null || this.uploadedFile == ''){
         this.$message.error('文件不能为空' )

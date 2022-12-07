@@ -503,6 +503,9 @@ export default {
             }
           })
     },
+    clearCardNextProduct: params =>{
+        return API.POST('/bigflow/manage/v1.0/card/product/next/clear', params)
+    } ,
     modifyAmountPoolStatus: params =>{
         return API.POST('/bigflow/manage/v1.0/amountPool/status/modify', params)
     } ,
