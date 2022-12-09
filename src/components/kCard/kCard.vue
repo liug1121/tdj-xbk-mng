@@ -180,7 +180,7 @@ export default {
             { prop: 'union_order', label: '联通订单号', width: 100, sortable: true },
             { prop: 'contact_num', label: '联系人手机号', width: 100, sortable: true },
             // { prop: 'description', label: '备注', width: 100, sortable: true },
-            { prop: 'phone_num', label: '卡号', width: 100, sortable: true },
+            // { prop: 'phone_num', label: '卡号', width: 100, sortable: true },
             { prop: 'address', label: '地址', width: 100, sortable: true },
             { prop: 'order_phone_number', label: '订购号码', width: 100, sortable: true },
             { prop: 'statusName', label: '订单状态', width: 100, sortable: true },
