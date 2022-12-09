@@ -2,7 +2,7 @@
   <div class="box_subject">
         <el-card class="all_list">
           <el-form :model="queryForm" :inline="true">
-            <el-form-item label="渠道" class="queryFormItem">
+            <!-- <el-form-item label="渠道" class="queryFormItem">
               <el-select class="queryFormInput"  
               filterable
               clearable
@@ -48,11 +48,14 @@
                 class="queryFormInput"  placeholder="请输入" v-model="queryForm.statusNotify">
                   <el-option v-for="item in statusNotify" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
-              </el-form-item>
-              <el-button size="medium" type="primary" icon="el-icon-search" @click="getZopOrders">查询</el-button>
-              <el-button size="medium" type="primary" @click="toImportOrders">导入渠道订单</el-button>
-              <el-button size="medium" type="primary" >导出</el-button>
+              </el-form-item> -->
           </el-form>
+          <div class="button_content">
+                <el-button size="medium" type="primary"  @click="getZopOrders">查询</el-button>
+                <el-button size="medium" type="primary" @click="toImportOrders">导入渠道订单</el-button>
+                <el-button size="medium" type="primary" @click="toImportUnionOrders">联通与京东物流数据导入</el-button>
+                <el-button size="medium" type="primary" >导出</el-button>
+              </div>
           <el-table   :data="zopOrders" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" >
             <el-table-column type="selection" width="55">
             </el-table-column>
@@ -75,25 +78,30 @@
             <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadFileForOrdersImport" :on-remove="removeFileForOrdersImport">
               <el-button size="small" type="primary">点击上传</el-button>
             </el-upload>
-            <!-- <el-form-item label="渠道" class="queryFormItem">
-              <el-select class="queryFormInput"  
-              filterable
-              clearable
-              reserve-keyword
-              placeholder="请选择渠道" v-model="createOrderForm.channelId">
-                <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
-              </el-select>
-              </el-form-item>
-            <el-form-item label="联系人">
-              <el-input style="width:300px;"  v-model="createOrderForm.contactName" placeholder="请输入" ></el-input>
-            </el-form-item>
-            <el-form-item label="备注">
-              <el-input style="width:300px;"  v-model="createOrderForm.descreption" placeholder="请输入备注" ></el-input>
-            </el-form-item> -->
           </el-form>
           <span slot="footer" class="dialog-footer">
             <el-button @click="closeCreateOrderDlgShowedDlg" :disabled="btnDisabled">取 消</el-button>
             <el-button type="primary" :disabled="btnDisabled" @click="okImportOrder">确 定</el-button>
+          </span>  
+        </el-dialog> 
+         <el-dialog title="联通订单数据导入" :visible.sync="importUnionOrdersDlgShowed" width="450px" @close="importUnionOrdersDlgShowed = false">
+          <el-form :model="importUnionOrderForm" label-width="110px">
+            <el-form-item label="订单文件" >
+              <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadFileForOrdersImport" :on-remove="removeFileForOrdersImport">
+                <el-button size="small" type="primary">点击上传</el-button>
+              </el-upload>
+             </el-form-item>
+            <el-form-item label="导入类型" >
+                <el-select 
+                reserve-keyword 
+                class="queryFormInput"  placeholder="请选择" v-model="importUnionOrderForm.importType">
+                  <el-option v-for="item in importUnionOrderTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+          </el-form>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="importUnionOrdersDlgShowed = false" :disabled="btnDisabled">取 消</el-button>
+            <el-button type="primary" :disabled="btnDisabled" @click="okImportUnionOrder">确 定</el-button>
           </span>  
         </el-dialog> 
         <el-main class="el-loading" v-loading="loading" element-loading-background="transparent"
@@ -110,6 +118,10 @@ export default {
   },
   data () {
     return {
+      importUnionOrderForm:{
+        importType: 0
+      },
+      importUnionOrdersDlgShowed:false,
       fileForImportOrders:'',
       loading:false,
       btnDisabled:false,
@@ -148,6 +160,10 @@ export default {
           {label:'未提交', value:0},
           {label:'已提交', value:1},
         ],
+        importUnionOrderTypes:[
+          {label:'实时数据', value:0},
+          {label:'物流数据', value:1}
+        ],
         statusNotify:[
           // {label:'全部', value:null},
           {label:'已激活', value:'1'},
@@ -158,17 +174,26 @@ export default {
           {label:'开户完成', value:'C1'},
            {label:'发货', value:'E0'}
         ],
-        // 1：激活，2：退单(激活前)，3:转套餐(要根据产品id判断是否为享有特权的套餐)，4：销户(激活后),6:首充数据同步，C1：开户完成，E0：发货
+       
         table_column_zop_order:[
             { prop: 'third_order_id', label: '订单号', width: 100, sortable: true },
             { prop: 'union_order', label: '联通订单号', width: 100, sortable: true },
             { prop: 'contact_num', label: '联系人手机号', width: 100, sortable: true },
-            { prop: 'description', label: '备注', width: 100, sortable: true },
+            // { prop: 'description', label: '备注', width: 100, sortable: true },
             { prop: 'phone_num', label: '卡号', width: 100, sortable: true },
             { prop: 'address', label: '地址', width: 100, sortable: true },
             { prop: 'order_phone_number', label: '订购号码', width: 100, sortable: true },
             { prop: 'statusName', label: '订单状态', width: 100, sortable: true },
-            { prop: 'short_url', label: '联通实名短链接', width: 100, sortable: true }
+            { prop: 'short_url', label: '联通实名短链接', width: 100, sortable: true },
+            { prop: 'deliverType', label: '交付方式', width: 100, sortable: true },
+            { prop: 'unionStatusName', label: '订单状态', width: 100, sortable: true },
+            { prop: 'disposeStatusName', label: '处理情况', width: 100, sortable: true },
+            { prop: 'verifyStatusName', label: '审单情况', width: 100, sortable: true },
+            { prop: 'updateTime', label: '更新时间', width: 100, sortable: true },
+            { prop: 'logisticsId', label: '物流单号', width: 100, sortable: true },
+            { prop: 'outStockId', label: '出库单号', width: 100, sortable: true },
+            { prop: 'jdSkuId', label: '京东SKU编码', width: 100, sortable: true },
+            { prop: 'logisticsUpateTime', label: '物流更新时间', width: 100, sortable: true },
         ],
     };
   },
@@ -181,6 +206,34 @@ export default {
   },
   watch: {},
   methods: {
+    toImportUnionOrders:function(){
+      this.importUnionOrdersDlgShowed = true
+    },
+    okImportUnionOrder:function(){
+      if(this.fileForImportOrders === ''){
+        this.$message.error('文件不能为空' )
+        return
+      }
+      this.$confirm('确认要操作？')
+        .then(() => {
+          let params = new FormData()
+          params.append('file', this.fileForImportOrders)
+          params.append('importType', this.importUnionOrderForm.importType)
+          this.loading = true
+          apiBigflow.importZopUnionOrders(params).then(res => {
+            if (res.resultCode === 0) {
+              this.loading = false
+              this.$message.success('导入订单成功，请在任务' + res.data + '中查看导入结果')
+              this.getZopOrders()
+              this.importUnionOrdersDlgShowed = false
+            } else {
+              this.$message.error(res.resultInfo)
+            }
+          })
+        })
+        .catch(() => {
+        });
+    },
     uploadFileForOrdersImport:function(item){
       this.fileForImportOrders = item.file
     },
@@ -267,4 +320,9 @@ export default {
 };
 </script>
 <style scoped>
+.el-button {
+  color:#145297;
+    background-color: transparent;
+    border-color: transparent;
+}
 </style>

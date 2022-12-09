@@ -576,5 +576,12 @@ export default {
               'content-type': 'multipart/form-data'
             }
           })
+    },
+    importZopUnionOrders:(params) => {
+        return API.POST('/bigflow/manage/v1.0/zop/order/union/import', params, {
+            headers: {
+              'content-type': 'multipart/form-data'
+            }
+          })
     }
 }
