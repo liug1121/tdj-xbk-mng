@@ -569,5 +569,12 @@ export default {
     },
     getCtCardInfo: params =>{
         return API.POST('/bigflow/manage/v1.0/ct/card', params)
+    },
+    importZopOrders:(params) => {
+        return API.POST('/bigflow/manage/v1.0/zop/order/import', params, {
+            headers: {
+              'content-type': 'multipart/form-data'
+            }
+          })
     }
 }
