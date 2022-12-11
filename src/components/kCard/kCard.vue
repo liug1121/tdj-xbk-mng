@@ -2,46 +2,63 @@
   <div class="box_subject">
         <el-card class="all_list">
           <el-form :model="queryForm" :inline="true">
-            <!-- <el-form-item label="渠道" class="queryFormItem">
-              <el-select class="queryFormInput"  
-              filterable
-              clearable
-              reserve-keyword
-              placeholder="请选择渠道" v-model="queryForm.channelId">
-                <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
-              </el-select>
+              <el-form-item label="渠道" >
+                <el-select 
+                clearable
+                reserve-keyword 
+                class="queryFormInput"  placeholder="请输入" v-model="queryForm.channelId">
+                  <el-option v-for="item in channels" :key="item.value" :label="item.name" :value="item.value"></el-option>
+                </el-select>
               </el-form-item>
               <el-form-item label="订单号"  class="queryFormItem">
-                <el-input class="queryFormInput" style="width:150px;" v-model="queryForm.orderId" placeholder="请输入订单号" ></el-input>
+                <el-input class="queryFormInput" style="width:150px;" clearable v-model="queryForm.orderId" placeholder="请输入" ></el-input>
               </el-form-item>
-              <el-form-item label="联系人手机号"  class="queryFormItem">
-                <el-input class="queryFormInput" style="width:150px;" v-model="queryForm.contactNum" placeholder="请输入联系人手机号" ></el-input>
+              <el-form-item label="入网人姓名"  class="queryFormItem"> 
+                <el-input class="queryFormInput" style="width:150px;" clearable v-model="queryForm.contactName" placeholder="请输入" ></el-input>
               </el-form-item>
-              <el-form-item label="是否点击" >
+              <el-form-item label="联通订单号"  class="queryFormItem">
+                <el-input class="queryFormInput" style="width:150px;" clearable v-model="queryForm.unionOrderId" placeholder="请输入" ></el-input>
+              </el-form-item>
+              <el-form-item label="订购号码"  class="queryFormItem">
+                <el-input class="queryFormInput" style="width:150px;" clearable v-model="queryForm.orderPhoneNumber" placeholder="请输入" ></el-input>
+              </el-form-item>
+              <el-form-item label="快递单号"  class="queryFormItem">
+                <el-input class="queryFormInput" style="width:150px;" clearable v-model="queryForm.logisticsId" placeholder="请输入" ></el-input>
+              </el-form-item>
+              <el-form-item label="订单时间" class="queryFormItem">
+                <el-date-picker style="width:140px"  type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd" @change="startTimeChange" 
+                v-model="queryForm.orderDateStart">
+                </el-date-picker>
+                <span class="time-line">-</span>
+                <el-date-picker style="width:140px"  type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd" @change="endTimeChange" 
+                v-model="queryForm.orderDateEnd">
+                </el-date-picker>
+              </el-form-item>
+              <!-- <el-form-item label="是否点击" >
                 <el-select 
                 clearable
                 reserve-keyword 
                 class="queryFormInput"  placeholder="请输入" v-model="queryForm.statusClick">
                   <el-option v-for="item in statusClick" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
-              </el-form-item>
-              <el-form-item label="是否提交预订单" >
+              </el-form-item> -->
+              <!-- <el-form-item label="是否提交预订单" >
                 <el-select 
                 clearable
                 reserve-keyword 
                 class="queryFormInput"  placeholder="请输入" v-model="queryForm.statusPreorder">
                   <el-option v-for="item in statusPreorder" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
-              </el-form-item>
-              <el-form-item label="是否提交订单" >
+              </el-form-item> -->
+              <!-- <el-form-item label="是否提交订单" >
                 <el-select 
                 clearable
                 reserve-keyword 
                 class="queryFormInput"  placeholder="请输入" v-model="queryForm.statusOrder">
                   <el-option v-for="item in statusOrder" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
-              </el-form-item>
-              <el-form-item label="联通订单状态" >
+              </el-form-item> -->
+              <!-- <el-form-item label="联通订单状态" >
                 <el-select 
                 clearable
                 reserve-keyword 
@@ -54,7 +71,7 @@
                 <el-button size="medium" type="primary"  @click="getZopOrders">查询</el-button>
                 <el-button size="medium" type="primary" @click="toImportOrders">导入渠道订单</el-button>
                 <el-button size="medium" type="primary" @click="toImportUnionOrders">联通与京东物流数据导入</el-button>
-                <el-button size="medium" type="primary" >导出</el-button>
+                <el-button size="medium" type="primary"  disabled>导出</el-button>
               </div>
           <el-table   :data="zopOrders" border max-height="600" align="center" :cell-style="{height: '38px',padding:0}" >
             <el-table-column type="selection" width="55">
@@ -143,7 +160,13 @@ export default {
             statusClick:'',
             statusPreorder:'',
             statusOrder:'',
-            statusNotify:''
+            statusNotify:'',
+            contactName:'',
+            unionOrderId:'',
+            orderPhoneNumber:'',
+            logisticsId:'',
+            orderDateStart:'',
+            orderDateEnd:''
         },
         statusClick:[
           // {label:'全部', value:null},
@@ -177,9 +200,9 @@ export default {
        
         table_column_zop_order:[
             { prop: 'third_order_id', label: '订单号', width: 100, sortable: true },
+            { prop: 'channel', label: '渠道', width: 100, sortable: true },
             { prop: 'union_order', label: '联通订单号', width: 100, sortable: true },
             { prop: 'contact_num', label: '联系人手机号', width: 100, sortable: true },
-            // { prop: 'description', label: '备注', width: 100, sortable: true },
             // { prop: 'phone_num', label: '卡号', width: 100, sortable: true },
             { prop: 'address', label: '地址', width: 100, sortable: true },
             { prop: 'order_phone_number', label: '订购号码', width: 100, sortable: true },
@@ -206,6 +229,14 @@ export default {
   },
   watch: {},
   methods: {
+    startTimeChange () {
+      this.queryForm.orderDateStart = `${this.queryForm.orderDateStart}`
+      // console.log('start:' + this.queryForm.orderDateStart)
+    },
+    endTimeChange () {
+      this.queryForm.orderDateEnd = `${this.queryForm.orderDateEnd}`
+      // console.log('end:' + this.queryForm.orderDateEnd)
+    },
     toImportUnionOrders:function(){
       this.importUnionOrdersDlgShowed = true
     },
@@ -268,6 +299,13 @@ export default {
         params.statusClick = this.queryForm.statusClick
         params.statusOrder = this.queryForm.statusOrder
         params.statusNotify = this.queryForm.statusNotify
+
+        params.unionOrderId = this.queryForm.unionOrderId
+        params.contactName = this.queryForm.contactName
+        params.logisticsId = this.queryForm.logisticsId
+        params.orderPhoneNumber = this.queryForm.orderPhoneNumber
+        params.orderDateStart = this.queryForm.orderDateStart
+        params.orderDateEnd = this.queryForm.orderDateEnd
         params.page = 0
         params.pageSize = 100
         // console.log(JSON.stringify(params))
