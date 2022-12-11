@@ -4,7 +4,7 @@
     <el-card class="all_list">
       <div class="board">
         
-        <div class="board-row">
+        <!-- <div class="board-row">
            <span>我的面板</span>
            <div class="board-panel" @click="toChannelList">
              <div class="borad-panel-main">
@@ -39,7 +39,7 @@
                <span>查  看</span>
              </div>
            </div>
-        </div>
+        </div> -->
         <!-- <div class="board-row"> -->
           <!-- <span>风险告警</span>
            <div class="alert-panel" @click="toLbs">
@@ -119,8 +119,8 @@
           </div>  
         </div> -->
 
-        <!-- <div class="board-row">
-          <span>增长趋势</span>
+        <div class="board-row">
+          <span>用量趋势</span>
           <div class="chart">
             <div class="chart-form">
               <el-form  :inline="true" >
@@ -149,7 +149,7 @@
               <VeLine  :data="dataUsage"></VeLine>
             </div>
             
-          <div class="chart">
+          <!-- <div class="chart">
             <el-form  :inline="true" >
               <el-form-item >
                 <el-select 
@@ -162,9 +162,9 @@
               </el-form-item>
             </el-form>
               <VeLine  :data="chartData"></VeLine>
-            </div>
+            </div> -->
             
-        </div> -->
+        </div>
       </div>
       
     </el-card>
@@ -294,23 +294,23 @@ export default {
       channelForCardNum:'',
       channelForDataUsage:'',
       channels:[],
-      dateType:1,
+      dateType:0,
       dateTypes:[
         {value:0, name:'7天内'},
         {value:1, name:'15天内'},
-        {value:2, name:'本计费周期内'},
-        {value:3, name:'6个月内'},
+        // {value:2, name:'本计费周期内'},
+        // {value:3, name:'6个月内'},
       ],
       loading:false,
       dataUsage: {
         columns: ["日期", "用量趋势变化GB"],
         rows: [
-          { 日期: "1月", 用量趋势变化GB: 0 },
-          { 日期: "2月", 用量趋势变化GB: 0 },
-          { 日期: "3月", 用量趋势变化GB: 0 },
-          { 日期: "4月", 用量趋势变化GB: 0 },
-          { 日期: "5月", 用量趋势变化GB: 0 },
-          { 日期: "6月", 用量趋势变化GB: 0 }
+          { 日期: "1", 用量趋势变化GB: 0 },
+          { 日期: "2", 用量趋势变化GB: 0 },
+          { 日期: "3", 用量趋势变化GB: 0 },
+          { 日期: "4", 用量趋势变化GB: 0 },
+          { 日期: "5", 用量趋势变化GB: 0 },
+          { 日期: "6", 用量趋势变化GB: 0 }
         ]
       },
       chartData: {
@@ -377,13 +377,13 @@ export default {
           this.initEchartMap();
       })
     // this.getChinaMapDatas()
-    // this.getAllChannels()
+    this.getAllChannels()
     // this.getStopedCardNumForChannels()
     // this.getSharingPoolNumForChannels()
     // this.getImeiNumForChannels()
     // this.getCardStatusNumForChannels()
     // this.getCardNumForChannels()
-    // this.getCardDataUsageForChannels()
+    this.getCardDataUsageForChannels()
   },
   methods:{
     getChinaMapDatas:function(){
@@ -422,6 +422,7 @@ export default {
       this.getCardDataUsageForChannels()
     },
     getCardDataUsageForChannels:function(){
+      console.log('getCardDataUsageForChannels')
       let params = {}
       params.channelId = this.channelForDataUsage
       params.queryType = this.dateType
@@ -722,7 +723,7 @@ export default {
     margin: 30px;
     margin-left: 50px;
     height: 570px;
-    width: 500px;
+    width: 80%;
   }
   .chart-form{
     display: flex;
