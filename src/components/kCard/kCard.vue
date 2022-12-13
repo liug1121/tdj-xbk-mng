@@ -95,7 +95,13 @@
             <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadFileForOrdersImport" :on-remove="removeFileForOrdersImport">
               <el-button size="small" type="primary">点击上传</el-button>
             </el-upload>
+            <el-form-item label="订单模板" >
+              <span>
+                  <p><a href='http://xbk.xuebaka.cn/download/template/zop_orders.xlsx'>下载模板</a></p>
+              </span>
+            </el-form-item>
           </el-form>
+         
           <span slot="footer" class="dialog-footer">
             <el-button @click="closeCreateOrderDlgShowedDlg" :disabled="btnDisabled">取 消</el-button>
             <el-button type="primary" :disabled="btnDisabled" @click="okImportOrder">确 定</el-button>
@@ -115,6 +121,16 @@
                   <el-option v-for="item in importUnionOrderTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
+             <el-form-item label="实时数据模版" >
+              <span>
+                  <p><a href='http://xbk.xuebaka.cn/download/template/union_order.xlsx'>下载模板</a></p>
+              </span>
+            </el-form-item>
+            <el-form-item label="物流数据模版" >
+              <span>
+                  <p><a href='http://xbk.xuebaka.cn/download/template/union_logistics_order.xlsx'>下载模板</a></p>
+              </span>
+            </el-form-item>
           </el-form>
           <span slot="footer" class="dialog-footer">
             <el-button @click="importUnionOrdersDlgShowed = false" :disabled="btnDisabled">取 消</el-button>
@@ -202,11 +218,13 @@ export default {
             { prop: 'third_order_id', label: '订单号', width: 100, sortable: true },
             { prop: 'channel', label: '渠道', width: 100, sortable: true },
             { prop: 'union_order', label: '联通订单号', width: 100, sortable: true },
+            { prop: 'contact_name', label: '联系人', width: 100, sortable: true },
             { prop: 'contact_num', label: '联系人手机号', width: 100, sortable: true },
             // { prop: 'phone_num', label: '卡号', width: 100, sortable: true },
             { prop: 'address', label: '地址', width: 100, sortable: true },
             { prop: 'order_phone_number', label: '订购号码', width: 100, sortable: true },
             { prop: 'statusName', label: '订单状态', width: 100, sortable: true },
+            { prop: 'description', label: '描述信息', width: 100, sortable: true },
             { prop: 'short_url', label: '联通实名短链接', width: 100, sortable: true },
             { prop: 'deliverType', label: '交付方式', width: 100, sortable: true },
             { prop: 'unionStatusName', label: '订单状态', width: 100, sortable: true },

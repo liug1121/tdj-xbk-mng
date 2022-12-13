@@ -161,10 +161,10 @@ const router = new Router({
         },
         {
           path: '/kcard',
-          name: 'K卡订单',
+          name: 'L卡订单',
           component: (resolve) => require(['components/kCard/kCard.vue'], resolve),
           meta: {
-            title: 'K卡订单'
+            title: 'L卡订单'
           }
         },
         {
