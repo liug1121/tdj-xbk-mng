@@ -294,7 +294,7 @@ export default {
       channelForCardNum:'',
       channelForDataUsage:'',
       channels:[],
-      dateType:0,
+      dateType:4,
       dateTypes:[
         {value:0, name:'7天内'},
         {value:1, name:'15天内'},
