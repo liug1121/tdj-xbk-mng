@@ -298,6 +298,7 @@ export default {
       dateTypes:[
         {value:0, name:'7天内'},
         {value:1, name:'15天内'},
+        {value:4, name:'24小时内'}
         // {value:2, name:'本计费周期内'},
         // {value:3, name:'6个月内'},
       ],
