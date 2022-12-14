@@ -82,16 +82,22 @@
       <div class="button_content">
         <el-button size="medium" class="el-button" icon="el-icon-download" 
         v-permission="{indentity:'bigflowCardInfo-changeStatus'}" @click="openChangeStatusDlg" >卡状态变更</el-button>
+        <el-button size="medium" class="el-button" icon="el-icon-download" 
+        v-permission="{indentity:'bigflowCardInfo-changeStatus'}" @click="openFile2ChangeStatusDlg" >批量卡状态变更</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-unbind'}" @click="openUnbindDlg">解绑</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-flowClear'}" @click="openDosClearDlg">可用量清零</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowCardInfo-flowClear'}" @click="openFile2DosClearDlg">批量可用量清零</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-flowChange'}" @click="openDosChangeDlg">可用量变更</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-flowChange'}" @click="openFileDosChangeDlg">批量可用量变更</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-productChange'}" @click="openChangeProductDlg">变更卡套餐</el-button>
+        <el-button size="medium" type="primary" icon="el-icon-edit" 
+        v-permission="{indentity:'bigflowCardInfo-productChange'}" @click="openFile2ChangeProductDlg">批量变更卡套餐</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
         v-permission="{indentity:'bigflowCardInfo-productChange'}" @click="toClearNextProdut">清空未生效套餐</el-button>
         <el-button size="medium" type="primary" icon="el-icon-edit" 
@@ -169,6 +175,31 @@
       </span>
     </el-dialog>
 
+    <el-dialog title="批量卡状态变更" :visible.sync="file2ChangeStatusDlgShowed" width="450px" @close="file2ChangeStatusDlgShowed = false">
+      <!-- 内容主体区域 -->
+      <el-form :model="file2ChangeStatusForm"  label-width="110px">
+        <el-form-item label="卡状态" class="queryFormItem">
+          <el-select class="queryFormInput"  clearable placeholder="请选择卡状态" v-model="file2ChangeStatusForm.status2Change">
+            <el-option v-for="item in statusForOpt" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="原因">
+          <el-input style="width:300px;" v-model="file2ChangeStatusForm.reason" placeholder="请输入调整原因" ></el-input>
+        </el-form-item>
+        <el-form-item label="文件上传">
+          <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadFile" :on-remove="removeUploadedFile">
+            <el-button size="small" type="primary">点击上传</el-button>
+          </el-upload>
+          <a href='http://xbk.xuebaka.cn/download/template/dosChagne.xlsx'>下载模板文件</a>
+          </el-form-item>
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="file2ChangeStatusDlgShowed = false" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okFile2ChangeStatus" :disabled="btnEnable">确 定</el-button>
+      </span>
+    </el-dialog>
+
     <el-dialog title="解绑" :visible.sync="showUnbindDlg" width="450px" @close="closeUnbindDlg">
       <!-- 内容主体区域 -->
       <el-form :model="unbindForm"  label-width="110px">
@@ -194,6 +225,26 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeDosClearDlg" :disabled="btnEnable">取 消</el-button>
         <el-button type="primary" @click="okDosClear" :disabled="btnEnable">确 定</el-button>
+      </span> 
+    </el-dialog>
+
+    <el-dialog title="批量可用量清零" :visible.sync="file2DosClearDlgShowed" width="450px" @close="file2DosClearDlgShowed = false">
+      <!-- 内容主体区域 -->
+      <el-form :model="file2DosClearForm"  label-width="110px">
+        <el-form-item label="原因">
+          <el-input style="width:300px;" v-model="file2DosClearForm.reason" placeholder="请输入调整原因" ></el-input>
+        </el-form-item>
+        <el-form-item label="文件上传">
+          <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadFile" :on-remove="removeUploadedFile">
+            <el-button size="small" type="primary">点击上传</el-button>
+          </el-upload>
+          <a href='http://xbk.xuebaka.cn/download/template/dosChagne.xlsx'>下载模板文件</a>
+        </el-form-item>
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="file2DosClearDlgShowed = false" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okFile2DosClear" :disabled="btnEnable">确 定</el-button>
       </span> 
     </el-dialog>
 
@@ -283,6 +334,31 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeChangeProductDlg" :disabled="btnEnable">取 消</el-button>
         <el-button type="primary" @click="okChangeProduct" :disabled="btnEnable">确 定</el-button>
+      </span> 
+    </el-dialog>
+
+    <el-dialog title="批量变更卡套餐" :visible.sync="file2ChangeProductDlgShowed" width="450px" @close="file2ChangeProductDlgShowed=false">
+      <!-- 内容主体区域 -->
+      <el-form :model="file2ChangeProductForm"  label-width="110px">
+        <el-form-item label="变更套餐">
+          <el-select class="queryFormInput"  clearable placeholder="请选择套餐" v-model="file2ChangeProductForm.updateProductCode">
+            <el-option v-for="item in productCodes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="原因">
+          <el-input style="width:300px;" v-model="file2ChangeProductForm.reason" placeholder="请输入调整原因" ></el-input>
+        </el-form-item>
+        <el-form-item label="文件上传">
+          <el-upload class="unload-demo" accept=".xls, .xlsx" action="#"  :http-request="uploadFile" :on-remove="removeUploadedFile">
+            <el-button size="small" type="primary">点击上传</el-button>
+          </el-upload>
+          <a href='http://xbk.xuebaka.cn/download/template/dosChagne.xlsx'>下载模板文件</a>
+        </el-form-item>
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="file2ChangeProductDlgShowed=false" :disabled="btnEnable">取 消</el-button>
+        <el-button type="primary" @click="okFile2ChangeProduct" :disabled="btnEnable">确 定</el-button>
       </span> 
     </el-dialog>
 
@@ -494,6 +570,21 @@ export default {
   },
   data () {
     return {
+      productCodes:[],
+      file2ChangeProductForm:{
+         updateProductCode: '',
+         reason:''
+      },
+      file2ChangeProductDlgShowed:false,
+      file2DosClearForm:{
+        reason:''
+      },
+      file2DosClearDlgShowed:false,
+      file2ChangeStatusForm:{
+        reason:'',
+        status2Change:''
+      },
+      file2ChangeStatusDlgShowed:false,
       clearNextProductDlgShowed:false,
       clearNextProductForm:{
         reason:''
@@ -674,9 +765,20 @@ export default {
       this.getAllPools()
       this.queryCardInfos()
       this.getFengwoAccounts()
+      this.getProductCodes()
   },
   watch: {},
   methods: {
+    getProductCodes:function(){
+      let params = {}
+      apiBigflow.getProductCodes(params).then(res => {
+        if (res.resultCode === 0) {
+            this.productCodes = res.data
+        } else {
+          this.$message.error(res.resultInfo)
+        }
+      })
+    },
     toClearNextProdut:function(){
       if(this.iccids2Opt == ''){
           this.$message.error('请先选择要操作的卡')
@@ -1209,6 +1311,10 @@ export default {
         }); 
     },
 
+    openFile2ChangeProductDlg: function(){
+      this.uploadedFile = null
+      this.file2ChangeProductDlgShowed = true
+    },
     openChangeProductDlg:function(){
         this.optType = ''
         this.uploadedFile = null
@@ -1225,6 +1331,44 @@ export default {
     },
     closeChangeProductDlg:function(){
         this.showChangeProductDlg = false
+    },
+    okFile2ChangeProduct:function(){
+      if(this.file2ChangeProductForm.reason === ''){
+        this.$message.error('原因不能为空')
+        return
+      }
+      if(this.file2ChangeProductForm.updateProductCode === ''){
+        this.$message.error('套餐不能为空')
+        return
+      }
+      if(this.uploadedFile === null){
+        this.$message.error('请先上传文件')
+        return
+      }
+      let that = this
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+      }).then(() => {
+          that.btnEnable = true
+          let params = new FormData()
+          params.append('file', this.uploadedFile)
+          params.append('productCode', this.file2ChangeProductForm.updateProductCode)
+          apiBigflow.file2CardsProductChange(params).then(res=>{
+              if(res.resultCode == 0){
+                  that.queryCardInfos()
+                  that.file2ChangeProductDlgShowed = false
+                  this.$message.success('操作成功')
+              }else{
+                  this.$message.error('操作失败:' + res.resultInfo)
+              }
+              that.btnEnable = false
+          })
+      }).catch(() => {
+      });
+// file2CardsDoseClear
+
     },
     okChangeProduct:function(){
         let that = this
@@ -1379,7 +1523,83 @@ export default {
         }
         this.showUnbindDlg = true
     },
-
+    openFile2DosClearDlg:function(){
+      this.uploadedFile = null
+      this.file2DosClearDlgShowed = true
+    },
+    openFile2ChangeStatusDlg:function(){
+      this.file2ChangeStatusDlgShowed = true
+      this.uploadedFile = null
+    },
+    okFile2DosClear:function(){
+      if(this.file2DosClearForm.reason === ''){
+        this.$message.error('原因不能为空')
+        return
+      }
+      if(this.uploadedFile === null){
+        this.$message.error('请先上传文件')
+        return
+      }
+      let that = this
+      this.$confirm('您确认要此操作, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+      }).then(() => {
+          that.btnEnable = true
+          let params = new FormData()
+          params.append('file', this.uploadedFile)
+          params.append('reason', this.file2DosClearForm.reason)
+          apiBigflow.file2CardsDoseClear(params).then(res=>{
+              if(res.resultCode == 0){
+                  that.queryCardInfos()
+                  that.file2DosClearDlgShowed = false
+                  this.$message.success('操作成功')
+              }else{
+                  this.$message.error('操作失败:' + res.resultInfo)
+              }
+              that.btnEnable = false
+          })
+      }).catch(() => {
+      });
+    },
+    okFile2ChangeStatus:function(){
+      if(this.file2ChangeStatusForm.reason === ''){
+        this.$message.error('原因不能为空')
+        return
+      }
+      if(this.file2ChangeStatusForm.status2Change === ''){
+        this.$message.error('状态不能为空')
+        return
+      }
+      if(this.uploadedFile === null){
+        this.$message.error('请先上传文件')
+        return
+      }
+      let that = this
+        this.$confirm('您确认要此操作, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            that.btnEnable = true
+            let params = new FormData()
+            params.append('file', this.uploadedFile)
+            params.append('reason', this.file2ChangeStatusForm.reason)
+            params.append('status2Change', this.file2ChangeStatusForm.status2Change)
+            apiBigflow.file2ChangeCardsStatus(params).then(res=>{
+                if(res.resultCode == 0){
+                    that.queryCardInfos()
+                    that.file2ChangeStatusDlgShowed = false
+                    this.$message.success('操作成功')
+                }else{
+                    this.$message.error('操作失败:' + res.resultInfo)
+                }
+                that.btnEnable = false
+            })
+        }).catch(() => {
+        });
+    },
 
     openChangeStatusDlg:function(){
         this.optType = ''

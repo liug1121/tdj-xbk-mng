@@ -583,5 +583,26 @@ export default {
               'content-type': 'multipart/form-data'
             }
           })
-    }
+    },
+    file2ChangeCardsStatus: (params, reason, extendTime) => {
+        return API.POST(`/bigflow/manage/v1.0/card/changeCardStatus/import`, params, {
+          headers: {
+            'content-type': 'multipart/form-data'
+          }
+        })
+      },
+      file2CardsDoseClear: (params, reason, extendTime) => {
+        return API.POST(`/bigflow/manage/v1.0/card/dosClear/import`, params, {
+          headers: {
+            'content-type': 'multipart/form-data'
+          }
+        })
+      },
+      file2CardsProductChange: (params, reason, extendTime) => {
+        return API.POST(`/bigflow/manage/v1.0/card/updateProduct/import`, params, {
+          headers: {
+            'content-type': 'multipart/form-data'
+          }
+        })
+      }  
 }
